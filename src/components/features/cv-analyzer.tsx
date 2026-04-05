@@ -119,92 +119,39 @@ export default function CVAnalyzer() {
             }
         }
 
-        // Simulated Analysis
-        setTimeout(() => {
-            const results = runSimulatedAnalysis(cvText, targetJobText)
-            setResults(results)
-            setIsLoading(false)
-            setShowRating(true)
-        }, 1200)
-    }
+        try {
+            const res = await fetch("/api/analyze", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ cvText, jobText: targetJobText })
+            });
+            
+            if (!res.ok) {
+                throw new Error("Analysis failed. Did you add the API Key?");
+            }
 
-
-
-    const runSimulatedAnalysis = (cv: string, job: string) => {
-        const categories = {
-            "Core Tech Stack": ["react", "next.js", "tailwind", "typescript", "javascript", "vue", "node", "nest", "python", "graphql", "sql", "postgres"],
-            "Cloud & Scale": ["aws", "docker", "k8s", "kubernetes", "vercel", "supabase", "ci/cd", "terraform", "scalability", "distributed"],
-            "Strategic Domain": ["architect", "system design", "solid", "optimization", "clean code", "performance", "security", "encryption"],
-            "Process & Impact": ["agile", "leadership", "mentoring", "scrum", "product", "team", "strategy", "roadmap", "stakeholders"]
-        }
-
-        const cvLower = cv.toLowerCase()
-        const jobLower = job.toLowerCase()
-        
-        // Dynamic skill discovery (Look for all capitalized or common skill-like words)
-        const commonSkills = ["frontend", "backend", "fullstack", "ui/ux", "devops", "cloud", "api", "mobile", "rest", "git", "github", "jira", "figma"]
-        const matchedByCategory: Record<string, string[]> = {}
-        const allMatched: string[] = []
-
-        Object.entries(categories).forEach(([category, keywords]) => {
-            matchedByCategory[category] = keywords.filter(k => cvLower.includes(k) && jobLower.includes(k))
-            allMatched.push(...matchedByCategory[category])
-        })
-
-        // Catch-all 'General' matches for realism
-        const generalMatches = commonSkills.filter(k => cvLower.includes(k) && jobLower.includes(k))
-        if (generalMatches.length > 0) {
-            matchedByCategory["Operational Skills"] = generalMatches
-            allMatched.push(...generalMatches)
-        }
-
-        const matchedCount = allMatched.length
-        let score = Math.max(15, Math.min(99, 45 + (matchedCount * 5)))
-
-        // Strategic Profile Synthesis
-        const isLeadership = (matchedByCategory["Process & Impact"]?.length || 0) > 1
-        const isSystems = (matchedByCategory["Cloud & Scale"]?.length || 0) > 1 || (matchedByCategory["Strategic Domain"]?.length || 0) > 1
-        
-        let persona = { 
-            id: "talent",
-            label: "The High-Potential Talent", 
-            icon: <Zap className="h-5 w-5 text-emerald-400" />, 
-            color: "text-emerald-400",
-            desc: "Expert foundation with strong growth trajectory in modern technology vectors."
-        }
-
-        if (isLeadership && isSystems) {
-            persona = { id: "architect", label: "Strategic System Architect", icon: <Shield className="h-5 w-5 text-indigo-400" />, color: "text-indigo-400", desc: "Top-tier alignment with system architecture and leadership requirements." }
-        } else if (isLeadership) {
-            persona = { id: "visionary", label: "Strategic Product Lead", icon: <Target className="h-5 w-5 text-amber-500" />, color: "text-amber-500", desc: "High compatibility with team management and strategic execution roles." }
-        } else if (isSystems) {
-            persona = { id: "expert", label: "Infrastructure Excellence Specialist", icon: <Cpu className="h-5 w-5 text-primary" />, color: "text-primary", desc: "Specialist focus on performance, scalability, and system reliability." }
-        }
-
-        const missingByCategory: Record<string, string[]> = {}
-        Object.entries(categories).forEach(([category, keywords]) => {
-            missingByCategory[category] = keywords.filter(k => jobLower.includes(k) && !cvLower.includes(k))
-        })
-        const allMissing: string[] = []
-        Object.values(missingByCategory).forEach(arr => allMissing.push(...arr))
-
-        return {
-            score,
-            persona,
-            summary: "Comprehensive Analysis Synthesis: Professional core competency alignment has been verified against the target requirements.",
-            categories: matchedByCategory,
-            matched: allMatched,
-            growth: allMissing.length > 0 ? allMissing.slice(0, 15) : ["System Optimization", "Strategic Communication"],
-            role_match: {
-                "Technical Alignment": Math.min(98, 14 + (matchedByCategory["Core Tech Stack"]?.length || 0) * 20 + Math.floor(score * 0.15)),
-                "Strategic Fit": Math.min(95, 8 + (matchedByCategory["Process & Impact"]?.length || 0) * 25 + Math.floor(score * 0.2)),
-                "Scale Readiness": Math.min(96, 5 + (matchedByCategory["Cloud & Scale"]?.length || 0) * 30 + Math.floor(score * 0.1))
-            },
-            recommendations: [
-                "Map your historical impact directly to architectural system improvements.",
-                "Highlight specific scalability successes using quantitative ROI metrics.",
-                "Articulate your strategic leadership role in cross-functional team delivery."
-            ]
+            const data = await res.json();
+            
+            // Map the API results to our UI state format
+            setResults({
+                score: data.score,
+                persona: {
+                    id: "ai-persona",
+                    label: data.persona.label,
+                    desc: data.persona.desc,
+                    icon: <Target className="h-5 w-5 text-indigo-400" />,
+                    color: "text-indigo-400"
+                },
+                summary: data.summary,
+                matched: data.matched,
+                growth: data.growth
+            });
+        } catch (error) {
+            console.error("AI Error:", error);
+            alert("Analysis failed. Please check your console or ensure OPENAI_API_KEY is configured in .env.local on your server.");
+        } finally {
+            setIsLoading(false);
+            setShowRating(true);
         }
     }
 
