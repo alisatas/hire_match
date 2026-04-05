@@ -356,7 +356,7 @@ export default function CVAnalyzer() {
         import("pdfjs-dist").then((pdfjs) => {
             pdfjsLib = pdfjs
             // Use CDN worker — works on all browsers including mobile Safari
-            pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
+            pdfjs.GlobalWorkerOptions.workerSrc = `/pdf.worker.min.mjs`
         }).catch(err => {
             console.error("Failed to load PDF.js", err)
         })
@@ -371,7 +371,7 @@ export default function CVAnalyzer() {
             if (!pdfjsLib) {
                 const pdfjs = await import("pdfjs-dist")
                 pdfjsLib = pdfjs
-                pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
+                pdfjsLib.GlobalWorkerOptions.workerSrc = `/pdf.worker.min.mjs`
             }
 
             const arrayBuffer = await file.arrayBuffer()
