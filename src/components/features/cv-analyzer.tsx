@@ -116,6 +116,18 @@ const SKILL_RESOURCES: Record<string, { label: string; url: string }> = {
     ai: { label: "Anthropic Prompt Engineering", url: "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview" },
 }
 
+// Common words to ignore in raw keyword overlap
+const STOP_WORDS = new Set([
+    "the","and","for","with","that","this","have","from","will","your","our","are","was","you",
+    "they","their","been","has","not","but","can","all","its","also","more","into","other",
+    "than","then","some","what","when","which","about","there","would","these","those","such",
+    "each","work","team","role","must","able","well","good","strong","skills","experience",
+    "looking","join","help","make","build","support","using","used","based","across","within",
+    "including","ensure","provide","develop","working","related","required","responsibilities",
+    "opportunity","position","candidate","candidates","company","business","level","years",
+    "year","knowledge","ability","excellent","great","new","high","part","time","full","plus",
+])
+
 function normalizeText(text: string): string {
     return text.toLowerCase().replace(/[^a-z0-9.#+\s]/g, " ")
 }
@@ -131,7 +143,19 @@ function extractSkills(text: string): Set<string> {
     return found
 }
 
-function extractYearsOfExperience(text: string): number {
+// Extract meaningful keywords from any text (beyond our skill dictionary)
+function extractKeywords(text: string): Set<string> {
+    const words = text.toLowerCase().match(/\b[a-z][a-z0-9+#.]{2,}\b/g) || []
+    return new Set(words.filter(w => !STOP_WORDS.has(w) && w.length > 3))
+}
+
+function extractYearsRequired(text: string): number {
+    const matches = text.match(/(\d+)\+?\s*years?\s*(of\s*)?(experience|exp)/gi) || []
+    const years = matches.map(m => parseInt(m)).filter(n => !isNaN(n))
+    return years.length > 0 ? Math.max(...years) : 0
+}
+
+function extractYearsFromCV(text: string): number {
     const matches = text.match(/(\d+)\+?\s*years?\s*(of\s*)?(experience|exp)/gi) || []
     const years = matches.map(m => parseInt(m)).filter(n => !isNaN(n))
     return years.length > 0 ? Math.max(...years) : 0
@@ -159,47 +183,87 @@ interface AnalysisResult {
     score: number
     matched: string[]
     missing: string[]
+    rawMatched: number
+    rawTotal: number
+    jobWordCount: number
+    yearsRequired: number
+    yearsOnCV: number
     summary: string
     persona: { label: string; desc: string; color: string }
+    lowQuality: boolean
 }
 
 function analyze(cvText: string, jobText: string): AnalysisResult {
+    // ── Skill-dictionary matching ──────────────────────────────────
     const cvSkills = extractSkills(cvText)
     const jobSkills = extractSkills(jobText)
-    const cvYears = extractYearsOfExperience(cvText)
-
     const matched = [...jobSkills].filter(s => cvSkills.has(s))
     const missing = [...jobSkills].filter(s => !cvSkills.has(s))
 
-    const jobSize = jobSkills.size || 1
-    const skillScore = Math.round((matched.length / jobSize) * 100)
-    const yearBonus = Math.min(cvYears * 2, 15)
-    const score = Math.min(Math.max(skillScore + yearBonus, matched.length > 0 ? 20 : 5), 98)
+    // ── Raw keyword overlap (catches job-specific terms) ───────────
+    const cvKeywords = extractKeywords(cvText)
+    const jobKeywords = extractKeywords(jobText)
+    const rawMatched = [...jobKeywords].filter(w => cvKeywords.has(w)).length
+    const rawTotal = jobKeywords.size
 
-    let persona: AnalysisResult["persona"]
-    if (score >= 80) {
-        persona = { label: "Top Candidate", desc: "Your profile strongly aligns with this role. You cover most key requirements.", color: "text-emerald-400" }
-    } else if (score >= 60) {
-        persona = { label: "Strong Contender", desc: "Solid match with room to highlight a few more skills. You're competitive.", color: "text-indigo-400" }
-    } else if (score >= 40) {
-        persona = { label: "Emerging Talent", desc: "Good foundation, but closing some skill gaps could significantly boost your chances.", color: "text-amber-400" }
-    } else {
-        persona = { label: "Upskilling Phase", desc: "This role requires skills you're still building. Focus on the gaps below.", color: "text-rose-400" }
+    // ── Experience ─────────────────────────────────────────────────
+    const yearsRequired = extractYearsRequired(jobText)
+    const yearsOnCV = extractYearsFromCV(cvText)
+
+    // ── Job text quality (how much did we actually extract?) ───────
+    const jobWordCount = jobText.trim().split(/\s+/).length
+    const lowQuality = jobWordCount < 80 || (jobSkills.size < 3 && rawTotal < 20)
+
+    // ── Scoring ────────────────────────────────────────────────────
+    // Skill score: weighted 60% (dictionary) + 40% (raw keywords)
+    const skillRatio = jobSkills.size > 0 ? matched.length / jobSkills.size : 0
+    const rawRatio = rawTotal > 0 ? Math.min(rawMatched / rawTotal, 1) : 0
+    const baseScore = skillRatio * 60 + rawRatio * 40
+
+    // Confidence dampening: thin job text lowers the score ceiling
+    const confidence = Math.min(jobWordCount / 150, 1)
+    const dampened = baseScore * confidence + baseScore * 0.5 * (1 - confidence)
+
+    // Experience bonus/penalty (±8 max)
+    let expAdjust = 0
+    if (yearsRequired > 0) {
+        const gap = yearsOnCV - yearsRequired
+        expAdjust = Math.max(-8, Math.min(8, gap * 2))
+    } else if (yearsOnCV > 2) {
+        expAdjust = Math.min(yearsOnCV, 5)
     }
 
-    const summaries = [
-        `${matched.length} of ${jobSkills.size} required skills detected on your CV.`,
-        `Your profile covers ${matched.length}/${jobSkills.size} job keywords — ${score >= 60 ? "strong signal" : "needs work"}.`,
-        `Skill overlap: ${matched.length} match${matched.length !== 1 ? "es" : ""} found out of ${jobSkills.size} sought.`,
-    ]
-    const summary = summaries[Math.floor(Math.random() * summaries.length)]
+    const score = Math.min(Math.max(Math.round(dampened + expAdjust), 5), 97)
+
+    // ── Persona ─────────────────────────────────────────────────────
+    let persona: AnalysisResult["persona"]
+    if (score >= 78) {
+        persona = { label: "Top Candidate", desc: "Your profile strongly aligns with this role. You cover most key requirements.", color: "text-emerald-400" }
+    } else if (score >= 58) {
+        persona = { label: "Strong Contender", desc: "Solid match — a few skill additions could push you to the top of the pile.", color: "text-indigo-400" }
+    } else if (score >= 38) {
+        persona = { label: "Emerging Talent", desc: "Good foundation, but closing the skill gaps below will significantly boost your chances.", color: "text-amber-400" }
+    } else {
+        persona = { label: "Upskilling Phase", desc: "This role requires skills you're still building. Use the learning resources below.", color: "text-rose-400" }
+    }
+
+    // ── Summary ──────────────────────────────────────────────────────
+    const summary = lowQuality
+        ? `Limited job text extracted (${jobWordCount} words). Paste the full description for a more accurate score.`
+        : `${matched.length}/${jobSkills.size} skill categories matched · ${rawMatched} of ${rawTotal} keywords found on your CV.`
 
     return {
         score,
         matched: matched.map(getSkillLabel),
         missing: missing.map(getSkillLabel),
+        rawMatched,
+        rawTotal,
+        jobWordCount,
+        yearsRequired,
+        yearsOnCV,
         summary,
         persona,
+        lowQuality,
     }
 }
 
@@ -332,6 +396,8 @@ export default function CVAnalyzer() {
                     setFetchStatus("✓ Job post fetched")
                 } else {
                     setFetchStatus("Could not fetch — paste the text below")
+                    setIsLoading(false)
+                    return
                 }
             } catch {
                 setFetchStatus("Could not fetch — paste the text below")
@@ -559,6 +625,34 @@ export default function CVAnalyzer() {
                                         </p>
                                         <p className="text-white/60 text-sm font-medium">"{results.summary}"</p>
                                     </div>
+                                </div>
+
+                                {/* Low quality warning */}
+                                {results.lowQuality && (
+                                    <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl px-4 py-3 text-amber-300 text-xs font-semibold flex items-start gap-2">
+                                        <span className="text-base leading-none">⚠️</span>
+                                        <span>Only <strong>{results.jobWordCount} words</strong> extracted from the job post — LinkedIn blocks scraping. For accurate results, open the job on LinkedIn, copy the full description, and paste it in the job field.</span>
+                                    </div>
+                                )}
+
+                                {/* Stats row */}
+                                <div className="flex flex-wrap gap-3 text-[11px] font-bold uppercase tracking-widest">
+                                    <span className="px-3 py-1.5 bg-white/5 rounded-xl text-white/50">
+                                        {results.rawMatched}/{results.rawTotal} keywords
+                                    </span>
+                                    <span className="px-3 py-1.5 bg-white/5 rounded-xl text-white/50">
+                                        {results.matched.length}/{results.matched.length + results.missing.length} skill categories
+                                    </span>
+                                    {results.yearsRequired > 0 && (
+                                        <span className={cn(
+                                            "px-3 py-1.5 rounded-xl",
+                                            results.yearsOnCV >= results.yearsRequired
+                                                ? "bg-emerald-500/10 text-emerald-400"
+                                                : "bg-rose-500/10 text-rose-400"
+                                        )}>
+                                            {results.yearsOnCV}y exp · {results.yearsRequired}y required
+                                        </span>
+                                    )}
                                 </div>
 
                                 {/* Matched + Missing Skills */}
