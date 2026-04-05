@@ -278,7 +278,6 @@ let pdfjsLib: any = null
 
 export default function CVAnalyzer() {
     const [cvText, setCvText] = useState("")
-    const [cvFromPdf, setCvFromPdf] = useState(false)
     const [jobText, setJobText] = useState("")
     const [jobInput, setJobInput] = useState("")
     const [fetchStatus, setFetchStatus] = useState("")
@@ -339,7 +338,6 @@ export default function CVAnalyzer() {
             if (cleanedText.length < 10) throw new Error("PDF seems empty or non-text")
 
             setCvText(cleanedText)
-            setCvFromPdf(true)
             setPdfStatus(`✓ ${file.name} loaded`)
         } catch (err: any) {
             console.error("PDF Read Error:", err)
@@ -422,12 +420,20 @@ export default function CVAnalyzer() {
         }, 600)
     }
 
-    // "Analyze Again" only resets the CV side — job post stays loaded
-    const resetAll = () => {
-        setCvText("")
-        setCvFromPdf(false)
+    // "Analyze Again" — keep CV, only clear job + results
+    const resetForNewJob = () => {
+        setJobText("")
+        setJobInput("")
+        setFetchStatus("")
         setResults(null)
+        setError("")
+    }
+
+    // "Change CV" — explicit CV reset
+    const resetCV = () => {
+        setCvText("")
         setPdfStatus("")
+        setResults(null)
         setError("")
         if (fileInputRef.current) fileInputRef.current.value = ""
     }
@@ -465,41 +471,51 @@ export default function CVAnalyzer() {
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                        {/* CV Upload */}
-                        <div className="space-y-4">
-                            <div className="flex justify-between items-center">
-                                <label className="text-sm font-bold uppercase tracking-widest text-primary/90">Your CV</label>
-                                <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">PDF</span>
-                            </div>
-                            <div className="border-2 border-dashed border-border/60 rounded-xl h-[140px] flex flex-col items-center justify-center gap-4 transition-colors hover:border-primary/40 hover:bg-primary/5 cursor-pointer relative">
-                                <UploadCloud className="h-10 w-10 text-white/60" />
-                                <div className="text-center">
-                                    <p className="font-semibold text-white">Drop your PDF or click to browse</p>
-                                    <p className="text-xs text-white/60 mt-1 font-medium">Files up to 5MB supported</p>
+                        {/* CV — upload zone OR loaded badge */}
+                        {!cvText ? (
+                            <div className="space-y-4">
+                                <div className="flex justify-between items-center">
+                                    <label className="text-sm font-bold uppercase tracking-widest text-primary/90">Your CV</label>
+                                    <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">PDF</span>
                                 </div>
-                                <input
-                                    ref={fileInputRef}
-                                    type="file"
-                                    accept=".pdf"
-                                    className="absolute inset-0 opacity-0 cursor-pointer"
-                                    onChange={processPdf}
-                                />
-                            </div>
-                            {pdfStatus && (
-                                <p className={cn(
-                                    "text-xs text-center font-semibold",
-                                    pdfStatus.startsWith("✓") ? "text-emerald-400" : "text-white/70 animate-pulse"
-                                )}>{pdfStatus}</p>
-                            )}
-                            {!cvFromPdf && (
+                                <div className="border-2 border-dashed border-border/60 rounded-xl h-[140px] flex flex-col items-center justify-center gap-4 transition-colors hover:border-primary/40 hover:bg-primary/5 cursor-pointer relative">
+                                    <UploadCloud className="h-10 w-10 text-white/60" />
+                                    <div className="text-center">
+                                        <p className="font-semibold text-white">Drop your PDF or click to browse</p>
+                                        <p className="text-xs text-white/60 mt-1 font-medium">Files up to 5MB supported</p>
+                                    </div>
+                                    <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        accept=".pdf"
+                                        className="absolute inset-0 opacity-0 cursor-pointer"
+                                        onChange={processPdf}
+                                    />
+                                </div>
+                                {pdfStatus && (
+                                    <p className="text-xs text-center font-semibold text-white/70 animate-pulse">{pdfStatus}</p>
+                                )}
                                 <Textarea
                                     placeholder="Or paste your CV text here..."
                                     className="min-h-[80px] bg-muted/20 border-border/40 rounded-xl text-white placeholder:text-white/40"
                                     value={cvText}
                                     onChange={(e) => setCvText(e.target.value)}
                                 />
-                            )}
-                        </div>
+                            </div>
+                        ) : (
+                            <div className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/25 rounded-2xl px-4 py-3">
+                                <div className="flex items-center gap-3">
+                                    <FileText className="h-4 w-4 text-emerald-400 shrink-0" />
+                                    <span className="text-sm font-bold text-emerald-400 truncate">{pdfStatus.replace("✓ ", "") || "CV loaded"}</span>
+                                </div>
+                                <button
+                                    onClick={resetCV}
+                                    className="text-[11px] font-bold text-white/40 hover:text-white/70 uppercase tracking-widest shrink-0 ml-3 transition-colors"
+                                >
+                                    Change
+                                </button>
+                            </div>
+                        )}
 
                         {/* Job Description */}
                         <div className="space-y-3">
@@ -511,12 +527,12 @@ export default function CVAnalyzer() {
                                 <input
                                     type="text"
                                     className="flex-1 bg-muted/20 border border-border/40 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-primary/50"
-                                    placeholder="Paste URL or job description..."
+                                    placeholder="Paste job URL or description..."
                                     value={jobInput}
-                                    onChange={(e) => setJobInput(e.target.value)}
+                                    onChange={(e) => { setJobInput(e.target.value); setJobText(""); setFetchStatus("") }}
                                     onKeyDown={(e) => e.key === "Enter" && fetchJobPost()}
                                 />
-                                {jobInput.trim().startsWith("http") && (
+                                {jobInput.trim().startsWith("http") && !fetchStatus.startsWith("✓") && (
                                     <Button
                                         variant="outline"
                                         size="sm"
@@ -533,7 +549,7 @@ export default function CVAnalyzer() {
                                     fetchStatus.startsWith("✓") ? "text-emerald-400" : "text-white/60"
                                 )}>{fetchStatus}</p>
                             )}
-                            {(fetchStatus.includes("paste") || (!jobInput.startsWith("http") && jobInput)) && (
+                            {(fetchStatus.includes("paste") || (!jobInput.trim().startsWith("http") && jobInput)) && (
                                 <Textarea
                                     placeholder="Paste job description text here..."
                                     className="min-h-[80px] bg-muted/20 border-border/40 rounded-xl text-white placeholder:text-white/40"
@@ -550,12 +566,11 @@ export default function CVAnalyzer() {
                         <div className="space-y-3 pt-2">
                             {results ? (
                                 <Button
-                                    variant="outline"
-                                    className="w-full py-7 text-lg font-black rounded-2xl border-border/50 text-white/80 hover:text-white hover:border-primary/50"
-                                    onClick={resetAll}
+                                    className="w-full py-8 text-xl font-black group transition-all rounded-2xl shadow-xl active:scale-95 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-purple-500/20"
+                                    onClick={resetForNewJob}
                                 >
-                                    <RotateCcw className="mr-2 h-5 w-5" />
-                                    Analyze Again
+                                    <RotateCcw className="mr-2 h-5 w-5 group-hover:-rotate-180 transition-transform duration-500" />
+                                    Try Another Job
                                 </Button>
                             ) : (
                                 <Button
