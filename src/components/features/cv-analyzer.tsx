@@ -452,7 +452,7 @@ export default function CVAnalyzer() {
             <section className="text-center mb-8 animate-in fade-in slide-in-from-bottom-6 duration-1000">
                 <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight tracking-tighter text-white">
                     Get Hired in{" "}
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 drop-shadow-sm">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-400 drop-shadow-sm">
                         Style ✨
                     </span>
                 </h2>
@@ -580,7 +580,7 @@ export default function CVAnalyzer() {
                                         "w-full py-8 text-xl font-black group transition-all rounded-2xl shadow-xl active:scale-95",
                                         !canAnalyze
                                             ? "bg-muted text-muted-foreground cursor-not-allowed grayscale"
-                                            : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-purple-500/20"
+                                            : "bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 shadow-violet-500/30"
                                     )}
                                     onClick={doAnalyze}
                                     disabled={isLoading || !canAnalyze}
