@@ -355,10 +355,8 @@ export default function CVAnalyzer() {
     useEffect(() => {
         import("pdfjs-dist").then((pdfjs) => {
             pdfjsLib = pdfjs
-            pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-                "pdfjs-dist/build/pdf.worker.min.mjs",
-                import.meta.url
-            ).toString()
+            // Use CDN worker — works on all browsers including mobile Safari
+            pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
         }).catch(err => {
             console.error("Failed to load PDF.js", err)
         })
