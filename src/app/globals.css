@@ -84,10 +84,10 @@
 }
 
 .dark {
-  /* Fresh dark-teal ocean theme — no black, no purple */
-  --background: oklch(0.13 0.025 195);         /* deep ocean teal */
+  /* Fresh dark-forest-ocean theme */
+  --background: oklch(0.15 0.04 165);
   --foreground: oklch(0.96 0.01 195);
-  --card: oklch(0.17 0.028 195);               /* slightly lighter teal card */
+  --card: oklch(0.18 0.035 185 / 0.7);         /* semi-transparent teal card */
   --card-foreground: oklch(0.96 0.01 195);
   --popover: oklch(0.17 0.028 195);
   --popover-foreground: oklch(0.96 0.01 195);
@@ -123,7 +123,9 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background: linear-gradient(135deg, #0d3525 0%, #0b2d40 50%, #0d2535 100%);
+    min-height: 100vh;
   }
   html {
     @apply font-sans;
