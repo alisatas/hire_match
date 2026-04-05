@@ -7,23 +7,33 @@ type DottedSurfaceProps = Omit<React.ComponentProps<'div'>, 'ref'>;
 export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
 	return (
 		<div className={cn('pointer-events-none fixed inset-0 -z-10 overflow-hidden', className)} {...props}>
-			{/* Base background */}
-			<div className="absolute inset-0" style={{ background: 'oklch(0.1 0.02 270)' }} />
+			{/* Base: deep ocean teal */}
+			<div className="absolute inset-0" style={{ background: 'oklch(0.13 0.025 195)' }} />
 
-			{/* Gradient orbs — give the page depth and energy */}
-			<div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full opacity-25"
-				style={{ background: 'radial-gradient(circle, oklch(0.55 0.28 295) 0%, transparent 70%)', filter: 'blur(60px)' }} />
-			<div className="absolute top-1/3 -right-32 w-[500px] h-[500px] rounded-full opacity-20"
-				style={{ background: 'radial-gradient(circle, oklch(0.6 0.24 220) 0%, transparent 70%)', filter: 'blur(70px)' }} />
-			<div className="absolute -bottom-40 left-1/3 w-[550px] h-[550px] rounded-full opacity-20"
-				style={{ background: 'radial-gradient(circle, oklch(0.62 0.26 180) 0%, transparent 70%)', filter: 'blur(80px)' }} />
-			<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full opacity-10"
-				style={{ background: 'radial-gradient(circle, oklch(0.72 0.2 340) 0%, transparent 70%)', filter: 'blur(60px)' }} />
+			{/* Coral blob — top left */}
+			<div className="absolute -top-32 -left-32 w-[520px] h-[520px] rounded-full"
+				style={{ background: 'radial-gradient(circle, #ff7c5c 0%, transparent 70%)', opacity: 0.18, filter: 'blur(72px)' }} />
 
-			{/* Colored dot grid on top */}
+			{/* Mint / lime blob — top right */}
+			<div className="absolute -top-20 right-0 w-[480px] h-[480px] rounded-full"
+				style={{ background: 'radial-gradient(circle, #4ade80 0%, transparent 70%)', opacity: 0.16, filter: 'blur(80px)' }} />
+
+			{/* Sky blue blob — middle right */}
+			<div className="absolute top-1/2 -right-40 w-[500px] h-[500px] rounded-full"
+				style={{ background: 'radial-gradient(circle, #38bdf8 0%, transparent 70%)', opacity: 0.18, filter: 'blur(70px)' }} />
+
+			{/* Warm yellow blob — bottom left */}
+			<div className="absolute -bottom-32 -left-20 w-[460px] h-[460px] rounded-full"
+				style={{ background: 'radial-gradient(circle, #fbbf24 0%, transparent 70%)', opacity: 0.14, filter: 'blur(80px)' }} />
+
+			{/* Cyan blob — bottom right */}
+			<div className="absolute -bottom-20 right-1/4 w-[400px] h-[400px] rounded-full"
+				style={{ background: 'radial-gradient(circle, #22d3ee 0%, transparent 70%)', opacity: 0.14, filter: 'blur(70px)' }} />
+
+			{/* Teal-tinted dot grid */}
 			<div className="absolute inset-0"
 				style={{
-					backgroundImage: 'radial-gradient(circle, oklch(0.68 0.22 295 / 0.18) 1px, transparent 1px)',
+					backgroundImage: 'radial-gradient(circle, rgba(34,211,238,0.12) 1px, transparent 1px)',
 					backgroundSize: '28px 28px',
 				}} />
 		</div>
