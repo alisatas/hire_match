@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useRef } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -333,11 +333,6 @@ function analyze(cvText: string, jobText: string): AnalysisResult {
 }
 
 // ─────────────────────────────────────────────
-// PDF.js loader
-// ─────────────────────────────────────────────
-let pdfjsLib: any = null
-
-// ─────────────────────────────────────────────
 // COMPONENT
 // ─────────────────────────────────────────────
 
@@ -352,55 +347,18 @@ export default function CVAnalyzer() {
     const [error, setError] = useState("")
     const fileInputRef = useRef<HTMLInputElement>(null)
 
-    useEffect(() => {
-        import("pdfjs-dist").then((pdfjs) => {
-            pdfjsLib = pdfjs
-            // Use CDN worker — works on all browsers including mobile Safari
-            pdfjs.GlobalWorkerOptions.workerSrc = `/pdf.worker.min.mjs`
-        }).catch(err => {
-            console.error("Failed to load PDF.js", err)
-        })
-    }, [])
-
     const processPdf = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (!file || file.type !== "application/pdf") return
 
         setPdfStatus("Reading PDF...")
         try {
-            if (!pdfjsLib) {
-                const pdfjs = await import("pdfjs-dist")
-                pdfjsLib = pdfjs
-                pdfjsLib.GlobalWorkerOptions.workerSrc = `/pdf.worker.min.mjs`
-            }
-
-            const arrayBuffer = await file.arrayBuffer()
-            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise
-
-            let fullText = ""
-            for (let i = 1; i <= pdf.numPages; i++) {
-                const page = await pdf.getPage(i)
-                const content = await page.getTextContent()
-
-                // Group items by Y coordinate to reconstruct proper lines
-                const lineMap = new Map<number, string[]>()
-                for (const item of content.items as any[]) {
-                    const y = Math.round(item.transform[5])
-                    if (!lineMap.has(y)) lineMap.set(y, [])
-                    lineMap.get(y)!.push(item.str)
-                }
-
-                const sortedYs = [...lineMap.keys()].sort((a, b) => b - a)
-                for (const y of sortedYs) {
-                    fullText += lineMap.get(y)!.join(" ") + "\n"
-                }
-                fullText += "\n"
-            }
-
-            const cleanedText = fullText.trim()
-            if (cleanedText.length < 10) throw new Error("PDF seems empty or non-text")
-
-            setCvText(cleanedText)
+            const formData = new FormData()
+            formData.append("file", file)
+            const res = await fetch("/api/extract-pdf", { method: "POST", body: formData })
+            const data = await res.json()
+            if (data.error) throw new Error(data.error)
+            setCvText(data.text)
             setPdfStatus(`✓ ${file.name} loaded`)
         } catch (err: any) {
             console.error("PDF Read Error:", err)
