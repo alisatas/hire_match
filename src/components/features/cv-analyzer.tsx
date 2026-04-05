@@ -179,15 +179,43 @@ function getSkillLabel(key: string): string {
     return labels[key] || key
 }
 
+// Extract keyword frequencies from job text (how often each word appears)
+function extractKeywordFrequencies(text: string): Map<string, number> {
+    const words = text.toLowerCase().match(/\b[a-z][a-z0-9+#.]{2,}\b/g) || []
+    const freq = new Map<string, number>()
+    for (const w of words) {
+        if (!STOP_WORDS.has(w) && w.length > 3) {
+            freq.set(w, (freq.get(w) || 0) + 1)
+        }
+    }
+    return freq
+}
+
+// Top N repeated keywords from a job post (job-specific signals)
+function topJobKeywords(freq: Map<string, number>, n = 8): string[] {
+    return [...freq.entries()]
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, n)
+        .map(([w]) => w)
+}
+
+interface MissingSkillWithPriority {
+    label: string
+    key: string
+    freq: number      // how many times this skill's aliases appeared in job text
+    priority: "high" | "medium" | "low"
+}
+
 interface AnalysisResult {
     score: number
     matched: string[]
-    missing: string[]
+    missing: MissingSkillWithPriority[]
     rawMatched: number
     rawTotal: number
     jobWordCount: number
     yearsRequired: number
     yearsOnCV: number
+    topJobSignals: string[]   // top repeated keywords unique to this job
     summary: string
     persona: { label: string; desc: string; color: string }
     lowQuality: boolean
@@ -198,11 +226,12 @@ function analyze(cvText: string, jobText: string): AnalysisResult {
     const cvSkills = extractSkills(cvText)
     const jobSkills = extractSkills(jobText)
     const matched = [...jobSkills].filter(s => cvSkills.has(s))
-    const missing = [...jobSkills].filter(s => !cvSkills.has(s))
+    const missingKeys = [...jobSkills].filter(s => !cvSkills.has(s))
 
-    // ── Raw keyword overlap (catches job-specific terms) ───────────
+    // ── Raw keyword overlap ────────────────────────────────────────
     const cvKeywords = extractKeywords(cvText)
-    const jobKeywords = extractKeywords(jobText)
+    const jobFreq = extractKeywordFrequencies(jobText)
+    const jobKeywords = new Set(jobFreq.keys())
     const rawMatched = [...jobKeywords].filter(w => cvKeywords.has(w)).length
     const rawTotal = jobKeywords.size
 
@@ -210,57 +239,93 @@ function analyze(cvText: string, jobText: string): AnalysisResult {
     const yearsRequired = extractYearsRequired(jobText)
     const yearsOnCV = extractYearsFromCV(cvText)
 
-    // ── Job text quality (how much did we actually extract?) ───────
+    // ── Job text quality ───────────────────────────────────────────
     const jobWordCount = jobText.trim().split(/\s+/).length
     const lowQuality = jobWordCount < 80 || (jobSkills.size < 3 && rawTotal < 20)
 
     // ── Scoring ────────────────────────────────────────────────────
-    // Skill score: weighted 60% (dictionary) + 40% (raw keywords)
     const skillRatio = jobSkills.size > 0 ? matched.length / jobSkills.size : 0
     const rawRatio = rawTotal > 0 ? Math.min(rawMatched / rawTotal, 1) : 0
     const baseScore = skillRatio * 60 + rawRatio * 40
-
-    // Confidence dampening: thin job text lowers the score ceiling
     const confidence = Math.min(jobWordCount / 150, 1)
     const dampened = baseScore * confidence + baseScore * 0.5 * (1 - confidence)
-
-    // Experience bonus/penalty (±8 max)
     let expAdjust = 0
     if (yearsRequired > 0) {
-        const gap = yearsOnCV - yearsRequired
-        expAdjust = Math.max(-8, Math.min(8, gap * 2))
+        expAdjust = Math.max(-8, Math.min(8, (yearsOnCV - yearsRequired) * 2))
     } else if (yearsOnCV > 2) {
         expAdjust = Math.min(yearsOnCV, 5)
     }
-
     const score = Math.min(Math.max(Math.round(dampened + expAdjust), 5), 97)
 
-    // ── Persona ─────────────────────────────────────────────────────
+    // ── Missing skills with job-specific frequency/priority ────────
+    const missing: MissingSkillWithPriority[] = missingKeys.map(key => {
+        const aliases = SKILL_GROUPS[key] || []
+        const freq = aliases.reduce((sum, alias) => {
+            const words = alias.split(" ")
+            const minCount = Math.min(...words.map(w => jobFreq.get(w) || 0))
+            return sum + (words.every(w => jobFreq.has(w)) ? minCount : 0)
+        }, 0)
+        const priority: "high" | "medium" | "low" = freq >= 3 ? "high" : freq >= 1 ? "medium" : "low"
+        return { label: getSkillLabel(key), key, freq, priority }
+    }).sort((a, b) => b.freq - a.freq)  // sort by how heavily the job emphasises each skill
+
+    // ── Top job-specific signals (most repeated unique terms) ──────
+    // Filter out generic words, keep things that characterise THIS job
+    const topJobSignals = topJobKeywords(jobFreq, 10)
+        .filter(w => !cvKeywords.has(w))  // only show what's NOT already on the CV
+        .slice(0, 6)
+
+    // ── Dynamic persona description ────────────────────────────────
+    const topMissing = missing.filter(m => m.priority === "high").slice(0, 2).map(m => m.label)
+    const topMatched = matched.slice(0, 2).map(getSkillLabel)
+    const expNote = yearsRequired > 0
+        ? yearsOnCV >= yearsRequired
+            ? `Your ${yearsOnCV}y experience meets the ${yearsRequired}y requirement.`
+            : `The role asks for ${yearsRequired}y — you have ${yearsOnCV}y.`
+        : ""
+
     let persona: AnalysisResult["persona"]
     if (score >= 78) {
-        persona = { label: "Top Candidate", desc: "Your profile strongly aligns with this role. You cover most key requirements.", color: "text-emerald-400" }
+        persona = {
+            label: "Top Candidate",
+            desc: `Strong alignment — ${topMatched.length > 0 ? topMatched.join(" & ") + " are solid matches. " : ""}${topMissing.length > 0 ? `Adding ${topMissing.join(" & ")} would make you near-perfect for this role. ` : ""}${expNote}`,
+            color: "text-emerald-400",
+        }
     } else if (score >= 58) {
-        persona = { label: "Strong Contender", desc: "Solid match — a few skill additions could push you to the top of the pile.", color: "text-indigo-400" }
+        persona = {
+            label: "Strong Contender",
+            desc: `Competitive profile — ${topMatched.length > 0 ? topMatched.join(" & ") + " match well. " : ""}${topMissing.length > 0 ? `This job heavily emphasises ${topMissing.join(" & ")} which aren't prominent on your CV. ` : ""}${expNote}`,
+            color: "text-violet-400",
+        }
     } else if (score >= 38) {
-        persona = { label: "Emerging Talent", desc: "Good foundation, but closing the skill gaps below will significantly boost your chances.", color: "text-amber-400" }
+        persona = {
+            label: "Emerging Talent",
+            desc: `${topMatched.length > 0 ? topMatched.join(" & ") + " are in your favour. " : ""}${topMissing.length > 0 ? `This role specifically needs ${topMissing.join(" & ")} — high-priority gaps. ` : ""}${expNote}`,
+            color: "text-amber-400",
+        }
     } else {
-        persona = { label: "Upskilling Phase", desc: "This role requires skills you're still building. Use the learning resources below.", color: "text-rose-400" }
+        persona = {
+            label: "Upskilling Phase",
+            desc: `${topMissing.length > 0 ? `This job requires ${topMissing.join(" & ")} which are missing from your CV. ` : ""}${expNote || "Focus on the high-priority skills below to close the gap."}`,
+            color: "text-rose-400",
+        }
     }
 
-    // ── Summary ──────────────────────────────────────────────────────
+    // ── Summary ────────────────────────────────────────────────────
     const summary = lowQuality
-        ? `Limited job text extracted (${jobWordCount} words). Paste the full description for a more accurate score.`
-        : `${matched.length}/${jobSkills.size} skill categories matched · ${rawMatched} of ${rawTotal} keywords found on your CV.`
+        ? `Only ${jobWordCount} words extracted — paste the full job description for accurate results.`
+        : `${matched.length}/${jobSkills.size} skill categories matched · ${rawMatched} of ${rawTotal} job keywords found on your CV.`
 
     return {
         score,
         matched: matched.map(getSkillLabel),
-        missing: missing.map(getSkillLabel),
+        missing,
         rawMatched,
         rawTotal,
         jobWordCount,
         yearsRequired,
         yearsOnCV,
+        topJobSignals,
         summary,
         persona,
         lowQuality,
@@ -697,17 +762,47 @@ export default function CVAnalyzer() {
                                         </h4>
                                         <div className="flex flex-wrap gap-2">
                                             {results.missing.length > 0 ? results.missing.map((s, i) => (
-                                                <span key={i} className="px-3 py-1.5 bg-rose-500/10 border border-rose-500/20 text-rose-300 rounded-xl text-[11px] font-bold uppercase">
-                                                    {s}
+                                                <span
+                                                    key={i}
+                                                    title={s.priority === "high" ? "High priority for this job" : s.priority === "medium" ? "Mentioned in job" : "Nice to have"}
+                                                    className={cn(
+                                                        "px-3 py-1.5 rounded-xl text-[11px] font-bold uppercase border",
+                                                        s.priority === "high"
+                                                            ? "bg-rose-500/20 border-rose-400/40 text-rose-200"
+                                                            : s.priority === "medium"
+                                                            ? "bg-rose-500/10 border-rose-500/20 text-rose-300"
+                                                            : "bg-white/5 border-white/10 text-white/40"
+                                                    )}
+                                                >
+                                                    {s.priority === "high" && <span className="mr-1">🔴</span>}
+                                                    {s.priority === "medium" && <span className="mr-1">🟡</span>}
+                                                    {s.label}
                                                 </span>
                                             )) : (
                                                 <span className="text-xs text-white/50 italic">Great coverage — no major gaps!</span>
                                             )}
                                         </div>
+                                        {results.missing.some(m => m.priority === "high") && (
+                                            <p className="text-[10px] text-white/30 mt-3 font-medium">🔴 High priority · 🟡 Mentioned · ⚫ Nice to have</p>
+                                        )}
                                     </div>
                                 </div>
 
-                                {/* How to Improve */}
+                                {/* Top job-specific signals not on CV */}
+                                {results.topJobSignals.length > 0 && (
+                                    <div className="bg-violet-500/5 p-5 rounded-2xl border border-violet-500/15">
+                                        <p className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-3">Job-specific keywords not on your CV</p>
+                                        <div className="flex flex-wrap gap-2">
+                                            {results.topJobSignals.map((w, i) => (
+                                                <span key={i} className="px-2.5 py-1 bg-violet-500/10 border border-violet-500/20 text-violet-300 rounded-lg text-[10px] font-bold uppercase tracking-wide">
+                                                    {w}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* How to Improve — sorted by job priority */}
                                 {results.missing.length > 0 && (
                                     <div className="bg-indigo-500/5 p-6 rounded-3xl border border-indigo-500/20 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                         <h4 className="flex items-center gap-2 font-black mb-5 text-indigo-300 uppercase tracking-widest text-[11px]">
@@ -715,29 +810,31 @@ export default function CVAnalyzer() {
                                         </h4>
                                         <div className="space-y-3">
                                             {results.missing
-                                                .map(label => {
-                                                    const key = Object.entries(SKILL_RESOURCES).find(
-                                                        ([k]) => getSkillLabel(k).toLowerCase() === label.toLowerCase()
-                                                    )?.[0]
-                                                    return key ? { skillLabel: label, ...SKILL_RESOURCES[key] } : null
-                                                })
-                                                .filter(Boolean)
+                                                .filter(m => SKILL_RESOURCES[m.key])
                                                 .slice(0, 6)
-                                                .map((item, i) => item && (
-                                                    <a
-                                                        key={i}
-                                                        href={item.url}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="flex items-center justify-between p-3 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 hover:border-indigo-500/40 rounded-2xl transition-all group"
-                                                    >
-                                                        <div>
-                                                            <p className="text-xs font-bold text-white/50 uppercase tracking-widest mb-0.5">{item.skillLabel}</p>
-                                                            <p className="text-sm font-semibold text-white/80 group-hover:text-white transition-colors">{item.label}</p>
-                                                        </div>
-                                                        <ExternalLink className="h-4 w-4 text-indigo-400 group-hover:text-indigo-300 shrink-0 ml-3" />
-                                                    </a>
-                                                ))
+                                                .map((m, i) => {
+                                                    const resource = SKILL_RESOURCES[m.key]
+                                                    return (
+                                                        <a
+                                                            key={i}
+                                                            href={resource.url}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="flex items-center justify-between p-3 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 hover:border-indigo-500/40 rounded-2xl transition-all group"
+                                                        >
+                                                            <div>
+                                                                <p className="text-xs font-black text-white/40 uppercase tracking-widest mb-0.5 flex items-center gap-1.5">
+                                                                    {m.priority === "high" && <span>🔴</span>}
+                                                                    {m.priority === "medium" && <span>🟡</span>}
+                                                                    {m.label}
+                                                                    {m.freq > 0 && <span className="text-white/25">· mentioned {m.freq}× in job</span>}
+                                                                </p>
+                                                                <p className="text-sm font-semibold text-white/80 group-hover:text-white transition-colors">{resource.label}</p>
+                                                            </div>
+                                                            <ExternalLink className="h-4 w-4 text-indigo-400 group-hover:text-indigo-300 shrink-0 ml-3" />
+                                                        </a>
+                                                    )
+                                                })
                                             }
                                         </div>
                                     </div>
