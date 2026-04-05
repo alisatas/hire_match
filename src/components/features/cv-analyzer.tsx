@@ -664,8 +664,8 @@ export default function CVAnalyzer() {
                         {!results && !isLoading && (
                             <div className="flex flex-col items-center justify-center h-full text-center py-12 animate-in fade-in zoom-in-95">
                                 <Search className="h-16 w-16 text-white/20 mb-6" />
-                                <h3 className="text-xl font-black mb-2 uppercase tracking-widest text-white/40">Ready for Launch 🚀</h3>
-                                <p className="text-white/60 text-sm font-semibold">Upload your CV and add a job description to start.</p>
+                                <h3 className="text-xl font-black mb-2 uppercase tracking-widest text-white/40">Launch Your Future 🚀</h3>
+                                <p className="text-white/60 text-sm font-semibold">Upload your CV and drop a job link to get started.</p>
                             </div>
                         )}
 
