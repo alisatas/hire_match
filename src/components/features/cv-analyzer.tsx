@@ -1,59 +1,240 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import React, { useState, useEffect, useRef } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Input } from "@/components/ui/input"
 import { RatingInteraction } from "@/components/ui/emoji-rating"
-import { 
-    Sparkles, 
-    FileText, 
-    UploadCloud, 
-    ArrowRight, 
-    PieChart, 
-    Dumbbell, 
-    CheckCircle2, 
-    AlertTriangle, 
-    Target,
-    Save,
+import {
+    Sparkles,
+    FileText,
+    UploadCloud,
+    ArrowRight,
     Search,
-    Zap,
     Shield,
     Cpu,
-    BarChart,
-    TrendingUp
+    CreditCard,
+    RotateCcw,
+    ExternalLink,
+    BookOpen,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-// PDF.js - Loaded dynamically
-let pdfjsLib: any = null;
+// ─────────────────────────────────────────────
+// LOCAL SKILL ENGINE — no API key needed
+// ─────────────────────────────────────────────
+
+const SKILL_GROUPS: Record<string, string[]> = {
+    // Frontend
+    react: ["react", "reactjs", "react.js", "react hooks", "usestate", "useeffect"],
+    typescript: ["typescript", "ts", "tsx"],
+    javascript: ["javascript", "js", "es6", "es2015", "ecmascript"],
+    nextjs: ["next.js", "nextjs", "next js", "app router", "pages router"],
+    tailwind: ["tailwind", "tailwindcss", "tailwind css"],
+    css: ["css", "scss", "sass", "styled-components", "css modules"],
+    html: ["html", "html5", "semantic html"],
+    vue: ["vue", "vuejs", "vue.js", "nuxt"],
+    angular: ["angular", "angularjs"],
+    redux: ["redux", "zustand", "recoil", "state management"],
+    graphql: ["graphql", "apollo", "relay"],
+    // Backend
+    nodejs: ["node", "nodejs", "node.js", "express", "expressjs", "fastify"],
+    python: ["python", "django", "flask", "fastapi"],
+    java: ["java", "spring", "spring boot", "springboot"],
+    csharp: ["c#", "csharp", ".net", "dotnet", "asp.net"],
+    golang: ["golang", "go lang"],
+    rust: ["rust", "rustlang"],
+    php: ["php", "laravel", "symfony"],
+    ruby: ["ruby", "rails", "ruby on rails"],
+    // Database
+    sql: ["sql", "mysql", "postgresql", "postgres", "sqlite", "mariadb"],
+    mongodb: ["mongodb", "mongo", "nosql", "mongoose"],
+    redis: ["redis", "caching", "cache"],
+    elasticsearch: ["elasticsearch", "elastic search", "opensearch"],
+    // Cloud & DevOps
+    aws: ["aws", "amazon web services", "ec2", "s3", "lambda", "cloudformation"],
+    gcp: ["gcp", "google cloud", "firebase", "bigquery"],
+    azure: ["azure", "microsoft azure"],
+    docker: ["docker", "containerization", "dockerfile"],
+    kubernetes: ["kubernetes", "k8s", "helm", "kubectl"],
+    cicd: ["ci/cd", "ci cd", "github actions", "gitlab ci", "jenkins", "circleci", "pipeline"],
+    terraform: ["terraform", "infrastructure as code", "iac"],
+    // Testing
+    jest: ["jest", "vitest", "unit test", "unit testing"],
+    cypress: ["cypress", "playwright", "selenium", "e2e", "end-to-end"],
+    testing: ["testing", "tdd", "bdd", "qa", "quality assurance"],
+    // Tools & Practices
+    git: ["git", "github", "gitlab", "version control"],
+    agile: ["agile", "scrum", "kanban", "sprint", "jira"],
+    api: ["rest", "restful", "api", "microservices", "openapi", "swagger"],
+    linux: ["linux", "unix", "bash", "shell", "terminal"],
+    figma: ["figma", "design", "ux", "ui design", "wireframe"],
+    // Data & AI
+    ml: ["machine learning", "ml", "tensorflow", "pytorch", "scikit-learn"],
+    data: ["data analysis", "pandas", "numpy", "data science", "analytics"],
+    ai: ["ai", "llm", "openai", "langchain", "rag", "prompt engineering"],
+}
+
+const SKILL_RESOURCES: Record<string, { label: string; url: string }> = {
+    react: { label: "React Official Docs", url: "https://react.dev/learn" },
+    typescript: { label: "TypeScript Handbook", url: "https://www.typescriptlang.org/docs/handbook/intro.html" },
+    javascript: { label: "MDN JavaScript Guide", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide" },
+    nextjs: { label: "Next.js Learn", url: "https://nextjs.org/learn" },
+    tailwind: { label: "Tailwind CSS Docs", url: "https://tailwindcss.com/docs" },
+    css: { label: "CSS on MDN", url: "https://developer.mozilla.org/en-US/docs/Web/CSS" },
+    vue: { label: "Vue.js Guide", url: "https://vuejs.org/guide/introduction" },
+    angular: { label: "Angular Tutorial", url: "https://angular.dev/tutorials" },
+    redux: { label: "Redux Toolkit Docs", url: "https://redux-toolkit.js.org/introduction/getting-started" },
+    graphql: { label: "GraphQL How to", url: "https://graphql.org/learn/" },
+    nodejs: { label: "Node.js Docs", url: "https://nodejs.org/en/docs" },
+    python: { label: "Python Tutorial", url: "https://docs.python.org/3/tutorial/" },
+    java: { label: "Spring Boot Guide", url: "https://spring.io/guides" },
+    csharp: { label: ".NET Learning Path", url: "https://dotnet.microsoft.com/en-us/learn" },
+    golang: { label: "Go Tour", url: "https://go.dev/tour/welcome/1" },
+    rust: { label: "The Rust Book", url: "https://doc.rust-lang.org/book/" },
+    php: { label: "Laravel Docs", url: "https://laravel.com/docs" },
+    sql: { label: "SQL Tutorial — Mode", url: "https://mode.com/sql-tutorial/" },
+    mongodb: { label: "MongoDB University", url: "https://university.mongodb.com/" },
+    redis: { label: "Redis University", url: "https://university.redis.com/" },
+    aws: { label: "AWS Skill Builder", url: "https://skillbuilder.aws/" },
+    gcp: { label: "Google Cloud Skills Boost", url: "https://cloudskillsboost.google/" },
+    azure: { label: "Microsoft Learn Azure", url: "https://learn.microsoft.com/en-us/azure/" },
+    docker: { label: "Docker Get Started", url: "https://docs.docker.com/get-started/" },
+    kubernetes: { label: "Kubernetes Basics", url: "https://kubernetes.io/docs/tutorials/kubernetes-basics/" },
+    cicd: { label: "GitHub Actions Docs", url: "https://docs.github.com/en/actions" },
+    terraform: { label: "Terraform Learn", url: "https://developer.hashicorp.com/terraform/tutorials" },
+    jest: { label: "Jest Docs", url: "https://jestjs.io/docs/getting-started" },
+    cypress: { label: "Cypress Guides", url: "https://docs.cypress.io/guides/overview/why-cypress" },
+    testing: { label: "Testing Library Docs", url: "https://testing-library.com/docs/" },
+    git: { label: "Git — the simple guide", url: "https://rogerdudler.github.io/git-guide/" },
+    agile: { label: "Scrum Guide", url: "https://scrumguides.org/scrum-guide.html" },
+    api: { label: "REST API Tutorial", url: "https://restfulapi.net/" },
+    linux: { label: "Linux Command Line Course", url: "https://linuxcommand.org/lc3_learning_the_shell.php" },
+    figma: { label: "Figma Learn Design", url: "https://www.figma.com/resources/learn-design/" },
+    ml: { label: "ML Crash Course — Google", url: "https://developers.google.com/machine-learning/crash-course" },
+    data: { label: "Kaggle Learn", url: "https://www.kaggle.com/learn" },
+    ai: { label: "Anthropic Prompt Engineering", url: "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview" },
+}
+
+function normalizeText(text: string): string {
+    return text.toLowerCase().replace(/[^a-z0-9.#+\s]/g, " ")
+}
+
+function extractSkills(text: string): Set<string> {
+    const normalized = normalizeText(text)
+    const found = new Set<string>()
+    for (const [key, aliases] of Object.entries(SKILL_GROUPS)) {
+        if (aliases.some(alias => normalized.includes(alias))) {
+            found.add(key)
+        }
+    }
+    return found
+}
+
+function extractYearsOfExperience(text: string): number {
+    const matches = text.match(/(\d+)\+?\s*years?\s*(of\s*)?(experience|exp)/gi) || []
+    const years = matches.map(m => parseInt(m)).filter(n => !isNaN(n))
+    return years.length > 0 ? Math.max(...years) : 0
+}
+
+function getSkillLabel(key: string): string {
+    const labels: Record<string, string> = {
+        react: "React", typescript: "TypeScript", javascript: "JavaScript",
+        nextjs: "Next.js", tailwind: "Tailwind CSS", css: "CSS/SCSS",
+        html: "HTML5", vue: "Vue.js", angular: "Angular", redux: "State Mgmt",
+        graphql: "GraphQL", nodejs: "Node.js", python: "Python", java: "Java/Spring",
+        csharp: "C# / .NET", golang: "Go", rust: "Rust", php: "PHP/Laravel",
+        ruby: "Ruby on Rails", sql: "SQL / PostgreSQL", mongodb: "MongoDB",
+        redis: "Redis", elasticsearch: "Elasticsearch", aws: "AWS", gcp: "GCP",
+        azure: "Azure", docker: "Docker", kubernetes: "Kubernetes", cicd: "CI/CD",
+        terraform: "Terraform", jest: "Jest / Vitest", cypress: "Cypress / Playwright",
+        testing: "Testing / QA", git: "Git / GitHub", agile: "Agile / Scrum",
+        api: "REST API", linux: "Linux / Bash", figma: "Figma / UX",
+        ml: "Machine Learning", data: "Data Analysis", ai: "AI / LLM",
+    }
+    return labels[key] || key
+}
+
+interface AnalysisResult {
+    score: number
+    matched: string[]
+    missing: string[]
+    summary: string
+    persona: { label: string; desc: string; color: string }
+}
+
+function analyze(cvText: string, jobText: string): AnalysisResult {
+    const cvSkills = extractSkills(cvText)
+    const jobSkills = extractSkills(jobText)
+    const cvYears = extractYearsOfExperience(cvText)
+
+    const matched = [...jobSkills].filter(s => cvSkills.has(s))
+    const missing = [...jobSkills].filter(s => !cvSkills.has(s))
+
+    const jobSize = jobSkills.size || 1
+    const skillScore = Math.round((matched.length / jobSize) * 100)
+    const yearBonus = Math.min(cvYears * 2, 15)
+    const score = Math.min(Math.max(skillScore + yearBonus, matched.length > 0 ? 20 : 5), 98)
+
+    let persona: AnalysisResult["persona"]
+    if (score >= 80) {
+        persona = { label: "Top Candidate", desc: "Your profile strongly aligns with this role. You cover most key requirements.", color: "text-emerald-400" }
+    } else if (score >= 60) {
+        persona = { label: "Strong Contender", desc: "Solid match with room to highlight a few more skills. You're competitive.", color: "text-indigo-400" }
+    } else if (score >= 40) {
+        persona = { label: "Emerging Talent", desc: "Good foundation, but closing some skill gaps could significantly boost your chances.", color: "text-amber-400" }
+    } else {
+        persona = { label: "Upskilling Phase", desc: "This role requires skills you're still building. Focus on the gaps below.", color: "text-rose-400" }
+    }
+
+    const summaries = [
+        `${matched.length} of ${jobSkills.size} required skills detected on your CV.`,
+        `Your profile covers ${matched.length}/${jobSkills.size} job keywords — ${score >= 60 ? "strong signal" : "needs work"}.`,
+        `Skill overlap: ${matched.length} match${matched.length !== 1 ? "es" : ""} found out of ${jobSkills.size} sought.`,
+    ]
+    const summary = summaries[Math.floor(Math.random() * summaries.length)]
+
+    return {
+        score,
+        matched: matched.map(getSkillLabel),
+        missing: missing.map(getSkillLabel),
+        summary,
+        persona,
+    }
+}
+
+// ─────────────────────────────────────────────
+// PDF.js loader
+// ─────────────────────────────────────────────
+let pdfjsLib: any = null
+
+// ─────────────────────────────────────────────
+// COMPONENT
+// ─────────────────────────────────────────────
 
 export default function CVAnalyzer() {
     const [cvText, setCvText] = useState("")
+    const [cvFromPdf, setCvFromPdf] = useState(false)
     const [jobText, setJobText] = useState("")
+    const [jobInput, setJobInput] = useState("")
+    const [fetchStatus, setFetchStatus] = useState("")
     const [isLoading, setIsLoading] = useState(false)
-    const [results, setResults] = useState<any>(null)
+    const [results, setResults] = useState<AnalysisResult | null>(null)
     const [pdfStatus, setPdfStatus] = useState("")
-    const [showRating, setShowRating] = useState(false)
+    const [error, setError] = useState("")
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
-        // Load PDF.js worker
         import("pdfjs-dist").then((pdfjs) => {
             pdfjsLib = pdfjs
-            // Optimized worker resolution for Next.js 15+ & Turbopack
             pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-              "pdfjs-dist/build/pdf.worker.min.mjs",
-              import.meta.url
+                "pdfjs-dist/build/pdf.worker.min.mjs",
+                import.meta.url
             ).toString()
         }).catch(err => {
             console.error("Failed to load PDF.js", err)
-            setPdfStatus("Analytics Engine Error")
         })
     }, [])
-
-
 
     const processPdf = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -62,118 +243,148 @@ export default function CVAnalyzer() {
         setPdfStatus("Reading PDF...")
         try {
             if (!pdfjsLib) {
-                // Force reload attempt
                 const pdfjs = await import("pdfjs-dist")
                 pdfjsLib = pdfjs
                 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
             }
-            
+
             const arrayBuffer = await file.arrayBuffer()
-            const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer })
-            const pdf = await loadingTask.promise
-            
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise
+
             let fullText = ""
             for (let i = 1; i <= pdf.numPages; i++) {
                 const page = await pdf.getPage(i)
                 const content = await page.getTextContent()
-                fullText += content.items.map((item: any) => item.str).join(" ") + " "
+
+                // Group items by Y coordinate to reconstruct proper lines
+                const lineMap = new Map<number, string[]>()
+                for (const item of content.items as any[]) {
+                    const y = Math.round(item.transform[5])
+                    if (!lineMap.has(y)) lineMap.set(y, [])
+                    lineMap.get(y)!.push(item.str)
+                }
+
+                const sortedYs = [...lineMap.keys()].sort((a, b) => b - a)
+                for (const y of sortedYs) {
+                    fullText += lineMap.get(y)!.join(" ") + "\n"
+                }
+                fullText += "\n"
             }
-            
-            const cleanedText = fullText.replace(/\s+/g, " ").trim()
+
+            const cleanedText = fullText.trim()
             if (cleanedText.length < 10) throw new Error("PDF seems empty or non-text")
-            
+
             setCvText(cleanedText)
+            setCvFromPdf(true)
             setPdfStatus(`✓ ${file.name} loaded`)
         } catch (err: any) {
             console.error("PDF Read Error:", err)
-            setPdfStatus("Error reading PDF. Try pasting text below.")
-            // Allow manual fallback on error
-            setResults(null) 
+            setPdfStatus("Error reading PDF. Paste your CV text below.")
+        }
+    }
+
+    const fetchJobPost = async () => {
+        const url = jobInput.trim()
+        if (!url.startsWith("http")) {
+            setJobText(jobInput)
+            return
+        }
+
+        setFetchStatus("Fetching job post...")
+        try {
+            const res = await fetch("/api/scrape", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ url }),
+            })
+            const data = await res.json()
+            if (data.text && data.text.length > 50) {
+                setJobText(data.text)
+                setFetchStatus("✓ Job post fetched")
+            } else {
+                setFetchStatus("Could not fetch — paste the text below")
+            }
+        } catch {
+            setFetchStatus("Could not fetch — paste the text below")
         }
     }
 
     const doAnalyze = async () => {
-        if (!cvText || !jobText) {
-            alert("Please provide both CV and Job Description.")
+        if (!cvText) {
+            setError("Upload a PDF or paste your CV text first.")
             return
         }
 
-        setIsLoading(true)
-        setShowRating(false)
-        setResults(null)
-
-        let targetJobText = jobText
-        if (jobText.trim().startsWith("http")) {
+        // Auto-fetch job post if URL is set but text not yet loaded
+        let effectiveJobText = jobText
+        if (!effectiveJobText && jobInput.trim().startsWith("http")) {
+            setFetchStatus("Fetching job post...")
             try {
                 const res = await fetch("/api/scrape", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ url: jobText.trim() })
+                    body: JSON.stringify({ url: jobInput.trim() }),
                 })
-                if (res.ok) {
-                    const data = await res.json()
-                    if (data.text) targetJobText = data.text
+                const data = await res.json()
+                if (data.text && data.text.length > 50) {
+                    effectiveJobText = data.text
+                    setJobText(data.text)
+                    setFetchStatus("✓ Job post fetched")
+                } else {
+                    setFetchStatus("Could not fetch — paste the text below")
                 }
-            } catch (err) {
-                console.error("Scraping failed:", err)
+            } catch {
+                setFetchStatus("Could not fetch — paste the text below")
             }
+        } else if (!effectiveJobText) {
+            effectiveJobText = jobInput
         }
 
-        try {
-            const res = await fetch("/api/analyze", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ cvText, jobText: targetJobText })
-            });
-            
-            if (!res.ok) {
-                throw new Error("Analysis failed. Did you add the API Key?");
-            }
-
-            const data = await res.json();
-            
-            // Map the API results to our UI state format
-            setResults({
-                score: data.score,
-                persona: {
-                    id: "ai-persona",
-                    label: data.persona.label,
-                    desc: data.persona.desc,
-                    icon: <Target className="h-5 w-5 text-indigo-400" />,
-                    color: "text-indigo-400"
-                },
-                summary: data.summary,
-                matched: data.matched,
-                growth: data.growth
-            });
-        } catch (error) {
-            console.error("AI Error:", error);
-            alert("Analysis failed. Please check your console or ensure OPENAI_API_KEY is configured in .env.local on your server.");
-        } finally {
-            setIsLoading(false);
-            setShowRating(true);
+        if (!effectiveJobText) {
+            setError("Add a job description or URL.")
+            return
         }
+
+        setError("")
+        setIsLoading(true)
+        setResults(null)
+
+        setTimeout(() => {
+            const result = analyze(cvText, effectiveJobText)
+            setResults(result)
+            setIsLoading(false)
+        }, 600)
     }
 
-    const loadSample = () => {
-        setCvText("Alex Johnson\nFrontend Developer | 3+ years React, JS, Tailwind.")
-        setJobText("Senior Frontend Developer Wanted!\n- 5+ years React\n- TypeScript proficiency\n- Agile experience")
+    // "Analyze Again" only resets the CV side — job post stays loaded
+    const resetAll = () => {
+        setCvText("")
+        setCvFromPdf(false)
+        setResults(null)
+        setPdfStatus("")
+        setError("")
+        if (fileInputRef.current) fileInputRef.current.value = ""
     }
+
+    const canAnalyze = (!!cvText) && (!!jobText || !!jobInput)
 
     return (
         <div className="container mx-auto px-4 py-8 md:py-12">
             <header className="flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
                 <div className="flex items-center gap-3">
                     <Sparkles className="text-primary h-8 w-8" />
-                    <h1 className="text-2xl font-bold tracking-tight">CV Scorer</h1>
+                    <h1 className="text-2xl font-bold tracking-tight text-white">CV Scorer</h1>
                 </div>
             </header>
 
             <section className="text-center mb-8 animate-in fade-in slide-in-from-bottom-6 duration-1000">
-                <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight tracking-tighter">
-                    Get Hired in <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 drop-shadow-sm">Style ✨</span>
+                <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight tracking-tighter text-white">
+                    Get Hired in{" "}
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 drop-shadow-sm">
+                        Style ✨
+                    </span>
                 </h2>
-                <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-4xl mx-auto px-2">
+                <p className="text-base sm:text-lg md:text-xl text-white/80 font-semibold max-w-4xl mx-auto px-2 drop-shadow-sm">
                     Stop guessing. Start matching. Let our algorithm vibe-check your resume against your dream job. 🎯
                 </p>
             </section>
@@ -184,67 +395,129 @@ export default function CVAnalyzer() {
                     <CardHeader>
                         <div className="flex items-center gap-3 mb-2">
                             <FileText className="text-primary h-5 w-5" />
-                            <CardTitle className="font-black uppercase tracking-tighter">The Essentials 🎒</CardTitle>
+                            <CardTitle className="font-black uppercase tracking-tighter text-white">The Essentials 🎒</CardTitle>
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-6">
+                        {/* CV Upload */}
                         <div className="space-y-4">
                             <div className="flex justify-between items-center">
-                                <label className="text-sm font-bold uppercase tracking-widest text-primary/80">Upload your future</label>
-                                <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">REQUIRED</span>
+                                <label className="text-sm font-bold uppercase tracking-widest text-primary/90">Your CV</label>
+                                <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">PDF</span>
                             </div>
                             <div className="border-2 border-dashed border-border/60 rounded-xl h-[140px] flex flex-col items-center justify-center gap-4 transition-colors hover:border-primary/40 hover:bg-primary/5 cursor-pointer relative">
-                                <UploadCloud className="h-10 w-10 text-muted-foreground" />
+                                <UploadCloud className="h-10 w-10 text-white/60" />
                                 <div className="text-center">
-                                    <p className="font-medium">Drop your PDF or click to browse</p>
-                                    <p className="text-xs text-muted-foreground mt-1">Files up to 5MB supported</p>
+                                    <p className="font-semibold text-white">Drop your PDF or click to browse</p>
+                                    <p className="text-xs text-white/60 mt-1 font-medium">Files up to 5MB supported</p>
                                 </div>
-                                <input 
-                                    type="file" 
-                                    accept=".pdf" 
-                                    className="absolute inset-0 opacity-0 cursor-pointer" 
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept=".pdf"
+                                    className="absolute inset-0 opacity-0 cursor-pointer"
                                     onChange={processPdf}
                                 />
                             </div>
-                            <p className="text-xs mt-3 text-center animate-pulse text-primary">{pdfStatus}</p>
+                            {pdfStatus && (
+                                <p className={cn(
+                                    "text-xs text-center font-semibold",
+                                    pdfStatus.startsWith("✓") ? "text-emerald-400" : "text-white/70 animate-pulse"
+                                )}>{pdfStatus}</p>
+                            )}
+                            {!cvFromPdf && (
+                                <Textarea
+                                    placeholder="Or paste your CV text here..."
+                                    className="min-h-[80px] bg-muted/20 border-border/40 rounded-xl text-white placeholder:text-white/40"
+                                    value={cvText}
+                                    onChange={(e) => setCvText(e.target.value)}
+                                />
+                            )}
                         </div>
 
-                        <div className="space-y-4">
+                        {/* Job Description */}
+                        <div className="space-y-3">
                             <div className="flex justify-between items-center">
-                                <label className="text-sm font-bold uppercase tracking-widest text-primary/80 italic">The Dream Job 🌈</label>
+                                <label className="text-sm font-bold uppercase tracking-widest text-primary/90">Job Description</label>
                                 <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">REQUIRED</span>
                             </div>
-                            <Textarea 
-                                placeholder="📋 Copy-paste the Job Description or Link here..." 
-                                className="min-h-[100px] bg-muted/20 border-none rounded-xl focus-visible:ring-primary/40"
-                                value={jobText}
-                                onChange={(e) => setJobText(e.target.value)}
-                            />
-                            <p className="text-[10px] text-muted-foreground/60 px-1 italic">We'll scan the text or links for career DNA alignment.</p>
+                            <div className="flex gap-2">
+                                <input
+                                    type="text"
+                                    className="flex-1 bg-muted/20 border border-border/40 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-primary/50"
+                                    placeholder="Paste URL or job description..."
+                                    value={jobInput}
+                                    onChange={(e) => setJobInput(e.target.value)}
+                                    onKeyDown={(e) => e.key === "Enter" && fetchJobPost()}
+                                />
+                                {jobInput.trim().startsWith("http") && (
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="shrink-0 text-white/80 border-border/40"
+                                        onClick={fetchJobPost}
+                                    >
+                                        Fetch
+                                    </Button>
+                                )}
+                            </div>
+                            {fetchStatus && (
+                                <p className={cn(
+                                    "text-xs font-semibold",
+                                    fetchStatus.startsWith("✓") ? "text-emerald-400" : "text-white/60"
+                                )}>{fetchStatus}</p>
+                            )}
+                            {(fetchStatus.includes("paste") || (!jobInput.startsWith("http") && jobInput)) && (
+                                <Textarea
+                                    placeholder="Paste job description text here..."
+                                    className="min-h-[80px] bg-muted/20 border-border/40 rounded-xl text-white placeholder:text-white/40"
+                                    value={jobText}
+                                    onChange={(e) => setJobText(e.target.value)}
+                                />
+                            )}
                         </div>
 
-                        <div className="space-y-3 pt-4">
-                            <Button className={cn(
-                                "w-full py-8 text-xl font-black group transition-all rounded-2xl shadow-xl active:scale-95",
-                                (!cvText || !jobText) 
-                                    ? "bg-muted text-muted-foreground cursor-not-allowed grayscale" 
-                                    : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-purple-500/20"
-                            )} onClick={doAnalyze} disabled={isLoading || !cvText || !jobText}>
-                                <span>{isLoading ? "Your future is loading..." : "Analyze My CV"}</span>
-                                <ArrowRight className="ml-2 h-6 w-6 group-hover:translate-x-2 transition-transform" />
-                            </Button>
+                        {error && (
+                            <p className="text-rose-400 text-sm font-semibold">{error}</p>
+                        )}
+
+                        <div className="space-y-3 pt-2">
+                            {results ? (
+                                <Button
+                                    variant="outline"
+                                    className="w-full py-7 text-lg font-black rounded-2xl border-border/50 text-white/80 hover:text-white hover:border-primary/50"
+                                    onClick={resetAll}
+                                >
+                                    <RotateCcw className="mr-2 h-5 w-5" />
+                                    Analyze Again
+                                </Button>
+                            ) : (
+                                <Button
+                                    className={cn(
+                                        "w-full py-8 text-xl font-black group transition-all rounded-2xl shadow-xl active:scale-95",
+                                        !canAnalyze
+                                            ? "bg-muted text-muted-foreground cursor-not-allowed grayscale"
+                                            : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-purple-500/20"
+                                    )}
+                                    onClick={doAnalyze}
+                                    disabled={isLoading || !canAnalyze}
+                                >
+                                    <span>{isLoading ? "Analyzing..." : "Analyze My CV"}</span>
+                                    <ArrowRight className="ml-2 h-6 w-6 group-hover:translate-x-2 transition-transform" />
+                                </Button>
+                            )}
                         </div>
                     </CardContent>
                 </Card>
 
                 {/* Results Panel */}
                 <Card className="bg-background/40 backdrop-blur-xl border-border/50 h-full">
-                    <CardContent className="h-full flex flex-col p-8 lg:p-12">
+                    <CardContent className="h-full flex flex-col p-8 lg:p-10">
                         {!results && !isLoading && (
                             <div className="flex flex-col items-center justify-center h-full text-center py-12 animate-in fade-in zoom-in-95">
-                                <Search className="h-16 w-16 text-muted-foreground/30 mb-6" />
-                                <h3 className="text-xl font-black mb-2 uppercase tracking-widest text-primary/40">Ready for Launch 🚀</h3>
-                                <p className="text-muted-foreground/60 text-sm">Upload your future to start the transformation.</p>
+                                <Search className="h-16 w-16 text-white/20 mb-6" />
+                                <h3 className="text-xl font-black mb-2 uppercase tracking-widest text-white/40">Ready for Launch 🚀</h3>
+                                <p className="text-white/60 text-sm font-semibold">Upload your CV and add a job description to start.</p>
                             </div>
                         )}
 
@@ -254,105 +527,157 @@ export default function CVAnalyzer() {
                                     <div className="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
                                     <div className="absolute inset-0 border-4 border-primary rounded-full border-t-transparent animate-spin"></div>
                                 </div>
-                                <p className="mt-8 text-lg font-black animate-pulse text-indigo-400">Your future is loading...</p>
+                                <p className="mt-8 text-lg font-black animate-pulse text-indigo-400">Analyzing your profile...</p>
                             </div>
                         )}
 
                         {results && (
                             <div className="animate-in fade-in slide-in-from-right-8 duration-700 space-y-8">
-                                {/* Header Section */}
-                                <div className="flex flex-col md:flex-row items-center gap-10 pb-8 border-b border-border/50">
-                                    <div className="relative h-40 w-40 shrink-0">
-                                        <svg viewBox="0 0 100 100" className="transform -rotate-90">
-                                            <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="6" className="text-muted/10" />
-                                            <circle 
-                                                cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="6" 
-                                                strokeDasharray="283" 
+                                {/* Score Header */}
+                                <div className="flex flex-col md:flex-row items-center gap-8 pb-8 border-b border-border/50">
+                                    <div className="relative h-36 w-36 shrink-0">
+                                        <svg viewBox="0 0 100 100" className="transform -rotate-90 w-full h-full">
+                                            <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="6" className="text-white/10" />
+                                            <circle
+                                                cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="6"
+                                                strokeDasharray="283"
                                                 strokeDashoffset={283 - (283 * results.score) / 100}
-                                                className="text-primary transition-all duration-1000 ease-out" 
+                                                className="text-primary transition-all duration-1000 ease-out"
                                             />
                                         </svg>
                                         <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                            <span className="text-5xl font-black">{results.score}%</span>
-                                            <span className="text-[10px] font-bold uppercase tracking-widest opacity-40">Match</span>
+                                            <span className="text-5xl font-black text-white">{results.score}%</span>
+                                            <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Match</span>
                                         </div>
                                     </div>
                                     <div className="text-center md:text-left">
-                                        <h3 className="text-3xl font-black mb-2 uppercase tracking-tighter">Career Power Index ⚡️</h3>
-                                        <p className="text-muted-foreground leading-relaxed italic text-lg">"{results.summary}"</p>
-                                    </div>
-                                </div>
-
-                                {/* Strategic Persona Card */}
-                                <div className="bg-gradient-to-br from-indigo-500/5 via-background to-muted/50 p-6 md:p-8 rounded-[32px] border border-border/50 shadow-2xl flex flex-col md:flex-row items-center text-center md:text-left gap-6 md:gap-8 relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-primary/10 transition-colors" />
-                                    <div className="h-20 w-20 md:h-24 md:w-24 shrink-0 bg-background rounded-3xl flex items-center justify-center shadow-2xl border border-border/50 transform group-hover:scale-105 transition-transform duration-500">
-                                        <div className="scale-[1.5] md:scale-[2.0]">
-                                            {results.persona.icon}
-                                        </div>
-                                    </div>
-                                    <div className="relative">
-                                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground mb-2 flex items-center justify-center md:justify-start gap-2">
-                                            <TrendingUp className="h-3 w-3" /> Strategic Core Profile
-                                        </p>
-                                        <h4 className={cn("text-2xl md:text-3xl font-black uppercase tracking-tight mb-2", results.persona.color)}>
+                                        <p className={cn("text-2xl font-black uppercase tracking-tight mb-1", results.persona.color)}>
                                             {results.persona.label}
-                                        </h4>
-                                        <p className="text-sm text-muted-foreground max-w-md font-medium leading-relaxed italic md:border-l-2 md:border-border/50 md:pl-4 mx-auto md:mx-0">
+                                        </p>
+                                        <p className="text-white/80 font-semibold leading-relaxed text-sm italic mb-2">
                                             {results.persona.desc}
                                         </p>
+                                        <p className="text-white/60 text-sm font-medium">"{results.summary}"</p>
                                     </div>
                                 </div>
 
-                                {/* Intelligence Matrix Grid */}
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6">
-                                    {/* Professional DNA (Skills) */}
-                                    <div className="bg-muted/10 p-8 rounded-[40px] border border-border/40 relative overflow-hidden backdrop-blur-md">
-                                        <h4 className="flex items-center gap-3 font-black mb-8 text-foreground uppercase tracking-[0.2em] text-[11px]">
-                                            <Cpu className="h-4 w-4 text-primary" /> Matched Technologies & Core Skills
+                                {/* Matched + Missing Skills */}
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <div className="bg-emerald-500/5 p-6 rounded-3xl border border-emerald-500/20">
+                                        <h4 className="flex items-center gap-2 font-black mb-4 text-emerald-400 uppercase tracking-widest text-[11px]">
+                                            <Cpu className="h-4 w-4" /> Matched Skills
                                         </h4>
                                         <div className="flex flex-wrap gap-2">
-                                            {results.matched.length > 0 ? results.matched.map((s: string, idx: number) => (
-                                                <span key={`match-${s}-${idx}`} className="px-4 py-2 bg-background/60 border border-border/80 text-foreground rounded-2xl text-[10px] font-bold uppercase tracking-tight hover:border-primary/40 hover:bg-primary/5 transition-all cursor-default shadow-sm">
+                                            {results.matched.length > 0 ? results.matched.map((s, i) => (
+                                                <span key={i} className="px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 rounded-xl text-[11px] font-bold uppercase">
                                                     {s}
                                                 </span>
                                             )) : (
-                                                <span className="text-xs font-medium italic text-muted-foreground">No specific skill matches detected.</span>
+                                                <span className="text-xs text-white/50 italic">No keyword matches found.</span>
                                             )}
                                         </div>
                                     </div>
 
-                                    {/* Optimization Strategy */}
-                                    <div className="bg-destructive/5 p-8 rounded-[40px] border border-destructive/20 hover:bg-destructive/[0.07] transition-colors h-fit">
-                                        <h4 className="flex items-center gap-3 font-black mb-10 text-destructive uppercase tracking-[0.2em] text-[11px]">
-                                            <Shield className="h-4 w-4" /> Strategic Growth Gaps
+                                    <div className="bg-rose-500/5 p-6 rounded-3xl border border-rose-500/20">
+                                        <h4 className="flex items-center gap-2 font-black mb-4 text-rose-400 uppercase tracking-widest text-[11px]">
+                                            <Shield className="h-4 w-4" /> Skills to Add
                                         </h4>
                                         <div className="flex flex-wrap gap-2">
-                                            {results.growth.length > 0 ? results.growth.map((s: string) => (
-                                                <span key={s} className="px-4 py-2 bg-background border border-destructive/20 text-destructive rounded-2xl text-[10px] font-bold uppercase tracking-tight hover:border-destructive/40 transition-all cursor-default shadow-sm">
+                                            {results.missing.length > 0 ? results.missing.map((s, i) => (
+                                                <span key={i} className="px-3 py-1.5 bg-rose-500/10 border border-rose-500/20 text-rose-300 rounded-xl text-[11px] font-bold uppercase">
                                                     {s}
                                                 </span>
                                             )) : (
-                                                <span className="text-xs font-medium italic text-muted-foreground">Optimal coverage detected. No major keyword gaps identified.</span>
+                                                <span className="text-xs text-white/50 italic">Great coverage — no major gaps!</span>
                                             )}
                                         </div>
                                     </div>
                                 </div>
 
-                                {showRating && (
-                                    <div className="pt-10 border-t border-border/50 animate-in fade-in blur-in-sm slide-in-from-bottom-6 duration-1000 delay-700 flex flex-col items-center">
-                                        <p className="text-[10px] font-black mb-6 text-muted-foreground uppercase tracking-[0.3em]">Rate Intelligence Quality</p>
-                                        <RatingInteraction />
+                                {/* How to Improve */}
+                                {results.missing.length > 0 && (
+                                    <div className="bg-indigo-500/5 p-6 rounded-3xl border border-indigo-500/20 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                        <h4 className="flex items-center gap-2 font-black mb-5 text-indigo-300 uppercase tracking-widest text-[11px]">
+                                            <BookOpen className="h-4 w-4" /> How to Improve
+                                        </h4>
+                                        <div className="space-y-3">
+                                            {results.missing
+                                                .map(label => {
+                                                    const key = Object.entries(SKILL_RESOURCES).find(
+                                                        ([k]) => getSkillLabel(k).toLowerCase() === label.toLowerCase()
+                                                    )?.[0]
+                                                    return key ? { skillLabel: label, ...SKILL_RESOURCES[key] } : null
+                                                })
+                                                .filter(Boolean)
+                                                .slice(0, 6)
+                                                .map((item, i) => item && (
+                                                    <a
+                                                        key={i}
+                                                        href={item.url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex items-center justify-between p-3 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 hover:border-indigo-500/40 rounded-2xl transition-all group"
+                                                    >
+                                                        <div>
+                                                            <p className="text-xs font-bold text-white/50 uppercase tracking-widest mb-0.5">{item.skillLabel}</p>
+                                                            <p className="text-sm font-semibold text-white/80 group-hover:text-white transition-colors">{item.label}</p>
+                                                        </div>
+                                                        <ExternalLink className="h-4 w-4 text-indigo-400 group-hover:text-indigo-300 shrink-0 ml-3" />
+                                                    </a>
+                                                ))
+                                            }
+                                        </div>
                                     </div>
                                 )}
+
+                                {/* Buy Me a Coffee */}
+                                <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+                                    <div className="bg-gradient-to-br from-amber-500/15 to-orange-500/10 p-7 rounded-3xl border border-amber-500/30 text-center relative overflow-hidden group">
+                                        <div className="absolute inset-0 bg-amber-500/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500 rounded-3xl" />
+                                        <div className="relative flex flex-col items-center">
+                                            <div
+                                                className="text-7xl mb-4 drop-shadow-2xl"
+                                                style={{ animation: "coffeeFloat 2s ease-in-out infinite" }}
+                                            >
+                                                ☕
+                                            </div>
+                                            <h4 className="text-xl font-black text-amber-400 mb-1">Buy me a coffee!</h4>
+                                            <p className="text-sm text-white/70 font-semibold mb-5">
+                                                Helped you land an interview? Support the creator ❤️
+                                            </p>
+                                            <Button
+                                                className="w-full max-w-xs bg-[#6772E5] hover:bg-[#5469d4] text-white font-extrabold text-base shadow-xl shadow-indigo-500/30 transition-all active:scale-95 flex items-center justify-center gap-2 rounded-2xl h-12"
+                                                onClick={() => window.open("https://buy.stripe.com/your-link-here", "_blank")}
+                                            >
+                                                <CreditCard className="h-5 w-5" />
+                                                Support via Stripe
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Emoji Rating */}
+                                <div className="pt-6 border-t border-border/30 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 flex flex-col items-center">
+                                    <p className="text-sm font-black mb-5 text-white/80 uppercase tracking-widest">
+                                        How accurate was this analysis?
+                                    </p>
+                                    <RatingInteraction />
+                                </div>
                             </div>
                         )}
                     </CardContent>
                 </Card>
             </div>
 
-            <footer className="text-center py-12 border-t border-border/20 text-muted-foreground text-sm">
-                <p>&copy; 2026 CV Scorer — Premium Intelligence Suite. Mode: Analytics Active</p>
+            <style jsx global>{`
+                @keyframes coffeeFloat {
+                    0%, 100% { transform: translateY(0px) rotate(-3deg); }
+                    50% { transform: translateY(-10px) rotate(3deg); }
+                }
+            `}</style>
+
+            <footer className="text-center py-10 border-t border-border/20 text-white/50 font-semibold text-sm">
+                <p>&copy; 2026 CV Scorer — Local Analysis Engine. No data sent to servers.</p>
             </footer>
         </div>
     )
