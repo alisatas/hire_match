@@ -503,7 +503,8 @@ export default function CVAnalyzer() {
         if (fileInputRef.current) fileInputRef.current.value = ""
     }
 
-    const canAnalyze = (!!cvText) && (!!jobText || !!jobInput)
+    const validUrl = jobInput.trim().startsWith("http")
+    const canAnalyze = !!cvText && (!!jobText || validUrl)
 
     return (
         <div className="container mx-auto px-4 py-8 md:py-12">
@@ -582,45 +583,59 @@ export default function CVAnalyzer() {
                             </div>
                         )}
 
-                        {/* Job Description */}
+                        {/* Job Description — URL only */}
                         <div className="space-y-3">
                             <div className="flex justify-between items-center">
-                                <label className="text-sm font-bold uppercase tracking-widest text-primary/90">Job Description</label>
+                                <label className="text-sm font-bold uppercase tracking-widest text-primary/90">Job Link</label>
                                 <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">REQUIRED</span>
                             </div>
-                            <div className="flex gap-2">
+                            <div className={cn(
+                                "flex items-center gap-2 bg-muted/20 border rounded-xl px-3 transition-colors",
+                                jobInput && !jobInput.trim().startsWith("http")
+                                    ? "border-rose-500/50"
+                                    : fetchStatus.startsWith("✓")
+                                    ? "border-emerald-500/40"
+                                    : "border-border/40 focus-within:border-primary/50"
+                            )}>
+                                <span className="text-white/30 text-sm shrink-0">🔗</span>
                                 <input
-                                    type="text"
-                                    className="flex-1 bg-muted/20 border border-border/40 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-primary/50"
-                                    placeholder="Paste job URL or description..."
+                                    type="url"
+                                    className="flex-1 bg-transparent py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none"
+                                    placeholder="https://linkedin.com/jobs/..."
                                     value={jobInput}
                                     onChange={(e) => { setJobInput(e.target.value); setJobText(""); setFetchStatus("") }}
-                                    onKeyDown={(e) => e.key === "Enter" && fetchJobPost()}
+                                    onKeyDown={(e) => e.key === "Enter" && jobInput.trim().startsWith("http") && fetchJobPost()}
+                                    onBlur={() => jobInput && !jobInput.trim().startsWith("http") && setError("Please paste a valid job URL (must start with https://)")}
+                                    onFocus={() => setError("")}
                                 />
-                                {jobInput.trim().startsWith("http") && !fetchStatus.startsWith("✓") && (
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        className="shrink-0 text-white/80 border-border/40"
-                                        onClick={fetchJobPost}
-                                    >
-                                        Fetch
-                                    </Button>
+                                {fetchStatus.startsWith("✓") && (
+                                    <span className="text-emerald-400 text-xs font-bold shrink-0">✓</span>
                                 )}
                             </div>
+
+                            {/* URL validation hint */}
+                            {jobInput && !jobInput.trim().startsWith("http") && (
+                                <p className="text-rose-400 text-xs font-semibold">Please paste a valid job URL starting with https://</p>
+                            )}
+
                             {fetchStatus && (
                                 <p className={cn(
                                     "text-xs font-semibold",
                                     fetchStatus.startsWith("✓") ? "text-emerald-400" : "text-white/60"
                                 )}>{fetchStatus}</p>
                             )}
-                            {(fetchStatus.includes("paste") || (!jobInput.trim().startsWith("http") && jobInput)) && (
-                                <Textarea
-                                    placeholder="Paste job description text here..."
-                                    className="min-h-[80px] bg-muted/20 border-border/40 rounded-xl text-white placeholder:text-white/40"
-                                    value={jobText}
-                                    onChange={(e) => setJobText(e.target.value)}
-                                />
+
+                            {/* Fallback paste area — only shown when scraping fails */}
+                            {fetchStatus.includes("paste") && (
+                                <div className="space-y-1.5">
+                                    <p className="text-[11px] text-amber-400 font-semibold">LinkedIn blocked the fetch — copy the job description and paste it below:</p>
+                                    <Textarea
+                                        placeholder="Paste job description text here..."
+                                        className="min-h-[80px] bg-muted/20 border-border/40 rounded-xl text-white placeholder:text-white/40"
+                                        value={jobText}
+                                        onChange={(e) => setJobText(e.target.value)}
+                                    />
+                                </div>
                             )}
                         </div>
 
