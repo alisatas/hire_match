@@ -420,13 +420,13 @@ export default function CVAnalyzer() {
         }, 600)
     }
 
-    // "Analyze Again" — keep CV, only clear job + results
+    // "Try Another Job" — clear only the job field, keep CV + existing results visible
     const resetForNewJob = () => {
         setJobText("")
         setJobInput("")
         setFetchStatus("")
-        setResults(null)
         setError("")
+        // NOTE: results intentionally NOT cleared — stays visible until new analysis runs
     }
 
     // "Change CV" — explicit CV reset
@@ -564,9 +564,11 @@ export default function CVAnalyzer() {
                         )}
 
                         <div className="space-y-3 pt-2">
-                            {results ? (
+                            {/* Always show Analyze button — when results exist, also show Try Another */}
+                            {results && !jobInput && !jobText ? (
                                 <Button
-                                    className="w-full py-8 text-xl font-black group transition-all rounded-2xl shadow-xl active:scale-95 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-purple-500/20"
+                                    variant="outline"
+                                    className="w-full py-7 text-lg font-black group transition-all rounded-2xl border-border/50 text-white/70 hover:text-white hover:border-primary/50"
                                     onClick={resetForNewJob}
                                 >
                                     <RotateCcw className="mr-2 h-5 w-5 group-hover:-rotate-180 transition-transform duration-500" />
@@ -583,7 +585,7 @@ export default function CVAnalyzer() {
                                     onClick={doAnalyze}
                                     disabled={isLoading || !canAnalyze}
                                 >
-                                    <span>{isLoading ? "Analyzing..." : "Analyze My CV"}</span>
+                                    <span>{isLoading ? "Analyzing..." : results ? "Re-Analyze" : "Analyze My CV"}</span>
                                     <ArrowRight className="ml-2 h-6 w-6 group-hover:translate-x-2 transition-transform" />
                                 </Button>
                             )}
@@ -602,7 +604,8 @@ export default function CVAnalyzer() {
                             </div>
                         )}
 
-                        {isLoading && (
+                        {/* Spinner overlaid while re-analyzing — old results stay underneath */}
+                        {isLoading && !results && (
                             <div className="flex flex-col items-center justify-center h-full py-12 animate-in fade-in">
                                 <div className="relative h-20 w-20">
                                     <div className="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
@@ -613,6 +616,7 @@ export default function CVAnalyzer() {
                         )}
 
                         {results && (
+                            <div className={cn("transition-opacity duration-300", isLoading && "opacity-40 pointer-events-none")}>
                             <div className="animate-in fade-in slide-in-from-right-8 duration-700 space-y-8">
                                 {/* Score Header */}
                                 <div className="flex flex-col md:flex-row items-center gap-8 pb-8 border-b border-border/50">
@@ -772,6 +776,7 @@ export default function CVAnalyzer() {
                                     </p>
                                     <RatingInteraction />
                                 </div>
+                            </div>
                             </div>
                         )}
                     </CardContent>
