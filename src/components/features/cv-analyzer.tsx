@@ -827,11 +827,11 @@ export default function CVAnalyzer() {
                                                 Helped you land an interview? Support the creator ❤️
                                             </p>
                                             <Button
-                                                className="w-full max-w-xs bg-[#6772E5] hover:bg-[#5469d4] text-white font-extrabold text-base shadow-xl shadow-indigo-500/30 transition-all active:scale-95 flex items-center justify-center gap-2 rounded-2xl h-12"
-                                                onClick={() => window.open("https://buy.stripe.com/your-link-here", "_blank")}
+                                                className="w-full max-w-xs bg-[#003087] hover:bg-[#001f5e] text-white font-extrabold text-base shadow-xl shadow-blue-900/40 transition-all active:scale-95 flex items-center justify-center gap-2 rounded-2xl h-12"
+                                                onClick={() => window.open("https://paypal.me/alisatass", "_blank")}
                                             >
                                                 <CreditCard className="h-5 w-5" />
-                                                Support via Stripe
+                                                Buy Me a Coffee ☕
                                             </Button>
                                         </div>
                                     </div>
