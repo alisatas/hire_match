@@ -472,13 +472,13 @@ export default function CVAnalyzer() {
 
             <section className="text-center mb-8 animate-in fade-in slide-in-from-bottom-6 duration-1000">
                 <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight tracking-tighter text-white">
-                    Get Hired in{" "}
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-cyan-400 to-sky-400 drop-shadow-sm">
-                        Style ✨
+                    Does Your CV{" "}
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-teal-300 to-sky-400 drop-shadow-sm">
+                        Match the Job?
                     </span>
                 </h2>
                 <p className="text-base sm:text-lg md:text-xl text-white/80 font-semibold max-w-4xl mx-auto px-2 drop-shadow-sm">
-                    Stop guessing. Start matching. Let our algorithm vibe-check your resume against your dream job. 🎯
+                    Upload your CV, drop a job link — get an instant match score, skill gaps, and courses to close them.
                 </p>
             </section>
 
@@ -654,8 +654,8 @@ export default function CVAnalyzer() {
                             <div className={cn("transition-opacity duration-300", isLoading && "opacity-40 pointer-events-none")}>
                             <div className="animate-in fade-in slide-in-from-right-8 duration-700 space-y-8">
                                 {/* Score Header */}
-                                <div className="flex flex-col md:flex-row items-center gap-8 pb-8 border-b border-border/50">
-                                    <div className="relative h-36 w-36 shrink-0">
+                                <div className="flex flex-col md:flex-row items-center gap-6 pb-6 border-b border-border/30">
+                                    <div className="relative h-28 w-28 shrink-0">
                                         <svg viewBox="0 0 100 100" className="transform -rotate-90 w-full h-full">
                                             <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="6" className="text-white/10" />
                                             <circle
@@ -666,105 +666,92 @@ export default function CVAnalyzer() {
                                             />
                                         </svg>
                                         <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                            <span className="text-5xl font-black text-white">{results.score}%</span>
-                                            <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Match</span>
+                                            <span className="text-4xl font-black text-white">{results.score}%</span>
+                                            <span className="text-[10px] text-white/50">match</span>
                                         </div>
                                     </div>
                                     <div className="text-center md:text-left">
-                                        <p className={cn("text-2xl font-black uppercase tracking-tight mb-1", results.persona.color)}>
+                                        <p className={cn("text-xl font-bold mb-1", results.persona.color)}>
                                             {results.persona.label}
                                         </p>
-                                        <p className="text-white/80 font-semibold leading-relaxed text-sm italic mb-2">
-                                            {results.persona.desc}
-                                        </p>
-                                        <p className="text-white/60 text-sm font-medium">"{results.summary}"</p>
+                                        <p className="text-white/70 text-sm leading-relaxed mb-2">{results.persona.desc}</p>
+                                        <div className="flex flex-wrap gap-2 justify-center md:justify-start text-xs text-white/40">
+                                            <span>{results.rawMatched}/{results.rawTotal} keywords matched</span>
+                                            <span>·</span>
+                                            <span>{results.matched.length}/{results.matched.length + results.missing.length} skill categories</span>
+                                            {results.yearsRequired > 0 && (
+                                                <>
+                                                    <span>·</span>
+                                                    <span className={results.yearsOnCV >= results.yearsRequired ? "text-emerald-400" : "text-rose-400"}>
+                                                        {results.yearsOnCV}y exp · {results.yearsRequired}y required
+                                                    </span>
+                                                </>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
 
                                 {/* Low quality warning */}
                                 {results.lowQuality && (
-                                    <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl px-4 py-3 text-amber-300 text-xs font-semibold flex items-start gap-2">
-                                        <span className="text-base leading-none">⚠️</span>
-                                        <span>Only <strong>{results.jobWordCount} words</strong> extracted from the job post — LinkedIn blocks scraping. For accurate results, open the job on LinkedIn, copy the full description, and paste it in the job field.</span>
+                                    <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 text-amber-300 text-xs flex items-start gap-2">
+                                        <span>⚠️</span>
+                                        <span>Only <strong>{results.jobWordCount} words</strong> extracted — paste the full job description for accurate results.</span>
                                     </div>
                                 )}
 
-                                {/* Stats row */}
-                                <div className="flex flex-wrap gap-3 text-[11px] font-bold uppercase tracking-widest">
-                                    <span className="px-3 py-1.5 bg-white/5 rounded-xl text-white/50">
-                                        {results.rawMatched}/{results.rawTotal} keywords
-                                    </span>
-                                    <span className="px-3 py-1.5 bg-white/5 rounded-xl text-white/50">
-                                        {results.matched.length}/{results.matched.length + results.missing.length} skill categories
-                                    </span>
-                                    {results.yearsRequired > 0 && (
-                                        <span className={cn(
-                                            "px-3 py-1.5 rounded-xl",
-                                            results.yearsOnCV >= results.yearsRequired
-                                                ? "bg-emerald-500/10 text-emerald-400"
-                                                : "bg-rose-500/10 text-rose-400"
-                                        )}>
-                                            {results.yearsOnCV}y exp · {results.yearsRequired}y required
-                                        </span>
-                                    )}
-                                </div>
-
-                                {/* Matched + Missing Skills */}
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                    <div className="bg-emerald-500/5 p-6 rounded-3xl border border-emerald-500/20">
-                                        <h4 className="flex items-center gap-2 font-black mb-4 text-emerald-400 uppercase tracking-widest text-[11px]">
-                                            <Cpu className="h-4 w-4" /> Matched Skills
-                                        </h4>
-                                        <div className="flex flex-wrap gap-2">
-                                            {results.matched.length > 0 ? results.matched.map((s, i) => (
-                                                <span key={i} className="px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 rounded-xl text-[11px] font-bold uppercase">
-                                                    {s}
-                                                </span>
-                                            )) : (
-                                                <span className="text-xs text-white/50 italic">No keyword matches found.</span>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div className="bg-rose-500/5 p-6 rounded-3xl border border-rose-500/20">
-                                        <h4 className="flex items-center gap-2 font-black mb-4 text-rose-400 uppercase tracking-widest text-[11px]">
-                                            <Shield className="h-4 w-4" /> Skills to Add
-                                        </h4>
-                                        <div className="flex flex-wrap gap-2">
-                                            {results.missing.length > 0 ? results.missing.map((s, i) => (
-                                                <span
-                                                    key={i}
-                                                    title={s.priority === "high" ? "High priority for this job" : s.priority === "medium" ? "Mentioned in job" : "Nice to have"}
-                                                    className={cn(
-                                                        "px-3 py-1.5 rounded-xl text-[11px] font-bold uppercase border",
-                                                        s.priority === "high"
-                                                            ? "bg-rose-500/20 border-rose-400/40 text-rose-200"
-                                                            : s.priority === "medium"
-                                                            ? "bg-rose-500/10 border-rose-500/20 text-rose-300"
-                                                            : "bg-white/5 border-white/10 text-white/40"
-                                                    )}
-                                                >
-                                                    {s.priority === "high" && <span className="mr-1">🔴</span>}
-                                                    {s.priority === "medium" && <span className="mr-1">🟡</span>}
-                                                    {s.label}
-                                                </span>
-                                            )) : (
-                                                <span className="text-xs text-white/50 italic">Great coverage — no major gaps!</span>
-                                            )}
-                                        </div>
-                                        {results.missing.some(m => m.priority === "high") && (
-                                            <p className="text-[10px] text-white/30 mt-3 font-medium">🔴 High priority · 🟡 Mentioned · ⚫ Nice to have</p>
+                                {/* Matched Skills */}
+                                <div>
+                                    <h4 className="flex items-center gap-2 text-sm font-semibold text-cyan-300 mb-3">
+                                        <Cpu className="h-4 w-4" /> Matched Skills
+                                    </h4>
+                                    <div className="flex flex-wrap gap-2">
+                                        {results.matched.length > 0 ? results.matched.map((s, i) => (
+                                            <span key={i} className="px-3 py-1 bg-cyan-500/20 text-cyan-200 rounded-full text-xs font-medium">
+                                                {s}
+                                            </span>
+                                        )) : (
+                                            <span className="text-xs text-white/50 italic">No keyword matches found.</span>
                                         )}
                                     </div>
                                 </div>
 
-                                {/* Top job-specific signals not on CV */}
+                                {/* Skills to Add */}
+                                <div>
+                                    <h4 className="flex items-center gap-2 text-sm font-semibold text-teal-300 mb-3">
+                                        <Shield className="h-4 w-4" /> Skills to Add
+                                    </h4>
+                                    <div className="flex flex-wrap gap-2">
+                                        {results.missing.length > 0 ? results.missing.map((s, i) => (
+                                            <span
+                                                key={i}
+                                                className={cn(
+                                                    "px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5",
+                                                    s.priority === "high" ? "bg-rose-500/25 text-rose-200" :
+                                                    s.priority === "medium" ? "bg-amber-500/20 text-amber-200" :
+                                                    "bg-teal-500/15 text-teal-200"
+                                                )}
+                                            >
+                                                <span className="w-1.5 h-1.5 rounded-full shrink-0"
+                                                    style={{ background: s.priority === "high" ? "#f87171" : s.priority === "medium" ? "#fbbf24" : "#5eead4" }}
+                                                />
+                                                {s.label}
+                                            </span>
+                                        )) : (
+                                            <span className="text-xs text-cyan-300/70 italic">Great coverage — no major gaps!</span>
+                                        )}
+                                    </div>
+                                    {results.missing.some(m => m.priority !== "low") && (
+                                        <p className="text-xs text-white/40 mt-2">● High priority · ● Mentioned · ● Nice to have</p>
+                                    )}
+                                </div>
+
+                                {/* Job-specific keywords */}
                                 {results.topJobSignals.length > 0 && (
-                                    <div className="bg-violet-500/5 p-5 rounded-2xl border border-violet-500/15">
-                                        <p className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-3">Job-specific keywords not on your CV</p>
+                                    <div>
+                                        <h4 className="text-sm font-semibold text-teal-300 mb-3">Keywords missing from your CV</h4>
                                         <div className="flex flex-wrap gap-2">
                                             {results.topJobSignals.map((w, i) => (
-                                                <span key={i} className="px-2.5 py-1 bg-violet-500/10 border border-violet-500/20 text-violet-300 rounded-lg text-[10px] font-bold uppercase tracking-wide">
+                                                <span key={i} className="px-3 py-1 bg-teal-500/10 text-teal-200 rounded-full text-xs font-medium">
                                                     {w}
                                                 </span>
                                             ))}
@@ -772,13 +759,13 @@ export default function CVAnalyzer() {
                                     </div>
                                 )}
 
-                                {/* How to Improve — sorted by job priority */}
+                                {/* How to Improve */}
                                 {results.missing.length > 0 && (
-                                    <div className="bg-indigo-500/5 p-6 rounded-3xl border border-indigo-500/20 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                        <h4 className="flex items-center gap-2 font-black mb-5 text-indigo-300 uppercase tracking-widest text-[11px]">
+                                    <div>
+                                        <h4 className="flex items-center gap-2 text-sm font-semibold text-cyan-300 mb-3">
                                             <BookOpen className="h-4 w-4" /> How to Improve
                                         </h4>
-                                        <div className="space-y-3">
+                                        <div className="space-y-2">
                                             {results.missing
                                                 .filter(m => SKILL_RESOURCES[m.key])
                                                 .slice(0, 6)
@@ -790,18 +777,15 @@ export default function CVAnalyzer() {
                                                             href={resource.url}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
-                                                            className="flex items-center justify-between p-3 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 hover:border-indigo-500/40 rounded-2xl transition-all group"
+                                                            className="flex items-center justify-between px-4 py-3 bg-cyan-500/8 hover:bg-cyan-500/15 border border-cyan-500/10 hover:border-cyan-500/25 rounded-xl transition-colors group"
                                                         >
                                                             <div>
-                                                                <p className="text-xs font-black text-white/40 uppercase tracking-widest mb-0.5 flex items-center gap-1.5">
-                                                                    {m.priority === "high" && <span>🔴</span>}
-                                                                    {m.priority === "medium" && <span>🟡</span>}
-                                                                    {m.label}
-                                                                    {m.freq > 0 && <span className="text-white/25">· mentioned {m.freq}× in job</span>}
+                                                                <p className="text-xs text-teal-400/80 mb-0.5">
+                                                                    {m.label}{m.freq > 0 && ` · mentioned ${m.freq}× in job`}
                                                                 </p>
-                                                                <p className="text-sm font-semibold text-white/80 group-hover:text-white transition-colors">{resource.label}</p>
+                                                                <p className="text-sm text-white/85 group-hover:text-white transition-colors">{resource.label}</p>
                                                             </div>
-                                                            <ExternalLink className="h-4 w-4 text-indigo-400 group-hover:text-indigo-300 shrink-0 ml-3" />
+                                                            <ExternalLink className="h-4 w-4 text-cyan-400/50 group-hover:text-cyan-300 shrink-0 ml-3" />
                                                         </a>
                                                     )
                                                 })
