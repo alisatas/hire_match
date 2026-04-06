@@ -602,12 +602,6 @@ export default function CVAnalyzer() {
                                 {pdfStatus && (
                                     <p className="text-xs text-center font-semibold text-white/70 animate-pulse">{pdfStatus}</p>
                                 )}
-                                <Textarea
-                                    placeholder="Or paste your CV text here..."
-                                    className="min-h-[80px] bg-muted/20 border-border/40 rounded-xl text-white placeholder:text-white/40"
-                                    value={cvText}
-                                    onChange={(e) => setCvText(e.target.value)}
-                                />
                             </div>
                         ) : (
                             <div className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/25 rounded-2xl px-4 py-3">
