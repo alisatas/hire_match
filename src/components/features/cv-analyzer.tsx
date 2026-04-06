@@ -419,6 +419,7 @@ export default function CVAnalyzer() {
     const [cvText, setCvText] = useState("")
     const [jobText, setJobText] = useState("")
     const [jobInput, setJobInput] = useState("")
+    const [jobUrl, setJobUrl] = useState("")
     const [fetchStatus, setFetchStatus] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const [results, setResults] = useState<AnalysisResult | null>(null)
@@ -439,7 +440,7 @@ export default function CVAnalyzer() {
             if (data.error) throw new Error(data.error)
             setCvText(data.text)
             setPdfStatus(`✓ ${file.name} loaded`)
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("PDF Read Error:", err)
             setPdfStatus("Error reading PDF. Paste your CV text below.")
         }
@@ -449,9 +450,11 @@ export default function CVAnalyzer() {
         const url = jobInput.trim()
         if (!url.startsWith("http")) {
             setJobText(jobInput)
+            setJobUrl("")
             return
         }
 
+        setJobUrl(url)
         setFetchStatus("Fetching job post...")
         try {
             const res = await fetch("/api/scrape", {
@@ -526,6 +529,7 @@ export default function CVAnalyzer() {
     const resetForNewJob = () => {
         setJobText("")
         setJobInput("")
+        setJobUrl("")
         setFetchStatus("")
         setError("")
         // NOTE: results intentionally NOT cleared — stays visible until new analysis runs
@@ -640,7 +644,7 @@ export default function CVAnalyzer() {
                                     className="flex-1 bg-transparent py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none"
                                     placeholder="https://linkedin.com/jobs/..."
                                     value={jobInput}
-                                    onChange={(e) => { setJobInput(e.target.value); setJobText(""); setFetchStatus("") }}
+                                    onChange={(e) => { setJobInput(e.target.value); setJobText(""); setFetchStatus(""); if (e.target.value.startsWith("http")) setJobUrl(e.target.value); }}
                                     onKeyDown={(e) => e.key === "Enter" && e.currentTarget.value.trim().startsWith("http") && fetchJobPost()}
                                     onBlur={() => jobInput && !jobInput.trim().startsWith("http") && setError("Please paste a valid job URL (must start with https://)")}
                                     onFocus={() => setError("")}
@@ -704,7 +708,7 @@ export default function CVAnalyzer() {
 
                         <div className="space-y-3 pt-2">
                             {/* Always show Analyze button — when results exist, also show Try Another */}
-                            {results && !jobText ? (
+                            {results && !jobText && !jobInput ? (
                                 <Button
                                     variant="outline"
                                     className="w-full py-7 text-lg font-black group transition-all rounded-2xl border-border/50 text-white/70 hover:text-white hover:border-primary/50"
@@ -734,7 +738,43 @@ export default function CVAnalyzer() {
 
                 {/* Results Panel */}
                 <Card className="bg-background/40 backdrop-blur-xl border-border/50 h-full">
-                    <CardContent className="h-full flex flex-col p-8 lg:p-10">
+                    <CardContent className="h-full flex flex-col p-0">
+                    {results && (
+                        <div className="sticky top-0 z-10 bg-gradient-to-r from-emerald-950/95 to-teal-950/95 backdrop-blur border-b border-emerald-400/30 px-4 py-3 shadow-lg shadow-emerald-900/30">
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className="animate-bounce text-lg">👋</span>
+                                <p className="text-sm font-extrabold text-emerald-300 tracking-wide">Still want to apply?</p>
+                                <span className="text-lg animate-bounce">🚀</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="flex-1 flex items-center gap-2 bg-emerald-900/40 border border-emerald-400/30 rounded-xl px-3 py-2 focus-within:border-emerald-400/70 focus-within:ring-1 focus-within:ring-emerald-400/30 transition-all">
+                                    <span className="text-emerald-500 text-xs">🔗</span>
+                                    <input
+                                        type="url"
+                                        placeholder="https://..."
+                                        value={jobUrl}
+                                        onChange={e => setJobUrl(e.target.value)}
+                                        className="flex-1 bg-transparent text-xs text-emerald-200 placeholder:text-emerald-700 outline-none min-w-0"
+                                    />
+                                </div>
+                                {jobUrl ? (
+                                    <a
+                                        href={jobUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-extrabold transition-all active:scale-95 shrink-0 shadow-lg shadow-emerald-500/30 animate-pulse"
+                                    >
+                                        Apply Now 🎯
+                                    </a>
+                                ) : (
+                                    <div className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-900/50 border border-emerald-500/20 text-emerald-700 text-xs font-extrabold shrink-0">
+                                        Apply Now 🎯
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                    <div className="overflow-y-auto max-h-[85vh] p-8 lg:p-10 flex flex-col h-full">
                         {!results && !isLoading && (
                             <div className="flex flex-col items-center justify-center h-full text-center py-12 animate-in fade-in zoom-in-95">
                                 <Search className="h-16 w-16 text-white/20 mb-6" />
@@ -947,6 +987,7 @@ export default function CVAnalyzer() {
                             </div>
                             </div>
                         )}
+                    </div>
                     </CardContent>
                 </Card>
             </div>

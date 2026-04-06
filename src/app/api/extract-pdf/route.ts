@@ -23,8 +23,8 @@ export async function POST(req: Request) {
 
         return NextResponse.json({ text: text.trim() })
 
-    } catch (err: any) {
-        console.error('PDF extract error:', err.message)
+    } catch (err: unknown) {
+        console.error('PDF extract error:', err instanceof Error ? err.message : err)
         return NextResponse.json({ error: 'Failed to read PDF' }, { status: 500 })
     }
 }

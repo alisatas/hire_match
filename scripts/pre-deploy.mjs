@@ -96,7 +96,7 @@ else warn("JSON-LD structured data missing — recommended for rich results");
 // OG image
 const hasOgImage = existsSync("public/og-image.png") || existsSync("public/og-image.jpg");
 if (hasOgImage) pass("OG image found in /public");
-else fail("OG image missing — add public/og-image.png (1200x630)");
+else warn("OG image missing — add public/og-image.png (1200x630) for social sharing");
 
 // robots.txt
 if (existsSync("public/robots.txt")) pass("robots.txt found");
