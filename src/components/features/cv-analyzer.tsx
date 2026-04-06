@@ -915,13 +915,13 @@ export default function CVAnalyzer() {
                                             </p>
                                             <div className="flex flex-col sm:flex-row gap-3 w-full max-w-xs">
                                                 <Button
-                                                    className="flex-1 bg-[#635BFF] hover:bg-[#4f46e5] text-white font-extrabold text-sm shadow-xl shadow-indigo-500/30 transition-all active:scale-95 flex items-center justify-center gap-2 rounded-2xl h-12"
-                                                    onClick={() => window.open("https://buy.stripe.com/test_3cI5kF1mw3Td2IHf0c2B200", "_blank")}
+                                                    className="flex-1 bg-[#FF5E5B] hover:bg-[#e04e4b] text-white font-extrabold text-sm shadow-xl shadow-red-500/30 transition-all active:scale-95 flex items-center justify-center gap-2 rounded-2xl h-12"
+                                                    onClick={() => window.open("https://ko-fi.com/jobflare", "_blank")}
                                                 >
                                                     <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                                                        <path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z"/>
+                                                        <path d="M23.881 8.948c-.773-4.085-4.859-4.593-4.859-4.593H.723c-.604 0-.679.798-.679.798s-.082 7.324-.022 11.822c.164 2.424 2.586 2.672 2.586 2.672s8.267-.023 11.966-.049c2.438-.426 2.683-2.566 2.658-3.734 4.352.24 7.422-2.831 6.649-6.916zm-11.062 3.511c-1.246 1.453-4.011 3.976-4.011 3.976s-.121.119-.31.023c-.076-.057-.108-.09-.108-.09-.443-.441-3.368-3.049-4.034-3.954-.709-.965-1.041-2.7-.091-3.71.951-1.01 3.005-1.086 4.363.407 0 0 1.565-1.782 3.468-.963 1.904.82 1.832 3.011.723 4.311zm6.173.478c-.928.116-1.682.028-1.682.028V7.284h1.77s1.971.551 1.971 2.638c0 1.913-.985 2.667-2.059 3.015z"/>
                                                     </svg>
-                                                    Stripe
+                                                    Ko-fi
                                                 </Button>
                                                 <Button
                                                     className="flex-1 bg-[#003087] hover:bg-[#001f5e] text-white font-extrabold text-sm shadow-xl shadow-blue-900/40 transition-all active:scale-95 flex items-center justify-center gap-2 rounded-2xl h-12"
