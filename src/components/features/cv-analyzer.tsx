@@ -332,6 +332,86 @@ function analyze(cvText: string, jobText: string): AnalysisResult {
 }
 
 // ─────────────────────────────────────────────
+// SAMPLE JOBS
+// ─────────────────────────────────────────────
+
+const SAMPLE_JOBS = [
+    {
+        label: "Frontend Dev",
+        emoji: "🎨",
+        text: `Frontend Developer — Amsterdam (Hybrid)
+
+We are looking for a skilled Frontend Developer to join our product team. You will build responsive, performant web applications used by thousands of users daily.
+
+Requirements:
+- 3+ years of experience with React and TypeScript
+- Strong knowledge of Next.js, Tailwind CSS, and modern CSS
+- Experience with state management (Redux, Zustand, or similar)
+- Familiarity with REST APIs and GraphQL
+- Git version control and CI/CD pipelines (GitHub Actions)
+- Understanding of accessibility (WCAG) and cross-browser compatibility
+- Experience with Jest and Cypress for testing is a plus
+- Agile/Scrum team experience
+
+Nice to have:
+- Figma and UX design collaboration
+- Node.js for BFF patterns
+- Docker for local development
+
+We offer a competitive salary, flexible hybrid work, and a collaborative team culture.`,
+    },
+    {
+        label: "Backend Engineer",
+        emoji: "⚙️",
+        text: `Backend Engineer — Remote (EU)
+
+Join our engineering team to design and build scalable backend services powering our SaaS platform.
+
+Requirements:
+- 4+ years experience with Node.js or Python (FastAPI, Django)
+- Strong SQL skills — PostgreSQL preferred
+- Experience designing REST APIs and microservices
+- Familiarity with Docker and Kubernetes
+- AWS or GCP cloud infrastructure experience
+- CI/CD pipeline experience (GitHub Actions, Jenkins)
+- Redis for caching and queues
+- Git and code review practices
+
+Nice to have:
+- Terraform for infrastructure as code
+- Elasticsearch for search
+- GraphQL API design
+- Experience with message queues (RabbitMQ, Kafka)
+
+We're a fully remote team with async-first culture and 5+ years of runway.`,
+    },
+    {
+        label: "Data Analyst",
+        emoji: "📊",
+        text: `Data Analyst — Utrecht, Netherlands
+
+We're looking for a data-driven analyst to turn complex datasets into actionable insights for our growth and product teams.
+
+Requirements:
+- 2+ years experience in data analysis
+- Strong SQL — able to write complex queries across large datasets
+- Python with Pandas and NumPy for data manipulation
+- Experience with data visualisation tools (Tableau, Power BI, or similar)
+- Understanding of statistics and A/B testing methodology
+- Familiarity with Google Analytics and BigQuery or AWS Redshift
+- Excellent communication and data storytelling skills
+
+Nice to have:
+- Machine learning basics (scikit-learn)
+- Experience with dbt for data modelling
+- Agile/Scrum environment experience
+- Knowledge of GDPR data handling
+
+You will work closely with product managers, engineers, and the marketing team in a fast-growing scale-up.`,
+    },
+]
+
+// ─────────────────────────────────────────────
 // COMPONENT
 // ─────────────────────────────────────────────
 
@@ -419,6 +499,8 @@ export default function CVAnalyzer() {
                 }
             } catch {
                 setFetchStatus("Could not fetch — paste the text below")
+                setIsLoading(false)
+                return
             }
         } else if (!effectiveJobText) {
             effectiveJobText = jobInput
@@ -559,7 +641,7 @@ export default function CVAnalyzer() {
                                     placeholder="https://linkedin.com/jobs/..."
                                     value={jobInput}
                                     onChange={(e) => { setJobInput(e.target.value); setJobText(""); setFetchStatus("") }}
-                                    onKeyDown={(e) => e.key === "Enter" && jobInput.trim().startsWith("http") && fetchJobPost()}
+                                    onKeyDown={(e) => e.key === "Enter" && e.currentTarget.value.trim().startsWith("http") && fetchJobPost()}
                                     onBlur={() => jobInput && !jobInput.trim().startsWith("http") && setError("Please paste a valid job URL (must start with https://)")}
                                     onFocus={() => setError("")}
                                 />
@@ -578,6 +660,28 @@ export default function CVAnalyzer() {
                                     "text-xs font-semibold",
                                     fetchStatus.startsWith("✓") ? "text-emerald-400" : "text-white/60"
                                 )}>{fetchStatus}</p>
+                            )}
+
+                            {/* Sample job buttons */}
+                            {!jobText && !fetchStatus.startsWith("✓") && (
+                                <div className="flex flex-wrap gap-2">
+                                    <span className="text-xs text-white/40 self-center">Try example:</span>
+                                    {SAMPLE_JOBS.map((job) => (
+                                        <button
+                                            key={job.label}
+                                            type="button"
+                                            onClick={() => {
+                                                setJobInput("")
+                                                setJobText(job.text)
+                                                setFetchStatus(`✓ Sample: ${job.label}`)
+                                                setError("")
+                                            }}
+                                            className="px-3 py-1 text-xs font-medium bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-500/40 text-cyan-300 rounded-full transition-colors"
+                                        >
+                                            {job.emoji} {job.label}
+                                        </button>
+                                    ))}
+                                </div>
                             )}
 
                             {/* Fallback paste area — only shown when scraping fails */}
@@ -600,7 +704,7 @@ export default function CVAnalyzer() {
 
                         <div className="space-y-3 pt-2">
                             {/* Always show Analyze button — when results exist, also show Try Another */}
-                            {results && !jobInput && !jobText ? (
+                            {results && !jobText ? (
                                 <Button
                                     variant="outline"
                                     className="w-full py-7 text-lg font-black group transition-all rounded-2xl border-border/50 text-white/70 hover:text-white hover:border-primary/50"
@@ -710,7 +814,7 @@ export default function CVAnalyzer() {
                                                 {s}
                                             </span>
                                         )) : (
-                                            <span className="text-xs text-white/50 italic">No keyword matches found.</span>
+                                            <span className="text-xs text-white/50 italic">No matched skills found.</span>
                                         )}
                                     </div>
                                 </div>
@@ -854,9 +958,6 @@ export default function CVAnalyzer() {
                 }
             `}</style>
 
-            <footer className="text-center py-10 border-t border-border/20 text-white/50 font-semibold text-sm">
-                <p>&copy; 2026 CV Scorer — Local Analysis Engine. No data sent to servers.</p>
-            </footer>
         </div>
     )
 }

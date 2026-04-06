@@ -57,6 +57,9 @@ export default function Home() {
           ))}
         </div>
       </section>
+      <footer className="text-center py-10 border-t border-white/10 text-white/50 text-sm">
+        <p>&copy; 2026 JobFlare — Your CV data never leaves your device.</p>
+      </footer>
     </main>
   );
 }
