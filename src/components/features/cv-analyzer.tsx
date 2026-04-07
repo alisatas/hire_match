@@ -480,6 +480,10 @@ export default function CVAnalyzer() {
             return
         }
 
+        setError("")
+        setIsLoading(true)
+        setResults(null)
+
         // Auto-fetch job post if URL is set but text not yet loaded
         let effectiveJobText = jobText
         if (!effectiveJobText && jobInput.trim().startsWith("http")) {
@@ -511,18 +515,13 @@ export default function CVAnalyzer() {
 
         if (!effectiveJobText) {
             setError("Add a job description or URL.")
+            setIsLoading(false)
             return
         }
 
-        setError("")
-        setIsLoading(true)
-        setResults(null)
-
-        setTimeout(() => {
-            const result = analyze(cvText, effectiveJobText)
-            setResults(result)
-            setIsLoading(false)
-        }, 600)
+        const result = analyze(cvText, effectiveJobText)
+        setResults(result)
+        setIsLoading(false)
     }
 
     // "Try Another Job" — clear only the job field, keep CV + existing results visible

@@ -33,3 +33,39 @@ To maintain, govern, and continuously upgrade this project, the development road
 - Hunts down edge cases (e.g., empty datasets, undefined arrays, failed URL scraping).
 - Validates mobile responsiveness, ensuring UI grids stack correctly on small screens.
 - Audits the analysis output to ensure the dashboard remains highly accurate and free of empty spacing.
+
+## 🔐 Security Engineer
+**Role:** Threat & Vulnerability Specialist  
+**Objective:** Audits the entire codebase for security vulnerabilities before every production deployment. Ensures user data is never exposed and all inputs are sanitized.  
+**Responsibilities:**
+- Checks for XSS, CSRF, insecure cookies, exposed secrets, and unsafe HTML rendering.
+- Reviews all user inputs (PDF upload, URL scrape, text paste) for injection risks.
+- Validates HTTP headers, cookie flags (httpOnly, secure, sameSite), and OWASP Top 10 compliance.
+- Rates every finding: 🔴 Critical / 🟡 Medium / 🟢 Low and blocks deployment on Critical findings.
+
+## ⚡ Performance Engineer
+**Role:** Speed & Efficiency Guardian  
+**Objective:** Ensures the application loads fast, scores well on Core Web Vitals, and delivers a smooth experience on all devices and network conditions.  
+**Responsibilities:**
+- Audits bundle size, unused imports, and render-blocking resources.
+- Checks image optimization, font loading strategy, and lazy loading usage.
+- Reviews API response times and identifies slow or redundant network calls.
+- Targets Lighthouse scores: Performance ≥ 90, LCP < 2.5s, CLS < 0.1.
+
+## 🎨 UI/UX Engineer
+**Role:** Interface Quality & Accessibility Guard  
+**Objective:** Ensures every screen is visually consistent, accessible, responsive, and intuitive across all devices and browsers.  
+**Responsibilities:**
+- Audits accessibility: ARIA labels, keyboard navigation, color contrast ratios (WCAG AA).
+- Validates responsive layouts on mobile (320px), tablet (768px), and desktop (1280px+).
+- Checks all loading states, empty states, and error states are handled gracefully.
+- Reviews UX flows for confusion points, missing feedback, and inconsistent interactions.
+
+## 🔌 API Engineer
+**Role:** Backend Reliability & Contract Enforcer  
+**Objective:** Ensures all API routes are secure, validated, correctly structured, and handle failure cases gracefully.  
+**Responsibilities:**
+- Validates all inputs at API boundaries — type, size, format, and presence checks.
+- Ensures correct HTTP status codes, error messages, and response shapes.
+- Checks for missing rate limiting, unauthenticated endpoints, and oversized payload risks.
+- Reviews streaming endpoints for proper cleanup, error propagation, and timeout handling.
