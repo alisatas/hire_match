@@ -40,23 +40,51 @@ export async function POST(req: Request) {
 
         const normalized = normalizeLinkedInUrl(url);
 
-        const response = await fetch(normalized, {
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                'Accept-Language': 'en-US,en;q=0.9',
+        // Block SSRF — reject private/loopback addresses
+        try {
+            const parsed = new URL(normalized);
+            const hostname = parsed.hostname.toLowerCase();
+            if (
+                hostname === "localhost" ||
+                hostname.startsWith("127.") ||
+                hostname.startsWith("192.168.") ||
+                hostname.startsWith("10.") ||
+                hostname.startsWith("172.16.") ||
+                hostname === "0.0.0.0" ||
+                hostname.endsWith(".local")
+            ) {
+                return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
             }
-        });
+        } catch {
+            return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
+        }
+
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 15000);
+
+        let response: Response;
+        try {
+            response = await fetch(normalized, {
+                signal: controller.signal,
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                    'Accept-Language': 'en-US,en;q=0.9',
+                }
+            });
+        } finally {
+            clearTimeout(timeout);
+        }
 
         if (!response.ok) {
-            return NextResponse.json({ requiresPaste: true, error: `HTTP ${response.status}` }, { status: 200 });
+            return NextResponse.json({ requiresPaste: true, error: `HTTP ${response.status}` }, { status: 422 });
         }
 
         const html = await response.text();
         const text = stripHtml(html);
 
         if (text.length < 100) {
-            return NextResponse.json({ requiresPaste: true }, { status: 200 });
+            return NextResponse.json({ requiresPaste: true }, { status: 422 });
         }
 
         return NextResponse.json({ text });

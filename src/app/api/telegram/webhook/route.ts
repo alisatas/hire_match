@@ -354,7 +354,16 @@ function formatAnalysis(result: ReturnType<typeof analyze>): string {
 
 export async function POST(req: NextRequest) {
     if (!process.env.TELEGRAM_BOT_TOKEN) {
-        return NextResponse.json({ error: "TELEGRAM_BOT_TOKEN not set" }, { status: 500 })
+        return NextResponse.json({ error: "misconfigured" }, { status: 500 })
+    }
+
+    // Verify request is from Telegram using secret token
+    const secret = process.env.TELEGRAM_SECRET_TOKEN
+    if (secret) {
+        const incoming = req.headers.get("x-telegram-bot-api-secret-token")
+        if (incoming !== secret) {
+            return NextResponse.json({ error: "unauthorized" }, { status: 401 })
+        }
     }
 
     let update: {
