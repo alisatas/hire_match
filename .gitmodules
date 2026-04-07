@@ -1,0 +1,3 @@
+[submodule "cv-scorer"]
+	path = cv-scorer
+	url = https://github.com/alisatas/hire_match.git
