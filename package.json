@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "pre-deploy": "node scripts/pre-deploy.mjs",
-    "deploy": "npm run pre-deploy && vercel --prod"
+    "run-agents": "node --env-file=.env.local scripts/run-agents.mjs",
+    "deploy": "npm run pre-deploy && npm run run-agents && vercel --prod"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.67",
@@ -35,6 +36,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.2",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vercel": "^50.41.0"
   }
 }
