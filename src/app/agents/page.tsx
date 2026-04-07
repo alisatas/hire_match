@@ -1,5 +1,6 @@
 "use client"
 import { useState } from "react"
+import Link from "next/link"
 
 const AGENTS = [
     {
@@ -143,8 +144,6 @@ function AgentCard({ agent }: { agent: typeof AGENTS[0] }) {
 }
 
 export default function AgentsPage() {
-    const [runningAll, setRunningAll] = useState(false)
-
     return (
         <div className="min-h-screen bg-[#0a0f0f] p-8">
             <div className="max-w-5xl mx-auto">
@@ -153,7 +152,7 @@ export default function AgentsPage() {
                         <h1 className="text-3xl font-black text-white">🏢 Agent HQ</h1>
                         <p className="text-white/40 text-sm mt-1">Your AI company — run any agent to review the project</p>
                     </div>
-                    <a href="/" className="text-xs text-white/40 hover:text-white/70 transition-colors">← Back to app</a>
+                    <Link href="/" className="text-xs text-white/40 hover:text-white/70 transition-colors">← Back to app</Link>
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {AGENTS.map(agent => (
