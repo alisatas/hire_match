@@ -1,1 +1,28 @@
-bash /Users/aliisatas/Desktop/hire-match/cv-scorer/.git/hooks/pre-push
+cd "$(git rev-parse --show-toplevel)"
+
+echo ""
+echo "═══════════════════════════════════════"
+echo "  JobFlare Pre-Push Gate"
+echo "═══════════════════════════════════════"
+
+echo "⏳ TypeScript..."
+if npx tsc --noEmit --project tsconfig.json 2>&1; then
+  echo "✅ TypeScript — PASS"
+else
+  echo "🔴 TypeScript — FAILED. Fix type errors before pushing."
+  exit 1
+fi
+
+echo "⏳ ESLint..."
+if npx eslint src/ --ext .ts,.tsx --quiet 2>&1; then
+  echo "✅ ESLint — PASS"
+else
+  echo "⚠️  ESLint warnings (push allowed, fix soon)"
+fi
+
+echo ""
+echo "───────────────────────────────────────"
+echo "  Static checks passed."
+echo "  Reminder: run agent checks before deploying."
+echo "───────────────────────────────────────"
+echo ""
