@@ -6,10 +6,25 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "pre-deploy": "node scripts/pre-deploy.mjs",
-    "run-agents": "node --env-file=.env.local scripts/run-agents.mjs",
-    "deploy": "npm run pre-deploy && npm run run-agents && vercel --prod"
+    "lint": "next lint",
+    "prepare": "husky",
+    "release": "semantic-release"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": "next lint --fix"
+  },
+  "commitlint": {
+    "extends": ["@commitlint/config-conventional"]
+  },
+  "release": {
+    "branches": ["main"],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      ["@semantic-release/changelog", { "changelogFile": "CHANGELOG.md" }],
+      ["@semantic-release/git", { "assets": ["CHANGELOG.md", "package.json"], "message": "chore(release): ${nextRelease.version} [skip ci]" }],
+      "@semantic-release/github"
+    ]
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.68",
@@ -31,13 +46,20 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^12.0.6",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
-    "@types/pdfkit": "^0.17.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "semantic-release": "^25.0.3",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vercel": "^50.41.0"
