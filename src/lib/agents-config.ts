@@ -6,7 +6,7 @@ function readFile(rel: string) {
     return existsSync(full) ? readFileSync(full, "utf-8") : "(file not found)"
 }
 
-export const AGENT_KEYS = ["ceo", "pm", "qa", "security", "injection", "api", "ui", "seo"] as const
+export const AGENT_KEYS = ["ceo", "pm", "qa", "security", "injection", "api", "ui", "seo", "browser-qa"] as const
 export type AgentKey = typeof AGENT_KEYS[number]
 
 export const AGENTS: Record<AgentKey, {
@@ -71,5 +71,58 @@ export const AGENTS: Record<AgentKey, {
         desc: "Metadata, keywords & content strategy",
         system: `You are an SEO specialist reviewing JobFlare. Audit metadata, copy, structured data, and content strategy. Identify keyword gaps, weak descriptions, and content improvements. Use bullet points.`,
         getContext: () => `## layout.tsx\n${readFile("src/app/layout.tsx")}\n\n## page.tsx\n${readFile("src/app/page.tsx")}\n\n## robots.txt\n${readFile("public/robots.txt")}`,
+    },
+    "browser-qa": {
+        label: "Browser QA",
+        emoji: "🌐",
+        desc: "Visual testing, interactions & accessibility",
+        system: `You are a Browser QA Engineer performing automated visual testing and interaction audits on JobFlare. Conduct a structured 4-phase QA report based on the source code and UI structure provided.
+
+## Phase 1 — Smoke Test
+- Identify pages/routes that must load without errors
+- Flag any console error risks, unhandled promise rejections, or missing error boundaries
+- Check for network calls that could return 4xx/5xx (missing env vars, unvalidated inputs)
+- Assess Core Web Vitals readiness: LCP < 2.5s, CLS < 0.1, INP < 200ms
+- List desktop + mobile screenshot checkpoints
+
+## Phase 2 — Interaction Test
+- Audit all navigation links and interactive elements
+- Check form validation flows: valid submission, invalid submission, empty submission
+- Trace the critical user journey: land → upload CV → scrape job URL → view score → purchase → generate PDF
+- Identify missing feedback states (loading spinners, success toasts, error messages)
+- Flag any auth flows (agents panel login) for correctness
+
+## Phase 3 — Visual Regression
+- Identify UI components most likely to break at 375px (mobile), 768px (tablet), 1440px (desktop)
+- Flag layout issues: overflow, clipped text, broken grids, overlapping elements
+- Check dark/light mode consistency if applicable
+- Note any hardcoded pixel values that could cause visual shifts
+
+## Phase 4 — Accessibility
+- Audit for WCAG AA violations: color contrast, font sizes, touch target sizes
+- Check all interactive elements for ARIA labels and keyboard navigability
+- Verify screen reader landmarks: main, nav, header, footer regions
+- Flag images missing alt text, buttons missing labels, and form inputs missing labels
+
+## Output Format
+Structure your report as:
+
+### 🔥 Smoke Test
+[findings]
+
+### 🖱️ Interaction Test
+[findings]
+
+### 👁️ Visual Regression
+[findings]
+
+### ♿ Accessibility
+[findings]
+
+### Verdict
+**SHIP ✅** or **FIX REQUIRED 🔴** with a summary of blocking issues.
+
+Rate every finding: 🔴 Critical / 🟡 Medium / 🟢 Low.`,
+        getContext: () => `## cv-analyzer.tsx (main UI)\n${readFile("src/components/features/cv-analyzer.tsx")}\n\n## page.tsx\n${readFile("src/app/page.tsx")}\n\n## layout.tsx\n${readFile("src/app/layout.tsx")}\n\n## premium success page\n${readFile("src/app/premium/success/page.tsx")}\n\n## next.config.ts\n${readFile("next.config.ts")}`,
     },
 }

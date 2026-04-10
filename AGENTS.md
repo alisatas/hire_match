@@ -4,68 +4,121 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
-# CV Scorer: Autonomous AI Company Structure
+# JobFlare — Agent Pre-Push Gate
 
-To maintain, govern, and continuously upgrade this project, the development roadmap is conceptually guided by a virtual AI Agent company structure. This ensures enterprise-grade decision-making and quality checks.
+**MANDATORY:** Before every `git push` or deploy, Claude must run ALL agents below in order.
+A single 🔴 Critical finding BLOCKS the push. Fix it first.
 
 ---
 
-## 🏢 Chief Executive Officer (CEO)
-**Role:** Strategic Visionary & Market Director  
-**Objective:** Defines the overall market fit and future trajectory of the CV Scorer. The CEO evaluates the application's aesthetic identity (e.g., establishing the "Premium Business Intelligence Dashboard" vibe) and targets specific user demographics.  
-**Responsibilities:**
-- Approves major architectural pivots and technology stack adoptions.
-- Determines the product's overarching "voice" and visual branding.
-- Enforces long-term project goals.
+## How to run
 
-## 📊 Product Manager (PM)
-**Role:** Implementation Lead & Architect  
-**Objective:** Translates the CEO's high-level vision into actionable task lists, system designs, and algorithmic frameworks.  
-**Responsibilities:**
-- Outlines exact feature requirements (e.g., "Build a backend Next.js API proxy to scrape URLs").
-- Creates implementation plans and manages development workflows.
-- Tunes the "Career Power Index" scoring mathematics for maximum realism.
+Claude runs each agent by reading the relevant source files and applying the agent's checklist.
+Results are printed as a structured report. Push only when all agents return ✅ PASS.
 
-## 🕵️ Quality Assurance (QA)
-**Role:** Reliability & Precision Guard  
-**Objective:** Rigorously tests all logic, algorithms, and UI flows to guarantee flawless production stability before pushing code.  
-**Responsibilities:**
-- Hunts down edge cases (e.g., empty datasets, undefined arrays, failed URL scraping).
-- Validates mobile responsiveness, ensuring UI grids stack correctly on small screens.
-- Audits the analysis output to ensure the dashboard remains highly accurate and free of empty spacing.
+---
 
-## 🔐 Security Engineer
-**Role:** Threat & Vulnerability Specialist  
-**Objective:** Audits the entire codebase for security vulnerabilities before every production deployment. Ensures user data is never exposed and all inputs are sanitized.  
-**Responsibilities:**
-- Checks for XSS, CSRF, insecure cookies, exposed secrets, and unsafe HTML rendering.
-- Reviews all user inputs (PDF upload, URL scrape, text paste) for injection risks.
-- Validates HTTP headers, cookie flags (httpOnly, secure, sameSite), and OWASP Top 10 compliance.
-- Rates every finding: 🔴 Critical / 🟡 Medium / 🟢 Low and blocks deployment on Critical findings.
+## Agent 1 — 🔐 Security Engineer
 
-## ⚡ Performance Engineer
-**Role:** Speed & Efficiency Guardian  
-**Objective:** Ensures the application loads fast, scores well on Core Web Vitals, and delivers a smooth experience on all devices and network conditions.  
-**Responsibilities:**
-- Audits bundle size, unused imports, and render-blocking resources.
-- Checks image optimization, font loading strategy, and lazy loading usage.
-- Reviews API response times and identifies slow or redundant network calls.
-- Targets Lighthouse scores: Performance ≥ 90, LCP < 2.5s, CLS < 0.1.
+**Checks:**
+- XSS risks (dangerouslySetInnerHTML, unescaped user input)
+- Exposed secrets in source code or env files committed to git
+- Unvalidated user inputs at API boundaries (PDF upload, URL scrape)
+- HTTP headers (X-Frame-Options, CSP, HSTS present in next.config.ts)
+- OWASP Top 10 violations
 
-## 🎨 UI/UX Engineer
-**Role:** Interface Quality & Accessibility Guard  
-**Objective:** Ensures every screen is visually consistent, accessible, responsive, and intuitive across all devices and browsers.  
-**Responsibilities:**
-- Audits accessibility: ARIA labels, keyboard navigation, color contrast ratios (WCAG AA).
-- Validates responsive layouts on mobile (320px), tablet (768px), and desktop (1280px+).
-- Checks all loading states, empty states, and error states are handled gracefully.
-- Reviews UX flows for confusion points, missing feedback, and inconsistent interactions.
+**Files to read:** `src/app/api/**`, `next.config.ts`, `src/components/features/cv-analyzer.tsx`
+**Blocks push on:** 🔴 Critical finding
 
-## 🔌 API Engineer
-**Role:** Backend Reliability & Contract Enforcer  
-**Objective:** Ensures all API routes are secure, validated, correctly structured, and handle failure cases gracefully.  
-**Responsibilities:**
-- Validates all inputs at API boundaries — type, size, format, and presence checks.
-- Ensures correct HTTP status codes, error messages, and response shapes.
-- Checks for missing rate limiting, unauthenticated endpoints, and oversized payload risks.
-- Reviews streaming endpoints for proper cleanup, error propagation, and timeout handling.
+---
+
+## Agent 2 — 🧪 QA Engineer
+
+**Checks:**
+- Null/undefined access on optional data (results, arrays, API responses)
+- Missing loading and error states in UI
+- Edge cases: empty CV text, empty job text, failed scrape, invalid PDF
+- All `fetch()` calls have error handling
+
+**Files to read:** `src/components/features/cv-analyzer.tsx`, `src/app/api/scrape/route.ts`, `src/app/api/extract-pdf/route.ts`
+**Blocks push on:** 🔴 Critical finding
+
+---
+
+## Agent 3 — 🔌 API Engineer
+
+**Checks:**
+- All API routes validate inputs before processing
+- Correct HTTP status codes (400 for bad input, 500 for server errors)
+- No unauthenticated endpoints that should be protected
+- Response shapes are consistent
+
+**Files to read:** `src/app/api/**`
+**Blocks push on:** 🔴 Critical finding
+
+---
+
+## Agent 4 — 🎨 UI/UX Engineer
+
+**Checks:**
+- All interactive elements have ARIA labels or accessible text
+- Loading states exist for every async action
+- Mobile layout doesn't overflow at 375px
+- No hardcoded colors that break dark mode
+
+**Files to read:** `src/components/features/cv-analyzer.tsx`, `src/app/page.tsx`, `src/app/layout.tsx`
+**Blocks push on:** 🔴 Critical finding
+
+---
+
+## Agent 5 — 🌐 Browser QA
+
+**Checks:**
+- Critical routes load without console errors
+- Form validation flows work (empty, invalid, valid submission)
+- Core Web Vitals risks: large unoptimized assets, layout shifts
+- Keyboard navigation works on all interactive elements
+
+**Files to read:** `src/components/features/cv-analyzer.tsx`, `src/app/page.tsx`
+**Blocks push on:** 🔴 Critical finding
+
+---
+
+## Pre-Push Report Format
+
+Claude must output:
+
+```
+═══════════════════════════════════════
+  PRE-PUSH AGENT REPORT
+═══════════════════════════════════════
+🔐 Security ........ ✅ PASS  (0 critical)
+🧪 QA .............. ✅ PASS  (0 critical)
+🔌 API ............. ✅ PASS  (0 critical)
+🎨 UI/UX ........... ⚠️  WARN  (2 medium)
+🌐 Browser QA ...... ✅ PASS  (0 critical)
+───────────────────────────────────────
+VERDICT: ✅ SAFE TO PUSH
+═══════════════════════════════════════
+```
+
+If any agent returns 🔴, verdict is `🔴 BLOCKED — fix before pushing`.
+
+---
+
+## Agent roles (for UI panel)
+
+These agents also power the `/agents` panel in the UI.
+Their full system prompts and file context are in `src/lib/agents-config.ts`.
+
+| Agent | UI Panel | Pre-Push Gate |
+|---|---|---|
+| CEO | ✅ | ❌ |
+| Product Manager | ✅ | ❌ |
+| QA Engineer | ✅ | ✅ |
+| Security Engineer | ✅ | ✅ |
+| Pen Tester | ✅ | ❌ |
+| API Engineer | ✅ | ✅ |
+| UI/UX Engineer | ✅ | ✅ |
+| SEO Specialist | ✅ | ❌ |
+| Browser QA | ✅ | ✅ |
