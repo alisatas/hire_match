@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/alisatas/hire_match/compare/v1.0.0...v1.1.0) (2026-04-11)
+
+
+### Features
+
+* upgrade SEO agent to GEO specialist, add llms.txt and allow AI crawlers ([2dd5cd7](https://github.com/alisatas/hire_match/commit/2dd5cd70972307f84cf0b5171186cfc3ac6ec062))
+
 # 1.0.0 (2026-04-10)
 
 
