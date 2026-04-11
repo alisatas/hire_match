@@ -338,3 +338,4 @@ npm run build
 
 > Built by humans, quality-gated by AI.  
 > Your CV data never leaves your device.
+
