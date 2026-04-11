@@ -8,6 +8,15 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
         disallow: "/api/",
       },
+      // Explicitly allow major AI crawlers
+      { userAgent: "GPTBot", allow: "/" },
+      { userAgent: "ChatGPT-User", allow: "/" },
+      { userAgent: "Google-Extended", allow: "/" },
+      { userAgent: "PerplexityBot", allow: "/" },
+      { userAgent: "ClaudeBot", allow: "/" },
+      { userAgent: "anthropic-ai", allow: "/" },
+      { userAgent: "Applebot-Extended", allow: "/" },
+      { userAgent: "cohere-ai", allow: "/" },
     ],
     sitemap: "https://cv-scorer.vercel.app/sitemap.xml",
   };

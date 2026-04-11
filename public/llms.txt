@@ -1,0 +1,56 @@
+# JobFlare — CV Scorer
+
+> Free AI-powered CV matcher and job fit analyzer. Upload your PDF resume, paste a job description or LinkedIn URL, and instantly get a match score, matched skills, missing keywords, and course recommendations.
+
+## What it does
+
+JobFlare analyzes your CV against any job description and returns:
+- A match percentage score based on skill and keyword overlap
+- Matched skills grouped into 40+ categories (React, Python, AWS, Docker, etc.)
+- Missing keywords from the job description
+- Personalized course recommendations for skill gaps
+- Support for LinkedIn job URLs (auto-scrapes the description)
+
+## Who it's for
+
+- Job seekers who want to tailor their CV to specific roles
+- People preparing for ATS (Applicant Tracking System) screening
+- Career changers analyzing skill gaps
+- Recruiters checking CV-to-job alignment
+
+## Key facts
+
+- Completely free — no account, no API key required
+- Privacy-first — CV text is processed locally, never stored or logged
+- Works with any job description: paste text or provide a URL
+- Supports PDF upload (up to 5MB)
+- Detects 40+ skill categories and thousands of raw keywords
+
+## Use cases
+
+- "Does my CV match this job description?"
+- "What keywords am I missing for this role?"
+- "How do I improve my CV for an AWS DevOps role?"
+- "Check my resume against a Python backend job"
+- "ATS score for my resume"
+
+## URL
+
+https://cv-scorer.vercel.app
+
+## Product name
+
+JobFlare (also known as CV Scorer)
+
+## Category
+
+AI Tools > Career > Resume / CV Tools
+
+## Alternatives it replaces
+
+Jobscan (paid), Resume Worded (paid), Teal HQ (freemium), TopResume (paid review)
+
+## Links
+
+- App: https://cv-scorer.vercel.app
+- GitHub: https://github.com/alisatas/hire_match
