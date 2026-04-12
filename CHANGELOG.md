@@ -1,3 +1,10 @@
+## [1.10.3](https://github.com/alisatas/hire_match/compare/v1.10.2...v1.10.3) (2026-04-12)
+
+
+### Bug Fixes
+
+* revert PDF parsing to server-side /api/extract-pdf (unpdf) ([2656f89](https://github.com/alisatas/hire_match/commit/2656f891e9c098caa29417b49159d75d1fd968a7))
+
 ## [1.10.2](https://github.com/alisatas/hire_match/compare/v1.10.1...v1.10.2) (2026-04-12)
 
 
