@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/alisatas/hire_match/compare/v1.4.0...v1.4.1) (2026-04-12)
+
+
+### Bug Fixes
+
+* show custom domain in /status Telegram command ([47a3b1a](https://github.com/alisatas/hire_match/commit/47a3b1a12aade55812a4852fadf31e1efb1db569))
+
 # [1.4.0](https://github.com/alisatas/hire_match/compare/v1.3.1...v1.4.0) (2026-04-12)
 
 
