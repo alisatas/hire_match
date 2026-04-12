@@ -420,7 +420,7 @@ export default function CVAnalyzer() {
                     Upload your CV, drop a job link — get an instant match score, skill gaps, and courses to close them.
                 </p>
                 <p className="text-sm text-white/40 mt-2 font-medium">
-                    🔒 100% private — your CV never leaves your browser. No sign-up, no limits, free forever.
+                    🔒 100% private — your CV is never stored or logged. No sign-up, no limits, free forever.
                 </p>
             </section>
 

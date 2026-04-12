@@ -19,7 +19,7 @@ const faqs = [
   },
   {
     q: "Does CVXray store or share my resume data?",
-    a: "No. Your CV is processed 100% in your browser and never sent to any server. Nothing is stored, logged, or shared. Only the optional job URL fetch is an external request.",
+    a: "No. CVXray never stores or logs your CV. PDF text is extracted server-side and immediately discarded — it is never written to any database or file. The CV analysis itself runs in your browser. Nothing is retained after your session ends.",
   },
   {
     q: "How long does it take to get my CV match score?",
@@ -27,7 +27,7 @@ const faqs = [
   },
   {
     q: "Does CVXray work on mobile?",
-    a: "Yes. CVXray is fully mobile-friendly. You can upload a PDF CV from your phone, paste a job URL, and get your match score on any device. PDF text extraction runs directly in your mobile browser — no app needed.",
+    a: "Yes. CVXray is fully mobile-friendly. You can upload a PDF CV from your phone, paste a job URL, and get your match score on any device — no app needed.",
   },
 ];
 

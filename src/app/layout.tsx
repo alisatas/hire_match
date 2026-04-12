@@ -93,7 +93,7 @@ export default function RootLayout({
           "LinkedIn job URL auto-scraping",
           "PDF resume upload support",
           "No sign-up required",
-          "100% private — CV data never stored or sent to servers",
+          "100% private — CV data is never stored, logged, or retained",
           "Free forever",
         ],
         screenshot: `${siteUrl}/og-image.png`,
@@ -159,7 +159,7 @@ export default function RootLayout({
             name: "Is CVXray free?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes, CVXray is completely free. No account, no credit card, no API key required. All CV analysis is private — your data is never stored or sent to any server.",
+              text: "Yes, CVXray is completely free. No account, no credit card, no API key required. All CV analysis is private — your data is never stored, logged, or retained after your session.",
             },
           },
           {
@@ -191,7 +191,7 @@ export default function RootLayout({
             name: "Is my CV data private when using CVXray?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. CVXray processes your CV entirely in the browser. Your CV text is never stored, logged, or sent to any server. The only external request is the optional job URL fetch.",
+              text: "Yes. CVXray never stores or logs your CV data. PDF text is extracted server-side and immediately discarded — never written to any database. The CV matching analysis runs in your browser. Nothing is retained after your session ends.",
             },
           },
           {
