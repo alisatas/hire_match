@@ -21,6 +21,10 @@ const faqs = [
     q: "Does CVXray store or share my resume data?",
     a: "No. Your CV is processed 100% in your browser and never sent to any server. Nothing is stored, logged, or shared. Only the optional job URL fetch is an external request.",
   },
+  {
+    q: "How long does it take to get my CV match score?",
+    a: "Instantly — results appear in seconds. There is no upload, no waiting queue, and no email required. CVXray runs the entire analysis inside your browser the moment you click Analyze.",
+  },
 ];
 
 export default function Home() {

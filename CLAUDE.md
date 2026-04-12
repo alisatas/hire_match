@@ -1,8 +1,8 @@
 @AGENTS.md
 
-## Pre-Push Agent Gate — MANDATORY
+## Pre-Push Gate — MANDATORY (in order, no exceptions)
 
-**BEFORE EVERY `git push`, NO EXCEPTIONS:**
+**BEFORE EVERY `git push`:**
 1. Read AGENTS.md
 2. Run all 6 gate agents in order: Security, QA, API, UI/UX, Browser QA, SEO
 3. Read the relevant source files for each agent
@@ -12,9 +12,13 @@
    - Phase 1: verify nothing is broken
    - Phase 2: implement at least 1 concrete SEO improvement (copy, FAQ, llms.txt, JSON-LD, metadata)
    - Phase 3: verify improvement was applied, then include it in the commit
-7. Only run `git push` after ✅ SAFE TO PUSH verdict and SEO improvements are committed
+7. **Show the user the localhost link and wait for approval:**
+   - Make sure the dev server is running (`npm run dev` in cv-scorer/)
+   - Tell the user: "Changes are live at http://localhost:3000 — please check and confirm before I push."
+   - **Do NOT push until the user explicitly says to push.**
+8. Only run `git push` after ✅ SAFE TO PUSH verdict, SEO improvements committed, AND user has confirmed localhost looks good
 
-Never skip this gate, even for small fixes or renames.
+Never skip any step, even for small fixes or renames.
 
 ## Excalidraw Canvas Rule
 

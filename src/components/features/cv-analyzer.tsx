@@ -230,6 +230,9 @@ export default function CVAnalyzer() {
         setIsLoading(true)
         setResults(null)
 
+        // Yield to let React render the rocket animation before running analysis
+        await new Promise(resolve => setTimeout(resolve, 0))
+
         // Auto-fetch job post if URL is set but text not yet loaded
         let effectiveJobText = jobText
         if (!effectiveJobText && jobInput.trim().startsWith("http")) {
@@ -265,7 +268,11 @@ export default function CVAnalyzer() {
             return
         }
 
-        const result = analyze(cvText, effectiveJobText)
+        // Keep rocket visible for at least one full pass (2.8s animation cycle)
+        const [result] = await Promise.all([
+            Promise.resolve(analyze(cvText, effectiveJobText)),
+            new Promise(resolve => setTimeout(resolve, 2800)),
+        ])
         setResults(result)
         setIsLoading(false)
     }
@@ -777,10 +784,28 @@ export default function CVAnalyzer() {
                 </Card>
             </div>
 
+            {/* Rocket animation while analyzing */}
+            {isLoading && (
+                <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
+                    <div className="rocket-fly absolute text-5xl" style={{ top: "48%" }}>
+                        🚀
+                    </div>
+                </div>
+            )}
+
             <style jsx global>{`
                 @keyframes coffeeFloat {
                     0%, 100% { transform: translateY(0px) rotate(-3deg); }
                     50% { transform: translateY(-10px) rotate(3deg); }
+                }
+                @keyframes rocketFly {
+                    0%   { transform: translateY(-50%) translateX(-80px); opacity: 0; }
+                    8%   { opacity: 1; }
+                    92%  { opacity: 1; }
+                    100% { transform: translateY(-50%) translateX(calc(100vw + 80px)); opacity: 0; }
+                }
+                .rocket-fly {
+                    animation: rocketFly 2.8s linear infinite;
                 }
             `}</style>
 
