@@ -297,17 +297,17 @@ export default function CVAnalyzer() {
             <header className="flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
                 <div className="flex items-center gap-3">
                     <Sparkles className="text-primary h-8 w-8" />
-                    <h1 className="text-2xl font-bold tracking-tight text-white">CV Scorer</h1>
+                    <span className="text-2xl font-bold tracking-tight text-white">CVXray</span>
                 </div>
             </header>
 
             <section className="text-center mb-8 animate-in fade-in slide-in-from-bottom-6 duration-1000">
-                <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight tracking-tighter text-white">
+                <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight tracking-tighter text-white">
                     Does Your CV{" "}
                     <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-teal-300 to-sky-400 drop-shadow-sm">
                         Match the Job?
                     </span>
-                </h2>
+                </h1>
                 <p className="text-base sm:text-lg md:text-xl text-white/80 font-semibold max-w-4xl mx-auto px-2 drop-shadow-sm">
                     Upload your CV, drop a job link — get an instant match score, skill gaps, and courses to close them.
                 </p>
@@ -524,7 +524,7 @@ export default function CVAnalyzer() {
                         {!results && !isLoading && (
                             <div className="flex flex-col items-center justify-center h-full text-center py-12 animate-in fade-in zoom-in-95">
                                 <Search className="h-16 w-16 text-white/20 mb-6" />
-                                <h3 className="text-xl font-black mb-2 uppercase tracking-widest text-white/40">Launch Your Future 🚀</h3>
+                                <p className="text-xl font-black mb-2 uppercase tracking-widest text-white/40">Launch Your Future 🚀</p>
                                 <p className="text-white/60 text-sm font-semibold">Upload your CV and drop a job link to get started.</p>
                             </div>
                         )}
@@ -543,6 +543,7 @@ export default function CVAnalyzer() {
                         {results && (
                             <div className={cn("transition-opacity duration-300", isLoading && "opacity-40 pointer-events-none")}>
                             <div className="animate-in fade-in slide-in-from-right-8 duration-700 space-y-8">
+                                <h2 className="sr-only">Your Match Results</h2>
                                 {/* Score Header */}
                                 <div className="flex flex-col md:flex-row items-center gap-6 pb-6 border-b border-border/30">
                                     <div className="relative h-28 w-28 shrink-0">
@@ -591,9 +592,9 @@ export default function CVAnalyzer() {
 
                                 {/* Matched Skills */}
                                 <div>
-                                    <h4 className="flex items-center gap-2 text-sm font-semibold text-cyan-300 mb-3">
+                                    <h3 className="flex items-center gap-2 text-sm font-semibold text-cyan-300 mb-3">
                                         <Cpu className="h-4 w-4" /> Matched Skills
-                                    </h4>
+                                    </h3>
                                     <div className="flex flex-wrap gap-2">
                                         {results.matched.length > 0 ? results.matched.map((s, i) => (
                                             <span key={i} className="px-3 py-1 bg-cyan-500/20 text-cyan-200 rounded-full text-xs font-medium">
@@ -607,9 +608,9 @@ export default function CVAnalyzer() {
 
                                 {/* Skills to Add */}
                                 <div>
-                                    <h4 className="flex items-center gap-2 text-sm font-semibold text-teal-300 mb-3">
+                                    <h3 className="flex items-center gap-2 text-sm font-semibold text-teal-300 mb-3">
                                         <Shield className="h-4 w-4" /> Skills to Add
-                                    </h4>
+                                    </h3>
                                     <div className="flex flex-wrap gap-2">
                                         {results.missing.length > 0 ? results.missing.map((s, i) => (
                                             <span
@@ -639,7 +640,7 @@ export default function CVAnalyzer() {
                                 {results.topJobSignals.length > 0 && (
                                     <div>
                                         <div className="mb-3">
-                                            <h4 className="text-sm font-semibold text-teal-300 mb-0.5">Words the Recruiter Is Looking For</h4>
+                                            <h3 className="text-sm font-semibold text-teal-300 mb-0.5">Words the Recruiter Is Looking For</h3>
                                             <p className="text-xs text-white/40">These exact words are in the job posting but missing from your CV. Recruiters search by these terms — if they&apos;re not there, your application may be filtered out automatically.</p>
                                         </div>
                                         <div className="flex flex-wrap gap-2">
@@ -670,9 +671,9 @@ export default function CVAnalyzer() {
                                 {results.missing.length > 0 && (
                                     <div>
                                         <div className="flex items-center justify-between mb-1">
-                                            <h4 className="flex items-center gap-2 text-sm font-semibold text-cyan-300">
+                                            <h3 className="flex items-center gap-2 text-sm font-semibold text-cyan-300">
                                                 <BookOpen className="h-4 w-4" /> Recommended Training
-                                            </h4>
+                                            </h3>
                                             <span className="text-xs text-white/30">{results.missing.filter(m => SKILL_RESOURCES[m.key]).length} resources</span>
                                         </div>
                                         <p className="text-xs text-white/40 mb-3">Curated for your skill gaps — sorted by priority in this role.</p>
@@ -742,7 +743,7 @@ export default function CVAnalyzer() {
                                             >
                                                 ☕
                                             </div>
-                                            <h4 className="text-xl font-black text-amber-400 mb-1">Buy me a coffee!</h4>
+                                            <p className="text-xl font-black text-amber-400 mb-1">Buy me a coffee!</p>
                                             <p className="text-sm text-white/70 font-semibold mb-5">
                                                 Helped you land an interview? Support the creator ❤️
                                             </p>

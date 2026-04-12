@@ -39,8 +39,12 @@ CVXray analyzes your CV against any job description and returns:
 ## Common use cases and questions CVXray answers
 
 - "Does my CV match this job description?"
+- "Does my resume match the job description?"
 - "What keywords am I missing for this role?"
+- "Will my resume pass ATS screening?"
 - "How do I pass the ATS for this job?"
+- "How to tailor my CV to get past ATS?"
+- "How do I know if I'm qualified for this job?"
 - "What skills do I need for a React developer role?"
 - "Check my resume against a Python backend job"
 - "Free ATS score for my resume"
@@ -96,6 +100,21 @@ CVXray advantage: completely free, no limits, fully private, instant results.
 ## Tech stack
 
 Built with Next.js 16, React 19, TypeScript, deployed on Vercel.
+
+## Related searches CVXray answers
+
+- resume checker free no sign up
+- cv match percentage calculator
+- ats resume score checker free
+- how to optimize cv for ats
+- resume keyword analyzer free
+- check resume against job description free
+- how to know if my cv is good enough
+- best free resume scanner 2025
+- cv gap analysis tool
+- what keywords to add to resume for tech jobs
+- is my resume ats friendly
+- free alternative to jobscan reddit
 
 ## Links
 
