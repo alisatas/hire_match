@@ -8,7 +8,7 @@ https://cvxray.com
 
 ## Also known as
 
-CVXray, CV Xray, JobFlare, CV Scorer, cvxray.com
+CVXray, CV Xray, CVXray, CV Scorer, cvxray.com
 
 ## What CVXray does
 

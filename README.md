@@ -1,4 +1,4 @@
-# 🔥 JobFlare — CV Scorer
+# 🔥 CVXray — CV Scorer
 
 > **Free AI resume matcher.** Upload your CV, paste a job description or LinkedIn URL, and get an instant match score with skill gap analysis and personalized course recommendations.
 
@@ -54,7 +54,7 @@ Your CV data never leaves your device. All analysis is local. Zero accounts requ
 
 ## AI Agent System
 
-JobFlare ships with a **9-agent AI panel** accessible at `/agents`. Each agent reads the actual source code and performs a structured audit. Agents are defined in [`src/lib/agents-config.ts`](src/lib/agents-config.ts).
+CVXray ships with a **9-agent AI panel** accessible at `/agents`. Each agent reads the actual source code and performs a structured audit. Agents are defined in [`src/lib/agents-config.ts`](src/lib/agents-config.ts).
 
 ### UI Panel Agents
 
@@ -62,7 +62,7 @@ These agents run interactively in the browser — paste your findings, get struc
 
 | # | Agent | Emoji | What It Does |
 |---|---|---|---|
-| 1 | **CEO** | 👔 | Brand voice, copy quality, naming consistency (`JobFlare` vs `CV Scorer`) |
+| 1 | **CEO** | 👔 | Brand voice, copy quality, naming consistency (`CVXray` vs `CV Scorer`) |
 | 2 | **Product Manager** | 📊 | Feature gaps, UX flows, missing functionality, scope issues |
 | 3 | **QA Engineer** | 🧪 | Bugs, null/undefined risks, broken logic, edge cases |
 | 4 | **Security Engineer** | 🔐 | XSS, CSRF, OWASP Top 10, exposed secrets, insecure headers |
@@ -115,7 +115,7 @@ VERDICT: ✅ SAFE TO PUSH
 
 ## Automation Pipeline
 
-JobFlare uses a full automated quality pipeline. Nothing reaches production without passing through every gate.
+CVXray uses a full automated quality pipeline. Nothing reaches production without passing through every gate.
 
 ```
 Write code
@@ -288,7 +288,7 @@ The MCP Excalidraw server is configured in [`.mcp.json`](../.mcp.json) and gives
 
 ## Claude Code Integration
 
-JobFlare is built with Claude Code as a first-class collaborator. Two config files define the AI workflow:
+CVXray is built with Claude Code as a first-class collaborator. Two config files define the AI workflow:
 
 **[`CLAUDE.md`](CLAUDE.md)** — includes `AGENTS.md` and defines when to run each agent.
 

@@ -100,7 +100,12 @@ function AgentCard({ agent }: { agent: typeof AGENTS[0] }) {
         try {
             const res = await fetch("/api/agents/run", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    ...(process.env.NEXT_PUBLIC_AGENTS_KEY
+                        ? { "x-agent-key": process.env.NEXT_PUBLIC_AGENTS_KEY }
+                        : {}),
+                },
                 body: JSON.stringify({ agent: agent.id }),
             })
 

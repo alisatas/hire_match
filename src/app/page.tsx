@@ -6,16 +6,8 @@ const faqs = [
     a: "CVXray is a free AI-powered CV and resume matcher. Upload your PDF or paste your CV text, add a job description or job URL, and CVXray instantly calculates your match percentage using a skill-matching engine that detects 40+ skill categories and thousands of keywords.",
   },
   {
-    q: "Is CVXray free? Are there any limits?",
-    a: "Completely free — no account, no credit card, no scan limits. Unlike Jobscan or Resume Worded, CVXray has no paywalls or monthly limits. All analysis is instant and private.",
-  },
-  {
     q: "How do I check if my resume matches a job description?",
     a: "Upload your PDF CV (or paste your CV text), then paste the job description or a job URL from LinkedIn, Indeed, Glassdoor, or any company careers page. CVXray will show your match score, matched skills, and missing keywords in seconds.",
-  },
-  {
-    q: "Does CVXray work as an ATS checker?",
-    a: "Yes. CVXray acts as a free ATS (Applicant Tracking System) checker. It scans your CV for the exact keywords and skills in the job description — the same way automated ATS software filters resumes — so you can optimize your CV before applying.",
   },
   {
     q: "Does it work with LinkedIn job posts?",
@@ -28,10 +20,6 @@ const faqs = [
   {
     q: "Is my CV data private?",
     a: "Your CV is processed entirely in your browser and never stored or sent to any server. The only external request is the optional job URL fetch. No data, no tracking, no accounts.",
-  },
-  {
-    q: "What are free alternatives to Jobscan?",
-    a: "CVXray (cvxray.com) is the best free Jobscan alternative — no scan limits, no sign-up, fully private. Other options include Teal HQ (freemium) and Resume Worded (limited free tier), but CVXray is the only one that's completely unlimited and free.",
   },
 ];
 
@@ -52,7 +40,7 @@ export default function Home() {
               know
             </span>
           </h2>
-          <p className="text-white/50 text-sm">Quick answers about how JobFlare works.</p>
+          <p className="text-white/50 text-sm">Quick answers about how CVXray works.</p>
         </div>
         <div className="space-y-3">
           {faqs.map((faq, i) => (
@@ -70,7 +58,7 @@ export default function Home() {
         </div>
       </section>
       <footer className="text-center py-10 border-t border-white/10 text-white/50 text-sm">
-        <p>&copy; 2026 JobFlare — Your CV data never leaves your device.</p>
+        <p>&copy; 2026 CVXray — 100% private — nothing you upload is stored or shared.</p>
       </footer>
     </main>
   );

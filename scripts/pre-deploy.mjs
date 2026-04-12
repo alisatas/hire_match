@@ -107,7 +107,7 @@ if (hasSitemap) pass("Sitemap found");
 else warn("Sitemap missing — add src/app/sitemap.ts for automatic generation");
 
 const brandNames = [];
-if (/JobFlare/i.test(layout)) brandNames.push("JobFlare");
+if (/CVXray/i.test(layout)) brandNames.push("CVXray");
 if (/CV Scorer/i.test(layout)) brandNames.push("CV Scorer");
 if (brandNames.length > 1) fail(`Brand name inconsistency — found both: ${brandNames.join(" & ")}`);
 else pass(`Brand name consistent (${brandNames[0] || "unknown"})`);

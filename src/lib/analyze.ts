@@ -145,11 +145,11 @@ function extractYearsFromCV(text: string): number {
     return years.length > 0 ? Math.max(...years) : 0
 }
 
-function topJobKeywords(freq: Map<string, number>, n = 8): string[] {
+function topJobKeywords(freq: Map<string, number>, n = 8): { word: string; freq: number }[] {
     return [...freq.entries()]
         .sort((a, b) => b[1] - a[1])
         .slice(0, n)
-        .map(([w]) => w)
+        .map(([word, freq]) => ({ word, freq }))
 }
 
 export interface MissingSkillWithPriority {
@@ -168,7 +168,7 @@ export interface AnalysisResult {
     jobWordCount: number
     yearsRequired: number
     yearsOnCV: number
-    topJobSignals: string[]
+    topJobSignals: { word: string; freq: number }[]
     summary: string
     persona: { label: string; desc: string; color: string }
     lowQuality: boolean
@@ -271,7 +271,7 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
 
     // ── 10. Top missing job signals (raw keywords not on CV) ─────────────────
     const topJobSignals = topJobKeywords(jobFreq, 10)
-        .filter(w => !cvKeywords.has(w))
+        .filter(({ word }) => !cvKeywords.has(word))
         .slice(0, 6)
 
     // ── 11. Persona & summary ─────────────────────────────────────────────────

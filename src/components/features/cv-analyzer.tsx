@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useRef, useEffect } from "react"
+import React, { useState, useRef } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -24,45 +24,54 @@ import { analyze, type AnalysisResult } from "@/lib/analyze"
 // SKILL RESOURCES (UI-only: links for missing skills)
 // ─────────────────────────────────────────────
 
-const SKILL_RESOURCES: Record<string, { label: string; url: string }> = {
-    react: { label: "React Official Docs", url: "https://react.dev/learn" },
-    typescript: { label: "TypeScript Handbook", url: "https://www.typescriptlang.org/docs/handbook/intro.html" },
-    javascript: { label: "MDN JavaScript Guide", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide" },
-    nextjs: { label: "Next.js Learn", url: "https://nextjs.org/learn" },
-    tailwind: { label: "Tailwind CSS Docs", url: "https://tailwindcss.com/docs" },
-    css: { label: "CSS on MDN", url: "https://developer.mozilla.org/en-US/docs/Web/CSS" },
-    vue: { label: "Vue.js Guide", url: "https://vuejs.org/guide/introduction" },
-    angular: { label: "Angular Tutorial", url: "https://angular.dev/tutorials" },
-    redux: { label: "Redux Toolkit Docs", url: "https://redux-toolkit.js.org/introduction/getting-started" },
-    graphql: { label: "GraphQL How to", url: "https://graphql.org/learn/" },
-    nodejs: { label: "Node.js Docs", url: "https://nodejs.org/en/docs" },
-    python: { label: "Python Tutorial", url: "https://docs.python.org/3/tutorial/" },
-    java: { label: "Spring Boot Guide", url: "https://spring.io/guides" },
-    csharp: { label: ".NET Learning Path", url: "https://dotnet.microsoft.com/en-us/learn" },
-    golang: { label: "Go Tour", url: "https://go.dev/tour/welcome/1" },
-    rust: { label: "The Rust Book", url: "https://doc.rust-lang.org/book/" },
-    php: { label: "Laravel Docs", url: "https://laravel.com/docs" },
-    sql: { label: "SQL Tutorial — Mode", url: "https://mode.com/sql-tutorial/" },
-    mongodb: { label: "MongoDB University", url: "https://university.mongodb.com/" },
-    redis: { label: "Redis University", url: "https://university.redis.com/" },
-    aws: { label: "AWS Skill Builder", url: "https://skillbuilder.aws/" },
-    gcp: { label: "Google Cloud Skills Boost", url: "https://cloudskillsboost.google/" },
-    azure: { label: "Microsoft Learn Azure", url: "https://learn.microsoft.com/en-us/azure/" },
-    docker: { label: "Docker Get Started", url: "https://docs.docker.com/get-started/" },
-    kubernetes: { label: "Kubernetes Basics", url: "https://kubernetes.io/docs/tutorials/kubernetes-basics/" },
-    cicd: { label: "GitHub Actions Docs", url: "https://docs.github.com/en/actions" },
-    terraform: { label: "Terraform Learn", url: "https://developer.hashicorp.com/terraform/tutorials" },
-    jest: { label: "Jest Docs", url: "https://jestjs.io/docs/getting-started" },
-    cypress: { label: "Cypress Guides", url: "https://docs.cypress.io/guides/overview/why-cypress" },
-    testing: { label: "Testing Library Docs", url: "https://testing-library.com/docs/" },
-    git: { label: "Git — the simple guide", url: "https://rogerdudler.github.io/git-guide/" },
-    agile: { label: "Scrum Guide", url: "https://scrumguides.org/scrum-guide.html" },
-    api: { label: "REST API Tutorial", url: "https://restfulapi.net/" },
-    linux: { label: "Linux Command Line Course", url: "https://linuxcommand.org/lc3_learning_the_shell.php" },
-    figma: { label: "Figma Learn Design", url: "https://www.figma.com/resources/learn-design/" },
-    ml: { label: "ML Crash Course — Google", url: "https://developers.google.com/machine-learning/crash-course" },
-    data: { label: "Kaggle Learn", url: "https://www.kaggle.com/learn" },
-    ai: { label: "Anthropic Prompt Engineering", url: "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview" },
+interface SkillResource {
+    label: string
+    url: string
+    platform: string
+    type: "certification" | "course" | "guide" | "docs"
+    duration: string
+    free: boolean
+}
+
+const SKILL_RESOURCES: Record<string, SkillResource> = {
+    react: { label: "React — Official Learn Path", url: "https://react.dev/learn", platform: "react.dev", type: "guide", duration: "~8 hrs", free: true },
+    typescript: { label: "TypeScript for JS Programmers", url: "https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html", platform: "typescriptlang.org", type: "guide", duration: "~6 hrs", free: true },
+    javascript: { label: "JavaScript — The Complete Guide", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide", platform: "MDN", type: "docs", duration: "Self-paced", free: true },
+    nextjs: { label: "Next.js — App Router Course", url: "https://nextjs.org/learn", platform: "Vercel / Next.js", type: "course", duration: "~4 hrs", free: true },
+    tailwind: { label: "Tailwind CSS From Scratch", url: "https://tailwindcss.com/docs", platform: "Tailwind Labs", type: "docs", duration: "~3 hrs", free: true },
+    css: { label: "CSS Foundations", url: "https://developer.mozilla.org/en-US/docs/Web/CSS", platform: "MDN", type: "docs", duration: "Self-paced", free: true },
+    vue: { label: "Vue.js Official Tutorial", url: "https://vuejs.org/tutorial/", platform: "Vue.js", type: "guide", duration: "~5 hrs", free: true },
+    angular: { label: "Angular — First App Tutorial", url: "https://angular.dev/tutorials/first-app", platform: "Google / Angular", type: "guide", duration: "~6 hrs", free: true },
+    redux: { label: "Redux Toolkit — Fundamentals", url: "https://redux-toolkit.js.org/tutorials/fundamentals/part-1-overview", platform: "Redux", type: "guide", duration: "~4 hrs", free: true },
+    graphql: { label: "GraphQL — How to GraphQL", url: "https://www.howtographql.com/", platform: "Prisma", type: "course", duration: "~10 hrs", free: true },
+    nodejs: { label: "Node.js — Introduction to Node", url: "https://nodejs.org/en/learn/getting-started/introduction-to-nodejs", platform: "Node.js", type: "guide", duration: "~5 hrs", free: true },
+    python: { label: "Python for Everybody — Coursera", url: "https://www.coursera.org/specializations/python", platform: "Coursera / UMich", type: "course", duration: "~32 hrs", free: false },
+    java: { label: "Spring Boot — Building REST Services", url: "https://spring.io/guides/tutorials/rest", platform: "Spring", type: "guide", duration: "~4 hrs", free: true },
+    csharp: { label: "C# Learning Path — Microsoft", url: "https://learn.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/", platform: "Microsoft Learn", type: "course", duration: "~12 hrs", free: true },
+    golang: { label: "Go — A Tour of Go", url: "https://go.dev/tour/welcome/1", platform: "go.dev", type: "guide", duration: "~4 hrs", free: true },
+    rust: { label: "The Rust Book — Official", url: "https://doc.rust-lang.org/book/", platform: "Rust Foundation", type: "guide", duration: "~20 hrs", free: true },
+    php: { label: "Laravel Bootcamp", url: "https://bootcamp.laravel.com/", platform: "Laravel", type: "course", duration: "~8 hrs", free: true },
+    sql: { label: "SQL for Data Analysis — Mode", url: "https://mode.com/sql-tutorial/", platform: "Mode Analytics", type: "course", duration: "~6 hrs", free: true },
+    mongodb: { label: "MongoDB University — M001 Basics", url: "https://university.mongodb.com/courses/M001/about", platform: "MongoDB University", type: "certification", duration: "~10 hrs", free: true },
+    redis: { label: "Redis University — RU101", url: "https://university.redis.com/courses/ru101/", platform: "Redis University", type: "certification", duration: "~8 hrs", free: true },
+    aws: { label: "AWS Cloud Practitioner Essentials", url: "https://skillbuilder.aws/learn/course/external/view/elearning/134/aws-cloud-practitioner-essentials", platform: "AWS Skill Builder", type: "certification", duration: "~6 hrs", free: true },
+    gcp: { label: "Google Cloud Digital Leader", url: "https://cloudskillsboost.google/paths/9", platform: "Google Cloud", type: "certification", duration: "~8 hrs", free: true },
+    azure: { label: "AZ-900 — Azure Fundamentals", url: "https://learn.microsoft.com/en-us/credentials/certifications/azure-fundamentals/", platform: "Microsoft Learn", type: "certification", duration: "~8 hrs", free: true },
+    docker: { label: "Docker — Get Started", url: "https://docs.docker.com/get-started/", platform: "Docker", type: "guide", duration: "~3 hrs", free: true },
+    kubernetes: { label: "CKAD Prep — Kubernetes.io", url: "https://kubernetes.io/docs/tutorials/kubernetes-basics/", platform: "CNCF / k8s", type: "certification", duration: "~15 hrs", free: true },
+    cicd: { label: "GitHub Actions — Full Course", url: "https://docs.github.com/en/actions/learn-github-actions", platform: "GitHub", type: "guide", duration: "~4 hrs", free: true },
+    terraform: { label: "HashiCorp Certified: Terraform Associate", url: "https://developer.hashicorp.com/terraform/tutorials/certification-003", platform: "HashiCorp", type: "certification", duration: "~12 hrs", free: true },
+    jest: { label: "Jest — Testing JavaScript", url: "https://jestjs.io/docs/getting-started", platform: "Jest", type: "docs", duration: "~3 hrs", free: true },
+    cypress: { label: "Cypress — Real World Testing", url: "https://learn.cypress.io/", platform: "Cypress", type: "course", duration: "~6 hrs", free: true },
+    testing: { label: "Testing Library — Core Principles", url: "https://testing-library.com/docs/guiding-principles", platform: "Testing Library", type: "docs", duration: "~2 hrs", free: true },
+    git: { label: "Git & GitHub — The Full Course", url: "https://rogerdudler.github.io/git-guide/", platform: "Community", type: "guide", duration: "~2 hrs", free: true },
+    agile: { label: "Professional Scrum Master I (PSM I)", url: "https://www.scrum.org/assessments/professional-scrum-master-i-certification", platform: "Scrum.org", type: "certification", duration: "~10 hrs", free: false },
+    api: { label: "REST API Design Best Practices", url: "https://restfulapi.net/", platform: "restfulapi.net", type: "guide", duration: "~2 hrs", free: true },
+    linux: { label: "Linux Foundation — Intro to Linux", url: "https://training.linuxfoundation.org/training/introduction-to-linux/", platform: "Linux Foundation", type: "course", duration: "~60 hrs", free: true },
+    figma: { label: "Figma — UI Design Essentials", url: "https://www.figma.com/resources/learn-design/", platform: "Figma", type: "course", duration: "~5 hrs", free: true },
+    ml: { label: "Machine Learning Crash Course", url: "https://developers.google.com/machine-learning/crash-course", platform: "Google", type: "course", duration: "~15 hrs", free: true },
+    data: { label: "Kaggle — Intro to ML", url: "https://www.kaggle.com/learn/intro-to-machine-learning", platform: "Kaggle", type: "course", duration: "~5 hrs", free: true },
+    ai: { label: "Prompt Engineering — Anthropic", url: "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview", platform: "Anthropic", type: "guide", duration: "~3 hrs", free: true },
 }
 
 // ─────────────────────────────────────────────
@@ -629,44 +638,91 @@ export default function CVAnalyzer() {
                                 {/* Job-specific keywords */}
                                 {results.topJobSignals.length > 0 && (
                                     <div>
-                                        <h4 className="text-sm font-semibold text-teal-300 mb-3">Keywords missing from your CV</h4>
+                                        <div className="mb-3">
+                                            <h4 className="text-sm font-semibold text-teal-300 mb-0.5">Words the Recruiter Is Looking For</h4>
+                                            <p className="text-xs text-white/40">These exact words are in the job posting but missing from your CV. Recruiters search by these terms — if they&apos;re not there, your application may be filtered out automatically.</p>
+                                        </div>
                                         <div className="flex flex-wrap gap-2">
-                                            {results.topJobSignals.map((w, i) => (
-                                                <span key={i} className="px-3 py-1 bg-teal-500/10 text-teal-200 rounded-full text-xs font-medium">
-                                                    {w}
+                                            {results.topJobSignals.map(({ word, freq }, i) => (
+                                                <span
+                                                    key={i}
+                                                    className={`px-3 py-1.5 rounded-full text-xs font-medium border ${
+                                                        freq >= 3
+                                                            ? "bg-red-500/10 border-red-500/25 text-red-300"
+                                                            : freq === 2
+                                                            ? "bg-amber-500/10 border-amber-500/25 text-amber-300"
+                                                            : "bg-teal-500/10 border-teal-500/20 text-teal-200"
+                                                    }`}
+                                                >
+                                                    {word}
                                                 </span>
                                             ))}
                                         </div>
+                                        <p className="text-[10px] text-white/25 mt-2">
+                                            <span className="text-red-400/60">■</span> Used often in the job posting &nbsp;
+                                            <span className="text-amber-400/60">■</span> Used sometimes &nbsp;
+                                            <span className="text-teal-400/60">■</span> Used once
+                                        </p>
                                     </div>
                                 )}
 
                                 {/* How to Improve */}
                                 {results.missing.length > 0 && (
                                     <div>
-                                        <h4 className="flex items-center gap-2 text-sm font-semibold text-cyan-300 mb-3">
-                                            <BookOpen className="h-4 w-4" /> How to Improve
-                                        </h4>
+                                        <div className="flex items-center justify-between mb-1">
+                                            <h4 className="flex items-center gap-2 text-sm font-semibold text-cyan-300">
+                                                <BookOpen className="h-4 w-4" /> Recommended Training
+                                            </h4>
+                                            <span className="text-xs text-white/30">{results.missing.filter(m => SKILL_RESOURCES[m.key]).length} resources</span>
+                                        </div>
+                                        <p className="text-xs text-white/40 mb-3">Curated for your skill gaps — sorted by priority in this role.</p>
                                         <div className="space-y-2">
                                             {results.missing
                                                 .filter(m => SKILL_RESOURCES[m.key])
                                                 .slice(0, 6)
                                                 .map((m, i) => {
                                                     const resource = SKILL_RESOURCES[m.key]
+                                                    const typeColor = resource.type === "certification"
+                                                        ? "bg-violet-500/15 text-violet-300 border-violet-500/20"
+                                                        : resource.type === "course"
+                                                        ? "bg-blue-500/15 text-blue-300 border-blue-500/20"
+                                                        : "bg-white/5 text-white/40 border-white/10"
+                                                    const priorityBar = m.priority === "high"
+                                                        ? "bg-red-500"
+                                                        : m.priority === "medium"
+                                                        ? "bg-amber-500"
+                                                        : "bg-white/20"
                                                     return (
                                                         <a
                                                             key={i}
                                                             href={resource.url}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
-                                                            className="flex items-center justify-between px-4 py-3 bg-cyan-500/8 hover:bg-cyan-500/15 border border-cyan-500/10 hover:border-cyan-500/25 rounded-xl transition-colors group"
+                                                            className="flex items-center gap-3 px-4 py-3 bg-cyan-500/5 hover:bg-cyan-500/10 border border-white/8 hover:border-cyan-500/25 rounded-xl transition-colors group"
                                                         >
-                                                            <div>
-                                                                <p className="text-xs text-teal-400/80 mb-0.5">
-                                                                    {m.label}{m.freq > 0 && ` · mentioned ${m.freq}× in job`}
-                                                                </p>
-                                                                <p className="text-sm text-white/85 group-hover:text-white transition-colors">{resource.label}</p>
+                                                            <div className={`w-1 self-stretch rounded-full shrink-0 ${priorityBar}`} />
+                                                            <div className="flex-1 min-w-0">
+                                                                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                                                    <span className="text-xs font-semibold text-white/70">{m.label}</span>
+                                                                    {m.freq > 0 && (
+                                                                        <span className="text-[10px] text-white/30">mentioned {m.freq}× in job</span>
+                                                                    )}
+                                                                </div>
+                                                                <p className="text-sm text-white/85 group-hover:text-white transition-colors truncate">{resource.label}</p>
+                                                                <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                                                                    <span className="text-[10px] text-white/35">{resource.platform}</span>
+                                                                    <span className="text-white/15">·</span>
+                                                                    <span className="text-[10px] text-white/35">{resource.duration}</span>
+                                                                    <span className="text-white/15">·</span>
+                                                                    <span className={`text-[10px] font-semibold ${resource.free ? "text-emerald-400/70" : "text-white/30"}`}>
+                                                                        {resource.free ? "Free" : "Paid"}
+                                                                    </span>
+                                                                    <span className={`text-[10px] px-1.5 py-0.5 rounded border ${typeColor} capitalize ml-auto`}>
+                                                                        {resource.type}
+                                                                    </span>
+                                                                </div>
                                                             </div>
-                                                            <ExternalLink className="h-4 w-4 text-cyan-400/50 group-hover:text-cyan-300 shrink-0 ml-3" />
+                                                            <ExternalLink className="h-3.5 w-3.5 text-cyan-400/40 group-hover:text-cyan-300 shrink-0" />
                                                         </a>
                                                     )
                                                 })

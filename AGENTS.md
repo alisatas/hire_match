@@ -4,7 +4,7 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
-# JobFlare — Agent Pre-Push Gate
+# CVXray — Agent Pre-Push Gate
 
 **MANDATORY:** Before every `git push` or deploy, Claude must run ALL agents below in order.
 A single 🔴 Critical finding BLOCKS the push. Fix it first.

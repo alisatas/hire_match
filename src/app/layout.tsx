@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     "free resume checker", "ai resume analyzer", "cv scoring tool",
     "resume to job match", "check resume against job description",
     "free ats resume checker", "resume keyword checker", "cvxray",
-    "jobflare", "cv xray", "resume xray",
+    "cvxray", "cv xray", "resume xray",
   ],
   authors: [{ name: "CVXray" }],
   creator: "CVXray",
@@ -75,7 +75,7 @@ export default function RootLayout({
         "@type": "WebApplication",
         "@id": `${siteUrl}/#app`,
         name: "CVXray",
-        alternateName: ["CV Xray", "JobFlare", "CV Scorer", "CVXray.com"],
+        alternateName: ["CV Xray", "CVXray", "CV Scorer", "CVXray.com"],
         url: siteUrl,
         description:
           "CVXray is a free AI-powered resume and CV matcher. Upload your PDF CV, paste a job description or LinkedIn URL, and get an instant match score with skill gap analysis and course recommendations. No sign-up, no data stored.",

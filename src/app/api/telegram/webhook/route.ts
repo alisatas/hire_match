@@ -41,21 +41,6 @@ async function answerCallback(callbackQueryId: string, text: string) {
     })
 }
 
-// Send long text in ≤4000-char chunks
-async function sendChunked(chatId: number, text: string, prefix = "") {
-    const limit = 4000
-    const lines = text.split("\n")
-    let chunk = prefix ? `${prefix}\n\n` : ""
-
-    for (const line of lines) {
-        if ((chunk + line + "\n").length > limit) {
-            await sendMessage(chatId, chunk.trim())
-            chunk = ""
-        }
-        chunk += line + "\n"
-    }
-    if (chunk.trim()) await sendMessage(chatId, chunk.trim())
-}
 
 // ─── Vercel API helpers ─────────────────────────────────────────────────────
 
@@ -294,7 +279,7 @@ function formatAnalysis(result: ReturnType<typeof analyze>): string {
         lines.push(`${icon} <b>Experience:</b> ${yearsOnCV}y on CV vs ${yearsRequired}y required`)
     }
     if (topJobSignals.length > 0) {
-        lines.push(`\n💡 <b>Top signals not on CV:</b> ${topJobSignals.join(", ")}`)
+        lines.push(`\n💡 <b>ATS keywords not on CV:</b> ${topJobSignals.map(s => `${s.word} (×${s.freq})`).join(", ")}`)
     }
 
     return lines.join("\n")
