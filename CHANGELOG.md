@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/alisatas/hire_match/compare/v1.4.3...v1.5.0) (2026-04-12)
+
+
+### Features
+
+* remove agents UI panel, local-only agent runs ([8b58585](https://github.com/alisatas/hire_match/commit/8b5858518c2a6e8223acdeb448fab2cf6893b4da))
+
 ## [1.4.3](https://github.com/alisatas/hire_match/compare/v1.4.2...v1.4.3) (2026-04-12)
 
 
