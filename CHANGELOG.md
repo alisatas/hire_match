@@ -1,3 +1,10 @@
+## [1.10.1](https://github.com/alisatas/hire_match/compare/v1.10.0...v1.10.1) (2026-04-12)
+
+
+### Bug Fixes
+
+* mobile PDF upload, Telegram /status URL, and text overflow ([e700491](https://github.com/alisatas/hire_match/commit/e700491cd41cb3788270394e9a6c997d99a00219))
+
 # [1.10.0](https://github.com/alisatas/hire_match/compare/v1.9.0...v1.10.0) (2026-04-12)
 
 
