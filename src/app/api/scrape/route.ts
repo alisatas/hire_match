@@ -98,6 +98,6 @@ export async function POST(req: Request) {
 
     } catch (error: unknown) {
         console.error("Scraper API Error:", error instanceof Error ? error.message : error);
-        return NextResponse.json({ requiresPaste: true }, { status: 200 });
+        return NextResponse.json({ requiresPaste: true }, { status: 500 });
     }
 }

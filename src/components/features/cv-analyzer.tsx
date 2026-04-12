@@ -221,7 +221,7 @@ export default function CVAnalyzer() {
     }
 
     const doAnalyze = async () => {
-        if (!cvText) {
+        if (!cvText || !cvText.trim()) {
             setError("Upload a PDF or paste your CV text first.")
             return
         }
