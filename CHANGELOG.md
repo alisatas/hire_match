@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/alisatas/hire_match/compare/v1.6.0...v1.7.0) (2026-04-12)
+
+
+### Features
+
+* mandatory SEO improvement loop + title, FAQ, llms.txt upgrades ([098413a](https://github.com/alisatas/hire_match/commit/098413aa7d90ba6fa60901c64778a090e8bbded7))
+
 # [1.6.0](https://github.com/alisatas/hire_match/compare/v1.5.0...v1.6.0) (2026-04-12)
 
 
