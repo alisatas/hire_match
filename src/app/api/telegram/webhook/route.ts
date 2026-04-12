@@ -52,7 +52,7 @@ async function getDeployments() {
     if (!token) return null
 
     const res = await fetch(
-        `https://api.vercel.com/v6/deployments?projectId=${VERCEL_PROJECT_ID}&teamId=${VERCEL_TEAM_ID}&limit=5`,
+        `https://api.vercel.com/v6/deployments?projectId=${VERCEL_PROJECT_ID}&teamId=${VERCEL_TEAM_ID}&limit=5&withAlias=1`,
         { headers: { Authorization: `Bearer ${token}` } }
     )
     if (!res.ok) return null
@@ -60,6 +60,7 @@ async function getDeployments() {
     return data.deployments as Array<{
         uid: string
         url: string
+        alias?: string[]
         state: string
         target: string | null
         created: number
@@ -90,7 +91,9 @@ function formatDeployments(deployments: Awaited<ReturnType<typeof getDeployments
     return deployments.map((d, i) => {
         const env = d.target === "production" ? "🟢 prod" : "🔵 preview"
         const date = new Date(d.created).toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })
-        return `${i + 1}. ${stateIcon(d.state)} ${env} — ${date}\n   🔗 https://${d.url}`
+        const customDomain = d.alias?.find(a => !a.includes(".vercel.app"))
+        const displayUrl = customDomain ?? d.url
+        return `${i + 1}. ${stateIcon(d.state)} ${env} — ${date}\n   🔗 https://${displayUrl}`
     }).join("\n\n")
 }
 
