@@ -1,3 +1,10 @@
+## [1.4.2](https://github.com/alisatas/hire_match/compare/v1.4.1...v1.4.2) (2026-04-12)
+
+
+### Bug Fixes
+
+* rename JobFlare to CVXray in pre-push gate ([027f354](https://github.com/alisatas/hire_match/commit/027f354a664459ecec49285ea0f173c0180d54b3))
+
 ## [1.4.1](https://github.com/alisatas/hire_match/compare/v1.4.0...v1.4.1) (2026-04-12)
 
 
