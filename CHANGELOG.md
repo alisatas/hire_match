@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/alisatas/hire_match/compare/v1.9.0...v1.10.0) (2026-04-12)
+
+
+### Features
+
+* senior TL agents, fix keyword signals, security hardening, UX improvements ([1e7292c](https://github.com/alisatas/hire_match/commit/1e7292cc251b5c7aa8e2ba4b5ec5fde877296562))
+
 # [1.9.0](https://github.com/alisatas/hire_match/compare/v1.8.0...v1.9.0) (2026-04-12)
 
 
