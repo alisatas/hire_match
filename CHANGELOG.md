@@ -1,3 +1,10 @@
+## [1.2.4](https://github.com/alisatas/hire_match/compare/v1.2.3...v1.2.4) (2026-04-12)
+
+
+### Bug Fixes
+
+* expand sample job skill descriptions ([71a8a8d](https://github.com/alisatas/hire_match/commit/71a8a8d78c94242b8f8ea8f55abd1fe48d6abe6d))
+
 ## [1.2.3](https://github.com/alisatas/hire_match/compare/v1.2.2...v1.2.3) (2026-04-12)
 
 
