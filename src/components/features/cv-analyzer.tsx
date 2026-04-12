@@ -273,26 +273,12 @@ export default function CVAnalyzer() {
 
         setPdfStatus("Reading PDF...")
         try {
-            const arrayBuffer = await file.arrayBuffer()
-            const pdfjsLib = await import("pdfjs-dist")
-            // Serve worker from /public — same origin, correct MIME type, works in all
-            // mobile browsers and in-app WebViews (Telegram, iOS, etc.) without CSP issues.
-            pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs"
-
-            const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) }).promise
-            const pageTexts = await Promise.all(
-                Array.from({ length: pdf.numPages }, (_, i) =>
-                    pdf.getPage(i + 1).then(async (page) => {
-                        const content = await page.getTextContent()
-                        return content.items
-                            .map((item) => ("str" in item ? item.str : ""))
-                            .join(" ")
-                    })
-                )
-            )
-            const text = pageTexts.join("\n").trim()
-            if (!text) throw new Error("No text extracted")
-            setCvText(text)
+            const formData = new FormData()
+            formData.append("file", file)
+            const res = await fetch("/api/extract-pdf", { method: "POST", body: formData })
+            const data = await res.json()
+            if (!res.ok || !data.text) throw new Error(data.error || "No text extracted")
+            setCvText(data.text)
             setPdfStatus(`✓ ${file.name} loaded`)
         } catch (err: unknown) {
             console.error("PDF Read Error:", err)
