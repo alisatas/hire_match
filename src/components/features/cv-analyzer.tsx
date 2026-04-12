@@ -419,9 +419,6 @@ export default function CVAnalyzer() {
                 <p className="text-base sm:text-lg md:text-xl text-white/80 font-semibold max-w-4xl mx-auto px-2 drop-shadow-sm">
                     Upload your CV, drop a job link — get an instant match score, skill gaps, and courses to close them.
                 </p>
-                <p className="text-sm text-white/40 mt-2 font-medium">
-                    🔒 100% private — your CV is never stored or logged. No sign-up, no limits, free forever.
-                </p>
             </section>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
@@ -497,7 +494,7 @@ export default function CVAnalyzer() {
                                 <label className="text-sm font-bold uppercase tracking-widest text-primary/90">Job Description URL</label>
                                 <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">REQUIRED</span>
                             </div>
-                            <p className="text-xs text-white/40">Paste a job URL from LinkedIn, Indeed, or any job board &mdash; we&apos;ll fetch it automatically.</p>
+                            <p className="text-xs text-cyan-300/80">Paste a job URL from LinkedIn, Indeed, or any job board &mdash; we&apos;ll fetch it automatically.</p>
                             <div className={cn(
                                 "flex items-center gap-2 bg-muted/20 border rounded-xl px-3 transition-colors",
                                 jobInput && !jobInput.trim().startsWith("http")
@@ -538,7 +535,7 @@ export default function CVAnalyzer() {
                             {/* Sample job buttons */}
                             {!jobText && !fetchStatus.startsWith("✓") && (
                                 <div className="flex flex-col gap-2">
-                                    <p className="text-xs text-white/40">
+                                    <p className="text-xs text-cyan-300/80">
                                         No job description? Click a role to X-ray your CV against it:
                                     </p>
                                     <div className="flex flex-wrap gap-2">
@@ -598,7 +595,7 @@ export default function CVAnalyzer() {
                                         "w-full py-8 text-xl font-black group transition-all rounded-2xl shadow-xl active:scale-95",
                                         !canAnalyze
                                             ? "bg-muted text-muted-foreground cursor-not-allowed grayscale"
-                                            : "bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 shadow-cyan-500/30"
+                                            : "bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 shadow-cyan-500/30 text-white"
                                     )}
                                     onClick={doAnalyze}
                                     disabled={isLoading || !canAnalyze}
@@ -653,8 +650,8 @@ export default function CVAnalyzer() {
                         {!results && !isLoading && (
                             <div className="flex flex-col items-center justify-center h-full text-center py-12 animate-in fade-in zoom-in-95">
                                 <Search className="h-16 w-16 text-white/20 mb-6" />
-                                <p className="text-xl font-black mb-2 uppercase tracking-widest text-white/40">Drop your CV. We&apos;ll do the math.</p>
-                                <p className="text-white/60 text-sm font-semibold">Upload a PDF or paste your CV, add a job link — results in seconds.</p>
+                                <p className="text-xl font-black mb-2 uppercase tracking-widest text-cyan-300/80">Drop your CV. We&apos;ll do the math.</p>
+                                <p className="text-cyan-300/60 text-sm font-semibold">Upload a PDF or paste your CV, add a job link — results in seconds.</p>
                             </div>
                         )}
 
@@ -695,7 +692,7 @@ export default function CVAnalyzer() {
                                             {results.persona.label}
                                         </p>
                                         <p className="text-white/70 text-sm leading-relaxed mb-2">{results.persona.desc}</p>
-                                        <div className="flex flex-wrap gap-2 justify-center md:justify-start text-xs text-white/40">
+                                        <div className="flex flex-wrap gap-2 justify-center md:justify-start text-xs text-white/60">
                                             <span>{results.rawMatched}/{results.rawTotal} keywords matched</span>
                                             <span>·</span>
                                             <span>{results.matched.length}/{results.matched.length + results.missing.length} skill categories</span>
@@ -763,7 +760,7 @@ export default function CVAnalyzer() {
                                         )}
                                     </div>
                                     {results.missing.some(m => m.priority !== "low") && (
-                                        <p className="text-xs text-white/40 mt-2">● High priority · ● Mentioned · ● Nice to have</p>
+                                        <p className="text-xs text-white/60 mt-2">● High priority · ● Mentioned · ● Nice to have</p>
                                     )}
                                 </div>
 
@@ -772,7 +769,7 @@ export default function CVAnalyzer() {
                                     <div>
                                         <div className="mb-3">
                                             <h3 className="text-sm font-semibold text-teal-300 mb-0.5">Words the Recruiter Is Looking For</h3>
-                                            <p className="text-xs text-white/40">These exact words are in the job posting but missing from your CV. Recruiters search by these terms — if they&apos;re not there, your application may be filtered out automatically.</p>
+                                            <p className="text-xs text-cyan-300/80">These exact words are in the job posting but missing from your CV. Recruiters search by these terms — if they&apos;re not there, your application may be filtered out automatically.</p>
                                         </div>
                                         <div className="flex flex-wrap gap-2">
                                             {results.topJobSignals.map(({ word, freq }, i) => (
@@ -807,7 +804,7 @@ export default function CVAnalyzer() {
                                             </h3>
                                             <span className="text-xs text-white/30">{results.missing.filter(m => SKILL_RESOURCES[m.key]).length} resources</span>
                                         </div>
-                                        <p className="text-xs text-white/40 mb-3">Curated for your skill gaps — sorted by priority in this role.</p>
+                                        <p className="text-xs text-cyan-300/80 mb-3">Curated for your skill gaps — sorted by priority in this role.</p>
                                         <div className="space-y-2">
                                             {results.missing
                                                 .filter(m => SKILL_RESOURCES[m.key])
@@ -895,7 +892,7 @@ export default function CVAnalyzer() {
 
                                 {/* Share CVXray */}
                                 <div className="text-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-250">
-                                    <p className="text-xs text-white/40 mb-2">Know someone job hunting? Share CVXray with them — it&apos;s free.</p>
+                                    <p className="text-xs text-cyan-300/80 mb-2">Know someone job hunting? Share CVXray with them — it&apos;s free.</p>
                                     <button
                                         type="button"
                                         onClick={() => {

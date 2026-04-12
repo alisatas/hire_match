@@ -32,7 +32,7 @@ export default function Home() {
               know
             </span>
           </h2>
-          <p className="text-white/50 text-sm">Quick answers about how CVXray works.</p>
+          <p className="text-cyan-300/80 text-sm">Quick answers about how CVXray works.</p>
         </div>
         <div className="space-y-3">
           {faqs.map((faq, i) => (
@@ -49,7 +49,7 @@ export default function Home() {
           ))}
         </div>
       </section>
-      <footer className="text-center py-10 border-t border-white/10 text-white/50 text-sm">
+      <footer className="text-center py-10 border-t border-white/10 text-cyan-300/80 text-sm">
         <p>&copy; 2026 CVXray — 100% private — nothing you upload is stored or shared.</p>
       </footer>
     </main>
