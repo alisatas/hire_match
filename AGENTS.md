@@ -106,19 +106,18 @@ If any agent returns 🔴, verdict is `🔴 BLOCKED — fix before pushing`.
 
 ---
 
-## Agent roles (for UI panel)
+## Agent roles
 
-These agents also power the `/agents` panel in the UI.
 Their full system prompts and file context are in `src/lib/agents-config.ts`.
 
-| Agent | UI Panel | Pre-Push Gate |
-|---|---|---|
-| CEO | ✅ | ❌ |
-| Product Manager | ✅ | ❌ |
-| QA Engineer | ✅ | ✅ |
-| Security Engineer | ✅ | ✅ |
-| Pen Tester | ✅ | ❌ |
-| API Engineer | ✅ | ✅ |
-| UI/UX Engineer | ✅ | ✅ |
-| SEO Specialist | ✅ | ❌ |
-| Browser QA | ✅ | ✅ |
+| Agent | Pre-Push Gate |
+|---|---|
+| CEO | ❌ |
+| Product Manager | ❌ |
+| QA Engineer | ✅ |
+| Security Engineer | ✅ |
+| Pen Tester | ❌ |
+| API Engineer | ✅ |
+| UI/UX Engineer | ✅ |
+| SEO Specialist | ❌ |
+| Browser QA | ✅ |
