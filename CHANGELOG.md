@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/alisatas/hire_match/compare/v1.2.2...v1.2.3) (2026-04-12)
+
+
+### Bug Fixes
+
+* show sample job context on hover and after loading ([bf5c875](https://github.com/alisatas/hire_match/commit/bf5c875c288996d61b2bf504c3ebfb67039bf0dd))
+
 ## [1.2.2](https://github.com/alisatas/hire_match/compare/v1.2.1...v1.2.2) (2026-04-12)
 
 
