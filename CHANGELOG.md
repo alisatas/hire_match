@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/alisatas/hire_match/compare/v1.8.0...v1.9.0) (2026-04-12)
+
+
+### Features
+
+* rocket animation on analyze, fix telegram /status domain, new FAQ entry ([0f8e074](https://github.com/alisatas/hire_match/commit/0f8e07415b3d632103dc6cc2e9edde8973b052df))
+
 # [1.8.0](https://github.com/alisatas/hire_match/compare/v1.7.0...v1.8.0) (2026-04-12)
 
 
