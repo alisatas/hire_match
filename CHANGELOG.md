@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/alisatas/hire_match/compare/v1.5.0...v1.6.0) (2026-04-12)
+
+
+### Features
+
+* add SEO as mandatory 6th pre-push gate agent ([5402626](https://github.com/alisatas/hire_match/commit/5402626eb84e0a0f2a71c2b4a450764ce5a1b4dd))
+
 # [1.5.0](https://github.com/alisatas/hire_match/compare/v1.4.3...v1.5.0) (2026-04-12)
 
 
