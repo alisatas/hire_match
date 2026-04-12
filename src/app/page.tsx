@@ -2,8 +2,8 @@ import CVAnalyzer from "@/components/features/cv-analyzer";
 
 const faqs = [
   {
-    q: "What's the best free ATS checker for my resume?",
-    a: "CVXray is a completely free ATS checker that instantly scores your resume against any job description. It detects missing keywords, analyzes skill gaps, and recommends courses to close them — no sign-up, no limits, no credit card.",
+    q: "What's the best free tool to check if my resume matches a job?",
+    a: "CVXray instantly scores your resume against any job description for free. It shows which skills you have, which keywords are missing, and recommends courses to close the gaps — no sign-up, no limits, no credit card.",
   },
   {
     q: "How do I check if my resume matches a job description?",

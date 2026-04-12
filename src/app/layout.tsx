@@ -20,18 +20,18 @@ const siteUrl = "https://cvxray.com";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "CVXray — Free Resume Matcher & ATS Checker (No Sign-Up)",
+    default: "CVXray — Free Resume Matcher & Keyword Checker (No Sign-Up)",
     template: "%s | CVXray",
   },
   description:
-    "Instantly score your CV against any job description. See matched skills, missing keywords, ATS gaps & courses to fill them. Free, private, no sign-up.",
+    "Instantly score your CV against any job description. See matched skills, missing keywords & courses to fill the gaps. Free, private, no sign-up.",
   keywords: [
     "cv matcher", "resume matcher", "job fit analyzer", "cv analyzer",
-    "resume scanner", "job match score", "ATS checker", "skill gap analysis",
+    "resume scanner", "job match score", "skill gap analysis",
     "resume keywords", "job description match", "cv match percentage",
     "free resume checker", "ai resume analyzer", "cv scoring tool",
     "resume to job match", "check resume against job description",
-    "free ats resume checker", "resume keyword checker", "cvxray",
+    "resume keyword checker", "cvxray",
     "cvxray", "cv xray", "resume xray",
   ],
   authors: [{ name: "CVXray" }],
@@ -86,7 +86,7 @@ export default function RootLayout({
         offers: { "@type": "Offer", price: "0", priceCurrency: "USD", availability: "https://schema.org/InStock" },
         featureList: [
           "CV to job description match scoring",
-          "ATS keyword gap analysis",
+          "Keyword gap analysis — see exactly what's missing from your CV",
           "40+ skill category detection",
           "Missing keyword identification",
           "Personalized course recommendations",
@@ -172,10 +172,10 @@ export default function RootLayout({
           },
           {
             "@type": "Question",
-            name: "What is an ATS checker and how does CVXray help?",
+            name: "How do I know which keywords to add to my CV?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "An ATS (Applicant Tracking System) checker scans your CV for keywords that match the job description. CVXray acts as a free ATS checker — it compares your resume against the job posting and highlights missing keywords so you can optimize your CV before applying.",
+              text: "CVXray shows you exactly which keywords from the job description are missing from your CV. Paste your CV and the job posting — CVXray highlights the missing words and skills so you can add them before applying.",
             },
           },
           {

@@ -282,7 +282,7 @@ function formatAnalysis(result: ReturnType<typeof analyze>): string {
         lines.push(`${icon} <b>Experience:</b> ${yearsOnCV}y on CV vs ${yearsRequired}y required`)
     }
     if (topJobSignals.length > 0) {
-        lines.push(`\n💡 <b>ATS keywords not on CV:</b> ${topJobSignals.map(s => `${s.word} (×${s.freq})`).join(", ")}`)
+        lines.push(`\n💡 <b>Missing job keywords:</b> ${topJobSignals.map(s => `${s.word} (×${s.freq})`).join(", ")}`)
     }
 
     return lines.join("\n")

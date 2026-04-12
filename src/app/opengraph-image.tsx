@@ -106,7 +106,7 @@ export default function OGImage() {
 
                 {/* Pills row */}
                 <div style={{ display: "flex", gap: "16px" }}>
-                    {["✓ 40+ Skill Categories", "✓ ATS Keyword Check", "✓ Free Forever"].map((text) => (
+                    {["✓ 40+ Skill Categories", "✓ Missing Keyword Check", "✓ Free Forever"].map((text) => (
                         <div
                             key={text}
                             style={{
