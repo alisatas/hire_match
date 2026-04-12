@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/alisatas/hire_match/compare/v1.2.0...v1.2.1) (2026-04-12)
+
+
+### Bug Fixes
+
+* remove Ko-fi button, keep PayPal only ([98f2a0c](https://github.com/alisatas/hire_match/commit/98f2a0c5ee2f319682550f9e4229b805d462b09d))
+
 # [1.2.0](https://github.com/alisatas/hire_match/compare/v1.1.0...v1.2.0) (2026-04-12)
 
 
