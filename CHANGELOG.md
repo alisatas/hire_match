@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/alisatas/hire_match/compare/v1.7.0...v1.8.0) (2026-04-12)
+
+
+### Features
+
+* fix H1/H2 heading hierarchy and add long-tail SEO queries to llms.txt ([c6b4569](https://github.com/alisatas/hire_match/commit/c6b45690cd9dbd865521cecdeb0e057f53020d07))
+
 # [1.7.0](https://github.com/alisatas/hire_match/compare/v1.6.0...v1.7.0) (2026-04-12)
 
 
