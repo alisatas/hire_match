@@ -73,7 +73,7 @@ const SAMPLE_JOBS = [
     {
         label: "Frontend Dev",
         emoji: "🎨",
-        desc: "React, TypeScript, Next.js — Amsterdam (Hybrid)",
+        desc: "React, TypeScript, Next.js, Tailwind, GraphQL, Jest, CI/CD",
         text: `Frontend Developer — Amsterdam (Hybrid)
 
 We are looking for a skilled Frontend Developer to join our product team. You will build responsive, performant web applications used by thousands of users daily.
@@ -98,7 +98,7 @@ We offer a competitive salary, flexible hybrid work, and a collaborative team cu
     {
         label: "Backend Engineer",
         emoji: "⚙️",
-        desc: "Node.js, Python, PostgreSQL, AWS — Remote (EU)",
+        desc: "Node.js, Python, PostgreSQL, AWS, Docker, Kubernetes, Redis, Terraform",
         text: `Backend Engineer — Remote (EU)
 
 Join our engineering team to design and build scalable backend services powering our SaaS platform.
@@ -124,7 +124,7 @@ We're a fully remote team with async-first culture and 5+ years of runway.`,
     {
         label: "Data Analyst",
         emoji: "📊",
-        desc: "SQL, Python, Tableau, BigQuery — Utrecht, NL",
+        desc: "SQL, Python, Pandas, Tableau, Power BI, BigQuery, Redshift, A/B Testing",
         text: `Data Analyst — Utrecht, Netherlands
 
 We're looking for a data-driven analyst to turn complex datasets into actionable insights for our growth and product teams.
