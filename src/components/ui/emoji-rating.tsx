@@ -76,7 +76,7 @@ export function RatingInteraction({ onChange, className }: RatingInteractionProp
             displayRating > 0 ? "opacity-0 blur-md scale-95" : "opacity-100 blur-0 scale-100",
           )}
         >
-          <span className="text-sm font-medium text-muted-foreground">Rate us</span>
+          <span className="text-sm font-semibold text-cyan-200/80">Rate us</span>
         </div>
 
         {/* Rating labels with blur in/out effect */}

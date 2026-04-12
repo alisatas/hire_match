@@ -246,8 +246,12 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
     // We weight each matched keyword by its frequency, capped to avoid outliers.
     let totalKwWeight = 0
     let matchedKwWeight = 0
+    // Adaptive cap: longer JDs naturally repeat keywords more without implying greater importance.
+    // Scale cap with JD length so short JDs stay strict, long JDs reward genuinely dense terms.
+    // e.g. 300-word JD → cap 4, 600-word → cap 5, 1500-word → cap 10
+    const keywordFreqCap = Math.ceil(Math.max(4, jobWordCount / 150))
     for (const [word, freq] of jobFreq.entries()) {
-        const weight = Math.min(freq, 5) // cap at 5 to prevent runaway terms
+        const weight = Math.min(freq, keywordFreqCap) // adaptive cap scales with JD length
         totalKwWeight += weight
         if (cvKeywords.has(word)) matchedKwWeight += weight
     }
@@ -258,7 +262,10 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
     let expScore = 0.65 // neutral default when no requirement stated
     if (yearsRequired > 0) {
         if (yearsOnCV === 0) {
-            expScore = 0.40 // no years on CV, can't assess
+            // Math Prof improvement: raised from 0.40 → 0.50. "0 years on CV" more likely means
+            // the person didn't write their years explicitly than that they have no experience.
+            // 0.50 (neutral) avoids unfairly penalising candidates who omit years from their CV.
+            expScore = 0.50 // unknown experience, not confirmed absence of experience
         } else {
             const ratio = yearsOnCV / yearsRequired
             // sigmoid-like mapping: overshooting is capped at 1.0

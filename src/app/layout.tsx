@@ -90,6 +90,7 @@ export default function RootLayout({
           "40+ skill category detection",
           "Missing keyword identification",
           "Personalized course recommendations",
+          "Company Insights — company name, culture signals, and real interview resources",
           "LinkedIn job URL auto-scraping",
           "PDF resume upload support",
           "No sign-up required",

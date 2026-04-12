@@ -19,6 +19,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { analyze, type AnalysisResult } from "@/lib/analyze"
+import { extractCompanyName, extractCultureSignals, getInterviewLinks } from "@/lib/insights"
 
 // ─────────────────────────────────────────────
 // SKILL RESOURCES (UI-only: links for missing skills)
@@ -251,8 +252,11 @@ export default function CVAnalyzer() {
     const [pdfStatus, setPdfStatus] = useState("")
     const [error, setError] = useState("")
     const [showCvPaste, setShowCvPaste] = useState(false)
-    const [copied, setCopied] = useState(false)
+
     const [history, setHistory] = useState<{ score: number; label: string; matched: number; missing: number; date: string }[]>([])
+    const [interviewResults, setInterviewResults] = useState<{ title: string; snippet: string; url: string; source: string }[]>([])
+    const [interviewLoading, setInterviewLoading] = useState(false)
+    const [scrapedCompanyName, setScrapedCompanyName] = useState("")
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
@@ -261,6 +265,19 @@ export default function CVAnalyzer() {
             if (stored) setHistory(JSON.parse(stored))
         } catch { /* ignore */ }
     }, [])
+
+    useEffect(() => {
+        if (!results || !jobText) return
+        const company = scrapedCompanyName || extractCompanyName(jobText)
+        if (!company) return
+        setInterviewResults([])
+        setInterviewLoading(true)
+        fetch(`/api/interview-questions?company=${encodeURIComponent(company)}`)
+            .then(r => r.json())
+            .then(data => { setInterviewResults(data.results ?? []) })
+            .catch(() => {})
+            .finally(() => setInterviewLoading(false))
+    }, [results, jobText, scrapedCompanyName])
 
     const processPdf = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -305,6 +322,7 @@ export default function CVAnalyzer() {
             const data = await res.json()
             if (data.text && data.text.length > 50) {
                 setJobText(data.text)
+                setScrapedCompanyName(data.companyName || "")
                 setFetchStatus("✓ Job post fetched")
             } else {
                 setFetchStatus("Could not fetch — paste the text below")
@@ -338,6 +356,7 @@ export default function CVAnalyzer() {
                 if (data.text && data.text.length > 50) {
                     effectiveJobText = data.text
                     setJobText(data.text)
+                    setScrapedCompanyName(data.companyName || "")
                     setFetchStatus("✓ Job post fetched")
                 } else {
                     setFetchStatus("Could not fetch — paste the text below")
@@ -383,6 +402,7 @@ export default function CVAnalyzer() {
         setJobText("")
         setJobInput("")
         setJobUrl("")
+        setScrapedCompanyName("")
         setFetchStatus("")
         setError("")
         // NOTE: results intentionally NOT cleared — stays visible until new analysis runs
@@ -403,10 +423,10 @@ export default function CVAnalyzer() {
     return (
         <div className="container mx-auto px-4 py-8 md:py-12">
             <header className="flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
-                <div className="flex items-center gap-3">
+                <a href="https://cvxray.com" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                     <Sparkles className="text-primary h-8 w-8" />
                     <span className="text-2xl font-bold tracking-tight text-white">CVXray</span>
-                </div>
+                </a>
             </header>
 
             <section className="text-center mb-8 animate-in fade-in slide-in-from-bottom-6 duration-1000">
@@ -510,7 +530,7 @@ export default function CVAnalyzer() {
                                     className="flex-1 bg-transparent py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none"
                                     placeholder="https://linkedin.com/jobs/..."
                                     value={jobInput}
-                                    onChange={(e) => { setJobInput(e.target.value); setJobText(""); setFetchStatus(""); if (e.target.value.startsWith("http")) setJobUrl(e.target.value); }}
+                                    onChange={(e) => { setJobInput(e.target.value); setJobText(""); setFetchStatus(""); setScrapedCompanyName(""); if (e.target.value.startsWith("http")) setJobUrl(e.target.value); }}
                                     onKeyDown={(e) => e.key === "Enter" && e.currentTarget.value.trim().startsWith("http") && fetchJobPost()}
                                     onBlur={() => jobInput && !jobInput.trim().startsWith("http") && setError("Please paste a valid job URL (must start with https://)")}
                                     onFocus={() => setError("")}
@@ -550,7 +570,7 @@ export default function CVAnalyzer() {
                                                     setFetchStatus(`✓ ${job.label} sample loaded`)
                                                     setError("")
                                                 }}
-                                                className="group px-3 py-1.5 text-xs font-semibold bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-500/40 text-cyan-300 rounded-full transition-all flex items-center gap-1.5"
+                                                className="group px-3 py-2.5 text-xs font-semibold bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-500/40 text-cyan-300 rounded-full transition-all flex items-center gap-1.5"
                                             >
                                                 {job.emoji} {job.label}
                                                 <span className="text-cyan-500/50 text-[10px] group-hover:text-cyan-400 transition-colors">↓</span>
@@ -718,105 +738,112 @@ export default function CVAnalyzer() {
                                     </div>
                                 )}
 
-                                {/* Matched Skills */}
-                                <div>
-                                    <h3 className="flex items-center gap-2 text-sm font-semibold text-cyan-300 mb-3">
-                                        <Cpu className="h-4 w-4" /> Matched Skills
-                                    </h3>
-                                    <div className="flex flex-wrap gap-2">
-                                        {results.matched.length > 0 ? results.matched.map((s, i) => (
-                                            <span key={i} className="px-3 py-1 bg-cyan-500/20 text-cyan-200 rounded-full text-xs font-medium">
-                                                {s}
-                                            </span>
-                                        )) : (
-                                            <span className="text-xs text-white/50 italic">No matched skills found.</span>
-                                        )}
-                                    </div>
-                                </div>
+                                {/* Skills card */}
+                                <div className="rounded-2xl border border-cyan-500/15 bg-gradient-to-br from-cyan-950/30 via-slate-900/60 to-teal-950/20 p-4 space-y-5">
 
-                                {/* Skills to Add */}
-                                <div>
-                                    <h3 className="flex items-center gap-2 text-sm font-semibold text-teal-300 mb-3">
-                                        <Shield className="h-4 w-4" /> Skills to Add
-                                    </h3>
-                                    <div className="flex flex-wrap gap-2">
-                                        {results.missing.length > 0 ? results.missing.map((s, i) => (
-                                            <span
-                                                key={i}
-                                                className={cn(
-                                                    "px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5",
-                                                    s.priority === "high" ? "bg-rose-500/25 text-rose-200" :
-                                                    s.priority === "medium" ? "bg-amber-500/20 text-amber-200" :
-                                                    "bg-teal-500/15 text-teal-200"
-                                                )}
-                                            >
-                                                <span className="w-1.5 h-1.5 rounded-full shrink-0"
-                                                    style={{ background: s.priority === "high" ? "#f87171" : s.priority === "medium" ? "#fbbf24" : "#5eead4" }}
-                                                />
-                                                {s.label}
-                                            </span>
-                                        )) : (
-                                            <span className="text-xs text-cyan-300/70 italic">Great coverage — no major gaps!</span>
+                                    {/* Matched Skills */}
+                                    <div>
+                                        <h3 className="flex items-center gap-2 text-sm font-semibold text-cyan-300 mb-3">
+                                            <Cpu className="h-4 w-4" /> Matched Skills
+                                        </h3>
+                                        <div className="flex flex-wrap gap-2">
+                                            {results.matched.length > 0 ? results.matched.map((s, i) => (
+                                                <span key={i} className="px-3 py-1 bg-cyan-500/20 text-cyan-200 rounded-full text-xs font-medium">
+                                                    {s}
+                                                </span>
+                                            )) : (
+                                                <span className="text-xs text-white/50 italic">No matched skills found.</span>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="border-t border-white/5" />
+
+                                    {/* Skills to Add */}
+                                    <div>
+                                        <h3 className="flex items-center gap-2 text-sm font-semibold text-teal-300 mb-3">
+                                            <Shield className="h-4 w-4" /> Skills to Add
+                                        </h3>
+                                        <div className="flex flex-wrap gap-2">
+                                            {results.missing.length > 0 ? results.missing.map((s, i) => (
+                                                <span
+                                                    key={i}
+                                                    className={cn(
+                                                        "px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5",
+                                                        s.priority === "high" ? "bg-rose-500/25 text-rose-200" :
+                                                        s.priority === "medium" ? "bg-amber-500/20 text-amber-200" :
+                                                        "bg-teal-500/15 text-teal-200"
+                                                    )}
+                                                >
+                                                    <span className="w-1.5 h-1.5 rounded-full shrink-0"
+                                                        style={{ background: s.priority === "high" ? "#f87171" : s.priority === "medium" ? "#fbbf24" : "#5eead4" }}
+                                                    />
+                                                    {s.label}
+                                                </span>
+                                            )) : (
+                                                <span className="text-xs text-cyan-300/70 italic">Great coverage — no major gaps!</span>
+                                            )}
+                                        </div>
+                                        {results.missing.some(m => m.priority !== "low") && (
+                                            <p className="text-xs mt-2 flex items-center gap-2 flex-wrap">
+                                                <span className="flex items-center gap-1"><span className="text-rose-400">●</span><span className="text-white/60">High priority</span></span>
+                                                <span className="text-white/20">·</span>
+                                                <span className="flex items-center gap-1"><span className="text-amber-400">●</span><span className="text-white/60">Mentioned</span></span>
+                                                <span className="text-white/20">·</span>
+                                                <span className="flex items-center gap-1"><span className="text-teal-400">●</span><span className="text-white/60">Nice to have</span></span>
+                                            </p>
                                         )}
                                     </div>
-                                    {results.missing.some(m => m.priority !== "low") && (
-                                        <p className="text-xs text-white/60 mt-2">● High priority · ● Mentioned · ● Nice to have</p>
+
+                                    {/* Job-specific keywords */}
+                                    {results.topJobSignals.length > 0 && (
+                                        <>
+                                            <div className="border-t border-white/5" />
+                                            <div>
+                                                <div className="mb-3">
+                                                    <h3 className="text-sm font-semibold text-teal-300 mb-0.5">Words the Recruiter Is Looking For</h3>
+                                                    <p className="text-xs text-cyan-300/80">These exact words are in the job posting but missing from your CV. Recruiters search by these terms — if they&apos;re not there, your application may be filtered out automatically.</p>
+                                                </div>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {results.topJobSignals.map(({ word, freq }, i) => (
+                                                        <span
+                                                            key={i}
+                                                            className={`px-3 py-1.5 rounded-full text-xs font-medium border ${
+                                                                freq >= 3
+                                                                    ? "bg-red-500/10 border-red-500/25 text-red-300"
+                                                                    : freq === 2
+                                                                    ? "bg-amber-500/10 border-amber-500/25 text-amber-300"
+                                                                    : "bg-teal-500/10 border-teal-500/20 text-teal-200"
+                                                            }`}
+                                                        >
+                                                            {word}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                                <p className="text-xs text-white/60 mt-2 flex items-center gap-3 flex-wrap">
+                                                    <span className="flex items-center gap-1"><span className="text-red-400">■</span> Used often</span>
+                                                    <span className="flex items-center gap-1"><span className="text-amber-400">■</span> Used sometimes</span>
+                                                    <span className="flex items-center gap-1"><span className="text-teal-400">■</span> Used once</span>
+                                                </p>
+                                            </div>
+                                        </>
                                     )}
                                 </div>
 
-                                {/* Job-specific keywords */}
-                                {results.topJobSignals.length > 0 && (
-                                    <div>
-                                        <div className="mb-3">
-                                            <h3 className="text-sm font-semibold text-teal-300 mb-0.5">Words the Recruiter Is Looking For</h3>
-                                            <p className="text-xs text-cyan-300/80">These exact words are in the job posting but missing from your CV. Recruiters search by these terms — if they&apos;re not there, your application may be filtered out automatically.</p>
-                                        </div>
-                                        <div className="flex flex-wrap gap-2">
-                                            {results.topJobSignals.map(({ word, freq }, i) => (
-                                                <span
-                                                    key={i}
-                                                    className={`px-3 py-1.5 rounded-full text-xs font-medium border ${
-                                                        freq >= 3
-                                                            ? "bg-red-500/10 border-red-500/25 text-red-300"
-                                                            : freq === 2
-                                                            ? "bg-amber-500/10 border-amber-500/25 text-amber-300"
-                                                            : "bg-teal-500/10 border-teal-500/20 text-teal-200"
-                                                    }`}
-                                                >
-                                                    {word}
-                                                </span>
-                                            ))}
-                                        </div>
-                                        <p className="text-[10px] text-white/25 mt-2">
-                                            <span className="text-red-400/60">■</span> Used often in the job posting &nbsp;
-                                            <span className="text-amber-400/60">■</span> Used sometimes &nbsp;
-                                            <span className="text-teal-400/60">■</span> Used once
-                                        </p>
-                                    </div>
-                                )}
-
-                                {/* How to Improve */}
+                                {/* Recommended Training */}
                                 {results.missing.length > 0 && (
                                     <div>
-                                        <div className="flex items-center justify-between mb-1">
-                                            <h3 className="flex items-center gap-2 text-sm font-semibold text-cyan-300">
-                                                <BookOpen className="h-4 w-4" /> Recommended Training
-                                            </h3>
-                                            <span className="text-xs text-white/30">{results.missing.filter(m => SKILL_RESOURCES[m.key]).length} resources</span>
-                                        </div>
-                                        <p className="text-xs text-cyan-300/80 mb-3">Curated for your skill gaps — sorted by priority in this role.</p>
-                                        <div className="space-y-2">
+                                        <h3 className="flex items-center gap-2 text-sm font-semibold text-cyan-300 mb-2">
+                                            <BookOpen className="h-4 w-4" /> Recommended Training
+                                        </h3>
+                                        <p className="text-xs text-cyan-200/80 mb-3">Courses & guides for your skill gaps — sorted by priority.</p>
+                                        <div className="space-y-1.5">
                                             {results.missing
                                                 .filter(m => SKILL_RESOURCES[m.key])
                                                 .slice(0, 6)
                                                 .map((m, i) => {
                                                     const resource = SKILL_RESOURCES[m.key]
-                                                    const typeColor = resource.type === "certification"
-                                                        ? "bg-violet-500/15 text-violet-300 border-violet-500/20"
-                                                        : resource.type === "course"
-                                                        ? "bg-blue-500/15 text-blue-300 border-blue-500/20"
-                                                        : "bg-white/5 text-white/40 border-white/10"
-                                                    const priorityBar = m.priority === "high"
+                                                    const priorityColor = m.priority === "high"
                                                         ? "bg-red-500"
                                                         : m.priority === "medium"
                                                         ? "bg-amber-500"
@@ -827,31 +854,12 @@ export default function CVAnalyzer() {
                                                             href={resource.url}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
-                                                            className="flex items-center gap-3 px-4 py-3 bg-cyan-500/5 hover:bg-cyan-500/10 border border-white/8 hover:border-cyan-500/25 rounded-xl transition-colors group"
+                                                            className="flex min-w-0 items-center gap-2.5 px-3 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-cyan-500/10 hover:border-cyan-500/30 transition-all group"
                                                         >
-                                                            <div className={`w-1 self-stretch rounded-full shrink-0 ${priorityBar}`} />
-                                                            <div className="flex-1 min-w-0">
-                                                                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                                                    <span className="text-xs font-semibold text-white/70">{m.label}</span>
-                                                                    {m.freq > 0 && (
-                                                                        <span className="text-[10px] text-white/30">mentioned {m.freq}× in job</span>
-                                                                    )}
-                                                                </div>
-                                                                <p className="text-sm text-white/85 group-hover:text-white transition-colors truncate">{resource.label}</p>
-                                                                <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                                                                    <span className="text-[10px] text-white/35">{resource.platform}</span>
-                                                                    <span className="text-white/15">·</span>
-                                                                    <span className="text-[10px] text-white/35">{resource.duration}</span>
-                                                                    <span className="text-white/15">·</span>
-                                                                    <span className={`text-[10px] font-semibold ${resource.free ? "text-emerald-400/70" : "text-white/30"}`}>
-                                                                        {resource.free ? "Free" : "Paid"}
-                                                                    </span>
-                                                                    <span className={`text-[10px] px-1.5 py-0.5 rounded border ${typeColor} capitalize ml-auto`}>
-                                                                        {resource.type}
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                            <ExternalLink className="h-3.5 w-3.5 text-cyan-400/40 group-hover:text-cyan-300 shrink-0" />
+                                                            <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${priorityColor}`} />
+                                                            <span className="shrink-0 text-[10px] font-bold text-cyan-400/70 uppercase tracking-wider w-16 truncate">{m.label}</span>
+                                                            <span className="min-w-0 text-xs text-white/80 group-hover:text-cyan-300 transition-colors truncate flex-1">{resource.label}</span>
+                                                            <ExternalLink className="shrink-0 w-3 h-3 text-white/30 group-hover:text-cyan-400 transition-colors" />
                                                         </a>
                                                     )
                                                 })
@@ -875,61 +883,114 @@ export default function CVAnalyzer() {
                                             <p className="text-sm text-white/70 font-semibold mb-5">
                                                 Helped you land an interview? Support the creator ❤️
                                             </p>
-                                            <div className="flex flex-col sm:flex-row gap-3 w-full max-w-xs">
-                                                <Button
-                                                    className="flex-1 bg-[#003087] hover:bg-[#001f5e] text-white font-extrabold text-sm shadow-xl shadow-blue-900/40 transition-all active:scale-95 flex items-center justify-center gap-2 rounded-2xl h-12"
-                                                    onClick={() => window.open("https://www.paypal.com/ncp/payment/6YEN62KUUHH4Y", "_blank")}
-                                                >
-                                                    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                                                        <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/>
-                                                    </svg>
-                                                    PayPal
-                                                </Button>
-                                            </div>
+                                            {/* PayPal-style Pay Now widget */}
+                                            <button
+                                                onClick={() => window.open("https://www.paypal.com/ncp/payment/PJQ645FWEKYAU", "_blank")}
+                                                className="w-full rounded-2xl overflow-hidden shadow-xl active:scale-95 transition-transform"
+                                            >
+                                                {/* Pay Now button */}
+                                                <div className="bg-[#FFC439] hover:bg-[#f0b429] transition-colors px-6 py-3.5 flex items-center justify-center">
+                                                    <span className="text-[#003087] font-black text-base tracking-wide">Pay Now</span>
+                                                </div>
+                                                {/* Payment methods bar */}
+                                                <div className="bg-white px-4 py-2.5 flex flex-col items-center gap-1.5">
+                                                    <div className="flex items-center gap-2">
+                                                        {/* PayPal icon */}
+                                                        <svg viewBox="0 0 24 24" className="h-5 w-auto" fill="none">
+                                                            <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788l.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z" fill="#003087"/>
+                                                        </svg>
+                                                        {/* Visa */}
+                                                        <svg viewBox="0 0 48 16" className="h-4 w-auto" fill="none">
+                                                            <rect width="48" height="16" rx="3" fill="#1A1F71"/>
+                                                            <text x="50%" y="12" textAnchor="middle" fill="white" fontWeight="bold" fontSize="10" fontFamily="Arial">VISA</text>
+                                                        </svg>
+                                                        {/* Mastercard */}
+                                                        <svg viewBox="0 0 38 24" className="h-5 w-auto">
+                                                            <circle cx="14" cy="12" r="10" fill="#EB001B"/>
+                                                            <circle cx="24" cy="12" r="10" fill="#F79E1B"/>
+                                                            <path d="M19 5.27a10 10 0 0 1 0 13.46A10 10 0 0 1 19 5.27z" fill="#FF5F00"/>
+                                                        </svg>
+                                                        <span className="text-[11px] text-gray-500 font-medium">+more</span>
+                                                    </div>
+                                                    <p className="text-[10px] text-gray-400">Powered by <span className="font-bold text-[#003087]">PayPal</span></p>
+                                                </div>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Share CVXray */}
-                                <div className="text-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-250">
-                                    <p className="text-xs text-cyan-300/80 mb-2">Know someone job hunting? Share CVXray with them — it&apos;s free.</p>
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            const text = "https://cvxray.com"
-                                            const tryClipboard = async () => {
-                                                try {
-                                                    await navigator.clipboard.writeText(text)
-                                                    setCopied(true)
-                                                    setTimeout(() => setCopied(false), 2000)
-                                                } catch {
-                                                    const el = document.createElement("textarea")
-                                                    el.value = text
-                                                    el.style.position = "fixed"
-                                                    el.style.opacity = "0"
-                                                    document.body.appendChild(el)
-                                                    el.focus()
-                                                    el.select()
-                                                    document.execCommand("copy")
-                                                    document.body.removeChild(el)
-                                                    setCopied(true)
-                                                    setTimeout(() => setCopied(false), 2000)
-                                                }
-                                            }
-                                            tryClipboard()
-                                        }}
-                                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-500/40 text-cyan-300 text-sm font-bold transition-all active:scale-95"
-                                    >
-                                        {copied ? "✓ Link copied!" : "🔗 Share CVXray"}
-                                    </button>
-                                </div>
+                                {/* Company Insights */}
+                                {jobText && (() => {
+                                    const company = scrapedCompanyName || extractCompanyName(jobText)
+                                    const culture = extractCultureSignals(jobText)
+                                    if (!company && culture.length === 0) return null
+                                    return (
+                                        <div className="rounded-2xl border border-teal-500/20 bg-gradient-to-br from-teal-950/40 via-slate-900/60 to-cyan-950/30 p-4 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                                            {/* Card header */}
+                                            <div className="flex items-center gap-2 min-w-0">
+                                                <div className="flex shrink-0 items-center justify-center w-7 h-7 rounded-lg bg-teal-500/15 border border-teal-500/25 text-base">🏢</div>
+                                                <div className="min-w-0">
+                                                    <p className="text-[10px] font-semibold text-teal-400/70 uppercase tracking-widest">Company Insights</p>
+                                                    {company && <p className="text-sm font-bold text-white leading-tight truncate">{company}</p>}
+                                                </div>
+                                            </div>
+
+                                            {/* Culture signals */}
+                                            {culture.length > 0 && (
+                                                <div>
+                                                    <p className="text-xs text-cyan-200/90 mb-2 font-semibold">Culture signals</p>
+                                                    <div className="flex flex-wrap gap-1.5">
+                                                        {culture.map(({ label, color }) => (
+                                                            <span key={label} className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${color}`}>
+                                                                {label}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Interview resources */}
+                                            {company && (
+                                                <div>
+                                                    <p className="text-xs text-cyan-200/90 mb-2 font-semibold">Interview resources</p>
+                                                    {interviewLoading && (
+                                                        <p className="text-xs text-white/40 animate-pulse">Searching the web…</p>
+                                                    )}
+                                                    {!interviewLoading && interviewResults.length === 0 && (
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {getInterviewLinks(company).map(({ label, url, icon, color }) => (
+                                                                <a key={label} href={url} target="_blank" rel="noopener noreferrer"
+                                                                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${color}`}>
+                                                                    {icon} {label}
+                                                                </a>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                    {!interviewLoading && interviewResults.length > 0 && (
+                                                        <div className="space-y-1.5">
+                                                            {interviewResults.map((result, i) => (
+                                                                <a key={i} href={result.url} target="_blank" rel="noopener noreferrer"
+                                                                    className="flex min-w-0 items-center gap-2.5 px-3 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-teal-500/10 hover:border-teal-500/30 transition-all group">
+                                                                    <span className="shrink-0 text-[10px] font-bold text-teal-400/70 uppercase tracking-wider w-16 truncate">{result.source}</span>
+                                                                    <span className="min-w-0 text-xs text-white/80 group-hover:text-teal-300 transition-colors truncate flex-1">{result.title}</span>
+                                                                    <ExternalLink className="shrink-0 w-3 h-3 text-white/30 group-hover:text-teal-400 transition-colors" />
+                                                                </a>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )
+                                })()}
 
                                 {/* Emoji Rating */}
-                                <div className="pt-6 border-t border-border/30 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 flex flex-col items-center">
-                                    <p className="text-sm font-black mb-5 text-white/80 uppercase tracking-widest">
-                                        How accurate was this analysis?
-                                    </p>
-                                    <RatingInteraction />
+                                <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+                                    <div className="rounded-2xl border border-cyan-500/20 bg-gradient-to-br from-cyan-950/40 via-slate-900/60 to-teal-950/20 p-5 flex flex-col items-center text-center">
+<p className="text-base font-bold text-white mb-1">🎯 Rate this analysis</p>
+                                        <p className="text-xs text-cyan-200/70 mb-4">Was the match score accurate for this role?</p>
+                                        <RatingInteraction />
+                                    </div>
                                 </div>
                             </div>
                             </div>

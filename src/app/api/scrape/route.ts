@@ -1,5 +1,32 @@
 import { NextResponse } from 'next/server';
 
+export function extractCompanyFromHtml(html: string): string {
+    // LinkedIn: <title>Company Name hiring Job Title ... | LinkedIn</title>
+    const titleHiringMatch = html.match(/<title[^>]*>([^<]{2,80}?)\s+(?:is\s+)?hiring\s+[^|<]+[|<]/i)
+    if (titleHiringMatch) return titleHiringMatch[1].trim()
+
+    // LinkedIn: <title>Job Title at Company Name | LinkedIn</title>
+    const titleAtMatch = html.match(/<title[^>]*>[^<]*?\bat\s+([^|<]{2,60}?)\s*[|<]/i)
+    if (titleAtMatch) return titleAtMatch[1].trim()
+
+    // LinkedIn: org-name span/link
+    const orgMatch = html.match(/class="[^"]*topcard__org-name[^"]*"[^>]*>\s*([^<]{2,60}?)\s*</i)
+    if (orgMatch) return orgMatch[1].trim()
+
+    // Generic: "Company:" label in structured data
+    const companyMatch = html.match(/"hiringOrganization"\s*:\s*\{[^}]*"name"\s*:\s*"([^"]{2,60})"/i)
+    if (companyMatch) return companyMatch[1].trim()
+
+    // og:site_name or og:title
+    const ogTitle = html.match(/<meta[^>]+property="og:title"[^>]+content="([^"]+)"/i)
+    if (ogTitle) {
+        const atMatch = ogTitle[1].match(/\bat\s+([^|•·\-]{2,60}?)(?:\s*[|•·\-]|$)/i)
+        if (atMatch) return atMatch[1].trim()
+    }
+
+    return ""
+}
+
 function normalizeLinkedInUrl(url: string): string {
     try {
         const parsed = new URL(url);
@@ -97,13 +124,14 @@ export async function POST(req: Request) {
         if (html.length > 2 * 1024 * 1024) {
             return NextResponse.json({ requiresPaste: true }, { status: 422 });
         }
+        const companyName = extractCompanyFromHtml(html);
         const text = stripHtml(html);
 
         if (text.length < 100) {
             return NextResponse.json({ requiresPaste: true }, { status: 422 });
         }
 
-        return NextResponse.json({ text });
+        return NextResponse.json({ text, companyName: companyName || undefined });
 
     } catch (error: unknown) {
         console.error("Scraper API Error:", error instanceof Error ? error.message : error);
