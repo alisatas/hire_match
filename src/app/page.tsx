@@ -25,6 +25,10 @@ const faqs = [
     q: "How long does it take to get my CV match score?",
     a: "Instantly — results appear in seconds. There is no upload, no waiting queue, and no email required. CVXray runs the entire analysis inside your browser the moment you click Analyze.",
   },
+  {
+    q: "Does CVXray work on mobile?",
+    a: "Yes. CVXray is fully mobile-friendly. You can upload a PDF CV from your phone, paste a job URL, and get your match score on any device. PDF text extraction runs directly in your mobile browser — no app needed.",
+  },
 ];
 
 export default function Home() {

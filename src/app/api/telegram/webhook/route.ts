@@ -136,7 +136,7 @@ async function handleCommand(chatId: number, text: string) {
         }
         const deployments = await getDeployments()
         const msg = deployments
-            ? `<b>Recent Deployments</b>\n\n${formatDeployments(deployments)}`
+            ? `🌐 <b>Production:</b> https://cvxray.com\n\n<b>Recent Deployments</b>\n\n${formatDeployments(deployments)}`
             : "Failed to fetch deployments. Check VERCEL_TOKEN."
         await sendMessage(chatId, msg)
         return

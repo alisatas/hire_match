@@ -275,10 +275,15 @@ export default function CVAnalyzer() {
         try {
             const arrayBuffer = await file.arrayBuffer()
             const pdfjsLib = await import("pdfjs-dist")
-            pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+            // Set worker — use absolute URL so it works in in-app browsers (Telegram, etc.)
+            const workerUrl = new URL(
                 "pdfjs-dist/build/pdf.worker.min.mjs",
                 import.meta.url
             ).toString()
+            // In-app browsers may block blob workers; ensure absolute origin URL
+            pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl.startsWith("blob:")
+                ? `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`
+                : workerUrl
 
             const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) }).promise
             const pageTexts = await Promise.all(
@@ -545,7 +550,7 @@ export default function CVAnalyzer() {
 
                             {fetchStatus && (
                                 <p className={cn(
-                                    "text-xs font-semibold",
+                                    "text-xs font-semibold break-words",
                                     fetchStatus.startsWith("✓") ? "text-emerald-400" : "text-white/60"
                                 )}>{fetchStatus}</p>
                             )}
@@ -565,7 +570,7 @@ export default function CVAnalyzer() {
                                                 onClick={() => {
                                                     setJobInput("")
                                                     setJobText(job.text)
-                                                    setFetchStatus(`✓ Sample loaded: ${job.label} · ${job.desc}`)
+                                                    setFetchStatus(`✓ ${job.label} sample loaded`)
                                                     setError("")
                                                 }}
                                                 className="group px-3 py-1.5 text-xs font-semibold bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-500/40 text-cyan-300 rounded-full transition-all flex items-center gap-1.5"

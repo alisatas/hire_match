@@ -277,8 +277,10 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
     const missingCriticalRatio = criticalTotal.length > 0
         ? criticalMissing.length / criticalTotal.length
         : 0
-    // Penalty: 0 when nothing critical missing, up to -8 when all critical skills missing
-    const coveragePenalty = missingCriticalRatio * 8
+    // Math Prof improvement: exponential penalty curve — partial misses are penalised
+    // less than linear would suggest (e.g. missing 50% of critical skills → 35% penalty,
+    // not 50%). Only a near-total critical-skill absence triggers the full -8 hit.
+    const coveragePenalty = Math.pow(missingCriticalRatio, 1.5) * 8
 
     // ── 8. Composite Score ───────────────────────────────────────────────────
     // Weights: Skills 50% (most important), Keywords 35%, Experience 15%
