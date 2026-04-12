@@ -63,6 +63,7 @@ const STOP_WORDS = new Set([
     "including","ensure","provide","develop","working","related","required","responsibilities",
     "opportunity","position","candidate","candidates","company","business","level","years",
     "year","knowledge","ability","excellent","great","new","high","part","time","full","plus",
+    "nice","have","need","want","like","take","give","seek","love","passion","drive","fast",
 ])
 
 export function getSkillLabel(key: string): string {
@@ -98,9 +99,38 @@ function extractSkills(text: string): Set<string> {
     return found
 }
 
-function extractKeywords(text: string): Set<string> {
+// Frequency map: how many times each alias of a skill group appears in text
+function extractSkillFrequencies(text: string): Map<string, number> {
+    const normalized = normalizeText(text)
+    const freq = new Map<string, number>()
+    for (const [key, aliases] of Object.entries(SKILL_GROUPS)) {
+        let count = 0
+        for (const alias of aliases) {
+            // count non-overlapping occurrences
+            let pos = 0
+            while ((pos = normalized.indexOf(alias, pos)) !== -1) {
+                count++
+                pos += alias.length
+            }
+        }
+        if (count > 0) freq.set(key, count)
+    }
+    return freq
+}
+
+function extractKeywordFrequencies(text: string): Map<string, number> {
     const words = text.toLowerCase().match(/\b[a-z][a-z0-9+#.]{2,}\b/g) || []
-    return new Set(words.filter(w => !STOP_WORDS.has(w) && w.length > 3))
+    const freq = new Map<string, number>()
+    for (const w of words) {
+        if (!STOP_WORDS.has(w) && w.length > 3) {
+            freq.set(w, (freq.get(w) || 0) + 1)
+        }
+    }
+    return freq
+}
+
+function extractKeywords(text: string): Set<string> {
+    return new Set(extractKeywordFrequencies(text).keys())
 }
 
 function extractYearsRequired(text: string): number {
@@ -113,17 +143,6 @@ function extractYearsFromCV(text: string): number {
     const matches = text.match(/(\d+)\+?\s*years?\s*(of\s*)?(experience|exp)/gi) || []
     const years = matches.map(m => parseInt(m)).filter(n => !isNaN(n))
     return years.length > 0 ? Math.max(...years) : 0
-}
-
-function extractKeywordFrequencies(text: string): Map<string, number> {
-    const words = text.toLowerCase().match(/\b[a-z][a-z0-9+#.]{2,}\b/g) || []
-    const freq = new Map<string, number>()
-    for (const w of words) {
-        if (!STOP_WORDS.has(w) && w.length > 3) {
-            freq.set(w, (freq.get(w) || 0) + 1)
-        }
-    }
-    return freq
 }
 
 function topJobKeywords(freq: Map<string, number>, n = 8): string[] {
@@ -156,51 +175,106 @@ export interface AnalysisResult {
 }
 
 export function analyze(cvText: string, jobText: string): AnalysisResult {
+    // ── 1. Skill extraction ──────────────────────────────────────────────────
     const cvSkills = extractSkills(cvText)
-    const jobSkills = extractSkills(jobText)
+    const jobSkillFreq = extractSkillFrequencies(jobText)
+    const jobSkills = new Set(jobSkillFreq.keys())
     const matched = [...jobSkills].filter(s => cvSkills.has(s))
     const missingKeys = [...jobSkills].filter(s => !cvSkills.has(s))
 
+    // ── 2. Keyword extraction ────────────────────────────────────────────────
     const cvKeywords = extractKeywords(cvText)
     const jobFreq = extractKeywordFrequencies(jobText)
     const jobKeywords = new Set(jobFreq.keys())
     const rawMatched = [...jobKeywords].filter(w => cvKeywords.has(w)).length
     const rawTotal = jobKeywords.size
 
+    // ── 3. Years of experience ───────────────────────────────────────────────
     const yearsRequired = extractYearsRequired(jobText)
     const yearsOnCV = extractYearsFromCV(cvText)
 
     const jobWordCount = jobText.trim().split(/\s+/).length
     const lowQuality = jobWordCount < 80 || (jobSkills.size < 3 && rawTotal < 20)
 
-    const skillRatio = jobSkills.size > 0 ? matched.length / jobSkills.size : 0
-    const rawRatio = rawTotal > 0 ? Math.min(rawMatched / rawTotal, 1) : 0
-    const baseScore = skillRatio * 60 + rawRatio * 40
-    const confidence = Math.min(jobWordCount / 150, 1)
-    const dampened = baseScore * confidence + baseScore * 0.5 * (1 - confidence)
-    let expAdjust = 0
-    if (yearsRequired > 0) {
-        expAdjust = Math.max(-8, Math.min(8, (yearsOnCV - yearsRequired) * 2))
-    } else if (yearsOnCV > 2) {
-        expAdjust = Math.min(yearsOnCV, 5)
+    // ── 4. Component A: Frequency-Weighted Skill Score (0-1) ────────────────
+    // Each skill is weighted by how often its aliases appear in the job description.
+    // A skill mentioned 5 times carries more weight than one mentioned once.
+    // Weight is log-dampened to prevent single skills from dominating.
+    let totalSkillWeight = 0
+    let matchedSkillWeight = 0
+    for (const [key, freq] of jobSkillFreq.entries()) {
+        const weight = 1 + Math.log(1 + freq) // log-dampened frequency weight
+        totalSkillWeight += weight
+        if (cvSkills.has(key)) matchedSkillWeight += weight
     }
-    const score = Math.min(Math.max(Math.round(dampened + expAdjust), 5), 97)
+    const skillScore = totalSkillWeight > 0 ? matchedSkillWeight / totalSkillWeight : 0
 
+    // ── 5. Component B: TF-Weighted Keyword Score (0-1) ─────────────────────
+    // Keywords mentioned more frequently in the job are more important.
+    // We weight each matched keyword by its frequency, capped to avoid outliers.
+    let totalKwWeight = 0
+    let matchedKwWeight = 0
+    for (const [word, freq] of jobFreq.entries()) {
+        const weight = Math.min(freq, 5) // cap at 5 to prevent runaway terms
+        totalKwWeight += weight
+        if (cvKeywords.has(word)) matchedKwWeight += weight
+    }
+    const keywordScore = totalKwWeight > 0 ? matchedKwWeight / totalKwWeight : 0
+
+    // ── 6. Component C: Experience Match Score (0-1) ─────────────────────────
+    // Maps years of experience to a normalized score.
+    let expScore = 0.65 // neutral default when no requirement stated
+    if (yearsRequired > 0) {
+        if (yearsOnCV === 0) {
+            expScore = 0.40 // no years on CV, can't assess
+        } else {
+            const ratio = yearsOnCV / yearsRequired
+            // sigmoid-like mapping: overshooting is capped at 1.0
+            expScore = Math.min(ratio, 1.25) / 1.25
+        }
+    } else if (yearsOnCV > 0) {
+        // No requirement stated — experience is a small bonus
+        expScore = Math.min(0.65 + yearsOnCV * 0.02, 0.80)
+    }
+
+    // ── 7. Component D: High-Priority Skill Coverage Penalty ─────────────────
+    // If the job heavily requires skills (freq ≥ 3) and they're ALL missing,
+    // apply a penalty. This prevents inflated scores from keyword overlap alone.
+    const criticalMissing = missingKeys.filter(k => (jobSkillFreq.get(k) || 0) >= 3)
+    const criticalTotal = [...jobSkills].filter(k => (jobSkillFreq.get(k) || 0) >= 3)
+    const missingCriticalRatio = criticalTotal.length > 0
+        ? criticalMissing.length / criticalTotal.length
+        : 0
+    // Penalty: 0 when nothing critical missing, up to -8 when all critical skills missing
+    const coveragePenalty = missingCriticalRatio * 8
+
+    // ── 8. Composite Score ───────────────────────────────────────────────────
+    // Weights: Skills 50% (most important), Keywords 35%, Experience 15%
+    const rawScore = (skillScore * 50) + (keywordScore * 35) + (expScore * 15)
+
+    // Confidence multiplier: short/low-quality job descriptions are less reliable
+    // Minimum confidence 0.6 ensures we always give a meaningful score
+    const confidence = Math.min(0.6 + (jobWordCount / 400) * 0.4, 1.0)
+
+    const adjustedScore = (rawScore * confidence) - coveragePenalty
+
+    // Map to realistic human range: a perfect match rarely exceeds ~95%
+    // Floor at 5 to avoid discouraging "0%" results
+    const score = Math.min(Math.max(Math.round(adjustedScore), 5), 95)
+
+    // ── 9. Missing skills with priority ──────────────────────────────────────
     const missing: MissingSkillWithPriority[] = missingKeys.map(key => {
-        const aliases = SKILL_GROUPS[key] || []
-        const freq = aliases.reduce((sum, alias) => {
-            const words = alias.split(" ")
-            const minCount = Math.min(...words.map(w => jobFreq.get(w) || 0))
-            return sum + (words.every(w => jobFreq.has(w)) ? minCount : 0)
-        }, 0)
+        const freq = jobSkillFreq.get(key) || 0
         const priority: "high" | "medium" | "low" = freq >= 3 ? "high" : freq >= 1 ? "medium" : "low"
         return { label: getSkillLabel(key), key, freq, priority }
     }).sort((a, b) => b.freq - a.freq)
 
+    // ── 10. Top missing job signals (raw keywords not on CV) ─────────────────
     const topJobSignals = topJobKeywords(jobFreq, 10)
         .filter(w => !cvKeywords.has(w))
         .slice(0, 6)
 
+    // ── 11. Persona & summary ─────────────────────────────────────────────────
     const topMissing = missing.filter(m => m.priority === "high").slice(0, 2).map(m => m.label)
     const topMatched = matched.slice(0, 2).map(getSkillLabel)
     const expNote = yearsRequired > 0
