@@ -1,3 +1,10 @@
+## [1.2.5](https://github.com/alisatas/hire_match/compare/v1.2.4...v1.2.5) (2026-04-12)
+
+
+### Bug Fixes
+
+* update PayPal payment link to hosted checkout ([68e7028](https://github.com/alisatas/hire_match/commit/68e7028511ab587c5caa9d3f6482a9e728f66e4d))
+
 ## [1.2.4](https://github.com/alisatas/hire_match/compare/v1.2.3...v1.2.4) (2026-04-12)
 
 
