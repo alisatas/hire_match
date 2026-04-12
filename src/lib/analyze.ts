@@ -55,6 +55,7 @@ export const SKILL_GROUPS: Record<string, string[]> = {
 }
 
 const STOP_WORDS = new Set([
+    // Common English
     "the","and","for","with","that","this","have","from","will","your","our","are","was","you",
     "they","their","been","has","not","but","can","all","its","also","more","into","other",
     "than","then","some","what","when","which","about","there","would","these","those","such",
@@ -64,6 +65,27 @@ const STOP_WORDS = new Set([
     "opportunity","position","candidate","candidates","company","business","level","years",
     "year","knowledge","ability","excellent","great","new","high","part","time","full","plus",
     "nice","have","need","want","like","take","give","seek","love","passion","drive","fast",
+    // Job posting page furniture (scraped noise)
+    "jobs","job","open","apply","application","applications","apply","posted","days","ago",
+    "hiring","hired","save","share","report","back","sign","login","view","see","click","here",
+    "easy","easily","just","get","let","use","used","uses","via","per","etc","e.g","i.e",
+    "show","shows","shown","find","found","offers","offer","salary","benefits","benefit",
+    "send","sent","contact","email","number","phone","address","website","follow","page",
+    "similar","related","recommended","promoted","featured","sponsored","paid","free","trial",
+    "cookie","privacy","terms","policy","rights","reserved","copyright","legal","disclaimer",
+    // Platforms & sites (page chrome noise)
+    "linkedin","indeed","glassdoor","monster","ziprecruiter","greenhouse","lever","workday",
+    // Directions & generic locations (The Hague → "hague", "south", etc.)
+    "north","south","east","west","central","greater","area","city","region","street","road",
+    // Numbers-as-words and filler
+    "one","two","three","four","five","six","seven","eight","nine","ten","first","second",
+    "third","last","next","prev","previous","latest","current","former","senior","junior",
+    "lead","head","chief","staff","member","members","people","person","someone","anyone",
+    // Generic job-description verbs
+    "ensure","maintain","manage","deliver","drive","lead","own","own","design","create",
+    "implement","improve","review","define","identify","communicate","collaborate","partner",
+    "contribute","coordinate","oversee","monitor","track","report","analyse","analyze",
+    "establish","execute","achieve","evaluate","assess","plan","plan","present","write",
 ])
 
 export function getSkillLabel(key: string): string {
@@ -122,7 +144,7 @@ function extractKeywordFrequencies(text: string): Map<string, number> {
     const words = text.toLowerCase().match(/\b[a-z][a-z0-9+#.]{2,}\b/g) || []
     const freq = new Map<string, number>()
     for (const w of words) {
-        if (!STOP_WORDS.has(w) && w.length > 3) {
+        if (!STOP_WORDS.has(w) && w.length > 4) {
             freq.set(w, (freq.get(w) || 0) + 1)
         }
     }
@@ -178,6 +200,16 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
     // ── 1. Skill extraction ──────────────────────────────────────────────────
     const cvSkills = extractSkills(cvText)
     const jobSkillFreq = extractSkillFrequencies(jobText)
+
+    // Math Prof improvement: skills in the job title (first 120 chars) are the
+    // strongest signal — double their frequency weight so they surface as
+    // high-priority gaps and drive the score more accurately.
+    const jobTitle = jobText.slice(0, 120)
+    const titleSkills = extractSkills(jobTitle)
+    for (const key of titleSkills) {
+        jobSkillFreq.set(key, (jobSkillFreq.get(key) || 0) + 2)
+    }
+
     const jobSkills = new Set(jobSkillFreq.keys())
     const matched = [...jobSkills].filter(s => cvSkills.has(s))
     const missingKeys = [...jobSkills].filter(s => !cvSkills.has(s))
@@ -252,9 +284,13 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
     // Weights: Skills 50% (most important), Keywords 35%, Experience 15%
     const rawScore = (skillScore * 50) + (keywordScore * 35) + (expScore * 15)
 
-    // Confidence multiplier: short/low-quality job descriptions are less reliable
-    // Minimum confidence 0.6 ensures we always give a meaningful score
-    const confidence = Math.min(0.6 + (jobWordCount / 400) * 0.4, 1.0)
+    // Confidence multiplier: short/low-quality job descriptions are less reliable.
+    // Math Prof improvement: two-tier curve — very short JDs (< 50 words) get a
+    // hard floor of 0.3 to prevent inflated scores from garbage input; longer JDs
+    // ramp from 0.55 → 1.0 over 0–400 words, reaching full confidence at ~400 words.
+    const confidence = jobWordCount < 50
+        ? Math.max(0.3, jobWordCount / 50 * 0.55)
+        : Math.min(0.55 + (jobWordCount / 400) * 0.45, 1.0)
 
     const adjustedScore = (rawScore * confidence) - coveragePenalty
 
@@ -269,10 +305,14 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
         return { label: getSkillLabel(key), key, freq, priority }
     }).sort((a, b) => b.freq - a.freq)
 
-    // ── 10. Top missing job signals (raw keywords not on CV) ─────────────────
-    const topJobSignals = topJobKeywords(jobFreq, 10)
-        .filter(({ word }) => !cvKeywords.has(word))
-        .slice(0, 6)
+    // ── 10. Top missing job signals — skill aliases only ─────────────────────
+    // Only surface words that are recognised skill aliases (from SKILL_GROUPS).
+    // This prevents location names, company names, and page furniture ("hague",
+    // "linkedin", "grade") from appearing. Each signal maps back to a real skill.
+    const allSkillAliases = new Set(Object.values(SKILL_GROUPS).flat())
+    const topJobSignals = topJobKeywords(jobFreq, 40)
+        .filter(({ word }) => allSkillAliases.has(word) && !cvKeywords.has(word))
+        .slice(0, 8)
 
     // ── 11. Persona & summary ─────────────────────────────────────────────────
     const topMissing = missing.filter(m => m.priority === "high").slice(0, 2).map(m => m.label)

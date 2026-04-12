@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { after } from "next/server"
+import { timingSafeEqual } from "crypto"
 import { analyze } from "@/lib/analyze"
 
 // ─── Telegram helpers ───────────────────────────────────────────────────────
@@ -91,9 +92,7 @@ function formatDeployments(deployments: Awaited<ReturnType<typeof getDeployments
     return deployments.map((d, i) => {
         const env = d.target === "production" ? "🟢 prod" : "🔵 preview"
         const date = new Date(d.created).toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })
-        const customDomain = d.alias?.find(a => a.includes("cvxray.com"))
-            ?? d.alias?.find(a => !a.includes(".vercel.app"))
-        const displayUrl = customDomain ?? d.url
+        const displayUrl = d.target === "production" ? "cvxray.com" : d.url
         return `${i + 1}. ${stateIcon(d.state)} ${env} — ${date}\n   🔗 https://${displayUrl}`
     }).join("\n\n")
 }
@@ -302,8 +301,12 @@ export async function POST(req: NextRequest) {
         console.error("TELEGRAM_SECRET_TOKEN is not set — webhook is unprotected")
         return NextResponse.json({ error: "misconfigured" }, { status: 500 })
     }
-    const incoming = req.headers.get("x-telegram-bot-api-secret-token")
-    if (incoming !== secret) {
+    const incoming = req.headers.get("x-telegram-bot-api-secret-token") ?? ""
+    // Constant-time comparison to prevent timing attacks on the webhook secret
+    const secretBuf = Buffer.from(secret)
+    const incomingBuf = Buffer.from(incoming.padEnd(secret.length, "\0").slice(0, secret.length))
+    const valid = secretBuf.length === incoming.length && timingSafeEqual(secretBuf, incomingBuf)
+    if (!valid) {
         return NextResponse.json({ error: "unauthorized" }, { status: 401 })
     }
 

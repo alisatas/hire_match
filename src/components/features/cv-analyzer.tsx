@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useRef } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -155,6 +155,85 @@ Nice to have:
 
 You will work closely with product managers, engineers, and the marketing team in a fast-growing scale-up.`,
     },
+    {
+        label: "Product Manager",
+        emoji: "📋",
+        desc: "Product strategy, roadmap, Agile, Jira, analytics, stakeholder management",
+        text: `Senior Product Manager — London (Hybrid)
+
+We are looking for an experienced Product Manager to lead our core product area and drive growth across our platform.
+
+Requirements:
+- 4+ years of product management experience in a B2B or B2C SaaS environment
+- Strong ability to define product vision, strategy, and roadmap
+- Experience running agile sprints — Jira, Confluence, and backlog grooming
+- Data-driven mindset: comfortable with SQL, Google Analytics, Mixpanel, or Amplitude
+- Excellent stakeholder management and communication skills
+- Proven track record of shipping features from ideation to launch
+- Experience writing PRDs, user stories, and acceptance criteria
+- Understanding of UX design principles and working with Figma
+
+Nice to have:
+- Prior experience in fintech, marketplace, or SaaS
+- A/B testing and experimentation experience
+- Basic technical knowledge (APIs, system design)
+- Experience with OKRs and product-led growth
+
+Join a fast-moving team where product decisions have real impact.`,
+    },
+    {
+        label: "DevOps Engineer",
+        emoji: "⚙️",
+        desc: "Kubernetes, Terraform, AWS, CI/CD, Docker, Linux, monitoring, security",
+        text: `DevOps Engineer — Berlin (Remote-friendly)
+
+We are hiring a DevOps Engineer to own our infrastructure, deployment pipelines, and cloud operations.
+
+Requirements:
+- 3+ years of DevOps or platform engineering experience
+- Deep expertise with Kubernetes (EKS or GKE preferred) and Helm
+- Strong Terraform skills for infrastructure as code
+- AWS or GCP cloud infrastructure — VPCs, IAM, S3, RDS, Lambda
+- Docker containerisation and image optimisation
+- CI/CD pipelines — GitHub Actions, ArgoCD, or Jenkins
+- Linux system administration and shell scripting (Bash)
+- Monitoring and observability: Prometheus, Grafana, Datadog, or similar
+- Security best practices: secrets management (Vault, AWS Secrets Manager), network policies
+
+Nice to have:
+- Service mesh experience (Istio, Linkerd)
+- Experience with multi-region deployments
+- Cost optimisation mindset (FinOps)
+- Python or Go for automation scripting
+
+We run fully on AWS with a large Kubernetes cluster and need someone who can own it end-to-end.`,
+    },
+    {
+        label: "UX Designer",
+        emoji: "🎨",
+        desc: "Figma, user research, wireframing, prototyping, usability testing, design systems",
+        text: `UX/Product Designer — Amsterdam (Hybrid)
+
+We are looking for a UX Designer to craft intuitive, beautiful product experiences for our growing user base.
+
+Requirements:
+- 3+ years of UX or product design experience in a digital product environment
+- Expert-level Figma skills — components, auto-layout, prototyping
+- Strong portfolio demonstrating end-to-end design process
+- Experience conducting user research, interviews, and usability testing
+- Ability to translate research insights into wireframes and high-fidelity designs
+- Familiarity with design systems and component libraries
+- Understanding of accessibility standards (WCAG)
+- Close collaboration with product managers and engineers
+
+Nice to have:
+- Motion design and micro-interactions (Framer, Principle)
+- Basic front-end knowledge (HTML, CSS, React)
+- Experience with Maze, Hotjar, or FullStory for research
+- Mobile app design (iOS/Android HIG)
+
+We care deeply about craft and ship thoughtful, user-tested features.`,
+    },
 ]
 
 // ─────────────────────────────────────────────
@@ -171,20 +250,50 @@ export default function CVAnalyzer() {
     const [results, setResults] = useState<AnalysisResult | null>(null)
     const [pdfStatus, setPdfStatus] = useState("")
     const [error, setError] = useState("")
+    const [showCvPaste, setShowCvPaste] = useState(false)
+    const [copied, setCopied] = useState(false)
+    const [history, setHistory] = useState<{ score: number; label: string; matched: number; missing: number; date: string }[]>([])
     const fileInputRef = useRef<HTMLInputElement>(null)
+
+    useEffect(() => {
+        try {
+            const stored = localStorage.getItem("cvxray_history")
+            if (stored) setHistory(JSON.parse(stored))
+        } catch { /* ignore */ }
+    }, [])
 
     const processPdf = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (!file || file.type !== "application/pdf") return
 
+        if (file.size > 5 * 1024 * 1024) {
+            setPdfStatus("File too large (max 5MB). Paste your CV text below.")
+            return
+        }
+
         setPdfStatus("Reading PDF...")
         try {
-            const formData = new FormData()
-            formData.append("file", file)
-            const res = await fetch("/api/extract-pdf", { method: "POST", body: formData })
-            const data = await res.json()
-            if (data.error) throw new Error(data.error)
-            setCvText(data.text)
+            const arrayBuffer = await file.arrayBuffer()
+            const pdfjsLib = await import("pdfjs-dist")
+            pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+                "pdfjs-dist/build/pdf.worker.min.mjs",
+                import.meta.url
+            ).toString()
+
+            const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) }).promise
+            const pageTexts = await Promise.all(
+                Array.from({ length: pdf.numPages }, (_, i) =>
+                    pdf.getPage(i + 1).then(async (page) => {
+                        const content = await page.getTextContent()
+                        return content.items
+                            .map((item) => ("str" in item ? item.str : ""))
+                            .join(" ")
+                    })
+                )
+            )
+            const text = pageTexts.join("\n").trim()
+            if (!text) throw new Error("No text extracted")
+            setCvText(text)
             setPdfStatus(`✓ ${file.name} loaded`)
         } catch (err: unknown) {
             console.error("PDF Read Error:", err)
@@ -230,9 +339,6 @@ export default function CVAnalyzer() {
         setIsLoading(true)
         setResults(null)
 
-        // Yield to let React render the rocket animation before running analysis
-        await new Promise(resolve => setTimeout(resolve, 0))
-
         // Auto-fetch job post if URL is set but text not yet loaded
         let effectiveJobText = jobText
         if (!effectiveJobText && jobInput.trim().startsWith("http")) {
@@ -268,13 +374,23 @@ export default function CVAnalyzer() {
             return
         }
 
-        // Keep rocket visible for at least one full pass (2.8s animation cycle)
-        const [result] = await Promise.all([
-            Promise.resolve(analyze(cvText, effectiveJobText)),
-            new Promise(resolve => setTimeout(resolve, 2800)),
-        ])
+        const result = analyze(cvText, effectiveJobText)
         setResults(result)
         setIsLoading(false)
+
+        // Save to history (last 3)
+        try {
+            const entry = {
+                score: result.score,
+                label: result.persona.label,
+                matched: result.matched.length,
+                missing: result.missing.length,
+                date: new Date().toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }),
+            }
+            const updated = [entry, ...history].slice(0, 3)
+            setHistory(updated)
+            localStorage.setItem("cvxray_history", JSON.stringify(updated))
+        } catch { /* ignore */ }
     }
 
     // "Try Another Job" — clear only the job field, keep CV + existing results visible
@@ -318,6 +434,9 @@ export default function CVAnalyzer() {
                 <p className="text-base sm:text-lg md:text-xl text-white/80 font-semibold max-w-4xl mx-auto px-2 drop-shadow-sm">
                     Upload your CV, drop a job link — get an instant match score, skill gaps, and courses to close them.
                 </p>
+                <p className="text-sm text-white/40 mt-2 font-medium">
+                    🔒 100% private — your CV never leaves your browser. No sign-up, no limits, free forever.
+                </p>
             </section>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
@@ -335,23 +454,40 @@ export default function CVAnalyzer() {
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center">
                                     <label className="text-sm font-bold uppercase tracking-widest text-primary/90">Your CV</label>
-                                    <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">PDF</span>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowCvPaste(v => !v)}
+                                        className="text-[10px] text-cyan-400 hover:text-cyan-300 font-bold uppercase tracking-widest transition-colors"
+                                    >
+                                        {showCvPaste ? "↑ Upload PDF instead" : "Paste text instead"}
+                                    </button>
                                 </div>
-                                <div className="border-2 border-dashed border-border/60 rounded-xl h-[140px] flex flex-col items-center justify-center gap-4 transition-colors hover:border-primary/40 hover:bg-primary/5 cursor-pointer relative">
-                                    <UploadCloud className="h-10 w-10 text-white/60" />
-                                    <div className="text-center">
-                                        <p className="font-semibold text-white">Drop your PDF or click to browse</p>
-                                        <p className="text-xs text-white/60 mt-1 font-medium">Files up to 5MB supported</p>
-                                    </div>
-                                    <input
-                                        ref={fileInputRef}
-                                        type="file"
-                                        accept=".pdf"
-                                        className="absolute inset-0 opacity-0 cursor-pointer"
-                                        onChange={processPdf}
+                                {showCvPaste ? (
+                                    <Textarea
+                                        placeholder="Paste your full CV text here..."
+                                        className="min-h-[140px] bg-muted/20 border-border/40 rounded-xl text-white placeholder:text-white/30 text-sm"
+                                        value={cvText}
+                                        onChange={(e) => { setCvText(e.target.value); setPdfStatus("✓ CV text loaded") }}
+                                        autoFocus
                                     />
-                                </div>
-                                {pdfStatus && (
+                                ) : (
+                                    <div className="border-2 border-dashed border-border/60 rounded-xl h-[140px] flex flex-col items-center justify-center gap-4 transition-colors hover:border-primary/40 hover:bg-primary/5 cursor-pointer relative">
+                                        <UploadCloud className="h-10 w-10 text-white/60" />
+                                        <div className="text-center">
+                                            <p className="font-semibold text-white">Drop your PDF or click to browse</p>
+                                            <p className="text-xs text-white/60 mt-1 font-medium">Files up to 5MB supported</p>
+                                        </div>
+                                        <input
+                                            ref={fileInputRef}
+                                            type="file"
+                                            accept=".pdf"
+                                            aria-label="Upload PDF CV"
+                                            className="absolute inset-0 opacity-0 cursor-pointer"
+                                            onChange={processPdf}
+                                        />
+                                    </div>
+                                )}
+                                {pdfStatus && !showCvPaste && (
                                     <p className="text-xs text-center font-semibold text-white/70 animate-pulse">{pdfStatus}</p>
                                 )}
                             </div>
@@ -388,6 +524,7 @@ export default function CVAnalyzer() {
                                 <span className="text-white/30 text-sm shrink-0">🔗</span>
                                 <input
                                     type="url"
+                                    aria-label="Job description URL"
                                     className="flex-1 bg-transparent py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none"
                                     placeholder="https://linkedin.com/jobs/..."
                                     value={jobInput}
@@ -527,12 +664,12 @@ export default function CVAnalyzer() {
                             </div>
                         </div>
                     )}
-                    <div className="overflow-y-auto max-h-[85vh] p-8 lg:p-10 flex flex-col h-full">
+                    <div className="overflow-y-auto lg:max-h-[85vh] p-6 sm:p-8 lg:p-10 flex flex-col h-full">
                         {!results && !isLoading && (
                             <div className="flex flex-col items-center justify-center h-full text-center py-12 animate-in fade-in zoom-in-95">
                                 <Search className="h-16 w-16 text-white/20 mb-6" />
-                                <p className="text-xl font-black mb-2 uppercase tracking-widest text-white/40">Launch Your Future 🚀</p>
-                                <p className="text-white/60 text-sm font-semibold">Upload your CV and drop a job link to get started.</p>
+                                <p className="text-xl font-black mb-2 uppercase tracking-widest text-white/40">Drop your CV. We&apos;ll do the math.</p>
+                                <p className="text-white/60 text-sm font-semibold">Upload a PDF or paste your CV, add a job link — results in seconds.</p>
                             </div>
                         )}
 
@@ -554,7 +691,7 @@ export default function CVAnalyzer() {
                                 {/* Score Header */}
                                 <div className="flex flex-col md:flex-row items-center gap-6 pb-6 border-b border-border/30">
                                     <div className="relative h-28 w-28 shrink-0">
-                                        <svg viewBox="0 0 100 100" className="transform -rotate-90 w-full h-full">
+                                        <svg viewBox="0 0 100 100" className="transform -rotate-90 w-full h-full" aria-label={`Match score: ${results.score}%`} role="img">
                                             <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="6" className="text-white/10" />
                                             <circle
                                                 cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="6"
@@ -588,6 +725,8 @@ export default function CVAnalyzer() {
                                         </div>
                                     </div>
                                 </div>
+
+
 
                                 {/* Low quality warning */}
                                 {results.lowQuality && (
@@ -769,6 +908,40 @@ export default function CVAnalyzer() {
                                     </div>
                                 </div>
 
+                                {/* Share CVXray */}
+                                <div className="text-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-250">
+                                    <p className="text-xs text-white/40 mb-2">Know someone job hunting? Share CVXray with them — it&apos;s free.</p>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const text = "https://cvxray.com"
+                                            const tryClipboard = async () => {
+                                                try {
+                                                    await navigator.clipboard.writeText(text)
+                                                    setCopied(true)
+                                                    setTimeout(() => setCopied(false), 2000)
+                                                } catch {
+                                                    const el = document.createElement("textarea")
+                                                    el.value = text
+                                                    el.style.position = "fixed"
+                                                    el.style.opacity = "0"
+                                                    document.body.appendChild(el)
+                                                    el.focus()
+                                                    el.select()
+                                                    document.execCommand("copy")
+                                                    document.body.removeChild(el)
+                                                    setCopied(true)
+                                                    setTimeout(() => setCopied(false), 2000)
+                                                }
+                                            }
+                                            tryClipboard()
+                                        }}
+                                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-500/40 text-cyan-300 text-sm font-bold transition-all active:scale-95"
+                                    >
+                                        {copied ? "✓ Link copied!" : "🔗 Share CVXray"}
+                                    </button>
+                                </div>
+
                                 {/* Emoji Rating */}
                                 <div className="pt-6 border-t border-border/30 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 flex flex-col items-center">
                                     <p className="text-sm font-black mb-5 text-white/80 uppercase tracking-widest">
@@ -784,28 +957,10 @@ export default function CVAnalyzer() {
                 </Card>
             </div>
 
-            {/* Rocket animation while analyzing */}
-            {isLoading && (
-                <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
-                    <div className="rocket-fly absolute text-5xl" style={{ top: "48%" }}>
-                        🚀
-                    </div>
-                </div>
-            )}
-
             <style jsx global>{`
                 @keyframes coffeeFloat {
                     0%, 100% { transform: translateY(0px) rotate(-3deg); }
                     50% { transform: translateY(-10px) rotate(3deg); }
-                }
-                @keyframes rocketFly {
-                    0%   { transform: translateY(-50%) translateX(-80px); opacity: 0; }
-                    8%   { opacity: 1; }
-                    92%  { opacity: 1; }
-                    100% { transform: translateY(-50%) translateX(calc(100vw + 80px)); opacity: 0; }
-                }
-                .rocket-fly {
-                    animation: rocketFly 2.8s linear infinite;
                 }
             `}</style>
 

@@ -97,9 +97,13 @@ CVXray is a free alternative to:
 
 CVXray advantage: completely free, no limits, fully private, instant results.
 
+## Privacy model
+
+CVXray is privacy-first by design. When a user uploads a PDF or pastes CV text, the text is extracted and processed entirely inside the browser using pdfjs-dist (client-side). No CV text is ever transmitted to CVXray servers. The only outbound request is the optional job URL fetch (to scrape the job description), which is proxied through a server-side route. CVXray stores no user data, no CV content, no session data, and requires no account.
+
 ## Tech stack
 
-Built with Next.js 16, React 19, TypeScript, deployed on Vercel.
+Built with Next.js, React 19, TypeScript, pdfjs-dist (client-side PDF parsing), deployed on Vercel.
 
 ## Related searches CVXray answers
 

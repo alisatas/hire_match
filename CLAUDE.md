@@ -4,7 +4,7 @@
 
 **BEFORE EVERY `git push`:**
 1. Read AGENTS.md
-2. Run all 6 gate agents in order: Security, QA, API, UI/UX, Browser QA, SEO
+2. Run all 7 gate agents in order: Security, QA, API, UI/UX, Browser QA, SEO, Math Professor
 3. Read the relevant source files for each agent
 4. Output the full PRE-PUSH AGENT REPORT
 5. If any 🔴 Critical finding exists — BLOCK the push and list what must be fixed first

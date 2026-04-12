@@ -87,7 +87,16 @@ export async function POST(req: Request) {
             return NextResponse.json({ requiresPaste: true, error: `HTTP ${response.status}` }, { status: 422 });
         }
 
+        // Cap response body at 2MB before reading — prevents memory exhaustion on large pages
+        const contentLength = response.headers.get("content-length")
+        if (contentLength && parseInt(contentLength) > 2 * 1024 * 1024) {
+            return NextResponse.json({ requiresPaste: true }, { status: 422 });
+        }
+
         const html = await response.text();
+        if (html.length > 2 * 1024 * 1024) {
+            return NextResponse.json({ requiresPaste: true }, { status: 422 });
+        }
         const text = stripHtml(html);
 
         if (text.length < 100) {
