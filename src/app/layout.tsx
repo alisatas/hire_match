@@ -44,13 +44,13 @@ export const metadata: Metadata = {
     title: "CVXray — Free AI Resume Matcher & Job Fit Analyzer",
     description:
       "Instantly match your CV to any job description. Get a score, see matched skills, spot gaps, and get course recommendations — free & private. No sign-up.",
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "CVXray - Free AI Resume Matcher" }],
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "CVXray - Free AI Resume Matcher" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "CVXray — Free AI Resume Matcher",
     description: "Upload your CV, paste a job link, get your match score instantly. Free, private, no sign-up.",
-    images: ["/og-image.png"],
+    images: ["/opengraph-image"],
   },
   robots: {
     index: true,
@@ -96,7 +96,7 @@ export default function RootLayout({
           "100% private — CV data is never stored, logged, or retained",
           "Free forever",
         ],
-        screenshot: `${siteUrl}/og-image.png`,
+        screenshot: `${siteUrl}/opengraph-image`,
         aggregateRating: {
           "@type": "AggregateRating",
           ratingValue: "4.9",
@@ -109,7 +109,7 @@ export default function RootLayout({
         "@id": `${siteUrl}/#org`,
         name: "CVXray",
         url: siteUrl,
-        logo: `${siteUrl}/og-image.png`,
+        logo: `${siteUrl}/opengraph-image`,
         sameAs: [
           "https://github.com/alisatas/hire_match",
         ],
