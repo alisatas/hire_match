@@ -1,3 +1,10 @@
+## [1.10.2](https://github.com/alisatas/hire_match/compare/v1.10.1...v1.10.2) (2026-04-12)
+
+
+### Bug Fixes
+
+* serve pdfjs worker from /public for mobile browser compatibility ([a64f025](https://github.com/alisatas/hire_match/commit/a64f0257d6b330cbfa4ebc6d52672e4074659b5e))
+
 ## [1.10.1](https://github.com/alisatas/hire_match/compare/v1.10.0...v1.10.1) (2026-04-12)
 
 
