@@ -1,13 +1,16 @@
 @AGENTS.md
 
-## Pre-Push Agent Gate
+## Pre-Push Agent Gate — MANDATORY
 
-When the user says "run pre-push agent checks" or "check before push":
+**BEFORE EVERY `git push`, NO EXCEPTIONS:**
 1. Read AGENTS.md
-2. Run each of the 5 gate agents in order (Security, QA, API, UI/UX, Browser QA)
+2. Run all 6 gate agents in order: Security, QA, API, UI/UX, Browser QA, SEO
 3. Read the relevant source files for each agent
-4. Output the structured PRE-PUSH AGENT REPORT from AGENTS.md
-5. If any 🔴 Critical finding exists — BLOCK and list what must be fixed
+4. Output the full PRE-PUSH AGENT REPORT
+5. If any 🔴 Critical finding exists — BLOCK the push and list what must be fixed first
+6. Only run `git push` after a clean ✅ SAFE TO PUSH verdict
+
+Never skip this gate, even for small fixes or renames.
 
 ## Excalidraw Canvas Rule
 

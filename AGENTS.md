@@ -84,6 +84,25 @@ Results are printed as a structured report. Push only when all agents return ✅
 
 ---
 
+## Agent 6 — 🔍 SEO Specialist
+
+**Checks:**
+- `<title>` and `<meta description>` present, unique, and keyword-rich
+- Open Graph tags (`og:title`, `og:description`, `og:image`, `og:url`) all present
+- JSON-LD structured data valid (WebApplication + FAQPage schemas)
+- `robots.ts` allows indexing and blocks `/api/`
+- `sitemap.ts` includes all public routes
+- `llms.txt` exists and describes CVXray clearly for AI crawlers
+- FAQ questions phrased as natural language queries (how/what/does)
+- No metadata removed or weakened compared to previous state
+- Any new pages have their own title + description (no blank/default metadata)
+- Primary keywords present in H1 and page copy: "CV matcher", "resume matcher", "job fit", "ATS"
+
+**Files to read:** `src/app/layout.tsx`, `src/app/page.tsx`, `src/app/robots.ts`, `src/app/sitemap.ts`, `public/llms.txt`
+**Blocks push on:** 🔴 Critical finding (missing OG tags, broken JSON-LD, robots blocking indexing)
+
+---
+
 ## Pre-Push Report Format
 
 Claude must output:
@@ -97,6 +116,7 @@ Claude must output:
 🔌 API ............. ✅ PASS  (0 critical)
 🎨 UI/UX ........... ⚠️  WARN  (2 medium)
 🌐 Browser QA ...... ✅ PASS  (0 critical)
+🔍 SEO ............. ✅ PASS  (0 critical)
 ───────────────────────────────────────
 VERDICT: ✅ SAFE TO PUSH
 ═══════════════════════════════════════
@@ -119,5 +139,5 @@ Their full system prompts and file context are in `src/lib/agents-config.ts`.
 | Pen Tester | ❌ |
 | API Engineer | ✅ |
 | UI/UX Engineer | ✅ |
-| SEO Specialist | ❌ |
+| SEO Specialist | ✅ |
 | Browser QA | ✅ |
