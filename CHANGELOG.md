@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/alisatas/hire_match/compare/v1.3.1...v1.4.0) (2026-04-12)
+
+
+### Features
+
+* rebrand to CVXray, remove agents login gate, improve keywords UI ([dfdd5c2](https://github.com/alisatas/hire_match/commit/dfdd5c2bb3435a51d1a278de9fc73ed4f706580f))
+
 ## [1.3.1](https://github.com/alisatas/hire_match/compare/v1.3.0...v1.3.1) (2026-04-12)
 
 
