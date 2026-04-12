@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { after } from "next/server"
-import Anthropic from "@anthropic-ai/sdk"
 import { analyze } from "@/lib/analyze"
-import { AGENTS, AGENT_KEYS, type AgentKey } from "@/lib/agents-config"
 
 // ─── Telegram helpers ───────────────────────────────────────────────────────
 
@@ -113,17 +111,12 @@ function formatDeployments(deployments: Awaited<ReturnType<typeof getDeployments
 
 // ─── Help text ──────────────────────────────────────────────────────────────
 
-const HELP = `<b>JobFlare Bot — Project Control</b>
+const HELP = `<b>CVXray Bot — Project Control</b>
 
 <b>Deploy</b>
 /deploy — trigger a new preview deploy
 /deploy prod — deploy to production
 /status — last 5 deployments with links
-
-<b>AI Agents</b>
-/agents — list all available agents
-/agent &lt;name&gt; — run an agent and get the report
-  e.g. /agent qa  /agent pm  /agent security
 
 <b>CV Analysis</b>
 Send any message in the format:
@@ -135,29 +128,6 @@ JOB:
 
 /help — show this message`
 
-// ─── Agent runner ────────────────────────────────────────────────────────────
-
-async function runAgent(chatId: number, agentKey: AgentKey) {
-    const config = AGENTS[agentKey]
-    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-
-    let result = ""
-    const stream = await client.messages.stream({
-        model: "claude-sonnet-4-6",
-        max_tokens: 4096,
-        system: config.system,
-        messages: [{ role: "user", content: `Review the following project files:\n\n${config.getContext()}` }],
-    })
-
-    for await (const chunk of stream) {
-        if (chunk.type === "content_block_delta" && chunk.delta.type === "text_delta") {
-            result += chunk.delta.text
-        }
-    }
-
-    await sendChunked(chatId, result, `${config.emoji} <b>${config.label} Report</b>`)
-}
-
 // ─── Command handlers ────────────────────────────────────────────────────────
 
 async function handleCommand(chatId: number, text: string) {
@@ -166,26 +136,6 @@ async function handleCommand(chatId: number, text: string) {
     // /start or /help
     if (lower === "/start" || lower === "/help") {
         await sendMessage(chatId, HELP)
-        return
-    }
-
-    // /agents
-    if (lower === "/agents") {
-        const list = AGENT_KEYS.map(k => `${AGENTS[k].emoji} <b>/agent ${k}</b> — ${AGENTS[k].desc}`).join("\n")
-        await sendMessage(chatId, `<b>Available Agents</b>\n\n${list}`)
-        return
-    }
-
-    // /agent <name>
-    if (lower.startsWith("/agent ")) {
-        const key = lower.slice(7).trim() as AgentKey
-        if (!AGENT_KEYS.includes(key)) {
-            const names = AGENT_KEYS.join(", ")
-            await sendMessage(chatId, `Unknown agent. Choose from: ${names}`)
-            return
-        }
-        await sendMessage(chatId, `${AGENTS[key].emoji} Running <b>${AGENTS[key].label}</b> agent... this takes ~30s`)
-        after(runAgent(chatId, key))
         return
     }
 
@@ -357,13 +307,15 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "misconfigured" }, { status: 500 })
     }
 
-    // Verify request is from Telegram using secret token
+    // Verify request is from Telegram using secret token — REQUIRED
     const secret = process.env.TELEGRAM_SECRET_TOKEN
-    if (secret) {
-        const incoming = req.headers.get("x-telegram-bot-api-secret-token")
-        if (incoming !== secret) {
-            return NextResponse.json({ error: "unauthorized" }, { status: 401 })
-        }
+    if (!secret) {
+        console.error("TELEGRAM_SECRET_TOKEN is not set — webhook is unprotected")
+        return NextResponse.json({ error: "misconfigured" }, { status: 500 })
+    }
+    const incoming = req.headers.get("x-telegram-bot-api-secret-token")
+    if (incoming !== secret) {
+        return NextResponse.json({ error: "unauthorized" }, { status: 401 })
     }
 
     let update: {

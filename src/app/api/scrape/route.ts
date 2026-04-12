@@ -44,15 +44,22 @@ export async function POST(req: Request) {
         try {
             const parsed = new URL(normalized);
             const hostname = parsed.hostname.toLowerCase();
-            if (
+            // Block SSRF: private/loopback/link-local/metadata addresses
+            const isPrivate =
                 hostname === "localhost" ||
-                hostname.startsWith("127.") ||
-                hostname.startsWith("192.168.") ||
-                hostname.startsWith("10.") ||
-                hostname.startsWith("172.16.") ||
                 hostname === "0.0.0.0" ||
-                hostname.endsWith(".local")
-            ) {
+                hostname === "::1" ||
+                hostname.endsWith(".local") ||
+                hostname.startsWith("127.") ||
+                hostname.startsWith("10.") ||
+                hostname.startsWith("192.168.") ||
+                // Docker bridge + private range 172.16.0.0/12
+                /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(hostname) ||
+                // AWS/GCP/Azure metadata endpoints
+                hostname === "169.254.169.254" ||
+                hostname.startsWith("169.254.") ||
+                hostname === "metadata.google.internal"
+            if (isPrivate) {
                 return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
             }
         } catch {
