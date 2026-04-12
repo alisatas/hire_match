@@ -275,15 +275,9 @@ export default function CVAnalyzer() {
         try {
             const arrayBuffer = await file.arrayBuffer()
             const pdfjsLib = await import("pdfjs-dist")
-            // Set worker — use absolute URL so it works in in-app browsers (Telegram, etc.)
-            const workerUrl = new URL(
-                "pdfjs-dist/build/pdf.worker.min.mjs",
-                import.meta.url
-            ).toString()
-            // In-app browsers may block blob workers; ensure absolute origin URL
-            pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl.startsWith("blob:")
-                ? `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`
-                : workerUrl
+            // Serve worker from /public — same origin, correct MIME type, works in all
+            // mobile browsers and in-app WebViews (Telegram, iOS, etc.) without CSP issues.
+            pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs"
 
             const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) }).promise
             const pageTexts = await Promise.all(
