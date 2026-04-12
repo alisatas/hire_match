@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/alisatas/hire_match/compare/v1.2.1...v1.2.2) (2026-04-12)
+
+
+### Bug Fixes
+
+* clarify job description field label and sample job buttons ([0e3b6da](https://github.com/alisatas/hire_match/commit/0e3b6daca6d10732a8e6e476e99ec1683004fd58))
+
 ## [1.2.1](https://github.com/alisatas/hire_match/compare/v1.2.0...v1.2.1) (2026-04-12)
 
 
