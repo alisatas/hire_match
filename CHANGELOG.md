@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/alisatas/hire_match/compare/v1.11.0...v1.12.0) (2026-04-12)
+
+
+### Features
+
+* add Company Insights, interview resources & UI polish ([7122a9f](https://github.com/alisatas/hire_match/commit/7122a9fcb4a572d7c719f278237ef40c2bfe1d0e))
+
 # [1.11.0](https://github.com/alisatas/hire_match/compare/v1.10.4...v1.11.0) (2026-04-12)
 
 
