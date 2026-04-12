@@ -1,3 +1,10 @@
+## [1.10.4](https://github.com/alisatas/hire_match/compare/v1.10.3...v1.10.4) (2026-04-12)
+
+
+### Bug Fixes
+
+* update privacy claims to reflect server-side PDF extraction ([6bdfc6f](https://github.com/alisatas/hire_match/commit/6bdfc6f9085e65be48305d24dd8f6e9d0842c993))
+
 ## [1.10.3](https://github.com/alisatas/hire_match/compare/v1.10.2...v1.10.3) (2026-04-12)
 
 
