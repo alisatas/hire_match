@@ -1,3 +1,10 @@
+## [1.4.3](https://github.com/alisatas/hire_match/compare/v1.4.2...v1.4.3) (2026-04-12)
+
+
+### Bug Fixes
+
+* add whitespace CV validation and correct scraper 500 status ([9c5edb1](https://github.com/alisatas/hire_match/commit/9c5edb1fd63d5bf99ab6473c7b54fc7fad7f0afa))
+
 ## [1.4.2](https://github.com/alisatas/hire_match/compare/v1.4.1...v1.4.2) (2026-04-12)
 
 
