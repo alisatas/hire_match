@@ -10,24 +10,8 @@ const faqs = [
     a: "Upload your PDF CV (or paste your CV text), then paste the job description or a job URL from LinkedIn, Indeed, Glassdoor, or any company careers page. CVXray shows your match score, matched skills, and missing keywords in seconds.",
   },
   {
-    q: "Can I paste a LinkedIn job post URL directly?",
-    a: "Yes — paste a LinkedIn job URL and CVXray will automatically fetch the job description. Since LinkedIn blocks some scraping, pasting the job description text directly gives the most reliable results.",
-  },
-  {
-    q: "How many skills and keywords can CVXray detect?",
-    a: "CVXray detects 40+ skill categories — React, TypeScript, Python, Node.js, AWS, Docker, Kubernetes, SQL, machine learning, CI/CD, and many more — plus thousands of raw keywords extracted directly from the job posting.",
-  },
-  {
     q: "Does CVXray store or share my resume data?",
-    a: "No. CVXray never stores or logs your CV. PDF text is extracted server-side and immediately discarded — it is never written to any database or file. The CV analysis itself runs in your browser. Nothing is retained after your session ends.",
-  },
-  {
-    q: "How long does it take to get my CV match score?",
-    a: "Instantly — results appear in seconds. There is no upload, no waiting queue, and no email required. CVXray runs the entire analysis inside your browser the moment you click Analyze.",
-  },
-  {
-    q: "Does CVXray work on mobile?",
-    a: "Yes. CVXray is fully mobile-friendly. You can upload a PDF CV from your phone, paste a job URL, and get your match score on any device — no app needed.",
+    a: "No. CVXray never stores or logs your CV. PDF text is extracted server-side and immediately discarded — never written to any database. The CV analysis runs in your browser. Nothing is retained after your session ends.",
   },
 ];
 
