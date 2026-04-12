@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/alisatas/hire_match/compare/v1.10.4...v1.11.0) (2026-04-12)
+
+
+### Features
+
+* add dynamic OG image for link previews (iMessage, Telegram, etc.) ([7868980](https://github.com/alisatas/hire_match/commit/7868980e75ec05092fd4d29e25f27a2d9d62b0f0))
+
 ## [1.10.4](https://github.com/alisatas/hire_match/compare/v1.10.3...v1.10.4) (2026-04-12)
 
 
