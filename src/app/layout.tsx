@@ -20,11 +20,11 @@ const siteUrl = "https://cvxray.com";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "CVXray — Free AI Resume Matcher & Job Fit Analyzer",
+    default: "CVXray — Free Resume Matcher & ATS Checker (No Sign-Up)",
     template: "%s | CVXray",
   },
   description:
-    "CVXray instantly matches your CV to any job description. Upload your PDF resume, paste a job URL or description, and get a match score, matched skills, missing keywords, and personalized course recommendations. Free, private, no sign-up.",
+    "Instantly score your CV against any job description. See matched skills, missing keywords, ATS gaps & courses to fill them. Free, private, no sign-up.",
   keywords: [
     "cv matcher", "resume matcher", "job fit analyzer", "cv analyzer",
     "resume scanner", "job match score", "ATS checker", "skill gap analysis",

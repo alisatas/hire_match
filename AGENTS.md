@@ -84,22 +84,38 @@ Results are printed as a structured report. Push only when all agents return ✅
 
 ---
 
-## Agent 6 — 🔍 SEO Specialist
+## Agent 6 — 🔍 SEO Continuous Improvement
 
-**Checks:**
-- `<title>` and `<meta description>` present, unique, and keyword-rich
+This agent does not just check — it **improves** SEO on every push. The goal is compounding gains: each push leaves SEO better than before.
+
+**Phase 1 — Regression Check (blocks push if broken):**
+- `<title>` and `<meta description>` present, unique, keyword-rich
 - Open Graph tags (`og:title`, `og:description`, `og:image`, `og:url`) all present
 - JSON-LD structured data valid (WebApplication + FAQPage schemas)
 - `robots.ts` allows indexing and blocks `/api/`
 - `sitemap.ts` includes all public routes
 - `llms.txt` exists and describes CVXray clearly for AI crawlers
-- FAQ questions phrased as natural language queries (how/what/does)
-- No metadata removed or weakened compared to previous state
-- Any new pages have their own title + description (no blank/default metadata)
-- Primary keywords present in H1 and page copy: "CV matcher", "resume matcher", "job fit", "ATS"
+- Any new pages have title + description (no blank/default metadata)
+
+**Phase 2 — Active Improvement (implement before pushing):**
+- Strengthen weak title/description copy — more specific, more keyword-rich
+- Improve FAQ: rewrite vague questions as exact queries users type ("how to check if my resume matches a job description")
+- Add missing FAQ entries targeting high-intent queries not yet covered
+- Improve `llms.txt`: add new use cases, sharpen the product description, add new example questions
+- Tighten JSON-LD: improve featureList, applicationCategory, description copy
+- Improve H1 and page subheadlines for keyword density and clarity
+- Add or improve `og:description` copy — should be a compelling call to action
+- Check primary keywords present in copy: "CV matcher", "resume matcher", "job fit", "ATS checker", "free", "instant"
+
+**Phase 3 — GEO (AI Engine Visibility):**
+- Is CVXray described clearly enough that an AI would cite it when asked "what's the best free CV matcher"?
+- Does `llms.txt` answer the top questions AI engines receive about CV tools?
+- Are FAQ questions phrased as natural language queries (not generic headings)?
 
 **Files to read:** `src/app/layout.tsx`, `src/app/page.tsx`, `src/app/robots.ts`, `src/app/sitemap.ts`, `public/llms.txt`
+**Files to improve:** `src/app/layout.tsx`, `src/app/page.tsx`, `public/llms.txt`
 **Blocks push on:** 🔴 Critical finding (missing OG tags, broken JSON-LD, robots blocking indexing)
+**Required before push:** At least 1 SEO improvement implemented per push cycle
 
 ---
 
