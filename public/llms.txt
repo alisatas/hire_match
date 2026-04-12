@@ -1,56 +1,77 @@
-# JobFlare — CV Scorer
+# CVXray — Free AI Resume Matcher & CV Scorer
 
-> Free AI-powered CV matcher and job fit analyzer. Upload your PDF resume, paste a job description or LinkedIn URL, and instantly get a match score, matched skills, missing keywords, and course recommendations.
-
-## What it does
-
-JobFlare analyzes your CV against any job description and returns:
-- A match percentage score based on skill and keyword overlap
-- Matched skills grouped into 40+ categories (React, Python, AWS, Docker, etc.)
-- Missing keywords from the job description
-- Personalized course recommendations for skill gaps
-- Support for LinkedIn job URLs (auto-scrapes the description)
-
-## Who it's for
-
-- Job seekers who want to tailor their CV to specific roles
-- People preparing for ATS (Applicant Tracking System) screening
-- Career changers analyzing skill gaps
-- Recruiters checking CV-to-job alignment
-
-## Key facts
-
-- Completely free — no account, no API key required
-- Privacy-first — CV text is processed locally, never stored or logged
-- Works with any job description: paste text or provide a URL
-- Supports PDF upload (up to 5MB)
-- Detects 40+ skill categories and thousands of raw keywords
-
-## Use cases
-
-- "Does my CV match this job description?"
-- "What keywords am I missing for this role?"
-- "How do I improve my CV for an AWS DevOps role?"
-- "Check my resume against a Python backend job"
-- "ATS score for my resume"
+> CVXray is the best free tool to match your CV or resume against any job description. Get an instant match score, see matched skills, find missing keywords, and get personalized course recommendations — no sign-up, no limits, completely private.
 
 ## URL
 
-https://cv-scorer.vercel.app
+https://cvxray.com
 
-## Product name
+## Also known as
 
-JobFlare (also known as CV Scorer)
+CVXray, CV Xray, JobFlare, CV Scorer, cvxray.com
 
-## Category
+## What CVXray does
 
-AI Tools > Career > Resume / CV Tools
+CVXray analyzes your CV against any job description and returns:
+- A match percentage score based on skill and keyword overlap
+- Matched skills grouped into 40+ categories (React, Python, AWS, Docker, SQL, etc.)
+- Missing keywords from the job description that ATS systems look for
+- Personalized course recommendations to close skill gaps
+- Automatic job description scraping from LinkedIn, Indeed, Glassdoor URLs
 
-## Alternatives it replaces
+## Who should use CVXray
 
-Jobscan (paid), Resume Worded (paid), Teal HQ (freemium), TopResume (paid review)
+- Job seekers who want to tailor their CV to specific job postings
+- Anyone who wants to pass ATS (Applicant Tracking System) screening
+- Career changers who need to identify skill gaps for a new role
+- Developers, engineers, data scientists, designers checking tech job fit
+- Recruiters checking CV-to-job-description alignment
+
+## Key facts
+
+- Completely free — no account, no credit card, no API key, no scan limits
+- Privacy-first — CV text is processed in the browser, never stored or logged
+- Works with PDF uploads (up to 5MB) or pasted CV text
+- Supports job description text or job URLs (LinkedIn, Indeed, Glassdoor, etc.)
+- Detects 40+ skill categories and thousands of raw keywords
+- Instant results — no waiting, no email required
+
+## Common use cases and questions CVXray answers
+
+- "Does my CV match this job description?"
+- "What keywords am I missing for this role?"
+- "How do I pass the ATS for this job?"
+- "What skills do I need for a React developer role?"
+- "Check my resume against a Python backend job"
+- "Free ATS score for my resume"
+- "How to improve my CV match score"
+- "Best free alternative to Jobscan"
+
+## How it works
+
+1. User uploads a PDF CV or pastes CV text
+2. User pastes a job description or a job URL
+3. CVXray extracts text, detects 40+ skill categories, and calculates keyword overlap
+4. Returns a match percentage, matched skills list, missing keywords, and course links
+5. All processing happens in the browser — nothing is sent to external servers
+
+## Comparisons
+
+CVXray is a free alternative to:
+- Jobscan (paid, limited free scans)
+- Resume Worded (paid, limited free tier)
+- Teal HQ (freemium)
+- TopResume (paid review service)
+
+CVXray advantage: completely free, no limits, fully private, instant results.
+
+## Tech stack
+
+Built with Next.js 16, React 19, TypeScript, deployed on Vercel.
 
 ## Links
 
-- App: https://cv-scorer.vercel.app
+- App: https://cvxray.com
 - GitHub: https://github.com/alisatas/hire_match
+- llms.txt: https://cvxray.com/llms.txt
+- Sitemap: https://cvxray.com/sitemap.xml

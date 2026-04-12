@@ -2,24 +2,36 @@ import CVAnalyzer from "@/components/features/cv-analyzer";
 
 const faqs = [
   {
-    q: "How does JobFlare work?",
-    a: "JobFlare extracts text from your PDF and compares it against the job description using a local skill-matching engine — 40+ skill categories plus raw keyword overlap. It returns a match percentage, matched skills, missing keywords, and course links.",
+    q: "What is CVXray and how does it work?",
+    a: "CVXray is a free AI-powered CV and resume matcher. Upload your PDF or paste your CV text, add a job description or job URL, and CVXray instantly calculates your match percentage using a skill-matching engine that detects 40+ skill categories and thousands of keywords.",
   },
   {
-    q: "Is JobFlare free?",
-    a: "Yes, completely free. No account, no API key required. All analysis runs locally — nothing is sent to external servers.",
+    q: "Is CVXray free? Are there any limits?",
+    a: "Completely free — no account, no credit card, no scan limits. Unlike Jobscan or Resume Worded, CVXray has no paywalls or monthly limits. All analysis is instant and private.",
+  },
+  {
+    q: "How do I check if my resume matches a job description?",
+    a: "Upload your PDF CV (or paste your CV text), then paste the job description or a job URL from LinkedIn, Indeed, Glassdoor, or any company careers page. CVXray will show your match score, matched skills, and missing keywords in seconds.",
+  },
+  {
+    q: "Does CVXray work as an ATS checker?",
+    a: "Yes. CVXray acts as a free ATS (Applicant Tracking System) checker. It scans your CV for the exact keywords and skills in the job description — the same way automated ATS software filters resumes — so you can optimize your CV before applying.",
   },
   {
     q: "Does it work with LinkedIn job posts?",
-    a: "Paste the LinkedIn job URL and we'll attempt to fetch it. Since LinkedIn blocks scraping, copying and pasting the job description text directly gives the most accurate results.",
+    a: "Yes — paste a LinkedIn job URL and CVXray will automatically fetch the job description. Since LinkedIn blocks some scraping, pasting the job description text directly gives the most reliable results.",
   },
   {
-    q: "What skills does it detect?",
-    a: "React, TypeScript, Python, Node.js, AWS, Docker, Kubernetes, SQL, PostgreSQL, machine learning, agile, CI/CD, GraphQL, Terraform, and 30+ more categories — plus thousands of raw keywords from the job post.",
+    q: "What skills does CVXray detect?",
+    a: "CVXray detects 40+ skill categories: React, TypeScript, Python, Node.js, AWS, Docker, Kubernetes, SQL, PostgreSQL, machine learning, agile, CI/CD, GraphQL, Terraform, and many more — plus thousands of raw keywords extracted directly from the job posting.",
   },
   {
     q: "Is my CV data private?",
-    a: "Yes. Your CV is processed entirely in your browser and never stored or logged. The only external request is the optional job URL fetch.",
+    a: "Your CV is processed entirely in your browser and never stored or sent to any server. The only external request is the optional job URL fetch. No data, no tracking, no accounts.",
+  },
+  {
+    q: "What are free alternatives to Jobscan?",
+    a: "CVXray (cvxray.com) is the best free Jobscan alternative — no scan limits, no sign-up, fully private. Other options include Teal HQ (freemium) and Resume Worded (limited free tier), but CVXray is the only one that's completely unlimited and free.",
   },
 ];
 

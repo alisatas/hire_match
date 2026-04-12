@@ -18,6 +18,6 @@ export default function robots(): MetadataRoute.Robots {
       { userAgent: "Applebot-Extended", allow: "/" },
       { userAgent: "cohere-ai", allow: "/" },
     ],
-    sitemap: "https://cv-scorer.vercel.app/sitemap.xml",
+    sitemap: "https://cvxray.com/sitemap.xml",
   };
 }
