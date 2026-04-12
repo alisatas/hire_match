@@ -354,9 +354,10 @@ export default function CVAnalyzer() {
                         {/* Job Description — URL only */}
                         <div className="space-y-3">
                             <div className="flex justify-between items-center">
-                                <label className="text-sm font-bold uppercase tracking-widest text-primary/90">Job Link</label>
+                                <label className="text-sm font-bold uppercase tracking-widest text-primary/90">Job Description URL</label>
                                 <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">REQUIRED</span>
                             </div>
+                            <p className="text-xs text-white/40">Paste a job URL from LinkedIn, Indeed, or any job board &mdash; we&apos;ll fetch it automatically.</p>
                             <div className={cn(
                                 "flex items-center gap-2 bg-muted/20 border rounded-xl px-3 transition-colors",
                                 jobInput && !jobInput.trim().startsWith("http")
@@ -395,23 +396,28 @@ export default function CVAnalyzer() {
 
                             {/* Sample job buttons */}
                             {!jobText && !fetchStatus.startsWith("✓") && (
-                                <div className="flex flex-wrap gap-2">
-                                    <span className="text-xs text-white/40 self-center">Try example:</span>
-                                    {SAMPLE_JOBS.map((job) => (
-                                        <button
-                                            key={job.label}
-                                            type="button"
-                                            onClick={() => {
-                                                setJobInput("")
-                                                setJobText(job.text)
-                                                setFetchStatus(`✓ Sample: ${job.label}`)
-                                                setError("")
-                                            }}
-                                            className="px-3 py-1 text-xs font-medium bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-500/40 text-cyan-300 rounded-full transition-colors"
-                                        >
-                                            {job.emoji} {job.label}
-                                        </button>
-                                    ))}
+                                <div className="flex flex-col gap-2">
+                                    <p className="text-xs text-white/40">
+                                        No job description yet? Load a sample to test CVXray instantly:
+                                    </p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {SAMPLE_JOBS.map((job) => (
+                                            <button
+                                                key={job.label}
+                                                type="button"
+                                                onClick={() => {
+                                                    setJobInput("")
+                                                    setJobText(job.text)
+                                                    setFetchStatus(`✓ Sample: ${job.label}`)
+                                                    setError("")
+                                                }}
+                                                className="px-3 py-1.5 text-xs font-semibold bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-500/40 text-cyan-300 rounded-full transition-colors flex items-center gap-1.5"
+                                            >
+                                                {job.emoji} {job.label}
+                                                <span className="text-cyan-500/60 text-[10px]">→ load</span>
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
                             )}
 
