@@ -73,6 +73,7 @@ const SAMPLE_JOBS = [
     {
         label: "Frontend Dev",
         emoji: "🎨",
+        desc: "React, TypeScript, Next.js — Amsterdam (Hybrid)",
         text: `Frontend Developer — Amsterdam (Hybrid)
 
 We are looking for a skilled Frontend Developer to join our product team. You will build responsive, performant web applications used by thousands of users daily.
@@ -97,6 +98,7 @@ We offer a competitive salary, flexible hybrid work, and a collaborative team cu
     {
         label: "Backend Engineer",
         emoji: "⚙️",
+        desc: "Node.js, Python, PostgreSQL, AWS — Remote (EU)",
         text: `Backend Engineer — Remote (EU)
 
 Join our engineering team to design and build scalable backend services powering our SaaS platform.
@@ -122,6 +124,7 @@ We're a fully remote team with async-first culture and 5+ years of runway.`,
     {
         label: "Data Analyst",
         emoji: "📊",
+        desc: "SQL, Python, Tableau, BigQuery — Utrecht, NL",
         text: `Data Analyst — Utrecht, Netherlands
 
 We're looking for a data-driven analyst to turn complex datasets into actionable insights for our growth and product teams.
@@ -398,23 +401,24 @@ export default function CVAnalyzer() {
                             {!jobText && !fetchStatus.startsWith("✓") && (
                                 <div className="flex flex-col gap-2">
                                     <p className="text-xs text-white/40">
-                                        No job description yet? Load a sample to test CVXray instantly:
+                                        No job description? Click a role to X-ray your CV against it:
                                     </p>
                                     <div className="flex flex-wrap gap-2">
                                         {SAMPLE_JOBS.map((job) => (
                                             <button
                                                 key={job.label}
                                                 type="button"
+                                                title={job.desc}
                                                 onClick={() => {
                                                     setJobInput("")
                                                     setJobText(job.text)
-                                                    setFetchStatus(`✓ Sample: ${job.label}`)
+                                                    setFetchStatus(`✓ Sample loaded: ${job.label} · ${job.desc}`)
                                                     setError("")
                                                 }}
-                                                className="px-3 py-1.5 text-xs font-semibold bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-500/40 text-cyan-300 rounded-full transition-colors flex items-center gap-1.5"
+                                                className="group px-3 py-1.5 text-xs font-semibold bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-500/40 text-cyan-300 rounded-full transition-all flex items-center gap-1.5"
                                             >
                                                 {job.emoji} {job.label}
-                                                <span className="text-cyan-500/60 text-[10px]">→ load</span>
+                                                <span className="text-cyan-500/50 text-[10px] group-hover:text-cyan-400 transition-colors">↓</span>
                                             </button>
                                         ))}
                                     </div>
