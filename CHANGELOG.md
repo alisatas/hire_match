@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/alisatas/hire_match/compare/v1.2.5...v1.3.0) (2026-04-12)
+
+
+### Features
+
+* rewrite scoring engine with frequency-weighted math, fix hydration warning ([2e63fe8](https://github.com/alisatas/hire_match/commit/2e63fe8afede4d91d17e6ffe052c85ee2a09a76c))
+
 ## [1.2.5](https://github.com/alisatas/hire_match/compare/v1.2.4...v1.2.5) (2026-04-12)
 
 
