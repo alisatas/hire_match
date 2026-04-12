@@ -2,7 +2,7 @@ cd "$(git rev-parse --show-toplevel)"
 
 echo ""
 echo "═══════════════════════════════════════"
-echo "  JobFlare Pre-Push Gate"
+echo "  CVXray Pre-Push Gate"
 echo "═══════════════════════════════════════"
 
 echo "⏳ TypeScript..."
