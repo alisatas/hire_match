@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/alisatas/hire_match/compare/v1.3.0...v1.3.1) (2026-04-12)
+
+
+### Bug Fixes
+
+* remove telegram agent runner, require webhook secret token, patch SSRF blocklist ([b2ac3bd](https://github.com/alisatas/hire_match/commit/b2ac3bd609ab7ae3853242fb87af681834d6b995))
+
 # [1.3.0](https://github.com/alisatas/hire_match/compare/v1.2.5...v1.3.0) (2026-04-12)
 
 
