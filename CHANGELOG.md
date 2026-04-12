@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/alisatas/hire_match/compare/v1.1.0...v1.2.0) (2026-04-12)
+
+
+### Features
+
+* rebrand to CVXray, full SEO and GEO overhaul for AI engine visibility ([4c0fa3a](https://github.com/alisatas/hire_match/commit/4c0fa3a757d9da347cbbdcd9bee9dedff78eb468))
+
 # [1.1.0](https://github.com/alisatas/hire_match/compare/v1.0.0...v1.1.0) (2026-04-11)
 
 
