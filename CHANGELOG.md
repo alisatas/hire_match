@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/alisatas/hire_match/compare/v1.12.0...v1.13.0) (2026-04-13)
+
+
+### Features
+
+* add Vercel Analytics + mobile FAQ entry ([1edffa1](https://github.com/alisatas/hire_match/commit/1edffa1d8c51721a46396789805acf9810331dd4))
+
 # [1.12.0](https://github.com/alisatas/hire_match/compare/v1.11.0...v1.12.0) (2026-04-12)
 
 
