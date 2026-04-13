@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { DottedSurface } from "@/components/ui/dotted-surface";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -197,6 +198,14 @@ export default function RootLayout({
           },
           {
             "@type": "Question",
+            name: "Can I use CVXray on my phone or mobile device?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Yes. CVXray works on any device — phone, tablet, or desktop. You can paste your CV text and a job description directly on mobile and get your match score instantly. PDF upload is also supported on mobile browsers.",
+            },
+          },
+          {
+            "@type": "Question",
             name: "What are the best free alternatives to Jobscan?",
             acceptedAnswer: {
               "@type": "Answer",
@@ -221,6 +230,7 @@ export default function RootLayout({
         <div className="relative z-10 min-h-screen">
           {children}
         </div>
+        <Analytics />
       </body>
     </html>
   );
