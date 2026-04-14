@@ -1,3 +1,10 @@
+## [1.16.1](https://github.com/alisatas/hire_match/compare/v1.16.0...v1.16.1) (2026-04-14)
+
+
+### Bug Fixes
+
+* improve empty state copy and visibility in results panel ([3ca658e](https://github.com/alisatas/hire_match/commit/3ca658e315b7aa5a913f494ac3ebb83c730e74c7))
+
 # [1.16.0](https://github.com/alisatas/hire_match/compare/v1.15.0...v1.16.0) (2026-04-14)
 
 
