@@ -319,9 +319,12 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
     // This prevents location names, company names, and page furniture ("hague",
     // "linkedin", "grade") from appearing. Each signal maps back to a real skill.
     const allSkillAliases = new Set(Object.values(SKILL_GROUPS).flat())
-    const topJobSignals = topJobKeywords(jobFreq, 40)
+    // Math Prof improvement: adapt signal count to match score — strong matches (≥70)
+    // already have enough context; weak matches benefit from more signals to act on.
+    const signalCount = score >= 70 ? 5 : score >= 45 ? 7 : 10
+    const topJobSignals = topJobKeywords(jobFreq, signalCount + 20)
         .filter(({ word }) => allSkillAliases.has(word) && !cvKeywords.has(word))
-        .slice(0, 8)
+        .slice(0, signalCount)
 
     // ── 11. Persona & summary ─────────────────────────────────────────────────
     const topMissing = missing.filter(m => m.priority === "high").slice(0, 2).map(m => m.label)
