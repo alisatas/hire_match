@@ -739,9 +739,9 @@ export default function CVAnalyzer() {
                     <div className="overflow-y-auto lg:max-h-[85vh] p-6 sm:p-8 lg:p-10 flex flex-col h-full">
                         {!results && !isLoading && (
                             <div className="flex flex-col items-center justify-center h-full text-center py-12 animate-in fade-in zoom-in-95">
-                                <Search className="h-16 w-16 text-white/20 mb-6" />
-                                <p className="text-xl font-black mb-2 uppercase tracking-widest text-cyan-300/80">Drop your CV. We&apos;ll do the math.</p>
-                                <p className="text-cyan-300/60 text-sm font-semibold">Upload a PDF or paste your CV, add a job link — results in seconds.</p>
+                                <Sparkles className="h-12 w-12 text-cyan-400/50 mb-5" />
+                                <p className="text-lg font-bold mb-2 text-cyan-200/90">Your results will appear here</p>
+                                <p className="text-white/80 text-sm">Fill in your CV and job description on the left, then hit Analyze.</p>
                             </div>
                         )}
 
