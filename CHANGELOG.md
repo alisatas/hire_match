@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/alisatas/hire_match/compare/v1.13.0...v1.14.0) (2026-04-14)
+
+
+### Features
+
+* add orchestration dashboard page ([cf72d27](https://github.com/alisatas/hire_match/commit/cf72d279617fbdf95a6b6fe19e3c64b1f14e736d))
+
 # [1.13.0](https://github.com/alisatas/hire_match/compare/v1.12.0...v1.13.0) (2026-04-13)
 
 
