@@ -21,6 +21,17 @@ import { cn } from "@/lib/utils"
 import { analyze, type AnalysisResult } from "@/lib/analyze"
 import { extractCompanyName, extractCultureSignals, getInterviewLinks } from "@/lib/insights"
 
+// Decode common HTML entities returned by search APIs
+function decodeHtmlEntities(str: string): string {
+    return str
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/&apos;/g, "'")
+}
+
 // ─────────────────────────────────────────────
 // SKILL RESOURCES (UI-only: links for missing skills)
 // ─────────────────────────────────────────────
@@ -253,6 +264,7 @@ export default function CVAnalyzer() {
     const [error, setError] = useState("")
     const [showCvPaste, setShowCvPaste] = useState(false)
 
+    const [jobInputMode, setJobInputMode] = useState<"url" | "paste">("url")
     const [history, setHistory] = useState<{ score: number; label: string; matched: number; missing: number; date: string }[]>([])
     const [interviewResults, setInterviewResults] = useState<{ title: string; snippet: string; url: string; source: string }[]>([])
     const [interviewLoading, setInterviewLoading] = useState(false)
@@ -467,7 +479,7 @@ export default function CVAnalyzer() {
                                 {showCvPaste ? (
                                     <Textarea
                                         placeholder="Paste your full CV text here..."
-                                        className="min-h-[140px] bg-muted/20 border-border/40 rounded-xl text-white placeholder:text-white/30 text-sm"
+                                        className="min-h-[140px] max-h-[220px] h-[220px] resize-none overflow-y-auto [field-sizing:fixed] bg-muted/20 border-border/40 rounded-xl text-white placeholder:text-white/30 text-sm"
                                         value={cvText}
                                         onChange={(e) => { setCvText(e.target.value); setPdfStatus("✓ CV text loaded") }}
                                         autoFocus
@@ -508,89 +520,147 @@ export default function CVAnalyzer() {
                             </div>
                         )}
 
-                        {/* Job Description — URL only */}
+                        {/* Job Description — URL or Paste */}
                         <div className="space-y-3">
                             <div className="flex justify-between items-center">
-                                <label className="text-sm font-bold uppercase tracking-widest text-primary/90">Job Description URL</label>
+                                <label className="text-sm font-bold uppercase tracking-widest text-primary/90">Job Description</label>
                                 <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">REQUIRED</span>
                             </div>
-                            <p className="text-xs text-cyan-300/80">Paste a job URL from LinkedIn, Indeed, or any job board &mdash; we&apos;ll fetch it automatically.</p>
-                            <div className={cn(
-                                "flex items-center gap-2 bg-muted/20 border rounded-xl px-3 transition-colors",
-                                jobInput && !jobInput.trim().startsWith("http")
-                                    ? "border-rose-500/50"
-                                    : fetchStatus.startsWith("✓")
-                                    ? "border-emerald-500/40"
-                                    : "border-border/40 focus-within:border-primary/50"
-                            )}>
-                                <span className="text-white/30 text-sm shrink-0">🔗</span>
-                                <input
-                                    type="url"
-                                    aria-label="Job description URL"
-                                    className="flex-1 bg-transparent py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none"
-                                    placeholder="https://linkedin.com/jobs/..."
-                                    value={jobInput}
-                                    onChange={(e) => { setJobInput(e.target.value); setJobText(""); setFetchStatus(""); setScrapedCompanyName(""); if (e.target.value.startsWith("http")) setJobUrl(e.target.value); }}
-                                    onKeyDown={(e) => e.key === "Enter" && e.currentTarget.value.trim().startsWith("http") && fetchJobPost()}
-                                    onBlur={() => jobInput && !jobInput.trim().startsWith("http") && setError("Please paste a valid job URL (must start with https://)")}
-                                    onFocus={() => setError("")}
-                                />
-                                {fetchStatus.startsWith("✓") && (
-                                    <span className="text-emerald-400 text-xs font-bold shrink-0">✓</span>
-                                )}
+
+                            {/* Tab toggle */}
+                            <div className="flex rounded-xl bg-muted/20 border border-border/40 p-0.5 gap-0.5">
+                                <button
+                                    type="button"
+                                    onClick={() => { setJobInputMode("url"); setJobText(""); setFetchStatus(""); setScrapedCompanyName(""); }}
+                                    className={cn(
+                                        "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all",
+                                        jobInputMode === "url"
+                                            ? "bg-primary/20 text-primary"
+                                            : "text-white/40 hover:text-white/70"
+                                    )}
+                                >
+                                    🔗 Job URL
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => { setJobInputMode("paste"); setJobInput(""); setJobUrl(""); setFetchStatus(""); setScrapedCompanyName(""); }}
+                                    className={cn(
+                                        "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all",
+                                        jobInputMode === "paste"
+                                            ? "bg-primary/20 text-primary"
+                                            : "text-white/40 hover:text-white/70"
+                                    )}
+                                >
+                                    📋 Paste Text
+                                </button>
                             </div>
 
-                            {/* URL validation hint */}
-                            {jobInput && !jobInput.trim().startsWith("http") && (
-                                <p className="text-rose-400 text-xs font-semibold">Please paste a valid job URL starting with https://</p>
-                            )}
-
-                            {fetchStatus && (
-                                <p className={cn(
-                                    "text-xs font-semibold break-words",
-                                    fetchStatus.startsWith("✓") ? "text-emerald-400" : "text-white/60"
-                                )}>{fetchStatus}</p>
-                            )}
-
-                            {/* Sample job buttons */}
-                            {!jobText && !fetchStatus.startsWith("✓") && (
-                                <div className="flex flex-col gap-2">
-                                    <p className="text-xs text-cyan-300/80">
-                                        No job description? Click a role to X-ray your CV against it:
-                                    </p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {SAMPLE_JOBS.map((job) => (
-                                            <button
-                                                key={job.label}
-                                                type="button"
-                                                title={job.desc}
-                                                onClick={() => {
-                                                    setJobInput("")
-                                                    setJobText(job.text)
-                                                    setFetchStatus(`✓ ${job.label} sample loaded`)
-                                                    setError("")
-                                                }}
-                                                className="group px-3 py-2.5 text-xs font-semibold bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-500/40 text-cyan-300 rounded-full transition-all flex items-center gap-1.5"
-                                            >
-                                                {job.emoji} {job.label}
-                                                <span className="text-cyan-500/50 text-[10px] group-hover:text-cyan-400 transition-colors">↓</span>
-                                            </button>
-                                        ))}
+                            {jobInputMode === "url" ? (
+                                <>
+                                    <p className="text-xs text-cyan-300/80">Paste a job URL from LinkedIn, Indeed, or any job board &mdash; we&apos;ll fetch it automatically.</p>
+                                    <div className={cn(
+                                        "flex items-center gap-2 bg-muted/20 border rounded-xl px-3 transition-colors",
+                                        jobInput && !jobInput.trim().startsWith("http")
+                                            ? "border-rose-500/50"
+                                            : fetchStatus.startsWith("✓")
+                                            ? "border-emerald-500/40"
+                                            : "border-border/40 focus-within:border-primary/50"
+                                    )}>
+                                        <span className="text-white/30 text-sm shrink-0">🔗</span>
+                                        <input
+                                            type="url"
+                                            aria-label="Job description URL"
+                                            className="flex-1 bg-transparent py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none"
+                                            placeholder="https://linkedin.com/jobs/..."
+                                            value={jobInput}
+                                            onChange={(e) => { setJobInput(e.target.value); setJobText(""); setFetchStatus(""); setScrapedCompanyName(""); if (e.target.value.startsWith("http")) setJobUrl(e.target.value); }}
+                                            onKeyDown={(e) => e.key === "Enter" && e.currentTarget.value.trim().startsWith("http") && fetchJobPost()}
+                                            onBlur={() => jobInput && !jobInput.trim().startsWith("http") && setError("Please paste a valid job URL (must start with https://)")}
+                                            onFocus={() => setError("")}
+                                        />
+                                        {fetchStatus.startsWith("✓") && (
+                                            <span className="text-emerald-400 text-xs font-bold shrink-0">✓</span>
+                                        )}
                                     </div>
-                                </div>
-                            )}
 
-                            {/* Fallback paste area — only shown when scraping fails */}
-                            {fetchStatus.includes("paste") && (
-                                <div className="space-y-1.5">
-                                    <p className="text-[11px] text-amber-400 font-semibold">LinkedIn blocked the fetch — copy the job description and paste it below:</p>
+                                    {jobInput && !jobInput.trim().startsWith("http") && (
+                                        <p className="text-rose-400 text-xs font-semibold">Please paste a valid job URL starting with https://</p>
+                                    )}
+
+                                    {fetchStatus && (
+                                        <p className={cn(
+                                            "text-xs font-semibold break-words",
+                                            fetchStatus.startsWith("✓") ? "text-emerald-400" : fetchStatus.includes("paste") ? "text-amber-400" : "text-white/60"
+                                        )}>{fetchStatus.includes("paste") ? "Couldn't fetch — switch to Paste Text tab above." : fetchStatus}</p>
+                                    )}
+
+                                    {/* Sample job buttons */}
+                                    {!jobText && !fetchStatus.startsWith("✓") && (
+                                        <div className="flex flex-col gap-2">
+                                            <p className="text-xs text-cyan-300/80">
+                                                No job description? Click a role to X-ray your CV against it:
+                                            </p>
+                                            <div className="flex flex-wrap gap-2">
+                                                {SAMPLE_JOBS.map((job) => (
+                                                    <button
+                                                        key={job.label}
+                                                        type="button"
+                                                        title={job.desc}
+                                                        onClick={() => {
+                                                            setJobInput("")
+                                                            setJobText(job.text)
+                                                            setFetchStatus(`✓ ${job.label} sample loaded`)
+                                                            setError("")
+                                                        }}
+                                                        className="group px-3 py-2.5 text-xs font-semibold bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-500/40 text-cyan-300 rounded-full transition-all flex items-center gap-1.5"
+                                                    >
+                                                        {job.emoji} {job.label}
+                                                        <span className="text-cyan-500/50 text-[10px] group-hover:text-cyan-400 transition-colors">↓</span>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <>
+                                    <p className="text-xs text-cyan-300/80">Copy the full job description and paste it here.</p>
                                     <Textarea
                                         placeholder="Paste job description text here..."
-                                        className="min-h-[80px] bg-muted/20 border-border/40 rounded-xl text-white placeholder:text-white/40"
+                                        className="min-h-[120px] max-h-[220px] h-[220px] resize-none overflow-y-auto [field-sizing:fixed] bg-muted/20 border-border/40 rounded-xl text-white placeholder:text-white/30 text-sm"
                                         value={jobText}
-                                        onChange={(e) => setJobText(e.target.value)}
+                                        onChange={(e) => { setJobText(e.target.value); setFetchStatus(e.target.value.length > 50 ? "✓ Job description ready" : ""); }}
+                                        autoFocus
                                     />
-                                </div>
+                                    {jobText.length > 50 && (
+                                        <p className="text-emerald-400 text-xs font-semibold">✓ Job description ready</p>
+                                    )}
+
+                                    {/* Sample job buttons in paste mode too */}
+                                    {!jobText && (
+                                        <div className="flex flex-col gap-2">
+                                            <p className="text-xs text-cyan-300/80">Or try a sample role:</p>
+                                            <div className="flex flex-wrap gap-2">
+                                                {SAMPLE_JOBS.map((job) => (
+                                                    <button
+                                                        key={job.label}
+                                                        type="button"
+                                                        title={job.desc}
+                                                        onClick={() => {
+                                                            setJobText(job.text)
+                                                            setFetchStatus(`✓ ${job.label} sample loaded`)
+                                                            setError("")
+                                                        }}
+                                                        className="group px-3 py-2.5 text-xs font-semibold bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-500/40 text-cyan-300 rounded-full transition-all flex items-center gap-1.5"
+                                                    >
+                                                        {job.emoji} {job.label}
+                                                        <span className="text-cyan-500/50 text-[10px] group-hover:text-cyan-400 transition-colors">↓</span>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </div>
 
@@ -598,7 +668,7 @@ export default function CVAnalyzer() {
                             <p className="text-rose-400 text-sm font-semibold">{error}</p>
                         )}
 
-                        <div className="space-y-3 pt-2">
+<div className="space-y-3 pt-2">
                             {/* Always show Analyze button — when results exist, also show Try Another */}
                             {results && !jobText && !jobInput ? (
                                 <Button
@@ -729,6 +799,44 @@ export default function CVAnalyzer() {
                                 </div>
 
 
+
+                                {/* Next Steps — score-tiered action card */}
+                                {(() => {
+                                    const s = results.score
+                                    const highGaps = results.missing.filter(m => m.priority === "high")
+                                    if (s >= 70) return (
+                                        <div className="rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/50 to-teal-950/30 px-5 py-4 space-y-2">
+                                            <p className="text-sm font-black text-emerald-300 flex items-center gap-2">✅ You&apos;re a strong match — apply now</p>
+                                            <ul className="space-y-1.5 text-xs text-white/70">
+                                                <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0 mt-0.5">→</span>Tailor your cover letter to mention: <span className="text-emerald-300 font-semibold">{results.matched.slice(0, 3).join(", ")}</span></li>
+                                                {highGaps.length > 0 && <li className="flex items-start gap-2"><span className="text-amber-400 shrink-0 mt-0.5">→</span>Briefly address your gap in <span className="text-amber-300 font-semibold">{highGaps[0].label}</span> — show learning in progress</li>}
+                                                <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0 mt-0.5">→</span>Click <strong>Apply Now</strong> above before the role closes</li>
+                                            </ul>
+                                        </div>
+                                    )
+                                    if (s >= 45) return (
+                                        <div className="rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-950/40 to-orange-950/20 px-5 py-4 space-y-2">
+                                            <p className="text-sm font-black text-amber-300 flex items-center gap-2">⚡ Decent match — close {Math.min(highGaps.length, 2)} gap{highGaps.length !== 1 ? "s" : ""} to be competitive</p>
+                                            <ul className="space-y-1.5 text-xs text-white/70">
+                                                {highGaps.slice(0, 2).map((g, i) => (
+                                                    <li key={i} className="flex items-start gap-2"><span className="text-amber-400 shrink-0 mt-0.5">→</span>Add <span className="text-amber-300 font-semibold">{g.label}</span> to your CV — even a side project counts</li>
+                                                ))}
+                                                <li className="flex items-start gap-2"><span className="text-cyan-400 shrink-0 mt-0.5">→</span>You can still apply — your existing skills in <span className="text-cyan-300 font-semibold">{results.matched.slice(0, 2).join(", ")}</span> are solid</li>
+                                            </ul>
+                                        </div>
+                                    )
+                                    return (
+                                        <div className="rounded-2xl border border-rose-500/25 bg-gradient-to-br from-rose-950/40 to-slate-900/60 px-5 py-4 space-y-2">
+                                            <p className="text-sm font-black text-rose-300 flex items-center gap-2">🎯 Below threshold — build skills before applying</p>
+                                            <ul className="space-y-1.5 text-xs text-white/70">
+                                                {highGaps.slice(0, 3).map((g, i) => (
+                                                    <li key={i} className="flex items-start gap-2"><span className="text-rose-400 shrink-0 mt-0.5">→</span>Priority: learn <span className="text-rose-300 font-semibold">{g.label}</span> — see course below</li>
+                                                ))}
+                                                <li className="flex items-start gap-2"><span className="text-cyan-400 shrink-0 mt-0.5">→</span>Try a similar role that fits better — use <strong>Try Another Job</strong> below</li>
+                                            </ul>
+                                        </div>
+                                    )
+                                })()}
 
                                 {/* Low quality warning */}
                                 {results.lowQuality && (
@@ -972,7 +1080,7 @@ export default function CVAnalyzer() {
                                                                 <a key={i} href={result.url} target="_blank" rel="noopener noreferrer"
                                                                     className="flex min-w-0 items-center gap-2.5 px-3 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-teal-500/10 hover:border-teal-500/30 transition-all group">
                                                                     <span className="shrink-0 text-[10px] font-bold text-teal-400/70 uppercase tracking-wider w-16 truncate">{result.source}</span>
-                                                                    <span className="min-w-0 text-xs text-white/80 group-hover:text-teal-300 transition-colors truncate flex-1">{result.title}</span>
+                                                                    <span className="min-w-0 text-xs text-white/80 group-hover:text-teal-300 transition-colors truncate flex-1">{decodeHtmlEntities(result.title)}</span>
                                                                     <ExternalLink className="shrink-0 w-3 h-3 text-white/30 group-hover:text-teal-400 transition-colors" />
                                                                 </a>
                                                             ))}

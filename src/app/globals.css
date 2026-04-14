@@ -124,12 +124,39 @@
   }
   body {
     @apply text-foreground;
-    background: linear-gradient(135deg, #0d3525 0%, #0b2d40 50%, #0d2535 100%);
+    background: transparent;
     min-height: 100vh;
   }
   html {
     @apply font-sans;
   }
+}
+
+/* ── Blob drift animations (aurora-style drifting orbs) ── */
+@keyframes blob-drift-1 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  33%       { transform: translate(60px, -40px) scale(1.08); }
+  66%       { transform: translate(-30px, 50px) scale(0.95); }
+}
+@keyframes blob-drift-2 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  33%       { transform: translate(-50px, 30px) scale(1.06); }
+  66%       { transform: translate(40px, -60px) scale(1.02); }
+}
+@keyframes blob-drift-3 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  25%       { transform: translate(30px, 50px) scale(0.96); }
+  75%       { transform: translate(-60px, -30px) scale(1.07); }
+}
+@keyframes blob-drift-4 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  40%       { transform: translate(-40px, -50px) scale(1.05); }
+  80%       { transform: translate(50px, 40px) scale(0.97); }
+}
+@keyframes blob-drift-5 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  30%       { transform: translate(50px, -30px) scale(1.04); }
+  70%       { transform: translate(-30px, 60px) scale(0.98); }
 }
 
 @media (prefers-reduced-motion: reduce) {
