@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/alisatas/hire_match/compare/v1.14.0...v1.15.0) (2026-04-14)
+
+
+### Features
+
+* add /api/tweet and /api/reddit-comment agent action routes ([d52378f](https://github.com/alisatas/hire_match/commit/d52378f3a2d138ba00dbecd7911a73e04ff738c0))
+
 # [1.14.0](https://github.com/alisatas/hire_match/compare/v1.13.0...v1.14.0) (2026-04-14)
 
 
