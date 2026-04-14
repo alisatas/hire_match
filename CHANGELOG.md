@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/alisatas/hire_match/compare/v1.15.0...v1.16.0) (2026-04-14)
+
+
+### Features
+
+* webgl shader background, job input tabs, next steps card, ux fixes ([1c23538](https://github.com/alisatas/hire_match/commit/1c235382c536ee3d8fd5b57029361400fc33465f))
+
 # [1.15.0](https://github.com/alisatas/hire_match/compare/v1.14.0...v1.15.0) (2026-04-14)
 
 
