@@ -49,8 +49,8 @@ export default function Home() {
           ))}
         </div>
       </section>
-      <footer className="text-center py-10 border-t border-white/10 text-cyan-300/80 text-sm">
-        <p>&copy; 2026 CVXray — 100% private — nothing you upload is stored or shared.</p>
+      <footer className="text-center py-8 border-t border-white/10 text-cyan-300/60 text-xs px-6">
+        <p>&copy; 2026 CVXray &nbsp;·&nbsp; 100% private &nbsp;·&nbsp; nothing you upload is stored or shared.</p>
       </footer>
     </main>
   );

@@ -310,7 +310,12 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
     // ── 9. Missing skills with priority ──────────────────────────────────────
     const missing: MissingSkillWithPriority[] = missingKeys.map(key => {
         const freq = jobSkillFreq.get(key) || 0
-        const priority: "high" | "medium" | "low" = freq >= 3 ? "high" : freq >= 1 ? "medium" : "low"
+        // Math Prof improvement: skills mentioned in the job title are automatically
+        // high-priority regardless of total frequency. The title is the most distilled
+        // expression of what the role needs — "React Developer" means React is essential
+        // even if the body only mentions it once.
+        const priority: "high" | "medium" | "low" =
+            (freq >= 3 || titleSkills.has(key)) ? "high" : freq >= 1 ? "medium" : "low"
         return { label: getSkillLabel(key), key, freq, priority }
     }).sort((a, b) => b.freq - a.freq)
 
@@ -380,4 +385,204 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
         persona,
         lowQuality,
     }
+}
+
+// ─────────────────────────────────────────────
+// HR CV AUDIT — standalone CV review, no JD required
+// Surfaces what hiring managers scan for before reading a word
+// ─────────────────────────────────────────────
+
+export interface CVAuditCategory {
+    key: string
+    label: string
+    icon: string
+    status: 'good' | 'warn' | 'missing'
+    found: string[]
+    missing: string[]   // specific terms/keywords to add — shown as chips in UI
+    suggestions: string[]
+    tip: string
+}
+
+export interface CVAuditResult {
+    categories: CVAuditCategory[]
+    grade: 'strong' | 'average' | 'weak'
+}
+
+export function auditCV(cvText: string): CVAuditResult {
+    const text = cvText.toLowerCase()
+
+    // ── 1. Quantified Impact ───────────────────────────────────────────────
+    // Google/FAANG rubric: every bullet should answer "so what?" with a number.
+    // Signals: percentages, money, multipliers, team/user/request scale.
+    const hasPercent    = /\d+\s*%/.test(text)
+    const hasMoney      = /[\$£€]\s*\d|\d\s*(million|billion|k\b)/.test(text)
+    const hasMultiplier = /\d+x\b|\d+×/.test(text)
+    const hasTeamSize   = /team of \d+|\d+[\s-]person|\d+ engineers?|\d+ developers?|\d+ reports?/i.test(cvText)
+    const hasUserScale  = /\d+[mk]?\+?\s*(users?|customers?|clients?|dau|mau|requests?|transactions?)/i.test(cvText)
+    const resultVerbs   = ['increased','decreased','reduced','improved','grew','saved','generated',
+                           'delivered','achieved','exceeded','accelerated','doubled','tripled','cut']
+    const foundResultVerbs = resultVerbs.filter(v => text.includes(v))
+
+    const quantSignals  = [hasPercent, hasMoney, hasMultiplier, hasTeamSize, hasUserScale].filter(Boolean).length
+    const quantStatus   = quantSignals >= 3 ? 'good' : quantSignals >= 1 ? 'warn' : 'missing'
+    const quantMissing  = [
+        ...(!hasPercent                          ? ['"improved latency by 40%" — add %'] : []),
+        ...(!hasMoney                            ? ['"saved $200k/yr" — add money/scale'] : []),
+        ...(!hasMultiplier                       ? ['"3× faster" — add a multiplier'] : []),
+        ...(!hasTeamSize                         ? ['"team of 6" — mention team size'] : []),
+        ...(!hasUserScale                        ? ['"10M users" — mention users/scale'] : []),
+        ...(foundResultVerbs.length < 3          ? ['use: increased, reduced, delivered'] : []),
+    ].slice(0, 3)
+    const quantSuggestions = quantMissing.length > 0 ? [quantMissing[0]] : []
+
+    // ── 2. Action Verbs — grouped by type ─────────────────────────────────
+    // FAANG scorecards look for ownership (led/owned), technical depth
+    // (architected/shipped), and business impact (scaled/drove).
+    const leadershipVerbs = ['led','managed','owned','directed','oversaw','mentored','hired','grew','coached']
+    const technicalVerbs  = ['architected','engineered','built','designed','automated','deployed',
+                             'migrated','integrated','shipped','refactored','optimised','optimized']
+    const impactVerbs     = ['launched','scaled','spearheaded','pioneered','transformed','streamlined',
+                             'negotiated','drove','championed','consolidated','established','secured']
+
+    const foundLeadership = leadershipVerbs.filter(v => text.includes(v))
+    const foundTechnical  = technicalVerbs.filter(v => text.includes(v))
+    const foundImpact     = impactVerbs.filter(v => text.includes(v))
+    const totalVerbs      = foundLeadership.length + foundTechnical.length + foundImpact.length
+    const verbStatus      = totalVerbs >= 7 ? 'good' : totalVerbs >= 3 ? 'warn' : 'missing'
+
+    const verbMissing = [
+        ...(foundLeadership.length === 0
+            ? [`leadership: ${leadershipVerbs.filter(v => !text.includes(v)).slice(0,2).join(', ')}`] : []),
+        ...(foundTechnical.length === 0
+            ? [`technical: ${technicalVerbs.filter(v => !text.includes(v)).slice(0,2).join(', ')}`] : []),
+        ...(foundImpact.length === 0
+            ? [`impact: ${impactVerbs.filter(v => !text.includes(v)).slice(0,2).join(', ')}`] : []),
+    ]
+    const verbSuggestions = verbMissing.length > 0
+        ? [`Try stronger verbs: ${[...leadershipVerbs,...technicalVerbs,...impactVerbs].filter(v => !text.includes(v)).slice(0,4).join(', ')}`]
+        : []
+    const foundVerbs = [...foundLeadership, ...foundTechnical, ...foundImpact]
+
+    // ── 3. Business & ATS Keywords ────────────────────────────────────────
+    // Standard vocabulary that ATS systems and senior HRs scan for.
+    // Source: Google, Meta, Amazon job description language analysis.
+    const proTerms: { term: string; label: string }[] = [
+        { term: 'stakeholder',      label: 'stakeholder management' },
+        { term: 'cross-functional', label: 'cross-functional teams'  },
+        { term: 'roadmap',          label: 'product roadmap'         },
+        { term: 'kpi',              label: 'KPIs'                    },
+        { term: 'okr',              label: 'OKRs'                    },
+        { term: 'prioriti',         label: 'prioritisation'          }, // catches both spellings
+        { term: 'data-driven',      label: 'data-driven'             },
+        { term: 'alignment',        label: 'alignment'               },
+        { term: 'strategy',         label: 'strategy'                },
+        { term: 'ownership',        label: 'ownership'               },
+        { term: 'agile',            label: 'agile'                   },
+        { term: 'impact',           label: 'business impact'         },
+        { term: 'collaboration',    label: 'collaboration'           },
+        { term: 'scalab',           label: 'scalability'             }, // catches scalable/scalability
+        { term: 'executive',        label: 'executive exposure'      },
+    ]
+    const foundPro   = proTerms.filter(t => text.includes(t.term)).map(t => t.label)
+    const missingPro = proTerms.filter(t => !text.includes(t.term)).map(t => t.label).slice(0, 4)
+    const proStatus  = foundPro.length >= 7 ? 'good' : foundPro.length >= 3 ? 'warn' : 'missing'
+    const proSuggestions = missingPro.length > 0 ? [`Add: ${missingPro.join(', ')}`] : []
+
+    // ── 4. Career Progression & Scope Signals ─────────────────────────────
+    // Senior HRs look for trajectory, not just a list of jobs.
+    // Explicit: promoted/principal/staff. Implicit: expanded/took on/grew team.
+    const progressionTerms = [
+        'promoted','promotion','senior','staff','principal','lead','head of','director','vp','vice president',
+        'expanded','grew','took on','additional responsibility','new responsibilities',
+        'managed up','reported to','c-suite','c suite','board',
+    ]
+    const foundProgression    = progressionTerms.filter(t => text.includes(t))
+    const progressionStatus   = foundProgression.length >= 3 ? 'good' : foundProgression.length >= 1 ? 'warn' : 'missing'
+    const progressionMissing  = [
+        ...(!text.includes('promot') && !text.includes('senior') && !text.includes('principal')
+            ? ['mention title progression (e.g. "promoted to Senior")'] : []),
+        ...(!text.includes('responsib') && !text.includes('expanded') && !text.includes('grew')
+            ? ['show how scope grew in each role'] : []),
+        ...(!text.includes('managed') && !text.includes('led') && !text.includes('head')
+            ? ['show who you led or reported to'] : []),
+    ].slice(0, 2)
+    const progressionSuggestions = progressionMissing.length > 0 ? [progressionMissing[0]] : []
+
+    // ── 5. Online Presence & Contact Completeness ─────────────────────────
+    const hasLinkedIn  = text.includes('linkedin')
+    const hasGithub    = text.includes('github') || text.includes('gitlab')
+    const hasPortfolio = text.includes('portfolio') || text.includes('website') || /https?:\/\//.test(text)
+    const hasEmail     = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/.test(text)
+    const presenceFound = [
+        hasLinkedIn  && 'LinkedIn',
+        hasGithub    && 'GitHub',
+        hasPortfolio && 'Portfolio/URL',
+        hasEmail     && 'Email',
+    ].filter(Boolean) as string[]
+    const presenceMissing = [
+        !hasLinkedIn  && 'add your LinkedIn URL',
+        !hasEmail     && 'add your email address',
+        !hasGithub    && 'add a GitHub profile',
+        !hasPortfolio && 'add a portfolio or website',
+    ].filter(Boolean) as string[]
+    const presenceStatus = presenceFound.length >= 3 ? 'good' : presenceFound.length >= 2 ? 'warn' : 'missing'
+    const presenceSuggestions = presenceMissing.slice(0, 2).map(p => `${(p as string)[0].toUpperCase()}${(p as string).slice(1)}`)
+
+    const categories: CVAuditCategory[] = [
+        {
+            key: 'quant',
+            label: 'Quantified Impact',
+            icon: '📊',
+            status: quantStatus,
+            found: foundResultVerbs,
+            missing: quantMissing,
+            suggestions: quantSuggestions,
+            tip: 'HRs spend 7 seconds on a CV — numbers make them stop.',
+        },
+        {
+            key: 'verbs',
+            label: 'Action Verbs',
+            icon: '⚡',
+            status: verbStatus,
+            found: foundVerbs,
+            missing: verbMissing,
+            suggestions: verbSuggestions,
+            tip: 'Strong verbs signal ownership. Weak verbs (worked on, helped with) signal support roles.',
+        },
+        {
+            key: 'pro',
+            label: 'Professional Keywords',
+            icon: '🏢',
+            status: proStatus,
+            found: foundPro,
+            missing: missingPro,
+            suggestions: proSuggestions,
+            tip: 'ATS systems and HRs scan for these terms before reading a single bullet.',
+        },
+        {
+            key: 'progression',
+            label: 'Career Progression',
+            icon: '📈',
+            status: progressionStatus,
+            found: foundProgression,
+            missing: progressionMissing,
+            suggestions: progressionSuggestions,
+            tip: 'Show trajectory — HRs look for upward movement, not just job history.',
+        },
+        {
+            key: 'presence',
+            label: 'Online Presence',
+            icon: '🔗',
+            status: presenceStatus,
+            found: presenceFound,
+            missing: presenceMissing,
+            suggestions: presenceSuggestions,
+            tip: 'HRs Google you. Make it easy — include LinkedIn, GitHub, and portfolio links.',
+        },
+    ]
+
+    const goodCount = categories.filter(c => c.status === 'good').length
+    const grade = goodCount >= 4 ? 'strong' : goodCount >= 2 ? 'average' : 'weak'
+
+    return { categories, grade }
 }

@@ -19,6 +19,7 @@ CVXray analyzes your CV against any job description and returns:
 - Personalized course recommendations to close skill gaps
 - Automatic job description scraping from LinkedIn, Indeed, Glassdoor URLs
 - Company Insights: company name, culture signals (remote, hybrid, equity, etc.), and real interview resources from Glassdoor and Indeed for the specific company in the job posting
+- HR Quick Scan: instant CV quality check (no job description needed) — checks for quantified impact, action verbs, professional keywords, career progression signals, and online presence. Tells you exactly what a hiring manager notices before reading your CV.
 
 ## Who should use CVXray
 

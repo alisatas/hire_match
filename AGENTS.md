@@ -18,6 +18,32 @@ Results are printed as a structured report. Push only when all agents return ✅
 
 ---
 
+## Agent Knowledge Logs — MANDATORY
+
+Every agent has a persistent knowledge log in `agent-logs/`:
+
+| Agent | Log file |
+|---|---|
+| 🔐 Security | `agent-logs/security.md` |
+| 🧪 QA | `agent-logs/qa.md` |
+| 🔌 API | `agent-logs/api.md` |
+| 🎨 UI/UX | `agent-logs/uiux.md` |
+| 🌐 Browser QA | `agent-logs/browser-qa.md` |
+| 🔍 SEO | `agent-logs/seo.md` |
+| 🧮 Math Professor | `agent-logs/math-professor.md` |
+
+**Before each push:**
+1. READ the relevant log file before running that agent's checklist — use past findings to inform current checks
+2. Note any recurring warnings that have now been fixed
+
+**After each push (before committing):**
+1. APPEND a new dated entry to EACH agent's log file with: status, findings, improvements made, and any new warnings
+2. Update the "running improvement backlog" in SEO and Math Professor logs with completed/new items
+
+Skipping log reads or writes is NOT allowed. These logs compound knowledge across pushes.
+
+---
+
 ## Agent 1 — 🔐 Security Engineer (Senior Team Lead)
 
 Think like a senior engineer who has dealt with real production breaches. Don't just tick boxes — reason about actual exploitability and blast radius.

@@ -10,7 +10,6 @@ import {
     FileText,
     UploadCloud,
     ArrowRight,
-    Search,
     Shield,
     Cpu,
     RotateCcw,
@@ -18,7 +17,7 @@ import {
     BookOpen,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { analyze, type AnalysisResult } from "@/lib/analyze"
+import { analyze, auditCV, type AnalysisResult, type CVAuditResult } from "@/lib/analyze"
 import { extractCompanyName, extractCultureSignals, getInterviewLinks } from "@/lib/insights"
 
 // Decode common HTML entities returned by search APIs
@@ -263,6 +262,7 @@ export default function CVAnalyzer() {
     const [pdfStatus, setPdfStatus] = useState("")
     const [error, setError] = useState("")
     const [showCvPaste, setShowCvPaste] = useState(false)
+    const [cvAudit, setCvAudit] = useState<CVAuditResult | null>(null)
 
     const [jobInputMode, setJobInputMode] = useState<"url" | "paste">("url")
     const [history, setHistory] = useState<{ score: number; label: string; matched: number; missing: number; date: string }[]>([])
@@ -308,6 +308,7 @@ export default function CVAnalyzer() {
             const data = await res.json()
             if (!res.ok || !data.text) throw new Error(data.error || "No text extracted")
             setCvText(data.text)
+            setCvAudit(auditCV(data.text))
             setPdfStatus(`✓ ${file.name} loaded`)
         } catch (err: unknown) {
             console.error("PDF Read Error:", err)
@@ -425,6 +426,7 @@ export default function CVAnalyzer() {
         setCvText("")
         setPdfStatus("")
         setResults(null)
+        setCvAudit(null)
         setError("")
         if (fileInputRef.current) fileInputRef.current.value = ""
     }
@@ -481,7 +483,7 @@ export default function CVAnalyzer() {
                                         placeholder="Paste your full CV text here..."
                                         className="min-h-[140px] max-h-[220px] h-[220px] resize-none overflow-y-auto [field-sizing:fixed] bg-muted/20 border-border/40 rounded-xl text-white placeholder:text-white/30 text-sm"
                                         value={cvText}
-                                        onChange={(e) => { setCvText(e.target.value); setPdfStatus("✓ CV text loaded") }}
+                                        onChange={(e) => { setCvText(e.target.value); setPdfStatus("✓ CV text loaded"); if (e.target.value.length > 100) setCvAudit(auditCV(e.target.value)) }}
                                         autoFocus
                                     />
                                 ) : (
@@ -506,17 +508,20 @@ export default function CVAnalyzer() {
                                 )}
                             </div>
                         ) : (
-                            <div className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/25 rounded-2xl px-4 py-3">
-                                <div className="flex items-center gap-3">
-                                    <FileText className="h-4 w-4 text-emerald-400 shrink-0" />
-                                    <span className="text-sm font-bold text-emerald-400 truncate">{pdfStatus.replace("✓ ", "") || "CV loaded"}</span>
+                            <div className="space-y-3">
+                                <div className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/25 rounded-2xl px-4 py-3">
+                                    <div className="flex items-center gap-3">
+                                        <FileText className="h-4 w-4 text-emerald-400 shrink-0" />
+                                        <span className="text-sm font-bold text-emerald-400 truncate">{pdfStatus.replace("✓ ", "") || "CV loaded"}</span>
+                                    </div>
+                                    <button
+                                        onClick={resetCV}
+                                        className="text-[11px] font-bold text-white/40 hover:text-white/70 uppercase tracking-widest shrink-0 ml-3 transition-colors"
+                                    >
+                                        Change
+                                    </button>
                                 </div>
-                                <button
-                                    onClick={resetCV}
-                                    className="text-[11px] font-bold text-white/40 hover:text-white/70 uppercase tracking-widest shrink-0 ml-3 transition-colors"
-                                >
-                                    Change
-                                </button>
+
                             </div>
                         )}
 
@@ -760,6 +765,49 @@ export default function CVAnalyzer() {
                             <div className={cn("transition-opacity duration-300", isLoading && "opacity-40 pointer-events-none")}>
                             <div className="animate-in fade-in slide-in-from-right-8 duration-700 space-y-8">
                                 <h2 className="sr-only">Your Match Results</h2>
+
+                                {/* Next Steps — score-tiered action card (shown first, replaces HR Quick Scan) */}
+                                {(() => {
+                                    const s = results.score
+                                    const highGaps = results.missing.filter(m => m.priority === "high")
+                                    if (s >= 70) return (
+                                        <div className="rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/50 to-teal-950/30 px-5 py-4 space-y-2">
+                                            <p className="text-sm font-black text-emerald-300 flex items-center gap-2">✅ You&apos;re a strong match — apply now</p>
+                                            <ul className="space-y-1.5 text-xs text-white/70">
+                                                <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0 mt-0.5">→</span>Tailor your cover letter to mention: <span className="text-emerald-300 font-semibold">{results.matched.slice(0, 3).join(", ")}</span></li>
+                                                {highGaps.length > 0 && <li className="flex items-start gap-2"><span className="text-amber-400 shrink-0 mt-0.5">→</span>Briefly address your gap in <span className="text-amber-300 font-semibold">{highGaps[0].label}</span> — show learning in progress</li>}
+                                                <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0 mt-0.5">→</span>Click <strong>Apply Now</strong> above before the role closes</li>
+                                            </ul>
+                                        </div>
+                                    )
+                                    if (s >= 45) return (
+                                        <div className="rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-950/40 to-orange-950/20 px-5 py-4 space-y-2">
+                                            <p className="text-sm font-black text-amber-300 flex items-center gap-2">
+                                                {highGaps.length > 0
+                                                    ? `⚡ Decent match — close ${Math.min(highGaps.length, 2)} gap${Math.min(highGaps.length, 2) !== 1 ? "s" : ""} to be competitive`
+                                                    : "⚡ Good match — apply and highlight your strengths"}
+                                            </p>
+                                            <ul className="space-y-1.5 text-xs text-white/70">
+                                                {highGaps.slice(0, 2).map((g, i) => (
+                                                    <li key={i} className="flex items-start gap-2"><span className="text-amber-400 shrink-0 mt-0.5">→</span>Add <span className="text-amber-300 font-semibold">{g.label}</span> to your CV — even a side project counts</li>
+                                                ))}
+                                                <li className="flex items-start gap-2"><span className="text-cyan-400 shrink-0 mt-0.5">→</span>You can still apply — your existing skills in <span className="text-cyan-300 font-semibold">{results.matched.slice(0, 2).join(", ")}</span> are solid</li>
+                                            </ul>
+                                        </div>
+                                    )
+                                    return (
+                                        <div className="rounded-2xl border border-rose-500/25 bg-gradient-to-br from-rose-950/40 to-slate-900/60 px-5 py-4 space-y-2">
+                                            <p className="text-sm font-black text-rose-300 flex items-center gap-2">🎯 Below threshold — build skills before applying</p>
+                                            <ul className="space-y-1.5 text-xs text-white/70">
+                                                {highGaps.slice(0, 3).map((g, i) => (
+                                                    <li key={i} className="flex items-start gap-2"><span className="text-rose-400 shrink-0 mt-0.5">→</span>Priority: learn <span className="text-rose-300 font-semibold">{g.label}</span> — see course below</li>
+                                                ))}
+                                                <li className="flex items-start gap-2"><span className="text-cyan-400 shrink-0 mt-0.5">→</span>Try a similar role that fits better — use <strong>Try Another Job</strong> below</li>
+                                            </ul>
+                                        </div>
+                                    )
+                                })()}
+
                                 {/* Score Header */}
                                 <div className="flex flex-col md:flex-row items-center gap-6 pb-6 border-b border-border/30">
                                     <div className="relative h-28 w-28 shrink-0">
@@ -800,49 +848,62 @@ export default function CVAnalyzer() {
 
 
 
-                                {/* Next Steps — score-tiered action card */}
-                                {(() => {
-                                    const s = results.score
-                                    const highGaps = results.missing.filter(m => m.priority === "high")
-                                    if (s >= 70) return (
-                                        <div className="rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/50 to-teal-950/30 px-5 py-4 space-y-2">
-                                            <p className="text-sm font-black text-emerald-300 flex items-center gap-2">✅ You&apos;re a strong match — apply now</p>
-                                            <ul className="space-y-1.5 text-xs text-white/70">
-                                                <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0 mt-0.5">→</span>Tailor your cover letter to mention: <span className="text-emerald-300 font-semibold">{results.matched.slice(0, 3).join(", ")}</span></li>
-                                                {highGaps.length > 0 && <li className="flex items-start gap-2"><span className="text-amber-400 shrink-0 mt-0.5">→</span>Briefly address your gap in <span className="text-amber-300 font-semibold">{highGaps[0].label}</span> — show learning in progress</li>}
-                                                <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0 mt-0.5">→</span>Click <strong>Apply Now</strong> above before the role closes</li>
-                                            </ul>
-                                        </div>
-                                    )
-                                    if (s >= 45) return (
-                                        <div className="rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-950/40 to-orange-950/20 px-5 py-4 space-y-2">
-                                            <p className="text-sm font-black text-amber-300 flex items-center gap-2">⚡ Decent match — close {Math.min(highGaps.length, 2)} gap{highGaps.length !== 1 ? "s" : ""} to be competitive</p>
-                                            <ul className="space-y-1.5 text-xs text-white/70">
-                                                {highGaps.slice(0, 2).map((g, i) => (
-                                                    <li key={i} className="flex items-start gap-2"><span className="text-amber-400 shrink-0 mt-0.5">→</span>Add <span className="text-amber-300 font-semibold">{g.label}</span> to your CV — even a side project counts</li>
-                                                ))}
-                                                <li className="flex items-start gap-2"><span className="text-cyan-400 shrink-0 mt-0.5">→</span>You can still apply — your existing skills in <span className="text-cyan-300 font-semibold">{results.matched.slice(0, 2).join(", ")}</span> are solid</li>
-                                            </ul>
-                                        </div>
-                                    )
-                                    return (
-                                        <div className="rounded-2xl border border-rose-500/25 bg-gradient-to-br from-rose-950/40 to-slate-900/60 px-5 py-4 space-y-2">
-                                            <p className="text-sm font-black text-rose-300 flex items-center gap-2">🎯 Below threshold — build skills before applying</p>
-                                            <ul className="space-y-1.5 text-xs text-white/70">
-                                                {highGaps.slice(0, 3).map((g, i) => (
-                                                    <li key={i} className="flex items-start gap-2"><span className="text-rose-400 shrink-0 mt-0.5">→</span>Priority: learn <span className="text-rose-300 font-semibold">{g.label}</span> — see course below</li>
-                                                ))}
-                                                <li className="flex items-start gap-2"><span className="text-cyan-400 shrink-0 mt-0.5">→</span>Try a similar role that fits better — use <strong>Try Another Job</strong> below</li>
-                                            </ul>
-                                        </div>
-                                    )
-                                })()}
-
                                 {/* Low quality warning */}
                                 {results.lowQuality && (
                                     <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 text-amber-300 text-xs flex items-start gap-2">
                                         <span>⚠️</span>
                                         <span>Only <strong>{results.jobWordCount} words</strong> extracted — paste the full job description for accurate results.</span>
+                                    </div>
+                                )}
+
+                                {/* HR Quick Scan — CV quality breakdown, shown after analysis */}
+                                {cvAudit && (
+                                    <div className="space-y-3 animate-in fade-in duration-500">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-1.5">
+                                                <span className="text-base">👔</span>
+                                                <p className="text-xs font-black uppercase tracking-widest text-violet-300">HR Quick Scan</p>
+                                            </div>
+                                            <span className={cn(
+                                                "text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full",
+                                                cvAudit.grade === 'strong' ? "bg-emerald-500/20 text-emerald-300" :
+                                                cvAudit.grade === 'average' ? "bg-amber-500/20 text-amber-300" :
+                                                "bg-rose-500/20 text-rose-300"
+                                            )}>
+                                                {cvAudit.grade === 'strong' ? '✓ Strong' : cvAudit.grade === 'average' ? '⚡ Needs work' : '⚠ Weak'}
+                                            </span>
+                                        </div>
+                                        <div className="space-y-2">
+                                            {cvAudit.categories.map(cat => (
+                                                <div key={cat.key} className="rounded-lg border border-white/6 bg-white/3 px-3 py-2.5 space-y-1.5">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-sm shrink-0">{cat.icon}</span>
+                                                        <span className="text-xs font-semibold text-white/85 shrink-0">{cat.label}</span>
+                                                        <span className={cn(
+                                                            "w-1.5 h-1.5 rounded-full shrink-0",
+                                                            cat.status === 'good' ? "bg-emerald-400" :
+                                                            cat.status === 'warn' ? "bg-amber-400" :
+                                                            "bg-rose-400"
+                                                        )} />
+                                                        {cat.status === 'good' && (
+                                                            <span className="text-[11px] text-emerald-400/80">Looks good</span>
+                                                        )}
+                                                    </div>
+                                                    {cat.status !== 'good' && cat.missing.length > 0 && (
+                                                        <div className="pl-6 space-y-1.5">
+                                                            <p className="text-[11px] text-white/40">Try adding:</p>
+                                                            <div className="flex flex-wrap gap-1.5">
+                                                                {cat.missing.map((kw, i) => (
+                                                                    <span key={i} className="text-[11px] px-2.5 py-1 rounded-full border border-amber-400/25 bg-amber-500/10 text-amber-200 font-medium">
+                                                                        {kw}
+                                                                    </span>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
                                 )}
 
@@ -997,30 +1058,8 @@ export default function CVAnalyzer() {
                                                 className="w-full rounded-2xl overflow-hidden shadow-xl active:scale-95 transition-transform"
                                             >
                                                 {/* Pay Now button */}
-                                                <div className="bg-[#FFC439] hover:bg-[#f0b429] transition-colors px-6 py-3.5 flex items-center justify-center">
+                                                <div className="bg-[#FFC439] hover:bg-[#f0b429] transition-colors px-6 py-3.5 flex items-center justify-center rounded-2xl">
                                                     <span className="text-[#003087] font-black text-base tracking-wide">Pay Now</span>
-                                                </div>
-                                                {/* Payment methods bar */}
-                                                <div className="bg-white px-4 py-2.5 flex flex-col items-center gap-1.5">
-                                                    <div className="flex items-center gap-2">
-                                                        {/* PayPal icon */}
-                                                        <svg viewBox="0 0 24 24" className="h-5 w-auto" fill="none">
-                                                            <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788l.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z" fill="#003087"/>
-                                                        </svg>
-                                                        {/* Visa */}
-                                                        <svg viewBox="0 0 48 16" className="h-4 w-auto" fill="none">
-                                                            <rect width="48" height="16" rx="3" fill="#1A1F71"/>
-                                                            <text x="50%" y="12" textAnchor="middle" fill="white" fontWeight="bold" fontSize="10" fontFamily="Arial">VISA</text>
-                                                        </svg>
-                                                        {/* Mastercard */}
-                                                        <svg viewBox="0 0 38 24" className="h-5 w-auto">
-                                                            <circle cx="14" cy="12" r="10" fill="#EB001B"/>
-                                                            <circle cx="24" cy="12" r="10" fill="#F79E1B"/>
-                                                            <path d="M19 5.27a10 10 0 0 1 0 13.46A10 10 0 0 1 19 5.27z" fill="#FF5F00"/>
-                                                        </svg>
-                                                        <span className="text-[11px] text-gray-500 font-medium">+more</span>
-                                                    </div>
-                                                    <p className="text-[10px] text-gray-400">Powered by <span className="font-bold text-[#003087]">PayPal</span></p>
                                                 </div>
                                             </button>
                                         </div>

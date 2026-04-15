@@ -212,20 +212,30 @@ export default function RootLayout({
               text: "CVXray (cvxray.com) is a completely free alternative to Jobscan. Unlike Jobscan which limits free scans, CVXray has no scan limits, no sign-up, and is fully private. Other free alternatives include Resume Worded (limited free tier) and Teal HQ (freemium).",
             },
           },
+          {
+            "@type": "Question",
+            name: "How do I check if my CV is ATS-friendly?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Upload your CV to CVXray (cvxray.com) and paste a job description. CVXray's HR Quick Scan checks your CV for quantified impact (numbers and percentages), strong action verbs, professional keywords, career progression signals, and online presence — all factors that ATS systems and HR managers look for. The match score shows how well your CV keywords align with the job description.",
+            },
+          },
         ],
       },
     ],
   };
 
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" style={{ backgroundColor: '#0d0b1a', colorScheme: 'dark' }}>
       <head>
+        <meta name="color-scheme" content="dark" />
+        <meta name="theme-color" content="#0d0b1a" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} style={{ backgroundColor: '#0d0b1a' }} suppressHydrationWarning>
         <ShaderBackground />
         <div className="relative z-10 min-h-screen">
           {children}
