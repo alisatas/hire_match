@@ -457,7 +457,7 @@ export default function CVAnalyzer() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
                 {/* Input Panel */}
-                <Card className="bg-background/40 backdrop-blur-xl border-border/50 overflow-hidden">
+                <Card className="bg-background/75 backdrop-blur-xl border-border/50 overflow-hidden">
                     <CardHeader>
                         <div className="flex items-center gap-3 mb-2">
                             <FileText className="text-primary h-5 w-5" />
@@ -689,8 +689,8 @@ export default function CVAnalyzer() {
                                     className={cn(
                                         "w-full py-8 text-xl font-black group transition-all rounded-2xl shadow-xl active:scale-95",
                                         !canAnalyze
-                                            ? "bg-muted text-muted-foreground cursor-not-allowed grayscale"
-                                            : "bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 shadow-cyan-500/30 text-white"
+                                            ? "bg-gradient-to-r from-teal-700 to-cyan-700 text-white/50 cursor-not-allowed opacity-50"
+                                            : "bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 shadow-lg shadow-cyan-500/30 text-white"
                                     )}
                                     onClick={doAnalyze}
                                     disabled={isLoading || !canAnalyze}
@@ -704,7 +704,7 @@ export default function CVAnalyzer() {
                 </Card>
 
                 {/* Results Panel */}
-                <Card className="bg-background/40 backdrop-blur-xl border-border/50 h-full">
+                <Card className="bg-background/75 backdrop-blur-xl border-border/50 h-full">
                     <CardContent className="h-full flex flex-col p-0">
                     {results && (
                         <div className="sticky top-0 z-10 bg-gradient-to-r from-emerald-950/95 to-teal-950/95 backdrop-blur border-b border-emerald-400/30 px-4 py-3 shadow-lg shadow-emerald-900/30">

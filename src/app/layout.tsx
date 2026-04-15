@@ -235,7 +235,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} style={{ backgroundColor: '#0d0b1a' }} suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} style={{ backgroundColor: 'transparent' }} suppressHydrationWarning>
         <ShaderBackground />
         <div className="relative z-10 min-h-screen">
           {children}
