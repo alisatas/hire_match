@@ -1,3 +1,10 @@
+## [1.17.1](https://github.com/alisatas/hire_match/compare/v1.17.0...v1.17.1) (2026-04-15)
+
+
+### Bug Fixes
+
+* restore shader background on prod, visible analyze button, mobile footer ([bc1ef79](https://github.com/alisatas/hire_match/commit/bc1ef79fd19c258382097f699a60d400229eea46)), closes [#0d0b1a](https://github.com/alisatas/hire_match/issues/0d0b1a)
+
 # [1.17.0](https://github.com/alisatas/hire_match/compare/v1.16.1...v1.17.0) (2026-04-15)
 
 
