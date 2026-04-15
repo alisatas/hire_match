@@ -1,3 +1,10 @@
+# [1.17.0](https://github.com/alisatas/hire_match/compare/v1.16.1...v1.17.0) (2026-04-15)
+
+
+### Features
+
+* hr quick scan in results, faang-grade audit, flash fix, footer mobile fix ([77c654e](https://github.com/alisatas/hire_match/commit/77c654e26eabe6a2671c074f441c03342e9e459f)), closes [hi#priority](https://github.com/hi/issues/priority) [hi#priority](https://github.com/hi/issues/priority) [#0d0b1a](https://github.com/alisatas/hire_match/issues/0d0b1a)
+
 ## [1.16.1](https://github.com/alisatas/hire_match/compare/v1.16.0...v1.16.1) (2026-04-14)
 
 
