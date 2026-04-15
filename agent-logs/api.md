@@ -36,3 +36,11 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - 🟡 No rate limiting on `/api/scrape` and `/api/extract-pdf`
 - 🟡 No constant-time token comparison on webhook (low practical risk)
 - 🟡 No explicit URL length cap on scrape route
+
+---
+
+## 2026-04-15 — Push 2 (shader fix + button visibility)
+
+**Status:** ✅ PASS (0 critical)
+
+- No API route changes this cycle

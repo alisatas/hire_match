@@ -32,3 +32,15 @@ Agents MUST read this log before running checks and MUST append an entry after e
 2. Strengthen `og:description` with a stronger CTA
 3. Add `sameAs` to JSON-LD pointing to social profiles
 4. Add "free" and "no signup" to H1 or subheadline for higher intent keyword density
+
+---
+
+## 2026-04-15 — Push 2 (shader fix + button visibility)
+
+**Status:** ✅ PASS (no SEO changes needed this cycle)
+
+- Page content expanded: How It Works section, stats strip, 4 new FAQ items
+- New FAQs added to page.tsx (client-side rendered via <details>) — these supplement the JSON-LD FAQs in layout.tsx
+- All OG tags, robots, sitemap, llms.txt unchanged ✅
+
+**Next improvement:** Add the new FAQ questions (ATS-friendly, Jobscan alternative) to the JSON-LD FAQPage in layout.tsx to ensure Google indexes them via structured data.

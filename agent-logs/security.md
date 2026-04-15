@@ -32,3 +32,16 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Add rate limiting to `/api/scrape` and `/api/extract-pdf` (medium priority)
 
 **LINKEDIN_ACCESS_TOKEN removed from `cvxray-company/.env`** — was a hardcoded secret, now deleted ✅
+
+---
+
+## 2026-04-15 — Push 2 (shader fix + button visibility)
+
+**Status:** ✅ PASS (0 critical)
+
+- body `style={{ backgroundColor: 'transparent' }}` — no security impact, purely visual
+- html `style={{ backgroundColor: '#0d0b1a' }}` — no security impact
+- No new API routes, no new user inputs, no new dangerouslySetInnerHTML
+- `bg-background/75` panel opacity change — purely visual
+- Button disabled state change — purely visual
+- All previous security controls unchanged

@@ -35,3 +35,15 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 **Known warnings:**
 - 🟡 Race condition on double-click Analyze — low severity, no data corruption
+
+---
+
+## 2026-04-15 — Push 2 (shader fix + button visibility)
+
+**Status:** ✅ PASS (0 critical)
+
+- WebGL canvas hidden in production — FIXED: body was opaque (#0d0b1a), changed to transparent
+- Analyze button invisible in disabled state — FIXED: now uses teal gradient at opacity-50
+- Panel readability — FIXED: bg-background/40 → bg-background/75
+- Flash on refresh still prevented: html keeps #0d0b1a inline style ✅
+- No regressions in analyze flow, results display, or HR Quick Scan

@@ -33,3 +33,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 **Known warnings:**
 - 🟡 PDF extraction blocking — large files may slow perceived performance
+
+---
+
+## 2026-04-15 — Push 2 (shader fix + button visibility)
+
+**Status:** ✅ PASS (0 critical)
+
+- Shader background now visible in production — FIXED
+- No console errors introduced
+- TypeScript clean ✅

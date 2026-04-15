@@ -43,3 +43,13 @@ final = clamp(score × confidence - penalty, 5, 95)
 2. Tune confidence multiplier curve for very long JDs (> 800 words) — currently over-confident
 3. Adapt course list slice: show more courses when `highGaps.length > 4`
 4. Improve experience score for "10+ years" or "senior" signals in CV without explicit year count
+
+---
+
+## 2026-04-15 — Push 2 (shader fix + button visibility)
+
+**Status:** ✅ PASS (no math changes this cycle)
+
+- No changes to analyze.ts scoring formula
+- No changes to auditCV() detection logic
+- Visual/UI fixes only this cycle

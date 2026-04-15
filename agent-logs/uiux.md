@@ -47,3 +47,16 @@ Agents MUST read this log before running checks and MUST append an entry after e
 **Known warnings:**
 - 🟡 Score circle has no `aria-label`
 - 🟡 Some tap targets under 44px on mobile
+
+---
+
+## 2026-04-15 — Push 2 (shader fix + button visibility)
+
+**Status:** ✅ PASS (0 critical)
+
+- WebGL shader background: was hidden on production — FIXED
+- Analyze button disabled state: was invisible against dark panel — FIXED (teal gradient opacity-50)
+- Panel backgrounds: raised to 75% opacity — content clearly readable against shader
+- Footer: · separators, text-xs — mobile-friendly ✅
+- Page: added How It Works 3-step strip, stats row (40+ skills, 100% free, 0 signups, <3s), 7 FAQ items
+- 🟡 Score circle still missing aria-label (known)
