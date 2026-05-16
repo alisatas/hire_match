@@ -10,6 +10,14 @@ const faqs = [
     a: "Upload your PDF CV (or paste your CV text), then paste the job description or a job URL from LinkedIn, Indeed, Glassdoor, or any company careers page. CVXray shows your match score, matched skills, and missing keywords in seconds.",
   },
   {
+    q: "What is a good CV match score?",
+    a: "A score of 70% or above means you're a strong match and should apply immediately. 45–70% is competitive — you can apply but may want to address 1–2 skill gaps first. Below 45% suggests significant gaps; focus on the recommended courses before applying to that specific role.",
+  },
+  {
+    q: "Can CVXray read LinkedIn job descriptions automatically?",
+    a: "Yes. Paste any LinkedIn job URL into CVXray and it fetches the job description automatically. The same works for Indeed, Glassdoor, and most company careers pages. If a page blocks scraping, just copy and paste the job text directly.",
+  },
+  {
     q: "Does CVXray store or share my resume data?",
     a: "No. CVXray never stores or logs your CV. PDF text is extracted server-side and immediately discarded — never written to any database. The CV analysis runs in your browser. Nothing is retained after your session ends.",
   },

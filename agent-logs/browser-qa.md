@@ -43,3 +43,28 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Shader background now visible in production — FIXED
 - No console errors introduced
 - TypeScript clean ✅
+
+---
+
+## 2026-05-16 — Push 3 (Ruflo integration + live orchestration)
+
+**Status:** ✅ PASS (0 critical)
+
+- `/orchestration` page: correct server/client split — metadata in server component, interactivity in `"use client"` child ✅
+- SSE stream parser: `buf` accumulates partial lines, only processes complete `data: {...}` events ✅
+- `useCallback` dependencies include `swarmRunning` and `statuses` — no stale closure bugs ✅
+- No hardcoded pixel widths in new components ✅
+- Grid: `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3` — mobile-safe responsive layout ✅
+- TypeScript: 0 errors ✅
+- No new unhandled promise rejections ✅
+
+---
+
+## 2026-05-16 — Push 4 (Skills + DigitalLoomBackground + framer-motion)
+
+**Status:** ✅ PASS (0 critical)
+
+- IIFE in course list is valid JSX — no console errors expected ✅
+- `digital-loom-background.tsx` uses `requestAnimationFrame` loop — matches pattern of shader-background ✅
+- No new unoptimized assets added
+- Keyboard navigation on course links: native `<a>` elements are keyboard-focusable ✅

@@ -44,3 +44,30 @@ Agents MUST read this log before running checks and MUST append an entry after e
 **Status:** ✅ PASS (0 critical)
 
 - No API route changes this cycle
+
+---
+
+## 2026-05-16 — Push 3 (Ruflo integration + live orchestration)
+
+**Status:** ✅ PASS (0 critical)
+
+- New `/api/orchestrate` route: `agentKey` validated against `AGENTS` object — no uncontrolled access ✅
+- `swarm` array filtered with type guard before processing ✅
+- Input is minimal JSON (key name only) — no body size risk ✅
+- No stack traces in responses — `String(err)` only ✅
+- Status codes correct: 400 on bad input ✅
+- `maxDuration: 60` set on SSE streaming route ✅
+- `runtime: "nodejs"` explicit ✅
+- Existing routes (scrape, extract-pdf, telegram) unchanged — all previous API checks still pass ✅
+- 🟡 No `Cache-Control: no-store` on orchestrate error responses (low risk, not sensitive data)
+
+---
+
+## 2026-05-16 — Push 4 (Skills + DigitalLoomBackground + framer-motion)
+
+**Status:** ✅ PASS (0 critical)
+
+- Content-type validation added to scrape route (diff confirmed) — previously a 🟡 warning, now resolved ✅
+- PDF magic bytes validation added to extract-pdf route (diff confirmed) — MIME spoofing guard ✅
+- No new API routes added this cycle
+- Orchestrate route unchanged from Push 3 ✅

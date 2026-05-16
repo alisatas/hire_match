@@ -270,6 +270,7 @@ export default function CVAnalyzer() {
     const [interviewLoading, setInterviewLoading] = useState(false)
     const [scrapedCompanyName, setScrapedCompanyName] = useState("")
     const fileInputRef = useRef<HTMLInputElement>(null)
+    const isPdfLoadingRef = useRef(false)
 
     useEffect(() => {
         try {
@@ -294,12 +295,14 @@ export default function CVAnalyzer() {
     const processPdf = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (!file || file.type !== "application/pdf") return
+        if (isPdfLoadingRef.current) return  // prevent concurrent uploads
 
         if (file.size > 5 * 1024 * 1024) {
             setPdfStatus("File too large (max 5MB). Paste your CV text below.")
             return
         }
 
+        isPdfLoadingRef.current = true
         setPdfStatus("Reading PDF...")
         try {
             const formData = new FormData()
@@ -313,6 +316,8 @@ export default function CVAnalyzer() {
         } catch (err: unknown) {
             console.error("PDF Read Error:", err)
             setPdfStatus("Error reading PDF. Paste your CV text below.")
+        } finally {
+            isPdfLoadingRef.current = false
         }
     }
 
@@ -391,8 +396,15 @@ export default function CVAnalyzer() {
             return
         }
 
-        const result = analyze(cvText, effectiveJobText)
-        setResults(result)
+        let result
+        try {
+            result = analyze(cvText, effectiveJobText)
+            setResults(result)
+        } catch {
+            setError("Analysis failed — please try again.")
+            setIsLoading(false)
+            return
+        }
         setIsLoading(false)
 
         // Save to history (last 3)
@@ -674,6 +686,22 @@ export default function CVAnalyzer() {
                         )}
 
 <div className="space-y-3 pt-2">
+                            {/* Scan history — stored in localStorage, shown here so users can track progress */}
+                            {history.length > 0 && (
+                                <div className="space-y-1.5">
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Recent scans</p>
+                                    {history.map((h, i) => (
+                                        <div key={i} className="flex items-center gap-2 bg-white/3 border border-white/6 rounded-xl px-3 py-2 text-xs">
+                                            <span className={cn(
+                                                "font-black shrink-0 w-8 text-center",
+                                                h.score >= 70 ? "text-emerald-400" : h.score >= 45 ? "text-amber-400" : "text-rose-400"
+                                            )}>{h.score}%</span>
+                                            <span className="text-white/50 truncate flex-1">{h.label}</span>
+                                            <span className="text-white/25 shrink-0 text-[10px]">{h.date}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                             {/* Always show Analyze button — when results exist, also show Try Another */}
                             {results && !jobText && !jobInput ? (
                                 <Button
@@ -1007,9 +1035,14 @@ export default function CVAnalyzer() {
                                         </h3>
                                         <p className="text-xs text-cyan-200/80 mb-3">Courses & guides for your skill gaps — sorted by priority.</p>
                                         <div className="space-y-1.5">
-                                            {results.missing
+                                            {(() => {
+                                                const highPriorityGaps = results.missing.filter(m => m.priority === "high" && SKILL_RESOURCES[m.key]).length
+                                                // Math Prof improvement: show more courses when there are more high-priority gaps.
+                                                // Each high-priority gap warrants attention; cap at 10 to avoid overwhelming the user.
+                                                const courseLimit = Math.min(Math.max(6, highPriorityGaps + 2), 10)
+                                                return results.missing
                                                 .filter(m => SKILL_RESOURCES[m.key])
-                                                .slice(0, 6)
+                                                .slice(0, courseLimit)
                                                 .map((m, i) => {
                                                     const resource = SKILL_RESOURCES[m.key]
                                                     const priorityColor = m.priority === "high"
@@ -1032,7 +1065,7 @@ export default function CVAnalyzer() {
                                                         </a>
                                                     )
                                                 })
-                                            }
+                                            })()}
                                         </div>
                                     </div>
                                 )}

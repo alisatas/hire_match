@@ -45,3 +45,32 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - `bg-background/75` panel opacity change — purely visual
 - Button disabled state change — purely visual
 - All previous security controls unchanged
+
+---
+
+## 2026-05-16 — Push 3 (Ruflo integration + live orchestration)
+
+**Status:** ✅ PASS (0 critical)
+
+- New `/api/orchestrate/route.ts`: `agentKey` validated via `in AGENTS` guard before use — no arbitrary key injection ✅
+- Swarm array: filtered with `(k): k is AgentKey => k in AGENTS` before any processing ✅
+- No `dangerouslySetInnerHTML` in `orchestration-live.tsx` — all agent output in `<pre>` text node ✅
+- ANTHROPIC_API_KEY consumed server-side only, never sent to client ✅
+- No stack traces returned — `String(err)` only in error responses ✅
+- `.mcp.json` ruflo entry uses `npx -y @claude-flow/cli@latest` — no secrets passed, sandboxed ✅
+- All previous security controls unchanged (SSRF, webhook auth, PDF validation, headers) ✅
+- 🟡 No rate limiting on `/api/orchestrate` — same medium risk as existing routes
+
+---
+
+## 2026-05-16 — Push 4 (Skills + DigitalLoomBackground + framer-motion)
+
+**Status:** ✅ PASS (0 critical)
+
+- `digital-loom-background.tsx`: canvas animation only, no user input, no innerHTML ✅
+- `orchestration-live.tsx`: all agent output in `<pre>` text node ✅
+- `framer-motion@12.38.0`: reputable library, no security concerns ✅
+- `cv-analyzer.tsx` IIFE change: computed value only, no user input reaches it ✅
+- All previous security controls unchanged (SSRF, CSP, webhook auth, PDF validation) ✅
+- ⚠️ `graphify-out/` not committed — correctly omitted from staging
+- 🟡 No rate limiting on `/api/orchestrate` (pre-existing medium warning)

@@ -44,13 +44,13 @@ export const metadata: Metadata = {
     siteName: "CVXray",
     title: "CVXray — Free AI Resume Matcher & Job Fit Analyzer",
     description:
-      "Instantly match your CV to any job description. Get a score, see matched skills, spot gaps, and get course recommendations — free & private. No sign-up.",
+      "Upload your CV, paste any job link. Get an instant ATS match score, see missing keywords, and get course recommendations to close skill gaps — free, no sign-up, 100% private.",
     images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "CVXray - Free AI Resume Matcher" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "CVXray — Free AI Resume Matcher",
-    description: "Upload your CV, paste a job link, get your match score instantly. Free, private, no sign-up.",
+    description: "Upload your CV, paste any job link — get your ATS match score, missing keywords & course recommendations instantly. Free, no sign-up, 100% private.",
     images: ["/opengraph-image"],
   },
   robots: {
@@ -202,6 +202,22 @@ export default function RootLayout({
             acceptedAnswer: {
               "@type": "Answer",
               text: "Yes. CVXray works on any device — phone, tablet, or desktop. You can paste your CV text and a job description directly on mobile and get your match score instantly. PDF upload is also supported on mobile browsers.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "What is a good CV match score?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "A CVXray match score of 70% or above means you're a strong match and should apply immediately. A score of 45–70% is competitive — you can apply but may want to close 1–2 skill gaps first. Below 45% indicates significant gaps; focus on the recommended courses before applying to that specific role.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Can CVXray read LinkedIn job descriptions automatically?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Yes. Paste any LinkedIn job URL into CVXray and it fetches the full job description automatically. The same works for Indeed, Glassdoor, and most company careers pages. If a page blocks automated scraping, simply copy and paste the job description text directly into the paste tab.",
             },
           },
           {

@@ -47,3 +47,31 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Panel readability — FIXED: bg-background/40 → bg-background/75
 - Flash on refresh still prevented: html keeps #0d0b1a inline style ✅
 - No regressions in analyze flow, results display, or HR Quick Scan
+
+---
+
+## 2026-05-16 — Push 3 (Ruflo integration + live orchestration)
+
+**Status:** ✅ PASS (0 critical)
+
+- Swarm SSE stream: `controller.close()` called after all agents complete — loading state never stuck ✅
+- Per-agent `try/catch` in swarm loop: one agent error doesn't crash the full swarm stream ✅
+- Single agent mode: `toTextStreamResponse()` handles Anthropic errors gracefully ✅
+- Client-side error catch: sets status → "error", appends `[Error: ...]` — always shows feedback ✅
+- `statuses[agentKey] === "running"` guard prevents concurrent runs on same agent ✅
+- Empty swarm input `[]` → filtered to `valid` → returns 400 before any processing ✅
+- `outputRef.current` null-checked before auto-scroll ✅
+- TypeScript: 0 errors after fixing `maxOutputTokens` (was `maxTokens`) and removing spurious `await` ✅
+
+---
+
+## 2026-05-16 — Push 4 (Skills + DigitalLoomBackground + framer-motion)
+
+**Status:** ✅ PASS (0 critical)
+
+- Course list IIFE: `highPriorityGaps` correctly counts only skills with a resource entry ✅
+- `courseLimit = Math.min(Math.max(6, highPriorityGaps + 2), 10)` — floor 6, ceiling 10 ✅
+- `})()}` closure correct, TypeScript 0 errors confirmed ✅
+- `digital-loom-background.tsx`: useEffect returns cleanup (cancelAnimationFrame + removeEventListener) ✅
+- New `Thread` class: constructor initialises all fields before `reset()` — no strict-mode issues ✅
+- Orchestration SSE stream: cleanup paths unchanged from Push 3 ✅

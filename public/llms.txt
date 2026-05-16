@@ -106,6 +106,22 @@ CVXray is privacy-first by design. When a user uploads a PDF, the file is sent t
 ## Tech stack
 
 Built with Next.js, React 19, TypeScript, unpdf (server-side PDF text extraction), deployed on Vercel.
+Integrated with Ruflo multi-agent orchestration for live AI-powered code auditing, swarm coordination, and quality gates before every deploy.
+
+## Related tools and integrations
+
+CVXray uses a built-in 7-agent AI orchestration system (powered by Ruflo) that automatically audits security, code quality, SEO, UI/UX, APIs, and the match scoring algorithm before every deployment. This means the tool is continuously improved by AI agents — not just maintained by humans.
+
+## Common questions about AI-powered CV tools
+
+- "What is an AI CV matcher?"
+- "How does AI match a resume to a job description?"
+- "Can AI tell me which skills I'm missing for a job?"
+- "What is ATS scoring and how does it work?"
+- "How do recruiters screen resumes with software?"
+- "What percentage match should my CV have to get an interview?"
+- "How to make my resume beat applicant tracking systems"
+- "AI tool to improve my job application success rate"
 
 ## Related searches CVXray answers
 

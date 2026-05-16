@@ -114,6 +114,12 @@ export async function POST(req: Request) {
             return NextResponse.json({ requiresPaste: true, error: `HTTP ${response.status}` }, { status: 422 });
         }
 
+        // Reject non-HTML content types — prevents reading binary blobs or JSON as HTML
+        const contentType = response.headers.get("content-type") || ""
+        if (!contentType.includes("text/html") && !contentType.includes("text/plain") && !contentType.includes("application/xhtml")) {
+            return NextResponse.json({ requiresPaste: true }, { status: 422 });
+        }
+
         // Cap response body at 2MB before reading — prevents memory exhaustion on large pages
         const contentLength = response.headers.get("content-length")
         if (contentLength && parseInt(contentLength) > 2 * 1024 * 1024) {
@@ -131,10 +137,11 @@ export async function POST(req: Request) {
             return NextResponse.json({ requiresPaste: true }, { status: 422 });
         }
 
-        return NextResponse.json({ text, companyName: companyName || undefined });
+        const noStore = { headers: { "Cache-Control": "no-store" } }
+        return NextResponse.json({ text, companyName: companyName || undefined }, noStore);
 
     } catch (error: unknown) {
         console.error("Scraper API Error:", error instanceof Error ? error.message : error);
-        return NextResponse.json({ requiresPaste: true }, { status: 500 });
+        return NextResponse.json({ requiresPaste: true }, { status: 500, headers: { "Cache-Control": "no-store" } });
     }
 }

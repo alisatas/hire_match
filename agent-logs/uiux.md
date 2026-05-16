@@ -60,3 +60,32 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Footer: · separators, text-xs — mobile-friendly ✅
 - Page: added How It Works 3-step strip, stats row (40+ skills, 100% free, 0 signups, <3s), 7 FAQ items
 - 🟡 Score circle still missing aria-label (known)
+
+---
+
+## 2026-05-16 — Push 3 (Ruflo integration + live orchestration)
+
+**Status:** ✅ PASS (0 critical)
+
+- New live orchestration dashboard: every async action (single agent, swarm) has visible loading state ✅
+- `animate-pulse` on running status badge — visually distinct from idle/done/error ✅
+- Error state shown in badge + appended to output panel — no silent failures ✅
+- "Run all agents" + individual "Run agent" buttons both correctly disabled during any running state ✅
+- Output panel auto-scrolls via `requestAnimationFrame` ✅
+- Agent tab switcher appears only when multiple outputs exist — not shown prematurely ✅
+- Full-width "Run agent" buttons: adequate tap targets on mobile ✅
+- Ruflo badge on page with attribution link ✅
+- Architecture note explains the streaming setup in plain terms ✅
+- 🟡 Score circle still missing `aria-label` (pre-existing, not introduced this cycle)
+
+---
+
+## 2026-05-16 — Push 4 (Skills + DigitalLoomBackground + framer-motion)
+
+**Status:** ✅ PASS (0 critical)
+
+- Course list adaptive limit: shows 6–10 courses based on high-priority gap count — more actionable feedback for weak matches ✅
+- `DigitalLoomBackground`: full-screen canvas behind content, `overflow-y-auto` on content div allows scroll ✅
+- Weekly cadence cards on /orchestration: tap targets adequate, readable on mobile ✅
+- All existing UI/UX controls unchanged ✅
+- 🟡 Score circle still missing `aria-label` (pre-existing, not introduced this cycle)

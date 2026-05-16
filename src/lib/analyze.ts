@@ -164,7 +164,18 @@ function extractYearsRequired(text: string): number {
 function extractYearsFromCV(text: string): number {
     const matches = text.match(/(\d+)\+?\s*years?\s*(of\s*)?(experience|exp)/gi) || []
     const years = matches.map(m => parseInt(m)).filter(n => !isNaN(n))
-    return years.length > 0 ? Math.max(...years) : 0
+    if (years.length > 0) return Math.max(...years)
+
+    // Math Prof improvement: infer seniority from title/role signals when no
+    // explicit year count is written. "Senior React Developer" is far more
+    // likely to have 5+ years than a 0-year default suggests, so we avoid
+    // the 0.50 neutral-penalty for candidates who simply didn't write their years.
+    const lower = text.toLowerCase()
+    if (/\b(principal|architect|vp|vice.?president|director|fellow)\b/.test(lower)) return 10
+    if (/\b(staff|senior|sr\.|lead)\b/.test(lower)) return 5
+    if (/\b(mid.?level|intermediate)\b/.test(lower)) return 3
+    if (/\b(junior|jr\.|entry.?level|graduate|intern)\b/.test(lower)) return 1
+    return 0
 }
 
 function topJobKeywords(freq: Map<string, number>, n = 8): { word: string; freq: number }[] {
@@ -226,6 +237,7 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
     const yearsOnCV = extractYearsFromCV(cvText)
 
     const jobWordCount = jobText.trim().split(/\s+/).length
+    const cvWordCount = cvText.trim().split(/\s+/).length
     const lowQuality = jobWordCount < 80 || (jobSkills.size < 3 && rawTotal < 20)
 
     // ── 4. Component A: Frequency-Weighted Skill Score (0-1) ────────────────
@@ -301,7 +313,12 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
         ? Math.max(0.3, jobWordCount / 50 * 0.55)
         : Math.min(0.55 + (jobWordCount / 400) * 0.45, 1.0)
 
-    const adjustedScore = (rawScore * confidence) - coveragePenalty
+    // Math Prof improvement: CV quality factor — a very short CV paste (< 80 words) is
+    // likely incomplete. Dampen the score proportionally so a 3-word CV can't hit 90%.
+    // Ramps from 0.5 (40 words) to 1.0 (80+ words), capped at 1.
+    const cvConfidence = Math.min(1.0, Math.max(0.5, cvWordCount / 80))
+
+    const adjustedScore = (rawScore * confidence * cvConfidence) - coveragePenalty
 
     // Map to realistic human range: a perfect match rarely exceeds ~95%
     // Floor at 5 to avoid discouraging "0%" results

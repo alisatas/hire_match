@@ -53,3 +53,57 @@ final = clamp(score × confidence - penalty, 5, 95)
 - No changes to analyze.ts scoring formula
 - No changes to auditCV() detection logic
 - Visual/UI fixes only this cycle
+
+---
+
+## 2026-05-16 — Push 3 (Ruflo integration + live orchestration)
+
+**Status:** ✅ PASS (1 improvement implemented)
+
+**Improvement: Seniority signal detection in `extractYearsFromCV()`**
+
+When a CV contains no explicit "X years of experience" text, the old code defaulted to `yearsOnCV = 0`, which mapped to the neutral-penalty `expScore = 0.50`. This unfairly penalised candidates who simply didn't list years but whose titles (e.g. "Senior", "Lead", "Principal") clearly signal significant experience.
+
+New behaviour:
+- "principal / architect / vp / director / fellow" → inferred 10 years
+- "staff / senior / sr. / lead" → inferred 5 years
+- "mid-level / intermediate" → inferred 3 years
+- "junior / jr. / entry-level / graduate / intern" → inferred 1 year
+- No signals → 0 (existing behaviour)
+
+Calibration checks:
+- "Senior React Developer, 7 years exp" → explicit match takes precedence (regex still fires first) ✅
+- "Senior React Developer" (no year count) → 5 years inferred → expScore ~0.8 for 5yr req ✅
+- "Junior Developer" → 1 year inferred → expScore ~0.2 for 5yr req — correctly low ✅
+
+**Running improvement backlog (next pushes):**
+1. ~~Add job-title keyword boost~~ ✅ (done in earlier push)
+2. Tune adaptive keyword cap for very long JDs (> 1200 words)
+3. Adapt course list slice: show more courses when `highGaps.length > 4`
+4. ~~Improve experience score for 'senior' signals~~ ✅ (done this push)
+
+---
+
+## 2026-05-16 — Push 4 (Skills + DigitalLoomBackground + framer-motion)
+
+**Status:** ✅ PASS (1 improvement implemented)
+
+**Improvement: Adaptive course list slice in `cv-analyzer.tsx`**
+
+Previously the Recommended Training section always showed exactly 6 courses regardless of how many high-priority skill gaps existed. A candidate with 8 critical gaps got the same 6 courses as one with 2 gaps — both were underserved.
+
+New behaviour:
+- `highPriorityGaps` = count of missing skills with a resource entry AND priority === "high"
+- `courseLimit = Math.min(Math.max(6, highPriorityGaps + 2), 10)`
+- Floor 6: always shows at least 6 courses (no regression for well-matched CVs)
+- Ceiling 10: caps at 10 to avoid overwhelming the user
+- Examples: 2 high gaps → 6 courses (unchanged), 5 high gaps → 7, 8 high gaps → 10
+
+Calibration checks:
+- Score 85%, 1 high gap → courseLimit = 6 ✅ (not overwhelming)
+- Score 35%, 7 high gaps → courseLimit = 9 ✅ (more guidance when needed most)
+- Score 20%, 10 high gaps → courseLimit = 10 ✅ (capped, not infinite)
+
+**Running improvement backlog (next pushes):**
+1. Tune adaptive keyword cap for very long JDs (> 1200 words)
+2. ~~Adapt course list slice to gap count~~ ✅ (done this push)
