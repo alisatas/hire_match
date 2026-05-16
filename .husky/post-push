@@ -1,0 +1,4 @@
+#!/bin/sh
+# Auto-post to @cvxray.ai (Instagram) and @cvxray (X) after every successful push
+node --env-file=.env.local scripts/instagram-post.mjs || true
+node --env-file=.env.local scripts/twitter-post.mjs || true
