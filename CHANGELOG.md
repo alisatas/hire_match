@@ -1,3 +1,10 @@
+# [1.19.0](https://github.com/alisatas/hire_match/compare/v1.18.0...v1.19.0) (2026-05-16)
+
+
+### Features
+
+* auto-post to instagram and x after every push ([fca7824](https://github.com/alisatas/hire_match/commit/fca782490553e3ec6ef2dded32977d63887b2cd9))
+
 # [1.18.0](https://github.com/alisatas/hire_match/compare/v1.17.1...v1.18.0) (2026-05-16)
 
 
