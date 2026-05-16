@@ -1,3 +1,10 @@
+# [1.18.0](https://github.com/alisatas/hire_match/compare/v1.17.1...v1.18.0) (2026-05-16)
+
+
+### Features
+
+* ruflo multi-agent orchestration, scoring & SEO improvements ([5d781d2](https://github.com/alisatas/hire_match/commit/5d781d25958d9b9713a446b6b7ec80a529694d76)), closes [hi#priority](https://github.com/hi/issues/priority)
+
 ## [1.17.1](https://github.com/alisatas/hire_match/compare/v1.17.0...v1.17.1) (2026-04-15)
 
 
