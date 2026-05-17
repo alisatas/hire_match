@@ -1,3 +1,10 @@
+## [1.21.1](https://github.com/alisatas/hire_match/compare/v1.21.0...v1.21.1) (2026-05-17)
+
+
+### Bug Fixes
+
+* make hero subheadline jargon-free; fix expNote for zero-year CVs ([80e3f84](https://github.com/alisatas/hire_match/commit/80e3f84b3af6a6b03cfaf83a9551fbbfc8bb8e85))
+
 # [1.21.0](https://github.com/alisatas/hire_match/compare/v1.20.0...v1.21.0) (2026-05-17)
 
 
