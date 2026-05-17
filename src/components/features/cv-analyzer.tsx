@@ -491,27 +491,28 @@ export default function CVAnalyzer() {
 
     const validUrl = jobInput.trim().startsWith("http")
     const canAnalyze = !!cvText && (!!jobText || validUrl)
+    const applyUrl = jobUrl || (validUrl ? jobInput.trim() : "")
 
     return (
         <div className="container mx-auto px-4 py-8 md:py-12">
             <header className="flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
                 <a href="https://cvxray.com" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                    <Sparkles className="text-primary h-8 w-8" />
-                    <span className="text-2xl font-bold tracking-tight text-white">CVXray</span>
+                    <Sparkles className="text-[#c0c0c0] h-8 w-8" />
+                    <span className="text-2xl font-bold tracking-tight text-silver">CVXray</span>
                 </a>
             </header>
 
             <section className="text-center mb-8 animate-in fade-in slide-in-from-bottom-6 duration-1000">
-                <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight tracking-tighter text-white">
+                <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight tracking-tighter text-silver">
                     Does Your CV{" "}
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-teal-300 to-sky-400 drop-shadow-sm">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-[#848484]">
                         Match the Job?
                     </span>
                 </h1>
-                <p className="text-base sm:text-lg md:text-xl text-white/80 font-semibold max-w-4xl mx-auto px-2 drop-shadow-sm">
-                    Upload your CV, drop a job link — get an instant match score, skill gaps, and courses to close them.
+                <p className="text-base sm:text-lg md:text-xl text-[#999999] font-semibold max-w-4xl mx-auto px-2 drop-shadow-sm">
+                    Upload your CV, drop a job link — get a free, instant ATS match score, find missing keywords, and courses to close every gap.
                 </p>
-                <div className="flex flex-wrap justify-center gap-2 mt-4 text-[11px] font-semibold text-white/50">
+                <div className="flex flex-wrap justify-center gap-2 mt-4 text-[11px] font-semibold text-[#808080]">
                     <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10">✓ 40+ skill categories</span>
                     <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10">✓ Company Insights</span>
                     <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10">✓ Free forever</span>
@@ -524,8 +525,8 @@ export default function CVAnalyzer() {
                 <Card className="bg-background/75 backdrop-blur-xl border-border/50 overflow-hidden">
                     <CardHeader>
                         <div className="flex items-center gap-3 mb-2">
-                            <FileText className="text-primary h-5 w-5" />
-                            <CardTitle className="font-black uppercase tracking-tighter text-white">The Essentials 🎒</CardTitle>
+                            <FileText className="text-[#c0c0c0] h-5 w-5" />
+                            <CardTitle className="font-black uppercase tracking-tighter text-silver">The Essentials 🎒</CardTitle>
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-6">
@@ -533,11 +534,11 @@ export default function CVAnalyzer() {
                         {!cvText ? (
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center">
-                                    <label className="text-sm font-bold uppercase tracking-widest text-primary/90">Your CV</label>
+                                    <label className="text-sm font-bold uppercase tracking-widest text-silver">Your CV</label>
                                     <button
                                         type="button"
                                         onClick={() => setShowCvPaste(v => !v)}
-                                        className="text-[10px] text-cyan-400 hover:text-cyan-300 font-bold uppercase tracking-widest transition-colors"
+                                        className="text-[10px] text-[#999999] hover:text-[#cccccc] font-bold uppercase tracking-widest transition-colors"
                                     >
                                         {showCvPaste ? "↑ Upload PDF instead" : "Paste text instead"}
                                     </button>
@@ -545,17 +546,17 @@ export default function CVAnalyzer() {
                                 {showCvPaste ? (
                                     <Textarea
                                         placeholder="Paste your full CV text here..."
-                                        className="min-h-[140px] max-h-[220px] h-[220px] resize-none overflow-y-auto [field-sizing:fixed] bg-muted/20 border-border/40 rounded-xl text-white placeholder:text-white/30 text-sm"
+                                        className="min-h-[140px] max-h-[220px] h-[220px] resize-none overflow-y-auto [field-sizing:fixed] bg-muted/20 border-border/40 rounded-xl text-white placeholder:text-[#666666] text-sm"
                                         value={cvText}
                                         onChange={(e) => { setCvText(e.target.value); setPdfStatus("✓ CV text loaded"); if (e.target.value.length > 100) setCvAudit(auditCV(e.target.value)) }}
                                         autoFocus
                                     />
                                 ) : (
                                     <div className="border-2 border-dashed border-border/60 rounded-xl h-[140px] flex flex-col items-center justify-center gap-4 transition-colors hover:border-primary/40 hover:bg-primary/5 cursor-pointer relative">
-                                        <UploadCloud className="h-10 w-10 text-white/60" />
+                                        <UploadCloud className="h-10 w-10 text-[#999999]" />
                                         <div className="text-center">
-                                            <p className="font-semibold text-white">Drop your PDF or click to browse</p>
-                                            <p className="text-xs text-white/60 mt-1 font-medium">Files up to 5MB supported</p>
+                                            <p className="font-semibold text-silver">Drop your PDF or click to browse</p>
+                                            <p className="text-xs text-[#999999] mt-1 font-medium">Files up to 5MB supported</p>
                                         </div>
                                         <input
                                             ref={fileInputRef}
@@ -568,7 +569,7 @@ export default function CVAnalyzer() {
                                     </div>
                                 )}
                                 {pdfStatus && !showCvPaste && (
-                                    <p className="text-xs text-center font-semibold text-white/70 animate-pulse">{pdfStatus}</p>
+                                    <p className="text-xs text-center font-semibold text-[#b3b3b3] animate-pulse">{pdfStatus}</p>
                                 )}
                             </div>
                         ) : (
@@ -580,7 +581,7 @@ export default function CVAnalyzer() {
                                     </div>
                                     <button
                                         onClick={resetCV}
-                                        className="text-[11px] font-bold text-white/40 hover:text-white/70 uppercase tracking-widest shrink-0 ml-3 transition-colors"
+                                        className="text-[11px] font-bold text-[#666666] hover:text-[#b3b3b3] uppercase tracking-widest shrink-0 ml-3 transition-colors"
                                     >
                                         Change
                                     </button>
@@ -592,8 +593,8 @@ export default function CVAnalyzer() {
                         {/* Job Description — URL or Paste */}
                         <div className="space-y-3">
                             <div className="flex justify-between items-center">
-                                <label className="text-sm font-bold uppercase tracking-widest text-primary/90">Job Description</label>
-                                <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">REQUIRED</span>
+                                <label className="text-sm font-bold uppercase tracking-widest text-silver">Job Description</label>
+                                <span className="text-[10px] bg-white/8 text-[#999999] px-2 py-0.5 rounded-full font-bold">REQUIRED</span>
                             </div>
 
                             {/* Tab toggle */}
@@ -604,8 +605,8 @@ export default function CVAnalyzer() {
                                     className={cn(
                                         "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all",
                                         jobInputMode === "url"
-                                            ? "bg-primary/20 text-primary"
-                                            : "text-white/40 hover:text-white/70"
+                                            ? "bg-white/10 text-[#cccccc]"
+                                            : "text-[#666666] hover:text-[#b3b3b3]"
                                     )}
                                 >
                                     🔗 Job URL
@@ -616,8 +617,8 @@ export default function CVAnalyzer() {
                                     className={cn(
                                         "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all",
                                         jobInputMode === "paste"
-                                            ? "bg-primary/20 text-primary"
-                                            : "text-white/40 hover:text-white/70"
+                                            ? "bg-white/10 text-[#cccccc]"
+                                            : "text-[#666666] hover:text-[#b3b3b3]"
                                     )}
                                 >
                                     📋 Paste Text
@@ -626,7 +627,7 @@ export default function CVAnalyzer() {
 
                             {jobInputMode === "url" ? (
                                 <>
-                                    <p className="text-xs text-cyan-300/80">Paste a job URL from LinkedIn, Indeed, or any job board &mdash; we&apos;ll fetch it automatically.</p>
+                                    <p className="text-xs text-[#aaaaaa]">Paste a job URL from LinkedIn, Indeed, or any job board &mdash; we&apos;ll fetch it automatically.</p>
                                     <div className={cn(
                                         "flex items-center gap-2 bg-muted/20 border rounded-xl px-3 transition-colors",
                                         jobInput && !jobInput.trim().startsWith("http")
@@ -635,11 +636,11 @@ export default function CVAnalyzer() {
                                             ? "border-emerald-500/40"
                                             : "border-border/40 focus-within:border-primary/50"
                                     )}>
-                                        <span className="text-white/30 text-sm shrink-0">🔗</span>
+                                        <span className="text-[#4d4d4d] text-sm shrink-0">🔗</span>
                                         <input
                                             type="url"
                                             aria-label="Job description URL"
-                                            className="flex-1 bg-transparent py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none"
+                                            className="flex-1 bg-transparent py-2.5 text-sm text-white placeholder:text-[#666666] focus:outline-none"
                                             placeholder="https://linkedin.com/jobs/..."
                                             value={jobInput}
                                             onChange={(e) => { setJobInput(e.target.value); setJobText(""); setFetchStatus(""); setScrapedCompanyName(""); if (e.target.value.startsWith("http")) setJobUrl(e.target.value); }}
@@ -659,14 +660,14 @@ export default function CVAnalyzer() {
                                     {fetchStatus && (
                                         <p className={cn(
                                             "text-xs font-semibold break-words",
-                                            fetchStatus.startsWith("✓") ? "text-emerald-400" : fetchStatus.includes("paste") ? "text-amber-400" : "text-white/60"
+                                            fetchStatus.startsWith("✓") ? "text-emerald-400" : fetchStatus.includes("paste") ? "text-amber-400" : "text-[#999999]"
                                         )}>{fetchStatus.includes("paste") ? "Couldn't fetch — switch to Paste Text tab above." : fetchStatus}</p>
                                     )}
 
                                     {/* Sample job buttons */}
                                     {!jobText && !fetchStatus.startsWith("✓") && (
                                         <div className="flex flex-col gap-2">
-                                            <p className="text-xs text-cyan-300/80">
+                                            <p className="text-xs text-[#aaaaaa]">
                                                 No job description? Click a role to X-ray your CV against it:
                                             </p>
                                             <div className="flex flex-wrap gap-2">
@@ -681,10 +682,10 @@ export default function CVAnalyzer() {
                                                             setFetchStatus(`✓ ${job.label} sample loaded`)
                                                             setError("")
                                                         }}
-                                                        className="group px-3 py-2.5 text-xs font-semibold bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-500/40 text-cyan-300 rounded-full transition-all flex items-center gap-1.5"
+                                                        className="group px-3 py-2.5 text-xs font-semibold bg-cyan-500/10 hover:bg-white/10 border border-white/15 hover:border-white/30 text-[#c0c0c0] rounded-full transition-all flex items-center gap-1.5"
                                                     >
                                                         {job.emoji} {job.label}
-                                                        <span className="text-cyan-500/50 text-[10px] group-hover:text-cyan-400 transition-colors">↓</span>
+                                                        <span className="text-[#555555] text-[10px] group-hover:text-[#aaaaaa] transition-colors">↓</span>
                                                     </button>
                                                 ))}
                                             </div>
@@ -693,10 +694,10 @@ export default function CVAnalyzer() {
                                 </>
                             ) : (
                                 <>
-                                    <p className="text-xs text-cyan-300/80">Copy the full job description and paste it here.</p>
+                                    <p className="text-xs text-[#aaaaaa]">Copy the full job description and paste it here.</p>
                                     <Textarea
                                         placeholder="Paste job description text here..."
-                                        className="min-h-[120px] max-h-[220px] h-[220px] resize-none overflow-y-auto [field-sizing:fixed] bg-muted/20 border-border/40 rounded-xl text-white placeholder:text-white/30 text-sm"
+                                        className="min-h-[120px] max-h-[220px] h-[220px] resize-none overflow-y-auto [field-sizing:fixed] bg-muted/20 border-border/40 rounded-xl text-white placeholder:text-[#666666] text-sm"
                                         value={jobText}
                                         onChange={(e) => { setJobText(e.target.value); setFetchStatus(e.target.value.length > 50 ? "✓ Job description ready" : ""); }}
                                         autoFocus
@@ -708,7 +709,7 @@ export default function CVAnalyzer() {
                                     {/* Sample job buttons in paste mode too */}
                                     {!jobText && (
                                         <div className="flex flex-col gap-2">
-                                            <p className="text-xs text-cyan-300/80">Or try a sample role:</p>
+                                            <p className="text-xs text-[#aaaaaa]">Or try a sample role:</p>
                                             <div className="flex flex-wrap gap-2">
                                                 {SAMPLE_JOBS.map((job) => (
                                                     <button
@@ -720,10 +721,10 @@ export default function CVAnalyzer() {
                                                             setFetchStatus(`✓ ${job.label} sample loaded`)
                                                             setError("")
                                                         }}
-                                                        className="group px-3 py-2.5 text-xs font-semibold bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-500/40 text-cyan-300 rounded-full transition-all flex items-center gap-1.5"
+                                                        className="group px-3 py-2.5 text-xs font-semibold bg-cyan-500/10 hover:bg-white/10 border border-white/15 hover:border-white/30 text-[#c0c0c0] rounded-full transition-all flex items-center gap-1.5"
                                                     >
                                                         {job.emoji} {job.label}
-                                                        <span className="text-cyan-500/50 text-[10px] group-hover:text-cyan-400 transition-colors">↓</span>
+                                                        <span className="text-[#555555] text-[10px] group-hover:text-[#aaaaaa] transition-colors">↓</span>
                                                     </button>
                                                 ))}
                                             </div>
@@ -741,15 +742,15 @@ export default function CVAnalyzer() {
                             {/* Scan history — stored in localStorage, shown here so users can track progress */}
                             {history.length > 0 && (
                                 <div className="space-y-1.5">
-                                    <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Recent scans</p>
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#4d4d4d]">Recent scans</p>
                                     {history.map((h, i) => (
                                         <div key={i} className="flex items-center gap-2 bg-white/3 border border-white/6 rounded-xl px-3 py-2 text-xs">
                                             <span className={cn(
                                                 "font-black shrink-0 w-8 text-center",
                                                 h.score >= 70 ? "text-emerald-400" : h.score >= 45 ? "text-amber-400" : "text-rose-400"
                                             )}>{h.score}%</span>
-                                            <span className="text-white/50 truncate flex-1">{h.label}</span>
-                                            <span className="text-white/25 shrink-0 text-[10px]">{h.date}</span>
+                                            <span className="text-[#808080] truncate flex-1">{h.label}</span>
+                                            <span className="text-[#404040] shrink-0 text-[10px]">{h.date}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -758,7 +759,7 @@ export default function CVAnalyzer() {
                             {results && !jobText && !jobInput ? (
                                 <Button
                                     variant="outline"
-                                    className="w-full py-7 text-lg font-black group transition-all rounded-2xl border-border/50 text-white/70 hover:text-white hover:border-primary/50"
+                                    className="w-full py-7 text-lg font-black group transition-all rounded-2xl border-border/50 text-[#b3b3b3] hover:text-white hover:border-primary/50"
                                     onClick={resetForNewJob}
                                 >
                                     <RotateCcw className="mr-2 h-5 w-5 group-hover:-rotate-180 transition-transform duration-500" />
@@ -769,7 +770,7 @@ export default function CVAnalyzer() {
                                     className={cn(
                                         "w-full py-8 text-xl font-black group transition-all rounded-2xl shadow-xl active:scale-95",
                                         !canAnalyze
-                                            ? "bg-gradient-to-r from-teal-700 to-cyan-700 text-white/50 cursor-not-allowed opacity-50"
+                                            ? "bg-gradient-to-r from-teal-700 to-cyan-700 text-[#808080] cursor-not-allowed opacity-50"
                                             : "bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 shadow-lg shadow-cyan-500/30 text-white"
                                     )}
                                     onClick={doAnalyze}
@@ -794,19 +795,17 @@ export default function CVAnalyzer() {
                                 <span className="text-lg animate-bounce">🚀</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <div className="flex-1 flex items-center gap-2 bg-emerald-900/40 border border-emerald-400/30 rounded-xl px-3 py-2 focus-within:border-emerald-400/70 focus-within:ring-1 focus-within:ring-emerald-400/30 transition-all">
-                                    <span className="text-emerald-500 text-xs">🔗</span>
-                                    <input
-                                        type="url"
-                                        placeholder="https://..."
-                                        value={jobUrl}
-                                        onChange={e => setJobUrl(e.target.value)}
-                                        className="flex-1 bg-transparent text-xs text-emerald-200 placeholder:text-emerald-700 outline-none min-w-0"
-                                    />
+                                <div className="flex-1 flex items-center gap-2 bg-emerald-900/40 border border-emerald-400/30 rounded-xl px-3 py-2">
+                                    <span className="text-emerald-500 text-xs shrink-0">🔗</span>
+                                    {applyUrl ? (
+                                        <span className="flex-1 text-xs text-emerald-200 truncate min-w-0">{applyUrl}</span>
+                                    ) : (
+                                        <span className="flex-1 text-xs text-emerald-800 italic min-w-0">Paste a job URL on the left to enable</span>
+                                    )}
                                 </div>
-                                {jobUrl ? (
+                                {applyUrl ? (
                                     <a
-                                        href={jobUrl}
+                                        href={applyUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-extrabold transition-all active:scale-95 shrink-0 shadow-lg shadow-emerald-500/30 animate-pulse"
@@ -824,9 +823,9 @@ export default function CVAnalyzer() {
                     <div className="overflow-y-auto lg:max-h-[85vh] p-6 sm:p-8 lg:p-10 flex flex-col h-full">
                         {!results && !isLoading && (
                             <div className="flex flex-col items-center justify-center h-full text-center py-12 animate-in fade-in zoom-in-95">
-                                <Sparkles className="h-12 w-12 text-cyan-400/50 mb-5" />
-                                <p className="text-lg font-bold mb-2 text-cyan-200/90">Your results will appear here</p>
-                                <p className="text-white/80 text-sm">Fill in your CV and job description on the left, then hit Analyze.</p>
+                                <Sparkles className="h-12 w-12 text-[#666666] mb-5" />
+                                <p className="text-lg font-bold mb-2 text-[#cccccc]">Your results will appear here</p>
+                                <p className="text-[#cccccc] text-sm">Fill in your CV and job description on the left, then hit Analyze.</p>
                             </div>
                         )}
 
@@ -853,7 +852,7 @@ export default function CVAnalyzer() {
                                     if (s >= 70) return (
                                         <div className="rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/50 to-teal-950/30 px-5 py-4 space-y-2">
                                             <p className="text-sm font-black text-emerald-300 flex items-center gap-2">✅ You&apos;re a strong match — apply now</p>
-                                            <ul className="space-y-1.5 text-xs text-white/70">
+                                            <ul className="space-y-1.5 text-xs text-[#b3b3b3]">
                                                 <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0 mt-0.5">→</span>Tailor your cover letter to mention: <span className="text-emerald-300 font-semibold">{results.matched.slice(0, 3).join(", ")}</span></li>
                                                 {highGaps.length > 0 && <li className="flex items-start gap-2"><span className="text-amber-400 shrink-0 mt-0.5">→</span>Briefly address your gap in <span className="text-amber-300 font-semibold">{highGaps[0].label}</span> — show learning in progress</li>}
                                                 <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0 mt-0.5">→</span>Click <strong>Apply Now</strong> above before the role closes</li>
@@ -867,22 +866,22 @@ export default function CVAnalyzer() {
                                                     ? `⚡ Decent match — close ${Math.min(highGaps.length, 2)} gap${Math.min(highGaps.length, 2) !== 1 ? "s" : ""} to be competitive`
                                                     : "⚡ Good match — apply and highlight your strengths"}
                                             </p>
-                                            <ul className="space-y-1.5 text-xs text-white/70">
+                                            <ul className="space-y-1.5 text-xs text-[#b3b3b3]">
                                                 {highGaps.slice(0, 2).map((g, i) => (
                                                     <li key={i} className="flex items-start gap-2"><span className="text-amber-400 shrink-0 mt-0.5">→</span>Add <span className="text-amber-300 font-semibold">{g.label}</span> to your CV — even a side project counts</li>
                                                 ))}
-                                                <li className="flex items-start gap-2"><span className="text-cyan-400 shrink-0 mt-0.5">→</span>You can still apply — your existing skills in <span className="text-cyan-300 font-semibold">{results.matched.slice(0, 2).join(", ")}</span> are solid</li>
+                                                <li className="flex items-start gap-2"><span className="text-[#aaaaaa] shrink-0 mt-0.5">→</span>You can still apply — your existing skills in <span className="text-[#cccccc] font-semibold">{results.matched.slice(0, 2).join(", ")}</span> are solid</li>
                                             </ul>
                                         </div>
                                     )
                                     return (
                                         <div className="rounded-2xl border border-rose-500/25 bg-gradient-to-br from-rose-950/40 to-slate-900/60 px-5 py-4 space-y-2">
                                             <p className="text-sm font-black text-rose-300 flex items-center gap-2">🎯 Below threshold — build skills before applying</p>
-                                            <ul className="space-y-1.5 text-xs text-white/70">
+                                            <ul className="space-y-1.5 text-xs text-[#b3b3b3]">
                                                 {highGaps.slice(0, 3).map((g, i) => (
                                                     <li key={i} className="flex items-start gap-2"><span className="text-rose-400 shrink-0 mt-0.5">→</span>Priority: learn <span className="text-rose-300 font-semibold">{g.label}</span> — see course below</li>
                                                 ))}
-                                                <li className="flex items-start gap-2"><span className="text-cyan-400 shrink-0 mt-0.5">→</span>Try a similar role that fits better — use <strong>Try Another Job</strong> below</li>
+                                                <li className="flex items-start gap-2"><span className="text-[#aaaaaa] shrink-0 mt-0.5">→</span>Try a similar role that fits better — use <strong>Try Another Job</strong> below</li>
                                             </ul>
                                         </div>
                                     )
@@ -892,25 +891,25 @@ export default function CVAnalyzer() {
                                 <div className="flex flex-col md:flex-row items-center gap-6 pb-6 border-b border-border/30">
                                     <div className="relative h-28 w-28 shrink-0">
                                         <svg viewBox="0 0 100 100" className="transform -rotate-90 w-full h-full" aria-label={`Match score: ${results.score}%`} role="img">
-                                            <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="6" className="text-white/10" />
+                                            <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="6" className="text-[#1a1a1a]" />
                                             <circle
                                                 cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="6"
                                                 strokeDasharray="283"
                                                 strokeDashoffset={283 - (283 * results.score) / 100}
-                                                className="text-primary transition-all duration-1000 ease-out"
+                                                className="text-[#c0c0c0] transition-all duration-1000 ease-out"
                                             />
                                         </svg>
                                         <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                            <span className="text-4xl font-black text-white">{results.score}%</span>
-                                            <span className="text-[10px] text-white/50">match</span>
+                                            <span className="text-4xl font-black text-silver">{results.score}%</span>
+                                            <span className="text-[10px] text-[#808080]">match</span>
                                         </div>
                                     </div>
                                     <div className="text-center md:text-left">
                                         <p className={cn("text-xl font-bold mb-1", results.persona.color)}>
                                             {results.persona.label}
                                         </p>
-                                        <p className="text-white/70 text-sm leading-relaxed mb-2">{results.persona.desc}</p>
-                                        <div className="flex flex-wrap gap-2 justify-center md:justify-start text-xs text-white/60">
+                                        <p className="text-[#b3b3b3] text-sm leading-relaxed mb-2">{results.persona.desc}</p>
+                                        <div className="flex flex-wrap gap-2 justify-center md:justify-start text-xs text-[#999999]">
                                             <span>{results.rawMatched}/{results.rawTotal} keywords matched</span>
                                             <span>·</span>
                                             <span>{results.matched.length}/{results.matched.length + results.missing.length} skill categories</span>
@@ -941,7 +940,7 @@ export default function CVAnalyzer() {
                                             setShareCopied(true)
                                             setTimeout(() => setShareCopied(false), 2000)
                                         }}
-                                        className="text-[11px] font-bold text-cyan-400/50 hover:text-cyan-300 transition-colors flex items-center gap-1"
+                                        className="text-[11px] font-bold text-[#666666] hover:text-[#cccccc] transition-colors flex items-center gap-1"
                                     >
                                         {shareCopied ? "✓ Link copied!" : "🔗 Share results"}
                                     </button>
@@ -977,7 +976,7 @@ export default function CVAnalyzer() {
                                                 <div key={cat.key} className="rounded-lg border border-white/6 bg-white/3 px-3 py-2.5 space-y-1.5">
                                                     <div className="flex items-center gap-2">
                                                         <span className="text-sm shrink-0">{cat.icon}</span>
-                                                        <span className="text-xs font-semibold text-white/85 shrink-0">{cat.label}</span>
+                                                        <span className="text-xs font-semibold text-[#d9d9d9] shrink-0">{cat.label}</span>
                                                         <span className={cn(
                                                             "w-1.5 h-1.5 rounded-full shrink-0",
                                                             cat.status === 'good' ? "bg-emerald-400" :
@@ -990,7 +989,7 @@ export default function CVAnalyzer() {
                                                     </div>
                                                     {cat.status !== 'good' && cat.missing.length > 0 && (
                                                         <div className="pl-6 space-y-1.5">
-                                                            <p className="text-[11px] text-white/40">Try adding:</p>
+                                                            <p className="text-[11px] text-[#666666]">Try adding:</p>
                                                             <div className="flex flex-wrap gap-1.5">
                                                                 {cat.missing.map((kw, i) => (
                                                                     <span key={i} className="text-[11px] px-2.5 py-1 rounded-full border border-amber-400/25 bg-amber-500/10 text-amber-200 font-medium">
@@ -1011,7 +1010,7 @@ export default function CVAnalyzer() {
 
                                     {/* Matched Skills */}
                                     <div>
-                                        <h3 className="flex items-center gap-2 text-sm font-semibold text-cyan-300 mb-3">
+                                        <h3 className="flex items-center gap-2 text-sm font-semibold text-silver mb-3">
                                             <Cpu className="h-4 w-4" /> Matched Skills
                                         </h3>
                                         <div className="flex flex-wrap gap-2">
@@ -1020,7 +1019,7 @@ export default function CVAnalyzer() {
                                                     {s}
                                                 </span>
                                             )) : (
-                                                <span className="text-xs text-white/50 italic">No matched skills found.</span>
+                                                <span className="text-xs text-[#808080] italic">No matched skills found.</span>
                                             )}
                                         </div>
                                     </div>
@@ -1029,7 +1028,7 @@ export default function CVAnalyzer() {
 
                                     {/* Skills to Add */}
                                     <div>
-                                        <h3 className="flex items-center gap-2 text-sm font-semibold text-teal-300 mb-3">
+                                        <h3 className="flex items-center gap-2 text-sm font-semibold text-silver mb-3">
                                             <Shield className="h-4 w-4" /> Skills to Add
                                         </h3>
                                         <div className="flex flex-wrap gap-2">
@@ -1049,16 +1048,16 @@ export default function CVAnalyzer() {
                                                     {s.label}
                                                 </span>
                                             )) : (
-                                                <span className="text-xs text-cyan-300/70 italic">Great coverage — no major gaps!</span>
+                                                <span className="text-xs text-[#999999] italic">Great coverage — no major gaps!</span>
                                             )}
                                         </div>
                                         {results.missing.some(m => m.priority !== "low") && (
                                             <p className="text-xs mt-2 flex items-center gap-2 flex-wrap">
-                                                <span className="flex items-center gap-1"><span className="text-rose-400">●</span><span className="text-white/60">High priority</span></span>
-                                                <span className="text-white/20">·</span>
-                                                <span className="flex items-center gap-1"><span className="text-amber-400">●</span><span className="text-white/60">Mentioned</span></span>
-                                                <span className="text-white/20">·</span>
-                                                <span className="flex items-center gap-1"><span className="text-teal-400">●</span><span className="text-white/60">Nice to have</span></span>
+                                                <span className="flex items-center gap-1"><span className="text-rose-400">●</span><span className="text-[#999999]">High priority</span></span>
+                                                <span className="text-[#333333]">·</span>
+                                                <span className="flex items-center gap-1"><span className="text-amber-400">●</span><span className="text-[#999999]">Mentioned</span></span>
+                                                <span className="text-[#333333]">·</span>
+                                                <span className="flex items-center gap-1"><span className="text-[#888888]">●</span><span className="text-[#999999]">Nice to have</span></span>
                                             </p>
                                         )}
                                     </div>
@@ -1070,7 +1069,7 @@ export default function CVAnalyzer() {
                                             <div>
                                                 <div className="mb-3">
                                                     <div className="flex items-center justify-between mb-0.5">
-                                                        <h3 className="text-sm font-semibold text-teal-300">Words the Recruiter Is Looking For</h3>
+                                                        <h3 className="text-sm font-semibold text-silver">Words the Recruiter Is Looking For</h3>
                                                         <button
                                                             type="button"
                                                             onClick={() => {
@@ -1079,12 +1078,12 @@ export default function CVAnalyzer() {
                                                                 setKeywordsCopied(true)
                                                                 setTimeout(() => setKeywordsCopied(false), 2000)
                                                             }}
-                                                            className="text-[10px] font-bold text-cyan-400/60 hover:text-cyan-300 transition-colors uppercase tracking-wider shrink-0"
+                                                            className="text-[10px] font-bold text-[#777777] hover:text-[#cccccc] transition-colors uppercase tracking-wider shrink-0"
                                                         >
                                                             {keywordsCopied ? "✓ Copied" : "Copy all"}
                                                         </button>
                                                     </div>
-                                                    <p className="text-xs text-cyan-300/80">These exact words are in the job posting but missing from your CV. Recruiters search by these terms — if they&apos;re not there, your application may be filtered out automatically.</p>
+                                                    <p className="text-xs text-[#aaaaaa]">These exact words are in the job posting but missing from your CV. Recruiters search by these terms — if they&apos;re not there, your application may be filtered out automatically.</p>
                                                 </div>
                                                 <div className="flex flex-wrap gap-2">
                                                     {results.topJobSignals.map(({ word, freq }, i) => (
@@ -1102,10 +1101,10 @@ export default function CVAnalyzer() {
                                                         </span>
                                                     ))}
                                                 </div>
-                                                <p className="text-xs text-white/60 mt-2 flex items-center gap-3 flex-wrap">
+                                                <p className="text-xs text-[#999999] mt-2 flex items-center gap-3 flex-wrap">
                                                     <span className="flex items-center gap-1"><span className="text-red-400">■</span> Used often</span>
                                                     <span className="flex items-center gap-1"><span className="text-amber-400">■</span> Used sometimes</span>
-                                                    <span className="flex items-center gap-1"><span className="text-teal-400">■</span> Used once</span>
+                                                    <span className="flex items-center gap-1"><span className="text-[#888888]">■</span> Used once</span>
                                                 </p>
                                             </div>
                                         </>
@@ -1115,10 +1114,10 @@ export default function CVAnalyzer() {
                                 {/* Recommended Training */}
                                 {results.missing.length > 0 && (
                                     <div>
-                                        <h3 className="flex items-center gap-2 text-sm font-semibold text-cyan-300 mb-2">
+                                        <h3 className="flex items-center gap-2 text-sm font-semibold text-silver mb-2">
                                             <BookOpen className="h-4 w-4" /> Recommended Training
                                         </h3>
-                                        <p className="text-xs text-cyan-200/80 mb-3">Courses & guides for your skill gaps — sorted by priority.</p>
+                                        <p className="text-xs text-[#b3b3b3] mb-3">Courses & guides for your skill gaps — sorted by priority.</p>
                                         <div className="space-y-1.5">
                                             {(() => {
                                                 const highPriorityGaps = results.missing.filter(m => m.priority === "high" && SKILL_RESOURCES[m.key]).length
@@ -1144,9 +1143,9 @@ export default function CVAnalyzer() {
                                                             className="flex min-w-0 items-center gap-2.5 px-3 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-cyan-500/10 hover:border-cyan-500/30 transition-all group"
                                                         >
                                                             <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${priorityColor}`} />
-                                                            <span className="shrink-0 text-[10px] font-bold text-cyan-400/70 uppercase tracking-wider w-16 truncate">{m.label}</span>
-                                                            <span className="min-w-0 text-xs text-white/80 group-hover:text-cyan-300 transition-colors truncate flex-1">{resource.label}</span>
-                                                            <ExternalLink className="shrink-0 w-3 h-3 text-white/30 group-hover:text-cyan-400 transition-colors" />
+                                                            <span className="shrink-0 text-[10px] font-bold text-[#999999] uppercase tracking-wider w-16 truncate">{m.label}</span>
+                                                            <span className="min-w-0 text-xs text-[#cccccc] group-hover:text-[#d0d0d0] transition-colors truncate flex-1">{resource.label}</span>
+                                                            <ExternalLink className="shrink-0 w-3 h-3 text-[#4d4d4d] group-hover:text-[#d0d0d0] transition-colors" />
                                                         </a>
                                                     )
                                                 })
@@ -1167,7 +1166,7 @@ export default function CVAnalyzer() {
                                                 ☕
                                             </div>
                                             <p className="text-xl font-black text-amber-400 mb-1">Buy me a coffee!</p>
-                                            <p className="text-sm text-white/70 font-semibold mb-5">
+                                            <p className="text-sm text-[#b3b3b3] font-semibold mb-5">
                                                 Helped you land an interview? Support the creator ❤️
                                             </p>
                                             {/* PayPal-style Pay Now widget */}
@@ -1195,15 +1194,15 @@ export default function CVAnalyzer() {
                                             <div className="flex items-center gap-2 min-w-0">
                                                 <div className="flex shrink-0 items-center justify-center w-7 h-7 rounded-lg bg-teal-500/15 border border-teal-500/25 text-base">🏢</div>
                                                 <div className="min-w-0">
-                                                    <p className="text-[10px] font-semibold text-teal-400/70 uppercase tracking-widest">Company Insights</p>
-                                                    {company && <p className="text-sm font-bold text-white leading-tight truncate">{company}</p>}
+                                                    <p className="text-[10px] font-semibold text-[#999999] uppercase tracking-widest">Company Insights</p>
+                                                    {company && <p className="text-sm font-bold text-silver leading-tight truncate">{company}</p>}
                                                 </div>
                                             </div>
 
                                             {/* Culture signals */}
                                             {culture.length > 0 && (
                                                 <div>
-                                                    <p className="text-xs text-cyan-200/90 mb-2 font-semibold">Culture signals</p>
+                                                    <p className="text-xs text-[#cccccc] mb-2 font-semibold">Culture signals</p>
                                                     <div className="flex flex-wrap gap-1.5">
                                                         {culture.map(({ label, color }) => (
                                                             <span key={label} className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${color}`}>
@@ -1217,9 +1216,9 @@ export default function CVAnalyzer() {
                                             {/* Interview resources */}
                                             {company && (
                                                 <div>
-                                                    <p className="text-xs text-cyan-200/90 mb-2 font-semibold">Interview resources</p>
+                                                    <p className="text-xs text-[#cccccc] mb-2 font-semibold">Interview resources</p>
                                                     {interviewLoading && (
-                                                        <p className="text-xs text-white/40 animate-pulse">Searching the web…</p>
+                                                        <p className="text-xs text-[#666666] animate-pulse">Searching the web…</p>
                                                     )}
                                                     {!interviewLoading && interviewResults.length === 0 && (
                                                         <div className="flex flex-wrap gap-2">
@@ -1236,9 +1235,9 @@ export default function CVAnalyzer() {
                                                             {interviewResults.map((result, i) => (
                                                                 <a key={i} href={result.url} target="_blank" rel="noopener noreferrer"
                                                                     className="flex min-w-0 items-center gap-2.5 px-3 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-teal-500/10 hover:border-teal-500/30 transition-all group">
-                                                                    <span className="shrink-0 text-[10px] font-bold text-teal-400/70 uppercase tracking-wider w-16 truncate">{result.source}</span>
-                                                                    <span className="min-w-0 text-xs text-white/80 group-hover:text-teal-300 transition-colors truncate flex-1">{decodeHtmlEntities(result.title)}</span>
-                                                                    <ExternalLink className="shrink-0 w-3 h-3 text-white/30 group-hover:text-teal-400 transition-colors" />
+                                                                    <span className="shrink-0 text-[10px] font-bold text-[#999999] uppercase tracking-wider w-16 truncate">{result.source}</span>
+                                                                    <span className="min-w-0 text-xs text-[#cccccc] group-hover:text-[#d0d0d0] transition-colors truncate flex-1">{decodeHtmlEntities(result.title)}</span>
+                                                                    <ExternalLink className="shrink-0 w-3 h-3 text-[#4d4d4d] group-hover:text-[#d0d0d0] transition-colors" />
                                                                 </a>
                                                             ))}
                                                         </div>
@@ -1252,8 +1251,8 @@ export default function CVAnalyzer() {
                                 {/* Emoji Rating */}
                                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
                                     <div className="rounded-2xl border border-cyan-500/20 bg-gradient-to-br from-cyan-950/40 via-slate-900/60 to-teal-950/20 p-5 flex flex-col items-center text-center">
-<p className="text-base font-bold text-white mb-1">🎯 Rate this analysis</p>
-                                        <p className="text-xs text-cyan-200/70 mb-4">Was the match score accurate for this role?</p>
+<p className="text-base font-bold text-silver mb-1">🎯 Rate this analysis</p>
+                                        <p className="text-xs text-[#999999] mb-4">Was the match score accurate for this role?</p>
                                         <RatingInteraction />
                                     </div>
                                 </div>

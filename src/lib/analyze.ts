@@ -285,8 +285,12 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
             expScore = 0.50 // unknown experience, not confirmed absence of experience
         } else {
             const ratio = yearsOnCV / yearsRequired
-            // sigmoid-like mapping: overshooting is capped at 1.0
-            expScore = Math.min(ratio, 1.25) / 1.25
+            // sigmoid-like mapping: overshooting is capped at 1.0.
+            // Overqualification discount: ratio > 3.0 (e.g. 6yr for 2yr role) slightly reduces
+            // expScore to reflect reduced hiring likelihood — each unit above 3.0 costs 0.03.
+            const base = Math.min(ratio, 1.25) / 1.25
+            const overqualDiscount = ratio > 3.0 ? Math.min((ratio - 3.0) * 0.03, 0.12) : 0
+            expScore = Math.max(base - overqualDiscount, 0.50)
         }
     } else if (yearsOnCV > 0) {
         // No requirement stated — experience is a small bonus

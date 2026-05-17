@@ -124,3 +124,19 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - URL hash loading: fires on mount only, silent skip if hash absent/malformed — no UX impact on normal load ✅
 - User journey unchanged: land → upload → analyze → read results — all steps still functional ✅
 - 🟡 Score circle still missing `aria-label` (pre-existing — add in next UI cycle)
+
+---
+
+## 2026-05-17 — Push 8 (Silver theme + banner auto-populate fix)
+
+**Status:** ✅ PASS (0 critical, 1 improvement)
+
+**Improvement: "Still want to apply?" banner now auto-populates from left-side job URL input**
+
+- Replaced editable `<input>` in banner with read-only `<span>` — users no longer confused by an editable field that has no effect on anything
+- When job URL entered on the left: banner right-side shows the URL automatically ✅
+- When no URL: italic placeholder "Paste a job URL on the left to enable" guides the user clearly ✅
+- Apply Now button: active emerald `<a>` link when URL present, greyed non-interactive `<div>` when absent ✅
+- Subheadline updated: "free, instant ATS match score" — clearer value proposition with "free" explicitly stated ✅
+- All existing loading indicators, error states, and mobile layout behaviour unchanged ✅
+- 🟡 Score circle still missing `aria-label` (pre-existing, carried forward)

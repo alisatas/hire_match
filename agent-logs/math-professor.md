@@ -192,3 +192,34 @@ Calibration spot-checks:
 **Running improvement backlog (next pushes):**
 1. ~~Tune adaptive keyword cap for very long JDs~~ ✅ (done this push)
 2. Improve experience score weighting when CV explicitly states "senior" but no year count AND JD has no year requirement
+
+---
+
+## 2026-05-17 — Push 8 (Silver theme + banner auto-populate fix)
+
+**Status:** ✅ PASS (1 improvement implemented)
+
+**Improvement: Overqualification discount in `expScore` (`analyze.ts`)**
+
+When a candidate's experience significantly exceeds the job requirement (ratio > 3.0), the old formula returned `expScore = 1.0` regardless — treating a 10-year candidate applying for a 2-year role identically to a 4-year candidate. In reality, heavily over-qualified candidates have reduced hiring likelihood for that role.
+
+New formula:
+```ts
+const base = Math.min(ratio, 1.25) / 1.25  // unchanged sigmoid
+const overqualDiscount = ratio > 3.0 ? Math.min((ratio - 3.0) * 0.03, 0.12) : 0
+expScore = Math.max(base - overqualDiscount, 0.50)
+```
+
+Calibration spot-checks:
+- 4yr candidate, 2yr req (ratio=2.0): no discount (ratio ≤ 3.0), expScore = 1.0 ✅
+- 6yr candidate, 2yr req (ratio=3.0): no discount (exactly at threshold), expScore = 1.0 ✅  
+- 8yr candidate, 2yr req (ratio=4.0): discount = 0.03, expScore = 0.97 — very slight reduction ✅
+- 10yr candidate, 2yr req (ratio=5.0): discount = 0.06, expScore = 0.94 — noticeable overqualification signal ✅
+- 15yr candidate, 2yr req (ratio=7.5): discount capped at 0.12, expScore = 0.88 — capped, not catastrophic ✅
+- Floor enforced: `Math.max(..., 0.50)` — overqualification never tanks the score below neutral ✅
+
+The impact on final score is modest (expScore × 15 weight): a 10yr/2yr-req mismatch reduces final score by ~0.9 points — enough to nudge the signal without distorting the overall result.
+
+**Running improvement backlog (next pushes):**
+1. Tune adaptive keyword cap for very long JDs (> 1200 words) — revisit after more user data
+2. Investigate whether confidence multiplier overestimates score stability for medium-length JDs (200–400 words)

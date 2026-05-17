@@ -86,19 +86,19 @@
 .dark {
   /* Fresh dark-forest-ocean theme */
   --background: oklch(0.15 0.04 165);
-  --foreground: oklch(0.96 0.01 195);
+  --foreground: oklch(0.87 0 0);               /* neutral silver — replaces near-white */
   --card: oklch(0.18 0.035 185 / 0.7);         /* semi-transparent teal card */
-  --card-foreground: oklch(0.96 0.01 195);
+  --card-foreground: oklch(0.87 0 0);
   --popover: oklch(0.17 0.028 195);
-  --popover-foreground: oklch(0.96 0.01 195);
+  --popover-foreground: oklch(0.87 0 0);
   --primary: oklch(0.75 0.18 185);             /* bright cyan-teal */
   --primary-foreground: oklch(0.1 0.02 195);
   --secondary: oklch(0.21 0.03 195);
-  --secondary-foreground: oklch(0.96 0.01 195);
+  --secondary-foreground: oklch(0.87 0 0);
   --muted: oklch(0.21 0.03 195);
-  --muted-foreground: oklch(0.6 0.06 195);
+  --muted-foreground: oklch(0.60 0 0);
   --accent: oklch(0.25 0.04 195);
-  --accent-foreground: oklch(0.96 0.01 195);
+  --accent-foreground: oklch(0.87 0 0);
   --destructive: oklch(0.65 0.22 25);
   --border: oklch(1 0 0 / 8%);
   --input: oklch(1 0 0 / 10%);
@@ -109,11 +109,11 @@
   --chart-4: oklch(0.68 0.22 25);
   --chart-5: oklch(0.65 0.18 310);
   --sidebar: oklch(0.17 0.028 195);
-  --sidebar-foreground: oklch(0.96 0.01 195);
+  --sidebar-foreground: oklch(0.87 0 0);
   --sidebar-primary: oklch(0.75 0.18 185);
   --sidebar-primary-foreground: oklch(0.1 0.02 195);
   --sidebar-accent: oklch(0.21 0.03 195);
-  --sidebar-accent-foreground: oklch(0.96 0.01 195);
+  --sidebar-accent-foreground: oklch(0.87 0 0);
   --sidebar-border: oklch(1 0 0 / 8%);
   --sidebar-ring: oklch(0.75 0.18 185);
 }
@@ -161,6 +161,18 @@
   0%, 100% { transform: translate(0px, 0px) scale(1); }
   30%       { transform: translate(50px, -30px) scale(1.04); }
   70%       { transform: translate(-30px, 60px) scale(0.98); }
+}
+
+/* Silver gradient text — white at top, medium gray at bottom.
+   Placed in @layer utilities so it participates in the Tailwind cascade correctly. */
+@layer utilities {
+  .text-silver {
+    background: linear-gradient(180deg, #f0f0f0 0%, #848484 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent; /* Firefox: ensures background-clip shows gradient */
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

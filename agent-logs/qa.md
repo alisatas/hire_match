@@ -117,3 +117,19 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Feature chips: non-interactive, flex-wrap — no logic, no crash vector ✅
 - Missing skill sort: now priority-first then frequency — no division-by-zero, no null access ✅
 - TypeScript: 0 errors confirmed ✅
+
+---
+
+## 2026-05-17 — Push 8 (Silver theme + banner auto-populate fix)
+
+**Status:** ✅ PASS (0 critical)
+
+- `applyUrl = jobUrl || (validUrl ? jobInput.trim() : "")` — correctly handles all states:
+  - No URL entered: `applyUrl = ""` → banner shows "Paste a job URL on the left to enable" ✅
+  - URL typed but not yet fetched: `validUrl = true` → `applyUrl = jobInput.trim()` ✅
+  - URL fetched successfully: `jobUrl` set by scraper → `applyUrl = jobUrl` ✅
+- Banner only renders when `results` is truthy — no phantom banner on empty state ✅
+- Apply Now button: active `<a>` link when URL present, greyed `<div>` when not — correct state handling ✅
+- No division by zero, no null crashes in new code ✅
+- All previous edge input guards unchanged ✅
+- TypeScript: 0 errors confirmed ✅

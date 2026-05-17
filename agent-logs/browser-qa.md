@@ -107,3 +107,15 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - `navigator.clipboard.writeText` wrapped in `.catch(() => {})` — silent failure, no unhandled rejection ✅
 - TypeScript: 0 errors confirmed ✅
 - No new assets added, no unoptimized images, no layout shifts introduced ✅
+
+---
+
+## 2026-05-17 — Push 8 (Silver theme + banner auto-populate fix)
+
+**Status:** ✅ PASS (0 critical)
+
+- Previous 500 error (broken IIFE in JSX) resolved — `/` now loads without compilation errors ✅
+- No hydration mismatches — `applyUrl` derived from existing React state, not server-rendered ✅
+- Banner renders/hides correctly based on `results` state — no phantom elements ✅
+- No new assets, no layout shifts introduced ✅
+- TypeScript: 0 errors confirmed ✅

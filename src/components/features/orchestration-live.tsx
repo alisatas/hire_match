@@ -35,7 +35,7 @@ const MARKETING_AGENTS: AgentMeta[] = [
 
 function StatusBadge({ status }: { status: AgentStatus }) {
   const map: Record<AgentStatus, { label: string; cls: string }> = {
-    idle:    { label: "idle",    cls: "bg-white/5 text-white/30 border-white/10" },
+    idle:    { label: "idle",    cls: "bg-white/5 text-[#4d4d4d] border-white/10" },
     running: { label: "running", cls: "bg-cyan-500/15 text-cyan-300 border-cyan-500/30 animate-pulse" },
     done:    { label: "done ✓",  cls: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30" },
     error:   { label: "error",   cls: "bg-rose-500/15 text-rose-300 border-rose-500/30" },
@@ -162,8 +162,8 @@ export function OrchestrationLive() {
       <section>
         <div className="border-b border-white/8 pb-2 flex items-center justify-between">
           <div>
-            <h2 className="text-base font-bold text-white">Pre-Push Gate — Live Run</h2>
-            <p className="text-xs text-white/40 mt-0.5">
+            <h2 className="text-base font-bold text-silver">Pre-Push Gate — Live Run</h2>
+            <p className="text-xs text-[#666666] mt-0.5">
               Powered by Ruflo multi-agent orchestration · Each agent reads real source files and audits live
             </p>
           </div>
@@ -202,8 +202,8 @@ export function OrchestrationLive() {
                     <div className="flex items-center gap-2">
                       <span className="text-xl">{agent.emoji}</span>
                       <div>
-                        <CardTitle className="text-white text-sm">{agent.label}</CardTitle>
-                        <CardDescription className="text-white/35 text-[11px]">{agent.desc}</CardDescription>
+                        <CardTitle className="text-silver text-sm">{agent.label}</CardTitle>
+                        <CardDescription className="text-[#595959] text-[11px]">{agent.desc}</CardDescription>
                       </div>
                     </div>
                     <StatusBadge status={status} />
@@ -217,8 +217,8 @@ export function OrchestrationLive() {
                     onClick={e => { e.stopPropagation(); runAgent(agent.key) }}
                     disabled={anyRunning}
                     className="mt-2 w-full py-1.5 rounded-md text-[11px] font-semibold
-                      bg-white/5 text-white/50 border border-white/8
-                      hover:bg-white/10 hover:text-white/80 transition-colors
+                      bg-white/5 text-[#808080] border border-white/8
+                      hover:bg-white/10 hover:text-[#cccccc] transition-colors
                       disabled:opacity-30 disabled:cursor-not-allowed"
                   >
                     {status === "running" ? "Running…" : "▶ Run agent"}
@@ -236,10 +236,10 @@ export function OrchestrationLive() {
           <div className="border-b border-white/8 pb-2 flex items-center gap-3">
             <span className="text-lg">{panelAgent?.emoji ?? "📋"}</span>
             <div>
-              <h2 className="text-base font-bold text-white">
+              <h2 className="text-base font-bold text-silver">
                 {panelAgent ? `${panelAgent.label} — Output` : "Swarm Output"}
               </h2>
-              <p className="text-xs text-white/40">Live agent analysis · Ruflo orchestration</p>
+              <p className="text-xs text-[#666666]">Live agent analysis · Ruflo orchestration</p>
             </div>
             {activePanel && Object.keys(outputs).length > 1 && (
               <div className="ml-auto flex gap-1 flex-wrap">
@@ -252,7 +252,7 @@ export function OrchestrationLive() {
                       className={`px-2 py-0.5 rounded text-[10px] border transition-colors
                         ${activePanel === a.key
                           ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/30"
-                          : "bg-white/5 text-white/30 border-white/10 hover:text-white/60"}`}
+                          : "bg-white/5 text-[#4d4d4d] border-white/10 hover:text-[#999999]"}`}
                     >
                       {a.emoji} {a.label}
                     </button>
@@ -267,7 +267,7 @@ export function OrchestrationLive() {
               max-h-[480px] overflow-y-auto whitespace-pre-wrap break-words"
           >
             {panelOutput || (
-              <span className="text-white/20 animate-pulse">
+              <span className="text-[#333333] animate-pulse">
                 {statuses[activePanel ?? ""] === "running" ? "Thinking…" : "Waiting for agent…"}
               </span>
             )}
@@ -278,8 +278,8 @@ export function OrchestrationLive() {
       {/* ── Marketing agents section ─────────────────────────────────────────── */}
       <section>
         <div className="border-b border-white/8 pb-2">
-          <h2 className="text-base font-bold text-white">Strategic Agents</h2>
-          <p className="text-xs text-white/40 mt-0.5">CEO + PM analysis agents · Run on demand</p>
+          <h2 className="text-base font-bold text-silver">Strategic Agents</h2>
+          <p className="text-xs text-[#666666] mt-0.5">CEO + PM analysis agents · Run on demand</p>
         </div>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
           {MARKETING_AGENTS.map(agent => {
@@ -297,8 +297,8 @@ export function OrchestrationLive() {
                     <div className="flex items-center gap-2">
                       <span className="text-xl">{agent.emoji}</span>
                       <div>
-                        <CardTitle className="text-white text-sm">{agent.label}</CardTitle>
-                        <CardDescription className="text-white/35 text-[11px]">{agent.desc}</CardDescription>
+                        <CardTitle className="text-silver text-sm">{agent.label}</CardTitle>
+                        <CardDescription className="text-[#595959] text-[11px]">{agent.desc}</CardDescription>
                       </div>
                     </div>
                     <StatusBadge status={status} />

@@ -136,3 +136,23 @@ Agents MUST read this log before running checks and MUST append an entry after e
 **Running improvement backlog (next pushes):**
 1. Add "free" and "no signup" to H1 or visible subheadline on main page for above-the-fold keyword density
 2. Add `sameAs` entries for Twitter/Instagram social profiles in JSON-LD Organization node
+
+---
+
+## 2026-05-17 — Push 8 (Silver theme + banner auto-populate fix)
+
+**Status:** ✅ PASS (1 improvement implemented)
+
+- All OG tags, JSON-LD, robots.ts, sitemap.ts, llms.txt unchanged ✅
+- `/` page title and meta description unchanged ✅
+
+**Improvement implemented this cycle:**
+- Hero subheadline updated to: "Upload your CV, drop a job link — get a **free, instant ATS match score**, find missing keywords, and courses to close every gap."
+  - Added: "free" (high-intent keyword for zero-cost tool searches)
+  - Added: "ATS match score" (exact phrase users search for)
+  - Added: "missing keywords" (high-intent job-seeker query fragment)
+  - Addresses backlog item: "Add 'free' and 'no signup' to H1 or visible subheadline"
+
+**Running improvement backlog (next pushes):**
+1. Add `sameAs` entries for Twitter/Instagram social profiles in JSON-LD Organization node
+2. Add schema.org `HowTo` structured data to the "How It Works" section

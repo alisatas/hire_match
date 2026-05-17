@@ -24,10 +24,10 @@ export default function OrchestrationPage() {
             <p className="text-xs font-semibold tracking-widest uppercase text-cyan-400 mb-1">
               CVXray · Agent Orchestration
             </p>
-            <h1 className="text-3xl font-black text-white">
+            <h1 className="text-3xl font-black text-silver">
               Orchestration Dashboard
             </h1>
-            <p className="text-sm text-white/40 mt-1 max-w-2xl">
+            <p className="text-sm text-[#666666] mt-1 max-w-2xl">
               Live multi-agent system powered by{" "}
               <span className="text-cyan-300 font-semibold">Ruflo</span> —
               run the 7-agent pre-push gate, strategic analysis, and swarm mode in real time.
@@ -40,7 +40,7 @@ export default function OrchestrationPage() {
             <span className="text-xl">⚡</span>
             <div>
               <p className="text-xs font-bold text-cyan-300">Ruflo Multi-Agent Orchestration</p>
-              <p className="text-[11px] text-white/40">
+              <p className="text-[11px] text-[#666666]">
                 300+ MCP tools · Swarm coordination · Vector memory · Hierarchical agent topology
               </p>
             </div>
@@ -48,7 +48,7 @@ export default function OrchestrationPage() {
               href="https://github.com/ruvnet/ruflo"
               target="_blank"
               rel="noopener noreferrer"
-              className="ml-4 text-[10px] text-white/25 hover:text-white/50 underline transition-colors"
+              className="ml-4 text-[10px] text-[#404040] hover:text-[#808080] underline transition-colors"
             >
               ruflo ↗
             </a>
@@ -60,8 +60,8 @@ export default function OrchestrationPage() {
           {/* Weekly cadence */}
           <section>
             <div className="border-b border-white/8 pb-2">
-              <h2 className="text-base font-bold text-white">Marketing Cadence</h2>
-              <p className="text-xs text-white/40 mt-0.5">Scheduled agent handoffs — zero ad spend growth loop</p>
+              <h2 className="text-base font-bold text-silver">Marketing Cadence</h2>
+              <p className="text-xs text-[#666666] mt-0.5">Scheduled agent handoffs — zero ad spend growth loop</p>
             </div>
             <div className="mt-4 grid grid-cols-5 gap-2">
               {[
@@ -83,16 +83,16 @@ export default function OrchestrationPage() {
 
           {/* Architecture note */}
           <section className="rounded-xl border border-white/10 bg-black/30 backdrop-blur-sm p-5">
-            <p className="text-xs font-semibold tracking-widest uppercase text-white/30 mb-2">
+            <p className="text-xs font-semibold tracking-widest uppercase text-[#4d4d4d] mb-2">
               Architecture
             </p>
-            <p className="text-sm text-white/50 leading-relaxed">
+            <p className="text-sm text-[#808080] leading-relaxed">
               Each agent call streams through{" "}
               <code className="text-cyan-300 bg-white/5 px-1 rounded">/api/orchestrate</code> →
               AI SDK + Anthropic claude-haiku → real-time SSE to the browser.
               Swarm mode runs agents sequentially via a single persistent stream,
               multiplexing agent chunks via SSE events. The Ruflo MCP server (registered in{" "}
-              <code className="text-white/40 bg-white/5 px-1 rounded">.mcp.json</code>) provides 300+
+              <code className="text-[#666666] bg-white/5 px-1 rounded">.mcp.json</code>) provides 300+
               coordination tools for memory, swarm topology, and agent lifecycle management.
             </p>
           </section>

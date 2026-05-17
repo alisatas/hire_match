@@ -31,16 +31,16 @@ export default function Home() {
       {/* FAQ — visible to users + indexed by Google and AI engines */}
       <section className="container mx-auto px-4 pb-24 max-w-3xl">
         <div className="text-center mb-10">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-xs font-semibold tracking-widest uppercase mb-4">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-[#999999] text-xs font-semibold tracking-widest uppercase mb-4">
             Got questions?
           </span>
-          <h2 className="text-3xl sm:text-4xl font-black text-white mb-3">
+          <h2 className="text-3xl sm:text-4xl font-black text-silver mb-3">
             Everything you need to{" "}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-teal-300">
+            <span className="text-silver">
               know
             </span>
           </h2>
-          <p className="text-cyan-300/80 text-sm">Quick answers about how CVXray works.</p>
+          <p className="text-[#aaaaaa] text-sm">Quick answers about how CVXray works.</p>
         </div>
         <div className="space-y-3">
           {faqs.map((faq, i) => (
@@ -48,16 +48,16 @@ export default function Home() {
               key={i}
               className="group bg-cyan-500/5 hover:bg-cyan-500/10 border border-cyan-500/15 hover:border-cyan-500/30 rounded-2xl px-6 py-4 transition-all duration-200"
             >
-              <summary className="cursor-pointer font-semibold text-white text-sm list-none flex justify-between items-center gap-4">
+              <summary className="cursor-pointer font-semibold text-silver text-sm list-none flex justify-between items-center gap-4">
                 {faq.q}
-                <span className="text-cyan-400 group-open:rotate-45 transition-transform duration-200 text-xl leading-none shrink-0">+</span>
+                <span className="text-[#aaaaaa] group-open:rotate-45 transition-transform duration-200 text-xl leading-none shrink-0">+</span>
               </summary>
-              <p className="mt-3 text-teal-300 text-sm leading-relaxed border-t border-cyan-500/20 pt-3">{faq.a}</p>
+              <p className="mt-3 text-[#b3b3b3] text-sm leading-relaxed border-t border-cyan-500/20 pt-3">{faq.a}</p>
             </details>
           ))}
         </div>
       </section>
-      <footer className="text-center py-8 border-t border-white/10 text-cyan-300/60 text-xs px-6">
+      <footer className="text-center py-8 border-t border-white/10 text-[#666666] text-xs px-6">
         <p>&copy; 2026 CVXray &nbsp;·&nbsp; 100% private &nbsp;·&nbsp; nothing you upload is stored or shared.</p>
       </footer>
     </main>

@@ -122,3 +122,16 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Background color change in `globals.css` / `layout.tsx`: no security impact ✅
 - `etheral-shadow.tsx` deleted — removes dead code, no security impact ✅
 - All previous controls unchanged (SSRF, CSP, webhook auth, PDF magic bytes, rate limiting) ✅
+
+---
+
+## 2026-05-17 — Push 8 (Silver theme + banner auto-populate fix)
+
+**Status:** ✅ PASS (0 critical)
+
+- `applyUrl` derived as `jobUrl || (validUrl ? jobInput.trim() : "")` — `validUrl` requires `startsWith("http")`, ruling out `javascript:` protocol injection ✅
+- `href={applyUrl}` in `<a>` tag: URL always starts with http/https — no XSS via protocol injection ✅
+- `target="_blank"` with `rel="noopener noreferrer"` present ✅
+- URL displayed in `<span>` as text node, never as HTML — no XSS ✅
+- All previous controls unchanged (SSRF, CSP, webhook auth, rate limiting, PDF magic bytes) ✅
+- No new API routes added this cycle ✅

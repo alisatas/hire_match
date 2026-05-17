@@ -109,3 +109,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - `navigator.clipboard.writeText`: browser API, no server call ✅
 - No new API routes added this cycle ✅
 - All previous API checks (auth, SSRF, rate limiting, body size caps, timeout guards, content-type validation) unchanged ✅
+
+---
+
+## 2026-05-17 — Push 8 (Silver theme + banner auto-populate fix)
+
+**Status:** ✅ PASS (0 critical)
+
+- No API route changes this cycle ✅
+- `applyUrl` derivation is client-side only — no new server endpoints ✅
+- All previous API controls unchanged (auth guards, SSRF blocks, rate limiting, body size caps, timeouts, content-type validation) ✅
