@@ -1,3 +1,10 @@
+# [1.20.0](https://github.com/alisatas/hire_match/compare/v1.19.0...v1.20.0) (2026-05-17)
+
+
+### Features
+
+* architecture hardening, etheral shadow component, SEO & math improvements ([efe4a87](https://github.com/alisatas/hire_match/commit/efe4a878c5c55078e7e54be66697dfcc04444d3a))
+
 # [1.19.0](https://github.com/alisatas/hire_match/compare/v1.18.0...v1.19.0) (2026-05-16)
 
 
