@@ -1,3 +1,11 @@
+# [1.21.0](https://github.com/alisatas/hire_match/compare/v1.20.0...v1.21.0) (2026-05-17)
+
+
+### Features
+
+* particle dot background, share URL, CEO/PM features, ATS FAQ & math fixes ([c46b88d](https://github.com/alisatas/hire_match/commit/c46b88dff8cf7267350a7b939d18f431b190c835)), closes [#0a0b0e](https://github.com/alisatas/hire_match/issues/0a0b0e)
+* silver theme, fix banner auto-populate, SEO/math improvements ([4633b35](https://github.com/alisatas/hire_match/commit/4633b35d6064204a316693273c3449ef2fd5d57e))
+
 # [1.20.0](https://github.com/alisatas/hire_match/compare/v1.19.0...v1.20.0) (2026-05-17)
 
 
