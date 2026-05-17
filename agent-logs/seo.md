@@ -156,3 +156,18 @@ Agents MUST read this log before running checks and MUST append an entry after e
 **Running improvement backlog (next pushes):**
 1. Add `sameAs` entries for Twitter/Instagram social profiles in JSON-LD Organization node
 2. Add schema.org `HowTo` structured data to the "How It Works" section
+
+---
+
+## 2026-05-17 — Push 9 (Subheadline copy accessibility fix)
+
+**Status:** ✅ PASS (1 improvement implemented)
+
+- All OG tags, JSON-LD, robots.ts, sitemap.ts, llms.txt unchanged ✅
+
+**Improvement implemented this cycle:**
+- Hero subheadline rewritten for broader accessibility: removed "ATS" jargon (unknown to most job seekers) in favour of plain-language "instantly see how well you fit the role, what keywords you're missing" — maintains keyword density ("keywords", "fit the role", "free courses") while being understood by all skill levels
+
+**Running improvement backlog (next pushes):**
+1. Add `sameAs` entries for Twitter/Instagram social profiles in JSON-LD Organization node
+2. Add schema.org `HowTo` structured data to the "How It Works" section

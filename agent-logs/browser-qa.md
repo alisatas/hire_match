@@ -119,3 +119,11 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Banner renders/hides correctly based on `results` state — no phantom elements ✅
 - No new assets, no layout shifts introduced ✅
 - TypeScript: 0 errors confirmed ✅
+
+---
+
+## 2026-05-17 — Push 9 (Subheadline copy accessibility fix)
+
+**Status:** ✅ PASS (0 critical)
+
+- Copy-only change — no hydration risk, no console errors ✅

@@ -367,10 +367,13 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
     // ── 11. Persona & summary ─────────────────────────────────────────────────
     const topMissing = missing.filter(m => m.priority === "high").slice(0, 2).map(m => m.label)
     const topMatched = matched.slice(0, 2).map(getSkillLabel)
+    // yearsOnCV === 0 means no signals found, not literally zero experience — avoid misleading "you have 0y"
     const expNote = yearsRequired > 0
-        ? yearsOnCV >= yearsRequired
-            ? `Your ${yearsOnCV}y experience meets the ${yearsRequired}y requirement.`
-            : `The role asks for ${yearsRequired}y — you have ${yearsOnCV}y.`
+        ? yearsOnCV === 0
+            ? `The role asks for ${yearsRequired}y — experience not stated on CV.`
+            : yearsOnCV >= yearsRequired
+                ? `Your ${yearsOnCV}y experience meets the ${yearsRequired}y requirement.`
+                : `The role asks for ${yearsRequired}y — you have ${yearsOnCV}y.`
         : ""
 
     let persona: AnalysisResult["persona"]

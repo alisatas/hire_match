@@ -223,3 +223,27 @@ The impact on final score is modest (expScore × 15 weight): a 10yr/2yr-req mism
 **Running improvement backlog (next pushes):**
 1. Tune adaptive keyword cap for very long JDs (> 1200 words) — revisit after more user data
 2. Investigate whether confidence multiplier overestimates score stability for medium-length JDs (200–400 words)
+
+---
+
+## 2026-05-17 — Push 9 (Subheadline copy accessibility fix)
+
+**Status:** ✅ PASS (1 improvement implemented)
+
+**Improvement: Fix misleading "you have 0y" in persona expNote (`analyze.ts`)**
+
+When `yearsOnCV === 0` (no year signals found on CV), the persona description previously said "The role asks for Xy — you have 0y." — implying the candidate literally has zero experience, which is incorrect. `yearsOnCV = 0` means "no signals found", not "zero experience proven".
+
+New branch:
+```ts
+yearsOnCV === 0
+  ? `The role asks for ${yearsRequired}y — experience not stated on CV.`
+```
+
+This is honest: the CV simply didn't state years, which is common among experienced candidates who list titles but no year counts. The candidate is not falsely accused of having zero experience.
+
+Calibration: CV with "Senior Engineer" but no explicit year count + JD requiring 5y → note now says "experience not stated on CV" instead of "you have 0y" ✅
+
+**Running improvement backlog (next pushes):**
+1. Tune adaptive keyword cap for very long JDs (> 1200 words)
+2. Investigate confidence multiplier stability for medium-length JDs (200–400 words)

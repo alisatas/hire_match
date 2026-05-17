@@ -140,3 +140,12 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Subheadline updated: "free, instant ATS match score" — clearer value proposition with "free" explicitly stated ✅
 - All existing loading indicators, error states, and mobile layout behaviour unchanged ✅
 - 🟡 Score circle still missing `aria-label` (pre-existing, carried forward)
+
+---
+
+## 2026-05-17 — Push 9 (Subheadline copy accessibility fix)
+
+**Status:** ✅ PASS (0 critical)
+
+- Subheadline: "ATS match score" → "instantly see how well you fit the role, what keywords you're missing" — clearer to non-technical job seekers ✅
+- No layout changes, no tap target regressions ✅

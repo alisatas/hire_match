@@ -135,3 +135,12 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - URL displayed in `<span>` as text node, never as HTML — no XSS ✅
 - All previous controls unchanged (SSRF, CSP, webhook auth, rate limiting, PDF magic bytes) ✅
 - No new API routes added this cycle ✅
+
+---
+
+## 2026-05-17 — Push 9 (Subheadline copy accessibility fix)
+
+**Status:** ✅ PASS (0 critical)
+
+- No API routes, no new inputs, no dangerouslySetInnerHTML — purely copy change ✅
+- All previous security controls unchanged ✅

@@ -119,3 +119,11 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - No API route changes this cycle ✅
 - `applyUrl` derivation is client-side only — no new server endpoints ✅
 - All previous API controls unchanged (auth guards, SSRF blocks, rate limiting, body size caps, timeouts, content-type validation) ✅
+
+---
+
+## 2026-05-17 — Push 9 (Subheadline copy accessibility fix)
+
+**Status:** ✅ PASS (0 critical)
+
+- No API route changes ✅

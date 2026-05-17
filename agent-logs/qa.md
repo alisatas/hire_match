@@ -133,3 +133,12 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - No division by zero, no null crashes in new code ✅
 - All previous edge input guards unchanged ✅
 - TypeScript: 0 errors confirmed ✅
+
+---
+
+## 2026-05-17 — Push 9 (Subheadline copy accessibility fix)
+
+**Status:** ✅ PASS (0 critical)
+
+- expNote fix: `yearsOnCV === 0` now renders "experience not stated on CV" — no null/crash risk ✅
+- All edge input paths and loading states unchanged ✅

@@ -510,7 +510,7 @@ export default function CVAnalyzer() {
                     </span>
                 </h1>
                 <p className="text-base sm:text-lg md:text-xl text-[#999999] font-semibold max-w-4xl mx-auto px-2 drop-shadow-sm">
-                    Upload your CV, drop a job link — get a free, instant ATS match score, find missing keywords, and courses to close every gap.
+                    Upload your CV, drop a job link — instantly see how well you fit the role, what keywords you&apos;re missing, and free courses to close every gap.
                 </p>
                 <div className="flex flex-wrap justify-center gap-2 mt-4 text-[11px] font-semibold text-[#808080]">
                     <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10">✓ 40+ skill categories</span>
