@@ -137,6 +137,37 @@ Calibration spot-checks:
 
 ---
 
+## 2026-05-17 — Push 7 (Particle dot background + CEO/PM features)
+
+**Status:** ✅ PASS (2 improvements implemented)
+
+**Improvement 1: Missing skill sort — priority-first, then frequency (`analyze.ts`)**
+
+Previously `missingSkills` was sorted by `freq` only. This buried high-priority skills (title-boosted, freq=1) below medium-priority skills (freq=2), sending the wrong "what to fix first" signal to the user.
+
+New sort: primary key = priority tier (high → medium → low), secondary key = frequency (desc). A high-priority skill with freq=1 now ranks above a medium-priority skill with freq=3.
+
+Implementation:
+```ts
+const rank = { high: 0, medium: 1, low: 2 } as const
+if (rank[a.priority] !== rank[b.priority]) return rank[a.priority] - rank[b.priority]
+return b.freq - a.freq
+```
+
+Calibration: job title "Senior React Developer" with React missing → React (high priority, freq=1) now surfaces above "Docker" (medium, freq=2) ✅
+
+**Improvement 2: Ruby/Rails resource added to SKILL_RESOURCES (`cv-analyzer.tsx`)**
+
+`ruby: { label: "The Odin Project — Ruby Path", url: "https://www.theodinproject.com/paths/full-stack-ruby-on-rails", platform: "The Odin Project", type: "course", duration: "~40 hrs", free: true }`
+
+Previously Ruby/Rails gaps showed no course recommendation. Now candidates missing Ruby see an actionable free resource.
+
+**Running improvement backlog (next pushes):**
+1. Improve experience score when CV seniority is significantly above JD requirement (overqualification signal)
+2. Tune adaptive keyword cap for very long JDs (> 1200 words)
+
+---
+
 ## 2026-05-16 — Push 5 (Architecture Robustness Hardening)
 
 **Status:** ✅ PASS (1 improvement implemented)

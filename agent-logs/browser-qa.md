@@ -92,3 +92,18 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - No frontend changes — all hardening in server routes and proxy ✅
 - TypeScript: 0 errors confirmed (`tsc --noEmit`) ✅
 - No new assets, no layout shift risks, no new unhandled rejections ✅
+
+---
+
+## 2026-05-17 — Push 7 (Particle dot background + CEO/PM features)
+
+**Status:** ✅ PASS (0 critical)
+
+- `shader-background.tsx`: Canvas 2D replaces WebGL — no GPU context required, no `canvas.getContext('webgl')` fallback risk ✅
+- `cancelAnimationFrame` + `removeEventListener` cleanup in useEffect — no memory leak on unmount ✅
+- Feature chips: static JSX, no event handlers, no console error risk ✅
+- `encodeURIComponent` + `JSON.stringify` for share URL — no encoding errors on special characters ✅
+- `decodeURIComponent` + `JSON.parse` inside try/catch for URL hash load — malformed hash never crashes app ✅
+- `navigator.clipboard.writeText` wrapped in `.catch(() => {})` — silent failure, no unhandled rejection ✅
+- TypeScript: 0 errors confirmed ✅
+- No new assets added, no unoptimized images, no layout shifts introduced ✅

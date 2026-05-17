@@ -126,7 +126,7 @@
      Color matches the shader background dominant tone (dark purple/navy). */
   html {
     @apply font-sans;
-    background-color: #0d0b1a;
+    background-color: #0a0b0e;
     color-scheme: dark;
   }
   body {
@@ -170,3 +170,4 @@
     transition-duration: 0.01ms !important;
   }
 }
+

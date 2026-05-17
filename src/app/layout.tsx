@@ -44,13 +44,13 @@ export const metadata: Metadata = {
     siteName: "CVXray",
     title: "CVXray — Free AI Resume Matcher & Job Fit Analyzer",
     description:
-      "Upload your CV, paste any job link. Get an instant ATS match score, see missing keywords, and get course recommendations to close skill gaps — free, no sign-up, 100% private.",
+      "Upload your CV, paste a job link — get an instant ATS match score, find missing keywords & get course recommendations. Free, no sign-up, private.",
     images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "CVXray - Free AI Resume Matcher" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "CVXray — Free AI Resume Matcher",
-    description: "Upload your CV, paste any job link — get your ATS match score, missing keywords & course recommendations instantly. Free, no sign-up, 100% private.",
+    description: "Upload your CV, paste a job link — get an instant ATS match score, missing keywords & course recommendations. Free, no sign-up, private.",
     images: ["/opengraph-image"],
   },
   robots: {
@@ -76,7 +76,7 @@ export default function RootLayout({
         "@type": "WebApplication",
         "@id": `${siteUrl}/#app`,
         name: "CVXray",
-        alternateName: ["CV Xray", "CVXray", "CV Scorer", "CVXray.com"],
+        alternateName: ["CV Xray", "CVXray.com"],
         url: siteUrl,
         description:
           "CVXray is a free AI-powered resume and CV matcher. Upload your PDF CV, paste a job description or LinkedIn URL, and get an instant match score with skill gap analysis and course recommendations. No sign-up, no data stored.",
@@ -246,6 +246,14 @@ export default function RootLayout({
           },
           {
             "@type": "Question",
+            name: "What is an ATS and how does it affect my job application?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "An ATS (Applicant Tracking System) is software used by employers to automatically screen and rank CVs before a human reads them. It filters resumes based on keyword matches, skill categories, and formatting. If your CV doesn't contain the right keywords from the job description, it can be rejected automatically — even if you're qualified. CVXray (cvxray.com) shows you your ATS match score and exactly which keywords are missing so you can fix your CV before applying.",
+            },
+          },
+          {
+            "@type": "Question",
             name: "How do I check if my CV is ATS-friendly?",
             acceptedAnswer: {
               "@type": "Answer",
@@ -258,10 +266,10 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className="dark" style={{ backgroundColor: '#0d0b1a', colorScheme: 'dark' }}>
+    <html lang="en" className="dark" style={{ backgroundColor: '#0a0b0e', colorScheme: 'dark' }}>
       <head>
         <meta name="color-scheme" content="dark" />
-        <meta name="theme-color" content="#0d0b1a" />
+        <meta name="theme-color" content="#0a0b0e" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

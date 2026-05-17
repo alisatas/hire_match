@@ -97,3 +97,15 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Telegram webhook `after()`: try/catch in both deploy blocks — failures message the user ✅
 - All previous API checks (SSRF, content-type, body size cap, magic bytes, stack trace guard) unchanged ✅
 - Rate limiting now in `proxy.ts` — all routes covered ✅
+
+---
+
+## 2026-05-17 — Push 7 (Particle dot background + CEO/PM features)
+
+**Status:** ✅ PASS (0 critical)
+
+- `shader-background.tsx` rewritten to Canvas 2D — no API route changes, purely client-side ✅
+- `encodeResults` / `decodeResults`: client-side only, URL hash manipulation — no server route impact ✅
+- `navigator.clipboard.writeText`: browser API, no server call ✅
+- No new API routes added this cycle ✅
+- All previous API checks (auth, SSRF, rate limiting, body size caps, timeout guards, content-type validation) unchanged ✅

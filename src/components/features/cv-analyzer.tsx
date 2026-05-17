@@ -17,8 +17,40 @@ import {
     BookOpen,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { analyze, auditCV, type AnalysisResult, type CVAuditResult } from "@/lib/analyze"
+import { analyze, auditCV, type AnalysisResult, type CVAuditResult, type MissingSkillWithPriority } from "@/lib/analyze"
 import { extractCompanyName, extractCultureSignals, getInterviewLinks } from "@/lib/insights"
+
+// ─── Share URL helpers ───────────────────────────────────────────────────────
+
+function encodeResults(r: AnalysisResult): string {
+    try {
+        return encodeURIComponent(JSON.stringify({
+            s: r.score, pl: r.persona.label, pd: r.persona.desc, pc: r.persona.color,
+            m: r.matched,
+            ms: r.missing.map(x => [x.label, x.key, x.freq, x.priority]),
+            rm: r.rawMatched, rt: r.rawTotal, yr: r.yearsRequired, yc: r.yearsOnCV,
+            ts: r.topJobSignals.map(x => [x.word, x.freq]),
+            lq: r.lowQuality, jw: r.jobWordCount, sm: r.summary,
+        }))
+    } catch { return "" }
+}
+
+function decodeResults(encoded: string): AnalysisResult | null {
+    try {
+        const c = JSON.parse(decodeURIComponent(encoded))
+        return {
+            score: c.s,
+            persona: { label: c.pl, desc: c.pd, color: c.pc },
+            matched: c.m,
+            missing: (c.ms as [string, string, number, string][]).map(
+                ([label, key, freq, priority]) => ({ label, key, freq, priority: priority as MissingSkillWithPriority["priority"] })
+            ),
+            rawMatched: c.rm, rawTotal: c.rt, yearsRequired: c.yr, yearsOnCV: c.yc,
+            topJobSignals: (c.ts as [string, number][]).map(([word, freq]) => ({ word, freq })),
+            lowQuality: c.lq, jobWordCount: c.jw, summary: c.sm,
+        }
+    } catch { return null }
+}
 
 // Decode common HTML entities returned by search APIs
 function decodeHtmlEntities(str: string): string {
@@ -61,6 +93,7 @@ const SKILL_RESOURCES: Record<string, SkillResource> = {
     csharp: { label: "C# Learning Path — Microsoft", url: "https://learn.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/", platform: "Microsoft Learn", type: "course", duration: "~12 hrs", free: true },
     golang: { label: "Go — A Tour of Go", url: "https://go.dev/tour/welcome/1", platform: "go.dev", type: "guide", duration: "~4 hrs", free: true },
     rust: { label: "The Rust Book — Official", url: "https://doc.rust-lang.org/book/", platform: "Rust Foundation", type: "guide", duration: "~20 hrs", free: true },
+    ruby: { label: "The Odin Project — Ruby Path", url: "https://www.theodinproject.com/paths/full-stack-ruby-on-rails", platform: "The Odin Project", type: "course", duration: "~40 hrs", free: true },
     php: { label: "Laravel Bootcamp", url: "https://bootcamp.laravel.com/", platform: "Laravel", type: "course", duration: "~8 hrs", free: true },
     sql: { label: "SQL for Data Analysis — Mode", url: "https://mode.com/sql-tutorial/", platform: "Mode Analytics", type: "course", duration: "~6 hrs", free: true },
     mongodb: { label: "MongoDB University — M001 Basics", url: "https://university.mongodb.com/courses/M001/about", platform: "MongoDB University", type: "certification", duration: "~10 hrs", free: true },
@@ -269,6 +302,8 @@ export default function CVAnalyzer() {
     const [interviewResults, setInterviewResults] = useState<{ title: string; snippet: string; url: string; source: string }[]>([])
     const [interviewLoading, setInterviewLoading] = useState(false)
     const [scrapedCompanyName, setScrapedCompanyName] = useState("")
+    const [keywordsCopied, setKeywordsCopied] = useState(false)
+    const [shareCopied, setShareCopied] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const isPdfLoadingRef = useRef(false)
 
@@ -277,6 +312,14 @@ export default function CVAnalyzer() {
             const stored = localStorage.getItem("cvxray_history")
             if (stored) setHistory(JSON.parse(stored))
         } catch { /* ignore */ }
+    }, [])
+
+    // Load shared results from URL hash (#r=...)
+    useEffect(() => {
+        const hash = window.location.hash
+        if (!hash.startsWith("#r=")) return
+        const decoded = decodeResults(hash.slice(3))
+        if (decoded) setResults(decoded)
     }, [])
 
     useEffect(() => {
@@ -400,6 +443,9 @@ export default function CVAnalyzer() {
         try {
             result = analyze(cvText, effectiveJobText)
             setResults(result)
+            // Update URL hash so results are shareable
+            const encoded = encodeResults(result)
+            if (encoded) window.history.replaceState(null, "", `#r=${encoded}`)
         } catch {
             setError("Analysis failed — please try again.")
             setIsLoading(false)
@@ -465,6 +511,12 @@ export default function CVAnalyzer() {
                 <p className="text-base sm:text-lg md:text-xl text-white/80 font-semibold max-w-4xl mx-auto px-2 drop-shadow-sm">
                     Upload your CV, drop a job link — get an instant match score, skill gaps, and courses to close them.
                 </p>
+                <div className="flex flex-wrap justify-center gap-2 mt-4 text-[11px] font-semibold text-white/50">
+                    <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10">✓ 40+ skill categories</span>
+                    <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10">✓ Company Insights</span>
+                    <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10">✓ Free forever</span>
+                    <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10">✓ No sign-up</span>
+                </div>
             </section>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
@@ -876,6 +928,25 @@ export default function CVAnalyzer() {
 
 
 
+                                {/* Share results */}
+                                <div className="flex justify-end -mt-4">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const encoded = encodeResults(results)
+                                            if (!encoded) return
+                                            const url = `${window.location.origin}${window.location.pathname}#r=${encoded}`
+                                            window.history.replaceState(null, "", `#r=${encoded}`)
+                                            navigator.clipboard.writeText(url).catch(() => {})
+                                            setShareCopied(true)
+                                            setTimeout(() => setShareCopied(false), 2000)
+                                        }}
+                                        className="text-[11px] font-bold text-cyan-400/50 hover:text-cyan-300 transition-colors flex items-center gap-1"
+                                    >
+                                        {shareCopied ? "✓ Link copied!" : "🔗 Share results"}
+                                    </button>
+                                </div>
+
                                 {/* Low quality warning */}
                                 {results.lowQuality && (
                                     <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 text-amber-300 text-xs flex items-start gap-2">
@@ -998,7 +1069,21 @@ export default function CVAnalyzer() {
                                             <div className="border-t border-white/5" />
                                             <div>
                                                 <div className="mb-3">
-                                                    <h3 className="text-sm font-semibold text-teal-300 mb-0.5">Words the Recruiter Is Looking For</h3>
+                                                    <div className="flex items-center justify-between mb-0.5">
+                                                        <h3 className="text-sm font-semibold text-teal-300">Words the Recruiter Is Looking For</h3>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                const keywords = results.topJobSignals.map(s => s.word).join(", ")
+                                                                navigator.clipboard.writeText(keywords).catch(() => {})
+                                                                setKeywordsCopied(true)
+                                                                setTimeout(() => setKeywordsCopied(false), 2000)
+                                                            }}
+                                                            className="text-[10px] font-bold text-cyan-400/60 hover:text-cyan-300 transition-colors uppercase tracking-wider shrink-0"
+                                                        >
+                                                            {keywordsCopied ? "✓ Copied" : "Copy all"}
+                                                        </button>
+                                                    </div>
                                                     <p className="text-xs text-cyan-300/80">These exact words are in the job posting but missing from your CV. Recruiters search by these terms — if they&apos;re not there, your application may be filtered out automatically.</p>
                                                 </div>
                                                 <div className="flex flex-wrap gap-2">

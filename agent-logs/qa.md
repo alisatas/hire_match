@@ -101,3 +101,19 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - `extract-pdf` text cap at 150KB: `analyze()` receives truncated but valid text — no parsing errors ✅
 - No new async flows introduced; all existing loading/error states unchanged ✅
 - 🟡 Telegram bot does not pre-check text length before calling analyze() — throw would propagate; low risk as 200KB Telegram input is pathological
+
+---
+
+## 2026-05-17 — Push 7 (Particle dot background + CEO/PM features)
+
+**Status:** ✅ PASS (0 critical)
+
+- `shader-background.tsx`: Canvas 2D, `cancelAnimationFrame` + `removeEventListener` in cleanup — no memory leak ✅
+- `initDots()` called inside `resize()` which runs on mount — correct initialization order ✅
+- `encodeResults` / `decodeResults`: both guarded by try/catch, return "" / null on failure — ✅
+- URL hash loading useEffect: only fires on mount, skips if hash absent or malformed — ✅
+- Share button: only rendered inside `{results && ...}` block — `results` always non-null when called ✅
+- "Copy all" button: `navigator.clipboard.writeText(...).catch(() => {})` — failure silent but not blocking ✅
+- Feature chips: non-interactive, flex-wrap — no logic, no crash vector ✅
+- Missing skill sort: now priority-first then frequency — no division-by-zero, no null access ✅
+- TypeScript: 0 errors confirmed ✅

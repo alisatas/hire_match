@@ -105,3 +105,20 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - `tweet` + `reddit-comment`: AbortSignal.timeout added — functions can no longer hang indefinitely ✅
 - Telegram `after()` blocks: both wrapped in try/catch — deploy failures now message the user ✅
 - All previous checks (dangerouslySetInnerHTML, SSRF, CSP, headers, webhook auth, PDF magic bytes) unchanged ✅
+
+---
+
+## 2026-05-17 — Push 7 (Particle dot background + CEO/PM features)
+
+**Status:** ✅ PASS (0 critical)
+
+- `shader-background.tsx`: Canvas 2D animation only, no user input, no innerHTML, no eval — ✅
+- `encodeResults`: `JSON.stringify` + `encodeURIComponent` on server-controlled result object — no injection vector ✅
+- `decodeResults`: `JSON.parse` inside try/catch, result only reaches React state (text nodes) — no XSS ✅
+- `window.location.hash` passed through `decodeURIComponent` + `JSON.parse` with catch — safe ✅
+- `window.history.replaceState`: URL manipulation only, no DOM write — ✅
+- `navigator.clipboard.writeText`: requires user gesture, no security concern ✅
+- `@radix-ui/react-slot`: reputable Radix UI library, no security concerns ✅
+- Background color change in `globals.css` / `layout.tsx`: no security impact ✅
+- `etheral-shadow.tsx` deleted — removes dead code, no security impact ✅
+- All previous controls unchanged (SSRF, CSP, webhook auth, PDF magic bytes, rate limiting) ✅

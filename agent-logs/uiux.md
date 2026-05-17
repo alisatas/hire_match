@@ -110,3 +110,17 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - No UI/UX changes this cycle — all backend hardening only ✅
 - Existing user journey, loading states, mobile layout, accessibility unchanged ✅
 - 🟡 Score circle still missing `aria-label` (pre-existing, tracked for next UI cycle)
+
+---
+
+## 2026-05-17 — Push 7 (Particle dot background + CEO/PM features)
+
+**Status:** ✅ PASS (0 critical)
+
+- Background replaced: WebGL shader → Canvas 2D particle dots. Visual change only — no UX regression ✅
+- Feature chips row added below subtitle: non-interactive, `flex-wrap`, visible at all widths — no overflow risk ✅
+- "🔗 Share results" button: only rendered inside `{results && ...}` — never visible on empty state ✅
+- "Copy all" button in keywords section: visible feedback via `keywordsCopied` state (2s flash) ✅
+- URL hash loading: fires on mount only, silent skip if hash absent/malformed — no UX impact on normal load ✅
+- User journey unchanged: land → upload → analyze → read results — all steps still functional ✅
+- 🟡 Score circle still missing `aria-label` (pre-existing — add in next UI cycle)

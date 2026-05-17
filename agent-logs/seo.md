@@ -105,6 +105,23 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 ---
 
+## 2026-05-17 — Push 7 (Particle dot background + CEO/PM features)
+
+**Status:** ✅ PASS (1 improvement implemented)
+
+- All OG tags, robots.ts, sitemap.ts, llms.txt unchanged ✅
+- JSON-LD schemas valid ✅
+
+**Improvement implemented this cycle:**
+- New FAQ entry added to JSON-LD FAQPage: "What is an ATS and how does it affect my job application?" — targets the high-intent ATS education query cluster. Explains how ATS filters CVs by keyword match and positions CVXray as the solution.
+- Second FAQ entry added: "How do I check if my CV is ATS-friendly?" — targets practical ATS-check queries, describes CVXray's HR Quick Scan feature.
+
+**Running improvement backlog (next pushes):**
+1. Add "free" and "no signup" to H1 or visible subheadline on main page for above-the-fold keyword density
+2. Add `sameAs` entries for Twitter/Instagram social profiles in JSON-LD Organization node
+
+---
+
 ## 2026-05-16 — Push 5 (Architecture Robustness Hardening)
 
 **Status:** ✅ PASS (1 improvement implemented)

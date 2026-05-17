@@ -339,7 +339,14 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
         const priority: "high" | "medium" | "low" =
             (freq >= 3 || titleSkills.has(key)) ? "high" : freq >= 1 ? "medium" : "low"
         return { label: getSkillLabel(key), key, freq, priority }
-    }).sort((a, b) => b.freq - a.freq)
+    }).sort((a, b) => {
+        // Math Prof improvement: sort by priority first (high → medium → low), then by
+        // frequency within each tier. Previously sorted by freq only, which buried
+        // title-boosted high-priority skills (freq=1) below medium-priority ones (freq=2).
+        const rank = { high: 0, medium: 1, low: 2 } as const
+        if (rank[a.priority] !== rank[b.priority]) return rank[a.priority] - rank[b.priority]
+        return b.freq - a.freq
+    })
 
     // ── 10. Top missing job signals — skill aliases only ─────────────────────
     // Only surface words that are recognised skill aliases (from SKILL_GROUPS).
