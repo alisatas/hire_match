@@ -75,3 +75,29 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - `digital-loom-background.tsx`: useEffect returns cleanup (cancelAnimationFrame + removeEventListener) ✅
 - New `Thread` class: constructor initialises all fields before `reset()` — no strict-mode issues ✅
 - Orchestration SSE stream: cleanup paths unchanged from Push 3 ✅
+
+---
+
+## 2026-05-17 — Push 6 (Etheral Shadow component + SEO/Math improvements)
+
+**Status:** ✅ PASS (0 critical)
+
+- `etheral-shadow.tsx`: component is purely presentational — no data flow, no user input ✅
+- framer-motion cleanup: `hueRotateAnimation.current?.stop()` called in useEffect return — no memory leak ✅
+- `animationEnabled` guard: SVG filter only rendered when `animation.scale > 0` — no crash on undefined animation ✅
+- 🟡 SVG filter graph ordering: `feColorMatrix in="dist"` references a result produced by a later primitive. Browser fallback handles this silently (no crash), but visual output may differ from design intent. Non-blocking — cosmetic only.
+- `analyze.ts` keyword fix: `w.length >= 4` now includes "java", "rust", "html", "node" in keyword scoring — calibration improvement, no data integrity risk ✅
+- No new async flows, no new loading states, no new localStorage access ✅
+- All previous QA checks unchanged ✅
+
+---
+
+## 2026-05-16 — Push 5 (Architecture Robustness Hardening)
+
+**Status:** ✅ PASS (0 critical)
+
+- `analyze()` now throws on >200KB CV or >100KB JD — UI users cannot hit this (PDF capped at 150KB, pasting 200KB manually impossible) ✅
+- Rate limiting (429): existing catch blocks in UI surface the error correctly ✅
+- `extract-pdf` text cap at 150KB: `analyze()` receives truncated but valid text — no parsing errors ✅
+- No new async flows introduced; all existing loading/error states unchanged ✅
+- 🟡 Telegram bot does not pre-check text length before calling analyze() — throw would propagate; low risk as 200KB Telegram input is pathological

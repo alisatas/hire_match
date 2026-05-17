@@ -84,3 +84,38 @@ Agents MUST read this log before running checks and MUST append an entry after e
 **Running improvement backlog (next pushes):**
 1. Add "free" and "no signup" to H1 or visible subheadline on main page for above-the-fold keyword density
 2. Add course recommendation count or skill category count to meta description ("40+ skill categories")
+
+---
+
+## 2026-05-17 — Push 6 (Etheral Shadow component + SEO/Math improvements)
+
+**Status:** ✅ PASS (1 improvement implemented)
+
+- All OG tags, robots.ts, sitemap.ts, llms.txt unchanged ✅
+- JSON-LD schemas valid ✅
+
+**Improvement implemented this cycle:**
+- 2 new FAQ entries added to JSON-LD FAQPage in `layout.tsx`:
+  1. "What is the best free AI resume scanner in 2026?" — captures high-intent 2026 date-qualified queries and AI scanner queries from Google and AI engines
+  2. "How do I use AI to match my CV to a job description?" — targets the growing "AI + CV" natural language query pattern for GEO/AI engine citation
+
+**Running improvement backlog (next pushes):**
+1. Add "free" and "no signup" to H1 or visible subheadline on main page for above-the-fold keyword density
+2. Add `sameAs` entries for Twitter/Instagram social profiles in JSON-LD Organization node
+
+---
+
+## 2026-05-16 — Push 5 (Architecture Robustness Hardening)
+
+**Status:** ✅ PASS (1 improvement implemented)
+
+- All OG tags, JSON-LD schemas, robots.ts, sitemap.ts, llms.txt unchanged ✅
+
+**Improvement implemented this cycle:**
+- Meta description updated to include "ATS score", "40+ categories", "missing keywords", "course recommendations" — higher intent keyword density and clearer value proposition:
+  - Before: "Instantly score your CV against any job description. See matched skills, missing keywords & courses to fill the gaps. Free, private, no sign-up."
+  - After: "Instantly match your CV to any job. Get your ATS score, see matched skills across 40+ categories, find missing keywords & get course recommendations. Free, no sign-up."
+
+**Running improvement backlog (next pushes):**
+1. Add "free" and "no signup" to H1 or visible subheadline on main page for above-the-fold keyword density
+2. Add `sameAs` entries for Twitter/Instagram social profiles in JSON-LD Organization node

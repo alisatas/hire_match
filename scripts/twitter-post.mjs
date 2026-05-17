@@ -53,6 +53,13 @@ function git(cmd) {
 }
 
 const subject = git(`git log -1 --pretty=format:"%s"`)
+
+// Only tweet for feat: commits — conserve the 50 free tweets/month
+if (!subject.startsWith("feat:")) {
+  console.log(`🐦 X: skipping — only tweeting for feat: commits (budget: 50/month). Got: "${subject}"`)
+  process.exit(0)
+}
+
 const body    = git(`git log -1 --pretty=format:"%b"`)
 
 const bodyLines = body

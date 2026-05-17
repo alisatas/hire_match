@@ -96,6 +96,7 @@ export async function POST(req: NextRequest) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ text: text.trim() }),
+        signal: AbortSignal.timeout(15_000),
     })
 
     if (!res.ok) {

@@ -144,7 +144,7 @@ function extractKeywordFrequencies(text: string): Map<string, number> {
     const words = text.toLowerCase().match(/\b[a-z][a-z0-9+#.]{2,}\b/g) || []
     const freq = new Map<string, number>()
     for (const w of words) {
-        if (!STOP_WORDS.has(w) && w.length > 4) {
+        if (!STOP_WORDS.has(w) && w.length >= 4) {
             freq.set(w, (freq.get(w) || 0) + 1)
         }
     }
@@ -208,6 +208,10 @@ export interface AnalysisResult {
 }
 
 export function analyze(cvText: string, jobText: string): AnalysisResult {
+    if (cvText.length > 200_000 || jobText.length > 100_000) {
+        throw new Error("Input text too large")
+    }
+
     // ── 1. Skill extraction ──────────────────────────────────────────────────
     const cvSkills = extractSkills(cvText)
     const jobSkillFreq = extractSkillFrequencies(jobText)
@@ -260,8 +264,9 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
     let matchedKwWeight = 0
     // Adaptive cap: longer JDs naturally repeat keywords more without implying greater importance.
     // Scale cap with JD length so short JDs stay strict, long JDs reward genuinely dense terms.
-    // e.g. 300-word JD → cap 4, 600-word → cap 5, 1500-word → cap 10
-    const keywordFreqCap = Math.ceil(Math.max(4, jobWordCount / 150))
+    // Hard ceiling at 10: prevents keyword-stuffed JDs (>1200 words) from extreme weight disparities.
+    // e.g. 300-word JD → cap 4, 600-word → cap 4, 1200-word → cap 8, 2000-word → cap 10 (capped)
+    const keywordFreqCap = Math.min(Math.ceil(Math.max(4, jobWordCount / 150)), 10)
     for (const [word, freq] of jobFreq.entries()) {
         const weight = Math.min(freq, keywordFreqCap) // adaptive cap scales with JD length
         totalKwWeight += weight
@@ -426,6 +431,7 @@ export interface CVAuditResult {
 }
 
 export function auditCV(cvText: string): CVAuditResult {
+    if (cvText.length > 200_000) throw new Error("Input text too large")
     const text = cvText.toLowerCase()
 
     // ── 1. Quantified Impact ───────────────────────────────────────────────

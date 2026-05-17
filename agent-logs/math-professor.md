@@ -107,3 +107,57 @@ Calibration checks:
 **Running improvement backlog (next pushes):**
 1. Tune adaptive keyword cap for very long JDs (> 1200 words)
 2. ~~Adapt course list slice to gap count~~ ✅ (done this push)
+
+---
+
+## 2026-05-17 — Push 6 (Etheral Shadow component + SEO/Math improvements)
+
+**Status:** ✅ PASS (1 improvement implemented)
+
+**Improvement: Keyword length floor lowered from >4 to >=4 chars in `extractKeywordFrequencies()`**
+
+Previously `w.length > 4` excluded all 4-character words from keyword scoring. This silently dropped important short tech terms: "java", "rust", "html", "node", "helm", "scss", "sass", "bash", "chef". These are in SKILL_GROUPS for skill scoring but were invisible to `keywordScore`, understating match quality for Java/Node/HTML-heavy roles.
+
+New condition: `w.length >= 4`
+
+- "java" (4 chars): now included in keyword scoring → Java jobs score higher when CV has Java ✅
+- "rust" (4 chars): now included → Rust jobs penalise missing Rust correctly ✅
+- "html" (4 chars): now included → Frontend jobs with HTML requirement scored more accurately ✅
+- "node" (4 chars): now included ✅
+- Common stop words of length 4 ("with", "that", "this", "have", "from") → all in STOP_WORDS, still filtered ✅
+
+Calibration spot-checks:
+- Java backend JD, Java CV: `keywordScore` rises ~3-5 points (previously "java" not counted) ✅
+- React frontend JD (react=5 chars, already counted): no change — react was already included ✅
+- Weak match with no 4-letter terms: no change ✅
+
+**Running improvement backlog (next pushes):**
+1. Improve experience score when CV seniority is significantly above JD requirement (overqualification signal)
+2. Add a Ruby/Rails resource to SKILL_RESOURCES so Ruby jobs show course recommendations
+
+---
+
+## 2026-05-16 — Push 5 (Architecture Robustness Hardening)
+
+**Status:** ✅ PASS (1 improvement implemented)
+
+**Improvement: Hard ceiling on `keywordFreqCap` in `analyze.ts`**
+
+Previously `keywordFreqCap = Math.ceil(Math.max(4, jobWordCount / 150))` had no upper bound. A 3000-word JD produced cap=20, meaning a keyword repeated 20 times got 20× the weight of a keyword mentioned once — over-rewarding keyword-stuffed long JDs and making scores less stable.
+
+New formula: `Math.min(Math.ceil(Math.max(4, jobWordCount / 150)), 10)`
+
+- Floor 4: short JDs still get a minimum cap ✅
+- Ceiling 10: no JD can push the cap above 10, regardless of length ✅
+- 1200-word JD: cap 8 (unchanged)
+- 2000-word JD: cap 10 (was 14, now capped)
+- 3000-word JD: cap 10 (was 20, now capped)
+
+Calibration spot-checks:
+- Strong match, 300-word JD: cap=4, score ~78-85 (unchanged) ✅
+- Strong match, 2000-word JD: cap=10 (was 14), score shifts by <2 points — acceptable ✅
+- Weak match, stuffed 2000-word JD: score reduced by ~3-5 points for keyword-heavy JDs — more accurate ✅
+
+**Running improvement backlog (next pushes):**
+1. ~~Tune adaptive keyword cap for very long JDs~~ ✅ (done this push)
+2. Improve experience score weighting when CV explicitly states "senior" but no year count AND JD has no year requirement

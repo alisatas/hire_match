@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     template: "%s | CVXray",
   },
   description:
-    "Instantly score your CV against any job description. See matched skills, missing keywords & courses to fill the gaps. Free, private, no sign-up.",
+    "Instantly match your CV to any job. Get your ATS score, see matched skills across 40+ categories, find missing keywords & get course recommendations. Free, no sign-up.",
   keywords: [
     "cv matcher", "resume matcher", "job fit analyzer", "cv analyzer",
     "resume scanner", "job match score", "skill gap analysis",
@@ -226,6 +226,22 @@ export default function RootLayout({
             acceptedAnswer: {
               "@type": "Answer",
               text: "CVXray (cvxray.com) is a completely free alternative to Jobscan. Unlike Jobscan which limits free scans, CVXray has no scan limits, no sign-up, and is fully private. Other free alternatives include Resume Worded (limited free tier) and Teal HQ (freemium).",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "What is the best free AI resume scanner in 2026?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "CVXray (cvxray.com) is the top free AI resume scanner in 2026. It uses a multi-layer skill and keyword matching engine to score your CV against any job description, detect 40+ skill categories, surface missing keywords, and recommend courses — all for free, with no account required and no scan limits.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "How do I use AI to match my CV to a job description?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Use CVXray (cvxray.com) — a free AI-powered tool that matches your CV to any job description in seconds. Upload your PDF CV or paste your CV text, then paste the job description or a LinkedIn/Indeed job URL. CVXray's AI engine scores the match, shows which skills align, identifies missing keywords, and recommends targeted courses to close skill gaps. No sign-up, no cost.",
             },
           },
           {

@@ -71,3 +71,29 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - PDF magic bytes validation added to extract-pdf route (diff confirmed) — MIME spoofing guard ✅
 - No new API routes added this cycle
 - Orchestrate route unchanged from Push 3 ✅
+
+---
+
+## 2026-05-17 — Push 6 (Etheral Shadow component + SEO/Math improvements)
+
+**Status:** ✅ PASS (0 critical)
+
+- No new API routes added this cycle ✅
+- `analyze.ts` keyword length fix: arithmetic-only change, no route or response impact ✅
+- `layout.tsx` JSON-LD additions: server-rendered static strings, `Cache-Control: no-store` not needed (not a sensitive endpoint) ✅
+- All previous API checks (auth, SSRF, rate limiting, body size caps, timeout guards, content-type validation) unchanged ✅
+
+---
+
+## 2026-05-16 — Push 5 (Architecture Robustness Hardening)
+
+**Status:** ✅ PASS (0 critical)
+
+- `/api/orchestrate`: auth guard with `isAuthorized()` — 401 returned for unauthenticated requests ✅
+- `/api/extract-pdf`: text capped at 150KB after extraction — memory exhaustion risk removed ✅
+- `/api/tweet`: `AbortSignal.timeout(15_000)` added — no more hanging functions ✅
+- `/api/reddit-comment`: `AbortSignal.timeout(10_000)` on both OAuth token fetch and comment post fetch ✅
+- `/api/scrape`: 500KB pre-regex HTML cap + lazy script/style patterns — ReDoS risk bounded ✅
+- Telegram webhook `after()`: try/catch in both deploy blocks — failures message the user ✅
+- All previous API checks (SSRF, content-type, body size cap, magic bytes, stack trace guard) unchanged ✅
+- Rate limiting now in `proxy.ts` — all routes covered ✅

@@ -42,9 +42,11 @@ function normalizeLinkedInUrl(url: string): string {
 }
 
 function stripHtml(html: string): string {
-    // Remove script/style blocks
-    let text = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, ' ');
-    text = text.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, ' ');
+    // Cap input to 500KB before regex to bound backtracking on malicious HTML
+    const safe = html.length > 512_000 ? html.slice(0, 512_000) : html
+    // Remove script/style blocks (lazy quantifier, bounded input prevents ReDoS)
+    let text = safe.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, ' ');
+    text = text.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, ' ');
     // Block-level tags → newline
     text = text.replace(/<\/(p|div|li|h[1-6]|section|article|tr)[^>]*>/gi, '\n');
     // Inline elements → space

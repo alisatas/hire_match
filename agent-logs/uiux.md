@@ -89,3 +89,24 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Weekly cadence cards on /orchestration: tap targets adequate, readable on mobile ✅
 - All existing UI/UX controls unchanged ✅
 - 🟡 Score circle still missing `aria-label` (pre-existing, not introduced this cycle)
+
+---
+
+## 2026-05-17 — Push 6 (Etheral Shadow component + SEO/Math improvements)
+
+**Status:** ✅ PASS (0 critical)
+
+- `etheral-shadow.tsx` added to `src/components/ui/` — not yet imported in any page, so no user-facing changes this cycle ✅
+- When integrated: component renders 100% width/height of parent — consumer must size the parent container appropriately
+- Existing user journey (land → upload → analyze → results) unchanged ✅
+- 🟡 Score circle still missing `aria-label` (pre-existing, scheduled for next UI cycle)
+
+---
+
+## 2026-05-16 — Push 5 (Architecture Robustness Hardening)
+
+**Status:** ✅ PASS (0 critical)
+
+- No UI/UX changes this cycle — all backend hardening only ✅
+- Existing user journey, loading states, mobile layout, accessibility unchanged ✅
+- 🟡 Score circle still missing `aria-label` (pre-existing, tracked for next UI cycle)

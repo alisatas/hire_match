@@ -32,6 +32,7 @@ async function getRedditToken(clientId: string, clientSecret: string, username: 
             username,
             password,
         }).toString(),
+        signal: AbortSignal.timeout(10_000),
     })
 
     if (!res.ok) {
@@ -106,6 +107,7 @@ export async function POST(req: NextRequest) {
             thing_id: thingId,
             text: text.trim(),
         }).toString(),
+        signal: AbortSignal.timeout(10_000),
     })
 
     if (!res.ok) {

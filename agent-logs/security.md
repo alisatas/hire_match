@@ -74,3 +74,34 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - All previous security controls unchanged (SSRF, CSP, webhook auth, PDF validation) ✅
 - ⚠️ `graphify-out/` not committed — correctly omitted from staging
 - 🟡 No rate limiting on `/api/orchestrate` (pre-existing medium warning)
+
+---
+
+## 2026-05-17 — Push 6 (Etheral Shadow component + SEO/Math improvements)
+
+**Status:** ✅ PASS (0 critical)
+
+- `etheral-shadow.tsx`: no `dangerouslySetInnerHTML`, no user input, no eval/innerHTML — ✅
+- Hardcoded Framer CDN URLs in CSS `maskImage` / `backgroundImage` — not user-controlled, no SSRF risk ✅
+- CSS resource URLs (`framerusercontent.com`) served over HTTPS — covered by existing `img-src 'self' data: https:` CSP ✅
+- framer-motion `animate()` usage: JS animation only, no DOM injection ✅
+- No new API routes, no new user-input surfaces, no new auth changes ✅
+- `analyze.ts` keyword length fix (`>= 4`): only affects scoring arithmetic — no security impact ✅
+- JSON-LD additions in `layout.tsx`: static server-controlled strings — no XSS vector ✅
+- All previous controls unchanged (SSRF, webhook auth, PDF magic bytes, rate limiting, CSP) ✅
+- 🟡 CSP `script-src` still includes `'unsafe-inline'` in production — pre-existing, required for JSON-LD script tag
+
+---
+
+## 2026-05-16 — Push 5 (Architecture Robustness Hardening)
+
+**Status:** ✅ PASS (0 critical, 0 warnings — all previous 🟡s resolved)
+
+- `/api/orchestrate`: auth guard added via `isAuthorized()` — closes 🟡 from Pushes 3–4 ✅
+- `proxy.ts`: per-IP rate limiter added (5/min orchestrate, 10/min PDF/tweet/reddit, 15/min scrape, 30/min default) — closes all rate-limiting 🟡s ✅
+- `analyze.ts`: input size guards (>200KB CV / >100KB JD throws) — prevents memory exhaustion from Telegram bot ✅
+- `extract-pdf`: extracted text capped at 150KB — prevents pathological PDF OOM ✅
+- `scrape`: script/style regex replaced with lazy quantifiers + 500KB pre-regex cap — ReDoS risk bounded ✅
+- `tweet` + `reddit-comment`: AbortSignal.timeout added — functions can no longer hang indefinitely ✅
+- Telegram `after()` blocks: both wrapped in try/catch — deploy failures now message the user ✅
+- All previous checks (dangerouslySetInnerHTML, SSRF, CSP, headers, webhook auth, PDF magic bytes) unchanged ✅

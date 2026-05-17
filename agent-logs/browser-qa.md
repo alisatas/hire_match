@@ -68,3 +68,27 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - `digital-loom-background.tsx` uses `requestAnimationFrame` loop — matches pattern of shader-background ✅
 - No new unoptimized assets added
 - Keyboard navigation on course links: native `<a>` elements are keyboard-focusable ✅
+
+---
+
+## 2026-05-17 — Push 6 (Etheral Shadow component + SEO/Math improvements)
+
+**Status:** ✅ PASS (0 critical)
+
+- `etheral-shadow.tsx`: not imported in any page — no browser impact this cycle ✅
+- framer-motion already in dependencies from Push 4 — no new bundle size concern ✅
+- `SVGFEColorMatrixElement` ref type: valid TypeScript SVG type, no compilation error ✅
+- JSON-LD additions in layout.tsx: static strings, no hydration mismatch risk ✅
+- `analyze.ts` keyword fix: client-side JS only, no CWV impact ✅
+- TypeScript: 0 errors expected (no new generics, no new any-casts) ✅
+- No new assets, no layout shifts, no new unhandled rejections ✅
+
+---
+
+## 2026-05-16 — Push 5 (Architecture Robustness Hardening)
+
+**Status:** ✅ PASS (0 critical)
+
+- No frontend changes — all hardening in server routes and proxy ✅
+- TypeScript: 0 errors confirmed (`tsc --noEmit`) ✅
+- No new assets, no layout shift risks, no new unhandled rejections ✅

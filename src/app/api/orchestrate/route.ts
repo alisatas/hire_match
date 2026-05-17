@@ -1,12 +1,29 @@
 import { anthropic } from "@ai-sdk/anthropic"
 import { streamText } from "ai"
+import { timingSafeEqual } from "crypto"
 import { NextRequest } from "next/server"
 import { AGENTS, type AgentKey } from "@/lib/agents-config"
 
 export const runtime = "nodejs"
 export const maxDuration = 60
 
+function isAuthorized(req: NextRequest): boolean {
+    const key = process.env.AGENT_ACTIONS_KEY
+    if (!key) return false
+    const provided = req.headers.get("x-agent-key") ?? req.headers.get("authorization")?.replace("Bearer ", "")
+    if (!provided) return false
+    try {
+        const a = Buffer.from(key)
+        const b = Buffer.from(provided)
+        return key.length === provided.length && timingSafeEqual(a, b)
+    } catch { return false }
+}
+
 export async function POST(req: NextRequest) {
+    if (!isAuthorized(req)) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401 })
+    }
+
     let body: { agentKey?: string; swarm?: AgentKey[] }
     try {
         body = await req.json()

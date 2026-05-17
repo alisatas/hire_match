@@ -28,7 +28,10 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Could not extract text from PDF' }, { status: 422, headers: { "Cache-Control": "no-store" } })
         }
 
-        return NextResponse.json({ text: text.trim() }, { headers: { "Cache-Control": "no-store" } })
+        // Cap extracted text to prevent memory exhaustion from pathological PDFs
+        const safeText = text.trim().slice(0, 150_000)
+
+        return NextResponse.json({ text: safeText }, { headers: { "Cache-Control": "no-store" } })
 
     } catch (err: unknown) {
         console.error('PDF extract error:', err instanceof Error ? err.message : err)

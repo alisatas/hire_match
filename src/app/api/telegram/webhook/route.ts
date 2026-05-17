@@ -164,19 +164,23 @@ async function handleCommand(chatId: number, text: string) {
         }
         await sendMessage(chatId, "🔨 Triggering preview deploy...")
         after(async () => {
-            const jobId = await triggerDeploy(hookUrl)
-            if (!jobId) {
-                await sendMessage(chatId, "❌ Deploy trigger failed. Check your VERCEL_DEPLOY_HOOK_URL.")
-                return
-            }
-            // Wait a moment then fetch latest deployment URL
-            await new Promise(r => setTimeout(r, 8000))
-            const deployments = await getDeployments()
-            const latest = deployments?.[0]
-            if (latest) {
-                await sendMessage(chatId, `✅ <b>Preview deploy triggered!</b>\n\n🔗 https://${latest.url}\n📊 Status: ${latest.state}`)
-            } else {
-                await sendMessage(chatId, `✅ Deploy triggered. Check Vercel dashboard for the URL.`)
+            try {
+                const jobId = await triggerDeploy(hookUrl)
+                if (!jobId) {
+                    await sendMessage(chatId, "❌ Deploy trigger failed. Check your VERCEL_DEPLOY_HOOK_URL.")
+                    return
+                }
+                // Wait a moment then fetch latest deployment URL
+                await new Promise(r => setTimeout(r, 8000))
+                const deployments = await getDeployments()
+                const latest = deployments?.[0]
+                if (latest) {
+                    await sendMessage(chatId, `✅ <b>Preview deploy triggered!</b>\n\n🔗 https://${latest.url}\n📊 Status: ${latest.state}`)
+                } else {
+                    await sendMessage(chatId, `✅ Deploy triggered. Check Vercel dashboard for the URL.`)
+                }
+            } catch (err) {
+                await sendMessage(chatId, `❌ Deploy error: ${err instanceof Error ? err.message : "Unknown error"}`)
             }
         })
         return
@@ -211,18 +215,22 @@ async function handleCallbackQuery(callbackQuery: {
         }
 
         after(async () => {
-            const jobId = await triggerDeploy(hookUrl)
-            if (!jobId) {
-                await sendMessage(chatId, "❌ Production deploy trigger failed.")
-                return
-            }
-            await new Promise(r => setTimeout(r, 8000))
-            const deployments = await getDeployments()
-            const latest = deployments?.find(d => d.target === "production") ?? deployments?.[0]
-            if (latest) {
-                await sendMessage(chatId, `🚀 <b>Production deploy triggered!</b>\n\n🔗 https://${latest.url}\n📊 Status: ${latest.state}`)
-            } else {
-                await sendMessage(chatId, `🚀 Production deploy triggered. Check Vercel dashboard for status.`)
+            try {
+                const jobId = await triggerDeploy(hookUrl)
+                if (!jobId) {
+                    await sendMessage(chatId, "❌ Production deploy trigger failed.")
+                    return
+                }
+                await new Promise(r => setTimeout(r, 8000))
+                const deployments = await getDeployments()
+                const latest = deployments?.find(d => d.target === "production") ?? deployments?.[0]
+                if (latest) {
+                    await sendMessage(chatId, `🚀 <b>Production deploy triggered!</b>\n\n🔗 https://${latest.url}\n📊 Status: ${latest.state}`)
+                } else {
+                    await sendMessage(chatId, `🚀 Production deploy triggered. Check Vercel dashboard for status.`)
+                }
+            } catch (err) {
+                await sendMessage(chatId, `❌ Production deploy error: ${err instanceof Error ? err.message : "Unknown error"}`)
             }
         })
         return
