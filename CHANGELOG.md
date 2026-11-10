@@ -1,3 +1,10 @@
+## [1.22.3](https://github.com/alisatas/hire_match/compare/v1.22.2...v1.22.3) (2026-11-10)
+
+
+### Bug Fixes
+
+* remove the payment prompt and GitHub links from the site ([1dee625](https://github.com/alisatas/hire_match/commit/1dee625ec3f8b24c9dfbac56cbc48a1ef48d4080))
+
 ## [1.22.2](https://github.com/alisatas/hire_match/compare/v1.22.1...v1.22.2) (2026-11-10)
 
 
