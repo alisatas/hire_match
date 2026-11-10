@@ -259,7 +259,7 @@ The canvas shows the full app flow:
 **The canvas auto-updates** after every Claude Code session via a Stop hook:
 
 ```json
-// cv-scorer/.claude/settings.json
+// .claude/settings.json
 {
   "hooks": {
     "Stop": [{

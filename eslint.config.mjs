@@ -12,8 +12,6 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // Git submodule pinned to an old copy of this repo — not part of the build
-    "cv-scorer/**",
   ]),
 ]);
 
