@@ -1,22 +1,38 @@
 "use client"
 
 import React, { useState, useRef, useEffect, useMemo, useSyncExternalStore } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { RatingInteraction } from "@/components/ui/emoji-rating"
 import {
-    Sparkles,
-    FileText,
-    UploadCloud,
     ArrowRight,
-    Shield,
-    Cpu,
+    ArrowUpRight,
+    Building2,
+    Check,
+    CircleAlert,
+    CircleCheck,
+    CircleX,
+    ClipboardPaste,
+    CloudUpload,
+    Coffee,
+    Copy,
+    FileSearch,
+    FileText,
+    Gauge,
+    GraduationCap,
+    Heart,
+    History,
+    Link2,
+    ListChecks,
+    LoaderCircle,
+    Lock,
     RotateCcw,
-    ExternalLink,
-    BookOpen,
+    ScanSearch,
+    Share2,
+    ShieldCheck,
+    Target,
+    TriangleAlert,
+    Zap,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Badge, Chip, Divider, FeedbackRating, Panel, ScoreRing, Section, SegmentedControl, StatTile, StepLabel, toneDot, toneForScore, toneText, type Tone } from "./analyzer-ui"
 import { analyze, auditCV, type AnalysisResult, type CVAuditResult, type MissingSkillWithPriority } from "@/lib/analyze"
 import { extractCompanyName, extractCultureSignals, getInterviewLinks } from "@/lib/insights"
 
@@ -556,155 +572,151 @@ export default function CVAnalyzer() {
     const canAnalyze = !!cvText && (!!jobText || validUrl)
     const applyUrl = jobUrl || (validUrl ? jobInput.trim() : "")
 
+    const tone = results ? toneForScore(results.score) : "neutral"
+    const highGaps = results ? results.missing.filter(m => m.priority === "high") : []
+    const totalSkills = results ? results.matched.length + results.missing.length : 0
+    const company = jobText ? (scrapedCompanyName || extractCompanyName(jobText)) : ""
+    const culture = jobText ? extractCultureSignals(jobText) : []
+    const priorityTone = (p: MissingSkillWithPriority["priority"]): Tone => p === "high" ? "danger" : p === "medium" ? "warning" : "neutral"
+
+    const sampleButtons = (onPick: (text: string, label: string) => void) => (
+        <div className="space-y-2">
+            <p className="text-xs text-muted-foreground">No job post handy? Try a sample role:</p>
+            <div className="flex flex-wrap gap-1.5">
+                {SAMPLE_JOBS.map(job => (
+                    <button
+                        key={job.label}
+                        type="button"
+                        title={job.desc}
+                        onClick={() => onPick(job.text, job.label)}
+                        className="inline-flex min-h-9 items-center rounded-md border border-border bg-foreground/[0.02] px-2.5 text-xs font-medium text-foreground/80 transition-colors hover:border-foreground/20 hover:bg-foreground/[0.05] hover:text-foreground"
+                    >
+                        {job.label}
+                    </button>
+                ))}
+            </div>
+        </div>
+    )
+
+    const inputClass = "w-full rounded-lg border border-input bg-inset px-3 text-sm text-foreground placeholder:text-muted-foreground/70 transition-colors focus:border-primary/50 focus:outline-none focus:ring-3 focus:ring-primary/15"
+
     return (
-        <div className="container mx-auto px-4 py-8 md:py-12">
-            <header className="flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
-                <a href="https://cvxray.com" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                    <Sparkles className="text-[#c0c0c0] h-8 w-8" />
-                    <span className="text-2xl font-bold tracking-tight text-silver">CVXray</span>
-                </a>
-            </header>
+        <section id="analyzer" className="relative mx-auto max-w-7xl scroll-mt-20 px-4 sm:px-6 lg:px-8">
+            <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
 
-            <section className="text-center mb-8 animate-in fade-in slide-in-from-bottom-6 duration-1000">
-                <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight tracking-tighter text-silver">
-                    Does Your CV{" "}
-                    <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-[#848484]">
-                        Match the Job?
-                    </span>
-                </h1>
-                <p className="text-base sm:text-lg md:text-xl text-[#999999] font-semibold max-w-4xl mx-auto px-2 drop-shadow-sm">
-                    Upload your CV, drop a job link — instantly see how well you fit the role, what keywords you&apos;re missing, and free courses to close every gap.
-                </p>
-                <div className="flex flex-wrap justify-center gap-2 mt-4 text-[11px] font-semibold text-[#808080]">
-                    <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10">✓ 40+ skill categories</span>
-                    <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10">✓ Company Insights</span>
-                    <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10">✓ Free forever</span>
-                    <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10">✓ No sign-up</span>
-                </div>
-            </section>
+                {/* ── Input panel ─────────────────────────────────────────── */}
+                <Panel className="p-5 sm:p-6 lg:sticky lg:top-20">
+                    <div className="mb-6">
+                        <h2 className="text-base font-semibold tracking-tight text-foreground">Analyze a match</h2>
+                        <p className="mt-1 text-[13px] text-muted-foreground">Add your CV and a job post. Results appear instantly.</p>
+                    </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-                {/* Input Panel */}
-                <Card className="bg-background/75 backdrop-blur-xl border-border/50 overflow-hidden">
-                    <CardHeader>
-                        <div className="flex items-center gap-3 mb-2">
-                            <FileText className="text-[#c0c0c0] h-5 w-5" />
-                            <CardTitle className="font-black uppercase tracking-tighter text-silver">The Essentials 🎒</CardTitle>
-                        </div>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                        {/* CV — upload zone OR loaded badge */}
-                        {!cvText || showCvPaste ? (
-                            <div className="space-y-4">
-                                <div className="flex justify-between items-center">
-                                    <label className="text-sm font-bold uppercase tracking-widest text-silver">Your CV</label>
+                    <div className="space-y-6">
+                        {/* Step 1 — CV */}
+                        <div className="space-y-3">
+                            <StepLabel
+                                n={1}
+                                action={!cvText || showCvPaste ? (
                                     <button
                                         type="button"
                                         onClick={() => setShowCvPaste(v => !v)}
-                                        className="text-[10px] text-[#999999] hover:text-[#cccccc] font-bold uppercase tracking-widest transition-colors p-3 -m-3 min-h-11 inline-flex items-center"
+                                        className="-m-3 inline-flex min-h-11 items-center p-3 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
                                     >
-                                        {showCvPaste ? "↑ Upload PDF instead" : "Paste text instead"}
+                                        {showCvPaste ? "Upload PDF instead" : "Paste text instead"}
                                     </button>
-                                </div>
-                                {showCvPaste ? (
-                                    <Textarea
-                                        placeholder="Paste your full CV text here..."
-                                        className="min-h-[140px] max-h-[220px] h-[220px] resize-none overflow-y-auto [field-sizing:fixed] bg-muted/20 border-border/40 rounded-xl text-white placeholder:text-[#666666] text-sm"
+                                ) : undefined}
+                            >
+                                Your CV
+                            </StepLabel>
+
+                            {!cvText || showCvPaste ? (
+                                showCvPaste ? (
+                                    <textarea
+                                        placeholder="Paste the full text of your CV…"
+                                        aria-label="CV text"
+                                        className={cn(inputClass, "h-44 resize-none py-2.5 leading-relaxed [field-sizing:fixed]")}
                                         value={cvText}
                                         onChange={(e) => { setCvText(e.target.value); setPdfStatus("✓ CV text loaded"); if (e.target.value.length > 100) setCvAudit(auditCV(e.target.value)) }}
                                         autoFocus
                                     />
                                 ) : (
-                                    <div className="border-2 border-dashed border-border/60 rounded-xl h-[140px] flex flex-col items-center justify-center gap-4 transition-colors hover:border-primary/40 hover:bg-primary/5 cursor-pointer relative">
-                                        <UploadCloud className="h-10 w-10 text-[#999999]" />
-                                        <div className="text-center">
-                                            <p className="font-semibold text-silver">Drop your PDF or click to browse</p>
-                                            <p className="text-xs text-[#999999] mt-1 font-medium">Files up to 5MB supported</p>
+                                    <div className="group relative flex h-36 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-foreground/15 bg-inset text-center transition-colors hover:border-primary/40 hover:bg-primary/[0.04] focus-within:border-primary/50">
+                                        <span className="flex size-10 items-center justify-center rounded-full border border-border bg-foreground/[0.04] text-muted-foreground transition-colors group-hover:text-primary">
+                                            <CloudUpload className="size-4.5" />
+                                        </span>
+                                        <div>
+                                            <p className="text-sm font-medium text-foreground">Drop your PDF or <span className="text-primary">browse</span></p>
+                                            <p className="mt-0.5 text-xs text-muted-foreground">PDF up to 5 MB · never stored</p>
                                         </div>
                                         <input
                                             ref={fileInputRef}
                                             type="file"
                                             accept=".pdf"
                                             aria-label="Upload PDF CV"
-                                            className="absolute inset-0 opacity-0 cursor-pointer"
+                                            className="absolute inset-0 cursor-pointer opacity-0"
                                             onChange={processPdf}
                                         />
                                     </div>
-                                )}
-                                {pdfStatus && !showCvPaste && (
-                                    <p className="text-xs text-center font-semibold text-[#b3b3b3] animate-pulse">{pdfStatus}</p>
-                                )}
-                            </div>
-                        ) : (
-                            <div className="space-y-3">
-                                <div className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/25 rounded-2xl px-4 py-3">
-                                    <div className="flex items-center gap-3">
-                                        <FileText className="h-4 w-4 text-emerald-400 shrink-0" />
-                                        <span className="text-sm font-bold text-emerald-400 truncate">{pdfStatus.replace("✓ ", "") || "CV loaded"}</span>
+                                )
+                            ) : (
+                                <div className="flex items-center justify-between gap-3 rounded-xl border border-success/25 bg-success/[0.07] px-3.5 py-3">
+                                    <div className="flex min-w-0 items-center gap-3">
+                                        <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-success/15 text-success">
+                                            <FileText className="size-4" />
+                                        </span>
+                                        <div className="min-w-0">
+                                            <p className="truncate text-sm font-medium text-foreground">{pdfStatus.replace("✓ ", "") || "CV loaded"}</p>
+                                            <p className="text-xs text-muted-foreground">{cvText.trim().split(/\s+/).length.toLocaleString()} words extracted</p>
+                                        </div>
                                     </div>
                                     <button
                                         onClick={resetCV}
-                                        className="text-[11px] font-bold text-[#666666] hover:text-[#b3b3b3] uppercase tracking-widest shrink-0 ml-3 px-3 -mr-3 py-3 -my-3 min-h-11 inline-flex items-center transition-colors"
+                                        className="-my-3 -mr-3 inline-flex min-h-11 shrink-0 items-center px-3 py-3 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
                                     >
-                                        Change
+                                        Replace
                                     </button>
                                 </div>
+                            )}
+                            {pdfStatus && !showCvPaste && !cvText && (
+                                <p className={cn("text-xs", pdfStatus.startsWith("Error") || pdfStatus.startsWith("File too large") ? "text-danger" : "text-muted-foreground")} aria-live="polite">
+                                    {pdfStatus === "Reading PDF..." ? <span className="inline-flex items-center gap-1.5"><LoaderCircle className="size-3 animate-spin" />Reading PDF…</span> : pdfStatus}
+                                </p>
+                            )}
+                        </div>
 
-                            </div>
-                        )}
-
-                        {/* Job Description — URL or Paste */}
+                        {/* Step 2 — Job description */}
                         <div className="space-y-3">
-                            <div className="flex justify-between items-center">
-                                <label className="text-sm font-bold uppercase tracking-widest text-silver">Job Description</label>
-                                <span className="text-[10px] bg-white/8 text-[#999999] px-2 py-0.5 rounded-full font-bold">REQUIRED</span>
-                            </div>
-
-                            {/* Tab toggle */}
-                            <div className="flex rounded-xl bg-muted/20 border border-border/40 p-0.5 gap-0.5">
-                                <button
-                                    type="button"
-                                    onClick={() => { setJobInputMode("url"); setJobText(""); setFetchStatus(""); setScrapedCompanyName(""); }}
-                                    className={cn(
-                                        "flex-1 min-h-11 text-xs font-bold rounded-lg transition-all",
-                                        jobInputMode === "url"
-                                            ? "bg-white/10 text-[#cccccc]"
-                                            : "text-[#666666] hover:text-[#b3b3b3]"
-                                    )}
-                                >
-                                    🔗 Job URL
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => { setJobInputMode("paste"); setJobInput(""); setJobUrl(""); setFetchStatus(""); setScrapedCompanyName(""); }}
-                                    className={cn(
-                                        "flex-1 min-h-11 text-xs font-bold rounded-lg transition-all",
-                                        jobInputMode === "paste"
-                                            ? "bg-white/10 text-[#cccccc]"
-                                            : "text-[#666666] hover:text-[#b3b3b3]"
-                                    )}
-                                >
-                                    📋 Paste Text
-                                </button>
-                            </div>
+                            <StepLabel n={2}>Job description</StepLabel>
+                            <SegmentedControl
+                                label="Job description input"
+                                value={jobInputMode}
+                                onChange={(mode) => {
+                                    setJobInputMode(mode)
+                                    setFetchStatus("")
+                                    setScrapedCompanyName("")
+                                    if (mode === "url") setJobText("")
+                                    else { setJobInput(""); setJobUrl("") }
+                                }}
+                                options={[
+                                    { value: "url", label: "Job link", icon: <Link2 /> },
+                                    { value: "paste", label: "Paste text", icon: <ClipboardPaste /> },
+                                ]}
+                            />
 
                             {jobInputMode === "url" ? (
-                                <>
-                                    <p className="text-xs text-[#aaaaaa]">Paste a job URL from LinkedIn, Indeed, or any job board &mdash; we&apos;ll fetch it automatically.</p>
-                                    <div className={cn(
-                                        "flex items-center gap-2 bg-muted/20 border rounded-xl px-3 transition-colors",
-                                        jobInput && !jobInput.trim().startsWith("http")
-                                            ? "border-rose-500/50"
-                                            : fetchStatus.startsWith("✓")
-                                            ? "border-emerald-500/40"
-                                            : "border-border/40 focus-within:border-primary/50"
-                                    )}>
-                                        <span className="text-[#4d4d4d] text-sm shrink-0">🔗</span>
+                                <div className="space-y-3">
+                                    <div className="relative">
+                                        <Link2 className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                                         <input
                                             type="url"
                                             aria-label="Job description URL"
-                                            className="flex-1 bg-transparent py-2.5 text-sm text-white placeholder:text-[#666666] focus:outline-none"
-                                            placeholder="https://linkedin.com/jobs/..."
+                                            aria-invalid={!!jobInput && !jobInput.trim().startsWith("http")}
+                                            className={cn(
+                                                inputClass,
+                                                "h-11 pl-9 pr-9",
+                                                jobInput && !jobInput.trim().startsWith("http") && "border-danger/50 focus:border-danger/60 focus:ring-danger/15",
+                                            )}
+                                            placeholder="https://www.linkedin.com/jobs/view/…"
                                             value={jobInput}
                                             onChange={(e) => { setJobInput(e.target.value); setJobText(""); setFetchStatus(""); setScrapedCompanyName(""); if (e.target.value.startsWith("http")) setJobUrl(e.target.value); }}
                                             onKeyDown={(e) => e.key === "Enter" && e.currentTarget.value.trim().startsWith("http") && fetchJobPost()}
@@ -712,628 +724,478 @@ export default function CVAnalyzer() {
                                             onFocus={() => setError("")}
                                         />
                                         {fetchStatus.startsWith("✓") && (
-                                            <span className="text-emerald-400 text-xs font-bold shrink-0">✓</span>
+                                            <Check className="absolute right-3 top-1/2 size-4 -translate-y-1/2 text-success" />
                                         )}
                                     </div>
-
-                                    {jobInput && !jobInput.trim().startsWith("http") && (
-                                        <p role="alert" className="text-rose-400 text-xs font-semibold">Please paste a valid job URL starting with https://</p>
+                                    {jobInput && !jobInput.trim().startsWith("http") ? (
+                                        <p role="alert" className="text-xs text-danger">Enter a full link starting with https://</p>
+                                    ) : !fetchStatus && (
+                                        <p className="text-xs text-muted-foreground">Works with LinkedIn, Indeed, Glassdoor and most careers pages.</p>
                                     )}
-
                                     {fetchStatus && (
-                                        <p className={cn(
-                                            "text-xs font-semibold break-words",
-                                            fetchStatus.startsWith("✓") ? "text-emerald-400" : fetchStatus.includes("paste") ? "text-amber-400" : "text-[#999999]"
-                                        )}>{fetchStatus.includes("paste") ? "Couldn't fetch — switch to Paste Text tab above." : fetchStatus}</p>
+                                        <p className={cn("text-xs", fetchStatus.startsWith("✓") ? "text-success" : fetchStatus.includes("paste") ? "text-warning" : "text-muted-foreground")} aria-live="polite">
+                                            {fetchStatus.includes("paste")
+                                                ? "This page couldn't be read automatically — switch to Paste text."
+                                                : fetchStatus.startsWith("Fetching")
+                                                ? <span className="inline-flex items-center gap-1.5"><LoaderCircle className="size-3 animate-spin" />Fetching job post…</span>
+                                                : fetchStatus.replace("✓ ", "")}
+                                        </p>
                                     )}
-
-                                    {/* Sample job buttons */}
-                                    {!jobText && !fetchStatus.startsWith("✓") && (
-                                        <div className="flex flex-col gap-2">
-                                            <p className="text-xs text-[#aaaaaa]">
-                                                No job description? Click a role to X-ray your CV against it:
-                                            </p>
-                                            <div className="flex flex-wrap gap-2">
-                                                {SAMPLE_JOBS.map((job) => (
-                                                    <button
-                                                        key={job.label}
-                                                        type="button"
-                                                        title={job.desc}
-                                                        onClick={() => {
-                                                            setJobInput("")
-                                                            setJobText(job.text)
-                                                            setFetchStatus(`✓ ${job.label} sample loaded`)
-                                                            setError("")
-                                                        }}
-                                                        className="group px-3 py-2.5 text-xs font-semibold bg-cyan-500/10 hover:bg-white/10 border border-white/15 hover:border-white/30 text-[#c0c0c0] rounded-full transition-all flex items-center gap-1.5"
-                                                    >
-                                                        {job.emoji} {job.label}
-                                                        <span className="text-[#555555] text-[10px] group-hover:text-[#aaaaaa] transition-colors">↓</span>
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-                                </>
+                                    {!jobText && !fetchStatus.startsWith("✓") && sampleButtons((text, label) => {
+                                        setJobInput("")
+                                        setJobText(text)
+                                        setFetchStatus(`✓ ${label} sample loaded`)
+                                        setError("")
+                                    })}
+                                </div>
                             ) : (
-                                <>
-                                    <p className="text-xs text-[#aaaaaa]">Copy the full job description and paste it here.</p>
-                                    <Textarea
-                                        placeholder="Paste job description text here..."
-                                        className="min-h-[120px] max-h-[220px] h-[220px] resize-none overflow-y-auto [field-sizing:fixed] bg-muted/20 border-border/40 rounded-xl text-white placeholder:text-[#666666] text-sm"
+                                <div className="space-y-3">
+                                    <textarea
+                                        placeholder="Paste the full job description…"
+                                        aria-label="Job description text"
+                                        className={cn(inputClass, "h-44 resize-none py-2.5 leading-relaxed [field-sizing:fixed]")}
                                         value={jobText}
                                         onChange={(e) => { setJobText(e.target.value); setFetchStatus(e.target.value.length > 50 ? "✓ Job description ready" : ""); }}
                                         autoFocus
                                     />
                                     {jobText.length > 50 && (
-                                        <p className="text-emerald-400 text-xs font-semibold">✓ Job description ready</p>
+                                        <p className="inline-flex items-center gap-1.5 text-xs text-success"><Check className="size-3.5" />{fetchStatus.replace("✓ ", "") || "Job description ready"}</p>
                                     )}
-
-                                    {/* Sample job buttons in paste mode too */}
-                                    {!jobText && (
-                                        <div className="flex flex-col gap-2">
-                                            <p className="text-xs text-[#aaaaaa]">Or try a sample role:</p>
-                                            <div className="flex flex-wrap gap-2">
-                                                {SAMPLE_JOBS.map((job) => (
-                                                    <button
-                                                        key={job.label}
-                                                        type="button"
-                                                        title={job.desc}
-                                                        onClick={() => {
-                                                            setJobText(job.text)
-                                                            setFetchStatus(`✓ ${job.label} sample loaded`)
-                                                            setError("")
-                                                        }}
-                                                        className="group px-3 py-2.5 text-xs font-semibold bg-cyan-500/10 hover:bg-white/10 border border-white/15 hover:border-white/30 text-[#c0c0c0] rounded-full transition-all flex items-center gap-1.5"
-                                                    >
-                                                        {job.emoji} {job.label}
-                                                        <span className="text-[#555555] text-[10px] group-hover:text-[#aaaaaa] transition-colors">↓</span>
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-                                </>
+                                    {!jobText && sampleButtons((text, label) => {
+                                        setJobText(text)
+                                        setFetchStatus(`✓ ${label} sample loaded`)
+                                        setError("")
+                                    })}
+                                </div>
                             )}
                         </div>
 
                         {error && (
-                            <p role="alert" className="text-rose-400 text-sm font-semibold">{error}</p>
+                            <p role="alert" className="flex items-start gap-2 rounded-lg border border-danger/25 bg-danger/[0.08] px-3 py-2.5 text-[13px] text-danger">
+                                <CircleAlert className="mt-0.5 size-3.5 shrink-0" />{error}
+                            </p>
                         )}
 
-<div className="space-y-3 pt-2">
-                            {/* Scan history — stored in localStorage, shown here so users can track progress */}
-                            {history.length > 0 && (
-                                <div className="space-y-1.5">
-                                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#4d4d4d]">Recent scans</p>
-                                    {history.map((h, i) => (
-                                        <div key={i} className="flex items-center gap-2 bg-white/3 border border-white/6 rounded-xl px-3 py-2 text-xs">
-                                            <span className={cn(
-                                                "font-black shrink-0 w-8 text-center",
-                                                h.score >= 70 ? "text-emerald-400" : h.score >= 45 ? "text-amber-400" : "text-rose-400"
-                                            )}>{h.score}%</span>
-                                            <span className="text-[#808080] truncate flex-1">{h.label}</span>
-                                            <span className="text-[#404040] shrink-0 text-[10px]">{h.date}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                            {/* Always show Analyze button — when results exist, also show Try Another */}
+                        {/* Primary action */}
+                        <div className="space-y-3">
                             {results && !jobText && !jobInput ? (
-                                <Button
-                                    variant="outline"
-                                    className="w-full py-7 text-lg font-black group transition-all rounded-2xl border-border/50 text-[#b3b3b3] hover:text-white hover:border-primary/50"
+                                <button
+                                    type="button"
                                     onClick={resetForNewJob}
+                                    className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-border bg-foreground/[0.03] text-sm font-semibold text-foreground transition-colors hover:bg-foreground/[0.06]"
                                 >
-                                    <RotateCcw className="mr-2 h-5 w-5 group-hover:-rotate-180 transition-transform duration-500" />
-                                    Try Another Job
-                                </Button>
+                                    <RotateCcw className="size-4" />
+                                    Try another job
+                                </button>
                             ) : (
-                                <Button
-                                    className={cn(
-                                        "w-full py-8 text-xl font-black group transition-all rounded-2xl shadow-xl active:scale-95",
-                                        !canAnalyze
-                                            ? "bg-gradient-to-r from-teal-700 to-cyan-700 text-[#808080] cursor-not-allowed opacity-50"
-                                            : "bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 shadow-lg shadow-cyan-500/30 text-white"
-                                    )}
+                                <button
+                                    type="button"
                                     onClick={doAnalyze}
                                     disabled={isLoading || !canAnalyze}
+                                    className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-[0_8px_24px_-8px_color-mix(in_oklch,var(--primary)_55%,transparent)] transition-all hover:brightness-110 active:translate-y-px disabled:cursor-not-allowed disabled:bg-foreground/[0.06] disabled:text-muted-foreground disabled:shadow-none"
                                 >
-                                    <span>{isLoading ? "Analyzing..." : results ? "Re-Analyze" : "Analyze My CV"}</span>
-                                    <ArrowRight className="ml-2 h-6 w-6 group-hover:translate-x-2 transition-transform" />
-                                </Button>
-                            )}
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Results Panel */}
-                <Card className="bg-background/75 backdrop-blur-xl border-border/50 h-full">
-                    <CardContent className="h-full flex flex-col p-0">
-                    {results && (
-                        <div className="sticky top-0 z-10 bg-gradient-to-r from-emerald-950/95 to-teal-950/95 backdrop-blur border-b border-emerald-400/30 px-4 py-3 shadow-lg shadow-emerald-900/30">
-                            <div className="flex items-center gap-2 mb-2">
-                                <span className="animate-bounce text-lg">👋</span>
-                                <p className="text-sm font-extrabold text-emerald-300 tracking-wide">Still want to apply?</p>
-                                <span className="text-lg animate-bounce">🚀</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <div className="flex-1 flex items-center gap-2 bg-emerald-900/40 border border-emerald-400/30 rounded-xl px-3 py-2">
-                                    <span className="text-emerald-500 text-xs shrink-0">🔗</span>
-                                    {applyUrl ? (
-                                        <span className="flex-1 text-xs text-emerald-200 truncate min-w-0">{applyUrl}</span>
+                                    {isLoading ? (
+                                        <><LoaderCircle className="size-4 animate-spin" />Analyzing…</>
                                     ) : (
-                                        <span className="flex-1 text-xs text-emerald-800 italic min-w-0">Paste a job URL on the left to enable</span>
+                                        <>{results ? "Re-analyze" : "Analyze match"}<ArrowRight className="size-4 transition-transform group-enabled:group-hover:translate-x-0.5" /></>
                                     )}
-                                </div>
-                                {applyUrl ? (
-                                    <a
-                                        href={applyUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-extrabold transition-all active:scale-95 shrink-0 shadow-lg shadow-emerald-500/30 animate-pulse"
-                                    >
-                                        Apply Now 🎯
-                                    </a>
-                                ) : (
-                                    <div className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-900/50 border border-emerald-500/20 text-emerald-700 text-xs font-extrabold shrink-0">
-                                        Apply Now 🎯
-                                    </div>
-                                )}
+                                </button>
+                            )}
+                            <p className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+                                <Lock className="size-3" />Private by design — your CV is never stored.
+                            </p>
+                        </div>
+
+                        {/* Recent scans */}
+                        {history.length > 0 && (
+                            <div className="space-y-2 border-t border-border pt-5">
+                                <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                                    <History className="size-3" />Recent scans
+                                </p>
+                                <ul className="space-y-1">
+                                    {history.map((h, i) => (
+                                        <li key={i} className="flex items-center gap-3 rounded-lg px-2 py-1.5 text-[13px] hover:bg-foreground/[0.03]">
+                                            <span className={cn("w-9 font-semibold tabular-nums", toneText(toneForScore(h.score)))}>{h.score}%</span>
+                                            <span className="flex-1 truncate text-foreground/80">{h.label}</span>
+                                            <span className="shrink-0 text-xs tabular-nums text-muted-foreground">{h.date}</span>
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
+                        )}
+                    </div>
+                </Panel>
+
+                {/* ── Results panel ───────────────────────────────────────── */}
+                <Panel className="min-h-[560px] overflow-hidden" aria-live="polite" aria-busy={isLoading}>
+                    {!results && !isLoading && (
+                        <div className="flex h-full min-h-[560px] flex-col items-center justify-center px-6 py-16 text-center">
+                            <span className="flex size-12 items-center justify-center rounded-2xl border border-border bg-foreground/[0.03] text-primary">
+                                <ScanSearch className="size-5" />
+                            </span>
+                            <h2 className="mt-5 text-lg font-semibold tracking-tight text-foreground">Your match report will appear here</h2>
+                            <p className="mt-1.5 max-w-sm text-sm text-muted-foreground text-pretty">Add your CV and a job description, then select Analyze match.</p>
+                            <ul className="mt-8 grid w-full max-w-md gap-2 text-left">
+                                {[
+                                    { icon: <Gauge />, title: "Match score", text: "How closely your CV fits this specific role" },
+                                    { icon: <Target />, title: "Skill gaps", text: "Required skills missing from your CV, by priority" },
+                                    { icon: <GraduationCap />, title: "Next steps", text: "Keywords to add and free courses to close gaps" },
+                                ].map(item => (
+                                    <li key={item.title} className="flex items-start gap-3 rounded-xl border border-border bg-foreground/[0.02] px-4 py-3">
+                                        <span className="mt-0.5 text-muted-foreground [&_svg]:size-4">{item.icon}</span>
+                                        <div>
+                                            <p className="text-sm font-medium text-foreground">{item.title}</p>
+                                            <p className="text-xs text-muted-foreground">{item.text}</p>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
                     )}
-                    <div className="overflow-y-auto lg:max-h-[85vh] p-6 sm:p-8 lg:p-10 flex flex-col h-full">
-                        {!results && !isLoading && (
-                            <div className="flex flex-col items-center justify-center h-full text-center py-12 animate-in fade-in zoom-in-95">
-                                <Sparkles className="h-12 w-12 text-[#666666] mb-5" />
-                                <p className="text-lg font-bold mb-2 text-[#cccccc]">Your results will appear here</p>
-                                <p className="text-[#cccccc] text-sm">Fill in your CV and job description on the left, then hit Analyze.</p>
+
+                    {isLoading && !results && (
+                        <div className="space-y-6 p-6 sm:p-8" aria-label="Analyzing">
+                            <div className="flex items-center gap-6">
+                                <div className="size-[124px] animate-pulse rounded-full bg-foreground/[0.05]" />
+                                <div className="flex-1 space-y-3">
+                                    <div className="h-5 w-40 animate-pulse rounded bg-foreground/[0.06]" />
+                                    <div className="h-3 w-full animate-pulse rounded bg-foreground/[0.04]" />
+                                    <div className="h-3 w-4/5 animate-pulse rounded bg-foreground/[0.04]" />
+                                </div>
                             </div>
-                        )}
-
-                        {/* Spinner overlaid while re-analyzing — old results stay underneath */}
-                        {isLoading && !results && (
-                            <div className="flex flex-col items-center justify-center h-full py-12 animate-in fade-in">
-                                <div className="relative h-20 w-20">
-                                    <div className="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
-                                    <div className="absolute inset-0 border-4 border-primary rounded-full border-t-transparent animate-spin"></div>
-                                </div>
-                                <p className="mt-8 text-lg font-black animate-pulse text-indigo-400">Analyzing your profile...</p>
+                            <div className="grid grid-cols-3 gap-3">
+                                {[0, 1, 2].map(i => <div key={i} className="h-20 animate-pulse rounded-xl bg-foreground/[0.04]" />)}
                             </div>
-                        )}
+                            <div className="h-40 animate-pulse rounded-xl bg-foreground/[0.03]" />
+                        </div>
+                    )}
 
-                        {results && (
-                            <div className={cn("transition-opacity duration-300", isLoading && "opacity-40 pointer-events-none")}>
-                            <div className="animate-in fade-in slide-in-from-right-8 duration-700 space-y-8">
-                                <h2 className="sr-only">Your Match Results</h2>
+                    {results && (
+                        <div className={cn("transition-opacity duration-300", isLoading && "pointer-events-none opacity-40")}>
+                            <h2 className="sr-only">Your match results</h2>
 
-                                {/* Next Steps — score-tiered action card (shown first, replaces HR Quick Scan) */}
-                                {(() => {
-                                    const s = results.score
-                                    const highGaps = results.missing.filter(m => m.priority === "high")
-                                    if (s >= 70) return (
-                                        <div className="rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/50 to-teal-950/30 px-5 py-4 space-y-2">
-                                            <p className="text-sm font-black text-emerald-300 flex items-center gap-2">✅ You&apos;re a strong match — apply now</p>
-                                            <ul className="space-y-1.5 text-xs text-[#b3b3b3]">
-                                                <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0 mt-0.5">→</span>Tailor your cover letter to mention: <span className="text-emerald-300 font-semibold">{results.matched.slice(0, 3).join(", ")}</span></li>
-                                                {highGaps.length > 0 && <li className="flex items-start gap-2"><span className="text-amber-400 shrink-0 mt-0.5">→</span>Briefly address your gap in <span className="text-amber-300 font-semibold">{highGaps[0].label}</span> — show learning in progress</li>}
-                                                <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0 mt-0.5">→</span>Click <strong>Apply Now</strong> above before the role closes</li>
-                                            </ul>
+                            {/* Summary */}
+                            <div className="border-b border-border p-6 sm:p-8">
+                                <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-center">
+                                    <ScoreRing score={results.score} />
+                                    <div className="min-w-0 flex-1 text-center sm:text-left">
+                                        <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+                                            <p className={cn("text-xl font-semibold tracking-tight", toneText(tone))}>{results.persona.label}</p>
+                                            {results.lowQuality && <Badge tone="warning">Low confidence</Badge>}
                                         </div>
-                                    )
-                                    if (s >= 45) return (
-                                        <div className="rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-950/40 to-orange-950/20 px-5 py-4 space-y-2">
-                                            <p className="text-sm font-black text-amber-300 flex items-center gap-2">
-                                                {highGaps.length > 0
-                                                    ? `⚡ Decent match — close ${Math.min(highGaps.length, 2)} gap${Math.min(highGaps.length, 2) !== 1 ? "s" : ""} to be competitive`
-                                                    : "⚡ Good match — apply and highlight your strengths"}
-                                            </p>
-                                            <ul className="space-y-1.5 text-xs text-[#b3b3b3]">
-                                                {highGaps.slice(0, 2).map((g, i) => (
-                                                    <li key={i} className="flex items-start gap-2"><span className="text-amber-400 shrink-0 mt-0.5">→</span>Add <span className="text-amber-300 font-semibold">{g.label}</span> to your CV — even a side project counts</li>
-                                                ))}
-                                                <li className="flex items-start gap-2"><span className="text-[#aaaaaa] shrink-0 mt-0.5">→</span>You can still apply — your existing skills in <span className="text-[#cccccc] font-semibold">{results.matched.slice(0, 2).join(", ")}</span> are solid</li>
-                                            </ul>
-                                        </div>
-                                    )
-                                    return (
-                                        <div className="rounded-2xl border border-rose-500/25 bg-gradient-to-br from-rose-950/40 to-slate-900/60 px-5 py-4 space-y-2">
-                                            <p className="text-sm font-black text-rose-300 flex items-center gap-2">🎯 Below threshold — build skills before applying</p>
-                                            <ul className="space-y-1.5 text-xs text-[#b3b3b3]">
-                                                {highGaps.slice(0, 3).map((g, i) => (
-                                                    <li key={i} className="flex items-start gap-2"><span className="text-rose-400 shrink-0 mt-0.5">→</span>Priority: learn <span className="text-rose-300 font-semibold">{g.label}</span> — see course below</li>
-                                                ))}
-                                                <li className="flex items-start gap-2"><span className="text-[#aaaaaa] shrink-0 mt-0.5">→</span>Try a similar role that fits better — use <strong>Try Another Job</strong> below</li>
-                                            </ul>
-                                        </div>
-                                    )
-                                })()}
-
-                                {/* Score Header */}
-                                <div className="flex flex-col md:flex-row items-center gap-6 pb-6 border-b border-border/30">
-                                    <div className="relative h-28 w-28 shrink-0">
-                                        <svg viewBox="0 0 100 100" className="transform -rotate-90 w-full h-full" aria-label={`Match score: ${results.score}%`} role="img">
-                                            <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="6" className="text-[#1a1a1a]" />
-                                            <circle
-                                                cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="6"
-                                                strokeDasharray="283"
-                                                strokeDashoffset={283 - (283 * results.score) / 100}
-                                                className="text-[#c0c0c0] transition-all duration-1000 ease-out"
-                                            />
-                                        </svg>
-                                        <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                            <span className="text-4xl font-black text-silver">{results.score}%</span>
-                                            <span className="text-[10px] text-[#808080]">match</span>
-                                        </div>
-                                    </div>
-                                    <div className="text-center md:text-left">
-                                        <p className={cn("text-xl font-bold mb-1", results.persona.color)}>
-                                            {results.persona.label}
-                                        </p>
-                                        <p className="text-[#b3b3b3] text-sm leading-relaxed mb-2">{results.persona.desc}</p>
-                                        <div className="flex flex-wrap gap-2 justify-center md:justify-start text-xs text-[#999999]">
-                                            <span>{results.rawMatched}/{results.rawTotal} keywords matched</span>
-                                            <span>·</span>
-                                            <span>{results.matched.length}/{results.matched.length + results.missing.length} skill categories</span>
-                                            {results.yearsRequired > 0 && (
-                                                <>
-                                                    <span>·</span>
-                                                    <span className={results.yearsOnCV >= results.yearsRequired ? "text-emerald-400" : "text-rose-400"}>
-                                                        {results.yearsOnCV}y exp · {results.yearsRequired}y required
-                                                    </span>
-                                                </>
-                                            )}
-                                        </div>
+                                        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground text-pretty">{results.persona.desc}</p>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const encoded = encodeResults(results)
+                                                if (!encoded) return
+                                                const url = `${window.location.origin}${window.location.pathname}#r=${encoded}`
+                                                window.history.replaceState(null, "", `#r=${encoded}`)
+                                                navigator.clipboard.writeText(url).catch(() => {})
+                                                setShareCopied(true)
+                                                setTimeout(() => setShareCopied(false), 2000)
+                                            }}
+                                            className="-ml-1 mt-3 inline-flex min-h-11 items-center gap-1.5 rounded-md px-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                        >
+                                            {shareCopied ? <><Check className="size-3.5 text-success" />Link copied</> : <><Share2 className="size-3.5" />Share result</>}
+                                        </button>
                                     </div>
                                 </div>
 
-
-
-                                {/* Share results */}
-                                <div className="flex justify-end -mt-4">
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            const encoded = encodeResults(results)
-                                            if (!encoded) return
-                                            const url = `${window.location.origin}${window.location.pathname}#r=${encoded}`
-                                            window.history.replaceState(null, "", `#r=${encoded}`)
-                                            navigator.clipboard.writeText(url).catch(() => {})
-                                            setShareCopied(true)
-                                            setTimeout(() => setShareCopied(false), 2000)
-                                        }}
-                                        className="text-[11px] font-bold text-[#666666] hover:text-[#cccccc] transition-colors flex items-center gap-1 p-3 -m-3 min-h-11"
-                                    >
-                                        {shareCopied ? "✓ Link copied!" : "🔗 Share results"}
-                                    </button>
+                                <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-3">
+                                    <StatTile
+                                        label="Skills"
+                                        value={<>{results.matched.length}<span className="text-muted-foreground">/{totalSkills}</span></>}
+                                        hint="skill categories matched"
+                                    />
+                                    <StatTile
+                                        label="Keywords"
+                                        value={<>{results.rawMatched}<span className="text-muted-foreground">/{results.rawTotal}</span></>}
+                                        hint="job keywords on your CV"
+                                    />
+                                    <StatTile
+                                        label="Experience"
+                                        value={results.yearsRequired > 0
+                                            ? <>{results.yearsOnCV || "—"}<span className="text-muted-foreground">/{results.yearsRequired}y</span></>
+                                            : results.yearsOnCV > 0 ? `${results.yearsOnCV}y` : "—"}
+                                        hint={results.yearsRequired > 0 ? (results.yearsOnCV >= results.yearsRequired ? "meets requirement" : results.yearsOnCV === 0 ? "not stated on CV" : "below requirement") : "no requirement stated"}
+                                        tone={results.yearsRequired > 0 ? (results.yearsOnCV >= results.yearsRequired ? "success" : "warning") : "neutral"}
+                                    />
                                 </div>
+                            </div>
 
-                                {/* Low quality warning */}
-                                {results.lowQuality && (
-                                    <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 text-amber-300 text-xs flex items-start gap-2">
-                                        <span>⚠️</span>
-                                        <span>Only <strong>{results.jobWordCount} words</strong> extracted — paste the full job description for accurate results.</span>
-                                    </div>
-                                )}
-
-                                {/* HR Quick Scan — CV quality breakdown, shown after analysis */}
-                                {cvAudit && (
-                                    <div className="space-y-3 animate-in fade-in duration-500">
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-1.5">
-                                                <span className="text-base">👔</span>
-                                                <p className="text-xs font-black uppercase tracking-widest text-violet-300">HR Quick Scan</p>
-                                            </div>
-                                            <span className={cn(
-                                                "text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full",
-                                                cvAudit.grade === 'strong' ? "bg-emerald-500/20 text-emerald-300" :
-                                                cvAudit.grade === 'average' ? "bg-amber-500/20 text-amber-300" :
-                                                "bg-rose-500/20 text-rose-300"
-                                            )}>
-                                                {cvAudit.grade === 'strong' ? '✓ Strong' : cvAudit.grade === 'average' ? '⚡ Needs work' : '⚠ Weak'}
-                                            </span>
-                                        </div>
-                                        <div className="space-y-2">
-                                            {cvAudit.categories.map(cat => (
-                                                <div key={cat.key} className="rounded-lg border border-white/6 bg-white/3 px-3 py-2.5 space-y-1.5">
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="text-sm shrink-0">{cat.icon}</span>
-                                                        <span className="text-xs font-semibold text-[#d9d9d9] shrink-0">{cat.label}</span>
-                                                        <span className={cn(
-                                                            "w-1.5 h-1.5 rounded-full shrink-0",
-                                                            cat.status === 'good' ? "bg-emerald-400" :
-                                                            cat.status === 'warn' ? "bg-amber-400" :
-                                                            "bg-rose-400"
-                                                        )} />
-                                                        {cat.status === 'good' && (
-                                                            <span className="text-[11px] text-emerald-400/80">Looks good</span>
-                                                        )}
-                                                    </div>
-                                                    {cat.status !== 'good' && cat.missing.length > 0 && (
-                                                        <div className="pl-6 space-y-1.5">
-                                                            <p className="text-[11px] text-[#666666]">Try adding:</p>
-                                                            <div className="flex flex-wrap gap-1.5">
-                                                                {cat.missing.map((kw, i) => (
-                                                                    <span key={i} className="text-[11px] px-2.5 py-1 rounded-full border border-amber-400/25 bg-amber-500/10 text-amber-200 font-medium">
-                                                                        {kw}
-                                                                    </span>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Skills card */}
-                                <div className="rounded-2xl border border-cyan-500/15 bg-gradient-to-br from-cyan-950/30 via-slate-900/60 to-teal-950/20 p-4 space-y-5">
-
-                                    {/* Matched Skills */}
-                                    <div>
-                                        <h3 className="flex items-center gap-2 text-sm font-semibold text-silver mb-3">
-                                            <Cpu className="h-4 w-4" /> Matched Skills
-                                        </h3>
-                                        <div className="flex flex-wrap gap-2">
-                                            {results.matched.length > 0 ? results.matched.map((s, i) => (
-                                                <span key={i} className="px-3 py-1 bg-cyan-500/20 text-cyan-200 rounded-full text-xs font-medium">
-                                                    {s}
-                                                </span>
-                                            )) : (
-                                                <span className="text-xs text-[#808080] italic">No matched skills found.</span>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div className="border-t border-white/5" />
-
-                                    {/* Skills to Add */}
-                                    <div>
-                                        <h3 className="flex items-center gap-2 text-sm font-semibold text-silver mb-3">
-                                            <Shield className="h-4 w-4" /> Skills to Add
-                                        </h3>
-                                        <div className="flex flex-wrap gap-2">
-                                            {results.missing.length > 0 ? results.missing.map((s, i) => (
-                                                <span
-                                                    key={i}
-                                                    className={cn(
-                                                        "px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5",
-                                                        s.priority === "high" ? "bg-rose-500/25 text-rose-200" :
-                                                        s.priority === "medium" ? "bg-amber-500/20 text-amber-200" :
-                                                        "bg-teal-500/15 text-teal-200"
-                                                    )}
-                                                >
-                                                    <span className="w-1.5 h-1.5 rounded-full shrink-0"
-                                                        style={{ background: s.priority === "high" ? "#f87171" : s.priority === "medium" ? "#fbbf24" : "#5eead4" }}
-                                                    />
-                                                    {s.label}
-                                                </span>
-                                            )) : (
-                                                <span className="text-xs text-[#999999] italic">Great coverage — no major gaps!</span>
-                                            )}
-                                        </div>
-                                        {results.missing.some(m => m.priority !== "low") && (
-                                            <p className="text-xs mt-2 flex items-center gap-2 flex-wrap">
-                                                <span className="flex items-center gap-1"><span className="text-rose-400">●</span><span className="text-[#999999]">High priority</span></span>
-                                                <span className="text-[#333333]">·</span>
-                                                <span className="flex items-center gap-1"><span className="text-amber-400">●</span><span className="text-[#999999]">Mentioned</span></span>
-                                                <span className="text-[#333333]">·</span>
-                                                <span className="flex items-center gap-1"><span className="text-[#888888]">●</span><span className="text-[#999999]">Nice to have</span></span>
-                                            </p>
+                            <div className="space-y-8 p-6 sm:p-8">
+                                {/* Recommendation */}
+                                <div className={cn(
+                                    "rounded-xl border p-4",
+                                    tone === "success" ? "border-success/25 bg-success/[0.06]" : tone === "warning" ? "border-warning/25 bg-warning/[0.06]" : "border-danger/25 bg-danger/[0.06]",
+                                )}>
+                                    <p className={cn("flex items-center gap-2 text-sm font-semibold", toneText(tone))}>
+                                        {tone === "success" ? <CircleCheck className="size-4" /> : tone === "warning" ? <Zap className="size-4" /> : <Target className="size-4" />}
+                                        {tone === "success"
+                                            ? "Strong match — apply now"
+                                            : tone === "warning"
+                                            ? (highGaps.length > 0 ? `Competitive — close ${Math.min(highGaps.length, 2)} gap${Math.min(highGaps.length, 2) !== 1 ? "s" : ""} to stand out` : "Competitive — apply and lead with your strengths")
+                                            : "Significant gaps — build skills before applying"}
+                                    </p>
+                                    <ul className="mt-3 space-y-2 text-[13px] leading-relaxed text-foreground/80">
+                                        {tone === "success" && (
+                                            <>
+                                                {results.matched.length > 0 && <li className="flex gap-2"><ArrowRight className="mt-1 size-3 shrink-0 text-muted-foreground" /><span>Mention <span className="font-medium text-foreground">{results.matched.slice(0, 3).join(", ")}</span> in your cover letter.</span></li>}
+                                                {highGaps.length > 0 && <li className="flex gap-2"><ArrowRight className="mt-1 size-3 shrink-0 text-muted-foreground" /><span>Address <span className="font-medium text-foreground">{highGaps[0].label}</span> briefly — show it&apos;s in progress.</span></li>}
+                                                <li className="flex gap-2"><ArrowRight className="mt-1 size-3 shrink-0 text-muted-foreground" /><span>Apply while the role is still open.</span></li>
+                                            </>
                                         )}
-                                    </div>
-
-                                    {/* Job-specific keywords */}
-                                    {results.topJobSignals.length > 0 && (
-                                        <>
-                                            <div className="border-t border-white/5" />
-                                            <div>
-                                                <div className="mb-3">
-                                                    <div className="flex items-center justify-between mb-0.5">
-                                                        <h3 className="text-sm font-semibold text-silver">Words the Recruiter Is Looking For</h3>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => {
-                                                                const keywords = results.topJobSignals.map(s => s.word).join(", ")
-                                                                navigator.clipboard.writeText(keywords).catch(() => {})
-                                                                setKeywordsCopied(true)
-                                                                setTimeout(() => setKeywordsCopied(false), 2000)
-                                                            }}
-                                                            className="text-[10px] font-bold text-[#777777] hover:text-[#cccccc] transition-colors uppercase tracking-wider shrink-0 p-3 -m-3 min-h-11 inline-flex items-center"
-                                                        >
-                                                            {keywordsCopied ? "✓ Copied" : "Copy all"}
-                                                        </button>
-                                                    </div>
-                                                    <p className="text-xs text-[#aaaaaa]">These exact words are in the job posting but missing from your CV. Recruiters search by these terms — if they&apos;re not there, your application may be filtered out automatically.</p>
-                                                </div>
-                                                <div className="flex flex-wrap gap-2">
-                                                    {results.topJobSignals.map(({ word, freq }, i) => (
-                                                        <span
-                                                            key={i}
-                                                            className={`px-3 py-1.5 rounded-full text-xs font-medium border ${
-                                                                freq >= 3
-                                                                    ? "bg-red-500/10 border-red-500/25 text-red-300"
-                                                                    : freq === 2
-                                                                    ? "bg-amber-500/10 border-amber-500/25 text-amber-300"
-                                                                    : "bg-teal-500/10 border-teal-500/20 text-teal-200"
-                                                            }`}
-                                                        >
-                                                            {word}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                                <p className="text-xs text-[#999999] mt-2 flex items-center gap-3 flex-wrap">
-                                                    <span className="flex items-center gap-1"><span className="text-red-400">■</span> Used often</span>
-                                                    <span className="flex items-center gap-1"><span className="text-amber-400">■</span> Used sometimes</span>
-                                                    <span className="flex items-center gap-1"><span className="text-[#888888]">■</span> Used once</span>
-                                                </p>
-                                            </div>
-                                        </>
+                                        {tone === "warning" && (
+                                            <>
+                                                {highGaps.slice(0, 2).map(g => (
+                                                    <li key={g.key} className="flex gap-2"><ArrowRight className="mt-1 size-3 shrink-0 text-muted-foreground" /><span>Add <span className="font-medium text-foreground">{g.label}</span> to your CV — a side project counts.</span></li>
+                                                ))}
+                                                {results.matched.length > 0 && <li className="flex gap-2"><ArrowRight className="mt-1 size-3 shrink-0 text-muted-foreground" /><span>Lead with your strengths in <span className="font-medium text-foreground">{results.matched.slice(0, 2).join(" and ")}</span>.</span></li>}
+                                            </>
+                                        )}
+                                        {tone === "danger" && (
+                                            <>
+                                                {highGaps.slice(0, 3).map(g => (
+                                                    <li key={g.key} className="flex gap-2"><ArrowRight className="mt-1 size-3 shrink-0 text-muted-foreground" /><span>Priority: learn <span className="font-medium text-foreground">{g.label}</span> — see the courses below.</span></li>
+                                                ))}
+                                                <li className="flex gap-2"><ArrowRight className="mt-1 size-3 shrink-0 text-muted-foreground" /><span>Compare against a closer-fitting role with Try another job.</span></li>
+                                            </>
+                                        )}
+                                    </ul>
+                                    {applyUrl && (
+                                        <div className="mt-4 flex flex-col gap-2 border-t border-foreground/[0.08] pt-4 sm:flex-row sm:items-center">
+                                            <p className="min-w-0 flex-1 truncate text-xs text-muted-foreground">{applyUrl}</p>
+                                            <a
+                                                href={applyUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-foreground px-3.5 text-[13px] font-semibold text-background transition-opacity hover:opacity-90"
+                                            >
+                                                Open job post<ArrowUpRight className="size-3.5" />
+                                            </a>
+                                        </div>
                                     )}
                                 </div>
 
-                                {/* Recommended Training */}
-                                {results.missing.length > 0 && (
-                                    <div>
-                                        <h3 className="flex items-center gap-2 text-sm font-semibold text-silver mb-2">
-                                            <BookOpen className="h-4 w-4" /> Recommended Training
-                                        </h3>
-                                        <p className="text-xs text-[#b3b3b3] mb-3">Courses & guides for your skill gaps — sorted by priority.</p>
-                                        <div className="space-y-1.5">
-                                            {(() => {
-                                                const highPriorityGaps = results.missing.filter(m => m.priority === "high" && SKILL_RESOURCES[m.key]).length
-                                                // Math Prof improvement: show more courses when there are more high-priority gaps.
-                                                // Each high-priority gap warrants attention; cap at 10 to avoid overwhelming the user.
-                                                const courseLimit = Math.min(Math.max(6, highPriorityGaps + 2), 10)
-                                                return results.missing
-                                                .filter(m => SKILL_RESOURCES[m.key])
-                                                .slice(0, courseLimit)
-                                                .map((m, i) => {
-                                                    const resource = SKILL_RESOURCES[m.key]
-                                                    const priorityColor = m.priority === "high"
-                                                        ? "bg-red-500"
-                                                        : m.priority === "medium"
-                                                        ? "bg-amber-500"
-                                                        : "bg-white/20"
-                                                    return (
-                                                        <a
-                                                            key={i}
-                                                            href={resource.url}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="flex min-w-0 items-center gap-2.5 px-3 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-cyan-500/10 hover:border-cyan-500/30 transition-all group"
-                                                        >
-                                                            <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${priorityColor}`} />
-                                                            <span className="shrink-0 text-[10px] font-bold text-[#999999] uppercase tracking-wider w-16 truncate">{m.label}</span>
-                                                            <span className="min-w-0 text-xs text-[#cccccc] group-hover:text-[#d0d0d0] transition-colors truncate flex-1">{resource.label}</span>
-                                                            <ExternalLink className="shrink-0 w-3 h-3 text-[#4d4d4d] group-hover:text-[#d0d0d0] transition-colors" />
-                                                        </a>
-                                                    )
-                                                })
-                                            })()}
-                                        </div>
-                                    </div>
+                                {results.lowQuality && (
+                                    <p className="flex items-start gap-2 rounded-xl border border-warning/25 bg-warning/[0.06] px-4 py-3 text-[13px] text-warning">
+                                        <TriangleAlert className="mt-0.5 size-3.5 shrink-0" />
+                                        <span>Only <strong className="font-semibold">{results.jobWordCount} words</strong> were found in the job post. Paste the full description for an accurate score.</span>
+                                    </p>
                                 )}
 
-                                {/* Buy Me a Coffee */}
-                                <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-                                    <div className="bg-gradient-to-br from-amber-500/15 to-orange-500/10 p-7 rounded-3xl border border-amber-500/30 text-center relative overflow-hidden group">
-                                        <div className="absolute inset-0 bg-amber-500/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500 rounded-3xl" />
-                                        <div className="relative flex flex-col items-center">
-                                            <div
-                                                className="text-7xl mb-4 drop-shadow-2xl"
-                                                style={{ animation: "coffeeFloat 2s ease-in-out infinite" }}
-                                            >
-                                                ☕
+                                {/* Skills */}
+                                <Section icon={<ListChecks />} title="Skills" description={`${results.matched.length} of ${totalSkills} skill categories in this job appear on your CV.`}>
+                                    <div className="grid gap-5 sm:grid-cols-2">
+                                        <div className="space-y-2.5">
+                                            <p className="text-xs font-medium text-muted-foreground">On your CV</p>
+                                            <div className="flex flex-wrap gap-1.5">
+                                                {results.matched.length > 0
+                                                    ? results.matched.map(s => <Chip key={s} tone="success"><Check className="size-3" />{s}</Chip>)
+                                                    : <p className="text-xs text-muted-foreground">No matching skill categories found.</p>}
                                             </div>
-                                            <p className="text-xl font-black text-amber-400 mb-1">Buy me a coffee!</p>
-                                            <p className="text-sm text-[#b3b3b3] font-semibold mb-5">
-                                                Helped you land an interview? Support the creator ❤️
-                                            </p>
-                                            {/* PayPal-style Pay Now widget */}
-                                            <button
-                                                onClick={() => window.open("https://www.paypal.com/ncp/payment/PJQ645FWEKYAU", "_blank")}
-                                                className="w-full rounded-2xl overflow-hidden shadow-xl active:scale-95 transition-transform"
-                                            >
-                                                {/* Pay Now button */}
-                                                <div className="bg-[#FFC439] hover:bg-[#f0b429] transition-colors px-6 py-3.5 flex items-center justify-center rounded-2xl">
-                                                    <span className="text-[#003087] font-black text-base tracking-wide">Pay Now</span>
-                                                </div>
-                                            </button>
+                                        </div>
+                                        <div className="space-y-2.5">
+                                            <p className="text-xs font-medium text-muted-foreground">Missing</p>
+                                            <div className="flex flex-wrap gap-1.5">
+                                                {results.missing.length > 0
+                                                    ? results.missing.map(s => <Chip key={s.key} tone={priorityTone(s.priority)} dot>{s.label}</Chip>)
+                                                    : <p className="text-xs text-muted-foreground">No gaps — great coverage.</p>}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                    {results.missing.length > 0 && (
+                                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                                            <span className="inline-flex items-center gap-1.5"><span className={cn("size-1.5 rounded-full", toneDot("danger"))} />High priority</span>
+                                            <span className="inline-flex items-center gap-1.5"><span className={cn("size-1.5 rounded-full", toneDot("warning"))} />Mentioned</span>
+                                            <span className="inline-flex items-center gap-1.5"><span className={cn("size-1.5 rounded-full", toneDot("neutral"))} />Nice to have</span>
+                                        </div>
+                                    )}
+                                </Section>
 
-                                {/* Company Insights */}
-                                {jobText && (() => {
-                                    const company = scrapedCompanyName || extractCompanyName(jobText)
-                                    const culture = extractCultureSignals(jobText)
-                                    if (!company && culture.length === 0) return null
-                                    return (
-                                        <div className="rounded-2xl border border-teal-500/20 bg-gradient-to-br from-teal-950/40 via-slate-900/60 to-cyan-950/30 p-4 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                                            {/* Card header */}
-                                            <div className="flex items-center gap-2 min-w-0">
-                                                <div className="flex shrink-0 items-center justify-center w-7 h-7 rounded-lg bg-teal-500/15 border border-teal-500/25 text-base">🏢</div>
-                                                <div className="min-w-0">
-                                                    <p className="text-[10px] font-semibold text-[#999999] uppercase tracking-widest">Company Insights</p>
-                                                    {company && <p className="text-sm font-bold text-silver leading-tight truncate">{company}</p>}
-                                                </div>
+                                {/* Keywords */}
+                                {results.topJobSignals.length > 0 && (
+                                    <>
+                                        <Divider />
+                                        <Section
+                                            icon={<FileSearch />}
+                                            title="Keywords recruiters search for"
+                                            description="These terms appear in the job post but not on your CV. Add the ones that reflect your real experience."
+                                            action={
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        navigator.clipboard.writeText(results.topJobSignals.map(s => s.word).join(", ")).catch(() => {})
+                                                        setKeywordsCopied(true)
+                                                        setTimeout(() => setKeywordsCopied(false), 2000)
+                                                    }}
+                                                    className="-m-2 inline-flex min-h-11 shrink-0 items-center gap-1.5 p-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                                >
+                                                    {keywordsCopied ? <><Check className="size-3.5 text-success" />Copied</> : <><Copy className="size-3.5" />Copy all</>}
+                                                </button>
+                                            }
+                                        >
+                                            <div className="flex flex-wrap gap-1.5">
+                                                {results.topJobSignals.map(({ word, freq }) => (
+                                                    <Chip key={word} tone={freq >= 3 ? "danger" : freq === 2 ? "warning" : "neutral"}>
+                                                        {word}
+                                                        <span className="tabular-nums opacity-60">×{freq}</span>
+                                                    </Chip>
+                                                ))}
                                             </div>
+                                        </Section>
+                                    </>
+                                )}
 
-                                            {/* Culture signals */}
-                                            {culture.length > 0 && (
-                                                <div>
-                                                    <p className="text-xs text-[#cccccc] mb-2 font-semibold">Culture signals</p>
-                                                    <div className="flex flex-wrap gap-1.5">
-                                                        {culture.map(({ label, color }) => (
-                                                            <span key={label} className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${color}`}>
-                                                                {label}
+                                {/* Training */}
+                                {results.missing.some(m => SKILL_RESOURCES[m.key]) && (
+                                    <>
+                                        <Divider />
+                                        <Section icon={<GraduationCap />} title="Recommended training" description="Courses and guides for your gaps, highest priority first.">
+                                            <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border">
+                                                {(() => {
+                                                    const highPriorityGaps = results.missing.filter(m => m.priority === "high" && SKILL_RESOURCES[m.key]).length
+                                                    // Show more courses when there are more high-priority gaps (6–10)
+                                                    const courseLimit = Math.min(Math.max(6, highPriorityGaps + 2), 10)
+                                                    return results.missing
+                                                        .filter(m => SKILL_RESOURCES[m.key])
+                                                        .slice(0, courseLimit)
+                                                        .map(m => {
+                                                            const resource = SKILL_RESOURCES[m.key]
+                                                            return (
+                                                                <li key={m.key}>
+                                                                    <a
+                                                                        href={resource.url}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        className="group flex items-center gap-3 bg-foreground/[0.01] px-4 py-3 transition-colors hover:bg-foreground/[0.04]"
+                                                                    >
+                                                                        <span className={cn("size-1.5 shrink-0 rounded-full", toneDot(priorityTone(m.priority)))} />
+                                                                        <div className="min-w-0 flex-1">
+                                                                            <p className="truncate text-sm font-medium text-foreground">{resource.label}</p>
+                                                                            <p className="truncate text-xs text-muted-foreground">{m.label} · {resource.platform} · {resource.duration}</p>
+                                                                        </div>
+                                                                        {resource.free && <Badge tone="accent">Free</Badge>}
+                                                                        <ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" />
+                                                                    </a>
+                                                                </li>
+                                                            )
+                                                        })
+                                                })()}
+                                            </ul>
+                                        </Section>
+                                    </>
+                                )}
+
+                                {/* CV quality */}
+                                {cvAudit && (
+                                    <>
+                                        <Divider />
+                                        <Section
+                                            icon={<ShieldCheck />}
+                                            title="CV quality check"
+                                            description="What a hiring manager notices in the first few seconds — independent of this job."
+                                            action={
+                                                <Badge tone={cvAudit.grade === "strong" ? "success" : cvAudit.grade === "average" ? "warning" : "danger"}>
+                                                    {cvAudit.grade === "strong" ? "Strong" : cvAudit.grade === "average" ? "Needs work" : "Weak"}
+                                                </Badge>
+                                            }
+                                        >
+                                            <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border">
+                                                {cvAudit.categories.map(cat => (
+                                                    <li key={cat.key} className="bg-foreground/[0.01] px-4 py-3">
+                                                        <div className="flex items-center gap-2.5">
+                                                            {cat.status === "good"
+                                                                ? <CircleCheck className="size-4 shrink-0 text-success" />
+                                                                : cat.status === "warn"
+                                                                ? <CircleAlert className="size-4 shrink-0 text-warning" />
+                                                                : <CircleX className="size-4 shrink-0 text-danger" />}
+                                                            <span className="text-sm font-medium text-foreground">{cat.label}</span>
+                                                            <span className="ml-auto text-xs text-muted-foreground">
+                                                                {cat.status === "good" ? "Looks good" : cat.status === "warn" ? "Could be stronger" : "Missing"}
                                                             </span>
-                                                        ))}
-                                                    </div>
+                                                        </div>
+                                                        {cat.status !== "good" && cat.missing.length > 0 && (
+                                                            <div className="mt-2.5 flex flex-wrap gap-1.5 pl-6.5">
+                                                                {cat.missing.map((kw, i) => <Chip key={i}>{kw}</Chip>)}
+                                                            </div>
+                                                        )}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </Section>
+                                    </>
+                                )}
+
+                                {/* Company insights */}
+                                {(company || culture.length > 0) && (
+                                    <>
+                                        <Divider />
+                                        <Section icon={<Building2 />} title={company ? `About ${company}` : "Company signals"} description="Culture signals from the job post and where to research the interview.">
+                                            {culture.length > 0 && (
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {culture.map(({ label }) => <Chip key={label} tone="accent">{label}</Chip>)}
                                                 </div>
                                             )}
-
-                                            {/* Interview resources */}
                                             {company && (
-                                                <div>
-                                                    <p className="text-xs text-[#cccccc] mb-2 font-semibold">Interview resources</p>
+                                                <div className="space-y-2">
+                                                    <p className="text-xs font-medium text-muted-foreground">Interview research</p>
                                                     {interviewLoading && (
-                                                        <p className="text-xs text-[#666666] animate-pulse">Searching the web…</p>
+                                                        <p className="inline-flex items-center gap-1.5 text-xs text-muted-foreground"><LoaderCircle className="size-3 animate-spin" />Searching the web…</p>
                                                     )}
                                                     {!interviewLoading && interviewResults.length === 0 && (
                                                         <div className="flex flex-wrap gap-2">
-                                                            {getInterviewLinks(company).map(({ label, url, icon, color }) => (
+                                                            {getInterviewLinks(company).map(({ label, url }) => (
                                                                 <a key={label} href={url} target="_blank" rel="noopener noreferrer"
-                                                                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${color}`}>
-                                                                    {icon} {label}
+                                                                    className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-foreground/[0.02] px-3 text-[13px] font-medium text-foreground/85 transition-colors hover:bg-foreground/[0.05] hover:text-foreground">
+                                                                    {label}<ArrowUpRight className="size-3.5 text-muted-foreground" />
                                                                 </a>
                                                             ))}
                                                         </div>
                                                     )}
                                                     {!interviewLoading && interviewResults.length > 0 && (
-                                                        <div className="space-y-1.5">
-                                                            {interviewResults.map((result, i) => (
-                                                                <a key={i} href={result.url} target="_blank" rel="noopener noreferrer"
-                                                                    className="flex min-w-0 items-center gap-2.5 px-3 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-teal-500/10 hover:border-teal-500/30 transition-all group">
-                                                                    <span className="shrink-0 text-[10px] font-bold text-[#999999] uppercase tracking-wider w-16 truncate">{result.source}</span>
-                                                                    <span className="min-w-0 text-xs text-[#cccccc] group-hover:text-[#d0d0d0] transition-colors truncate flex-1">{decodeHtmlEntities(result.title)}</span>
-                                                                    <ExternalLink className="shrink-0 w-3 h-3 text-[#4d4d4d] group-hover:text-[#d0d0d0] transition-colors" />
-                                                                </a>
+                                                        <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border">
+                                                            {interviewResults.map((r, i) => (
+                                                                <li key={i}>
+                                                                    <a href={r.url} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-3 bg-foreground/[0.01] px-4 py-3 transition-colors hover:bg-foreground/[0.04]">
+                                                                        <span className="w-20 shrink-0 truncate text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{r.source}</span>
+                                                                        <span className="min-w-0 flex-1 truncate text-sm text-foreground/85">{decodeHtmlEntities(r.title)}</span>
+                                                                        <ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" />
+                                                                    </a>
+                                                                </li>
                                                             ))}
-                                                        </div>
+                                                        </ul>
                                                     )}
                                                 </div>
                                             )}
-                                        </div>
-                                    )
-                                })()}
+                                        </Section>
+                                    </>
+                                )}
+                            </div>
 
-                                {/* Emoji Rating */}
-                                <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-                                    <div className="rounded-2xl border border-cyan-500/20 bg-gradient-to-br from-cyan-950/40 via-slate-900/60 to-teal-950/20 p-5 flex flex-col items-center text-center">
-<p className="text-base font-bold text-silver mb-1">🎯 Rate this analysis</p>
-                                        <p className="text-xs text-[#999999] mb-4">Was the match score accurate for this role?</p>
-                                        <RatingInteraction />
-                                    </div>
+                            {/* Feedback + support */}
+                            <div className="space-y-5 border-t border-border bg-inset p-6 sm:px-8">
+                                <FeedbackRating />
+                                <div className="flex flex-col gap-3 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
+                                    <p className="flex items-center gap-2 text-[13px] text-muted-foreground">
+                                        <Heart className="size-3.5 shrink-0 text-danger" />
+                                        CVXray is free and ad-free. If it helped, you can support it.
+                                    </p>
+                                    <a
+                                        href="https://www.paypal.com/ncp/payment/PJQ645FWEKYAU"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-border bg-foreground/[0.03] px-3.5 text-[13px] font-medium text-foreground transition-colors hover:bg-foreground/[0.07]"
+                                    >
+                                        <Coffee className="size-3.5" />Buy me a coffee
+                                    </a>
                                 </div>
                             </div>
-                            </div>
-                        )}
-                    </div>
-                    </CardContent>
-                </Card>
+                        </div>
+                    )}
+                </Panel>
             </div>
-
-            <style jsx global>{`
-                @keyframes coffeeFloat {
-                    0%, 100% { transform: translateY(0px) rotate(-3deg); }
-                    50% { transform: translateY(-10px) rotate(3deg); }
-                }
-            `}</style>
-
-        </div>
+        </section>
     )
 }

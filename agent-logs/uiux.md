@@ -183,3 +183,16 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Tap targets: "Paste text instead", "Change", "Share results", "Copy all" and the Job URL / Paste Text tabs are all ≥ 44px tall, with negative margins so the visual layout is unchanged ✅ measured 44px in browser
 - Validation errors use `role="alert"` ✅
 - Score tiers now agree everywhere (persona label, Next Steps card, history colours, FAQ): 70+ strong, 45–69 competitive, < 45 gaps ✅
+
+---
+
+## 2026-11-10 — Push 14 (UI redesign: Daylight theme)
+
+**Status:** ✅ PASS (0 critical) — full redesign
+
+- New visual system: Daylight theme (white surfaces, near-black text, single blue accent); success/warning/danger used only for meaning
+- Fixed a long-standing bug: Geist was never applied (font token referenced itself) — the site rendered in Times
+- Removed emojis from UI chrome, bouncing/pulsing animations, the oversized coffee card and the animated canvas background
+- New structure: sticky header with nav + CTA, hero, numbered input steps with a sticky input panel, results report (score ring, 3 stat tiles, recommendation, skills, keywords, training, CV quality, company), skeleton loading state, "How it works", FAQ accordion, footer
+- Owner picked Daylight after comparing four themes (Graphite, Midnight, Mono, Daylight) live on localhost
+- Verified at 1440px and 375px: no horizontal overflow; tap targets ≥ 44px; segmented control uses tab roles; rating uses radio roles

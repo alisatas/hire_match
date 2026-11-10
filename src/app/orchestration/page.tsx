@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 
 export default function OrchestrationPage() {
   return (
+    <div className="dark text-foreground">
     <DigitalLoomBackground
       backgroundColor="#04050a"
       threadColor="rgba(6, 182, 212, 0.22)"
@@ -103,5 +104,6 @@ export default function OrchestrationPage() {
         </div>
       </div>
     </DigitalLoomBackground>
+    </div>
   );
 }

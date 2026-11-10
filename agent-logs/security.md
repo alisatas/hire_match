@@ -196,3 +196,11 @@ Fixes for the two 🟡 findings from Push 10:
 
 - FAQ JSON-LD is built from static strings and `<` is escaped before `dangerouslySetInnerHTML` ✅
 - No new inputs or routes ✅
+
+---
+
+## 2026-11-10 — Push 14 (UI redesign: Daylight theme)
+
+**Status:** ✅ PASS (0 critical)
+
+- No new inputs, routes or `dangerouslySetInnerHTML` sinks; external links keep `rel="noopener noreferrer"` ✅

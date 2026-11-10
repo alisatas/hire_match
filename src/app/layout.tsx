@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import ShaderBackground from "@/components/ui/shader-background";
 import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
@@ -129,17 +128,17 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className="dark" style={{ backgroundColor: '#0a0b0e', colorScheme: 'dark' }}>
+    <html lang="en">
       <head>
-        <meta name="color-scheme" content="dark" />
-        <meta name="theme-color" content="#0a0b0e" />
+        <meta name="color-scheme" content="light" />
+        <meta name="theme-color" content="#fafafa" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} style={{ backgroundColor: 'transparent' }} suppressHydrationWarning>
-        <ShaderBackground />
+        <div aria-hidden className="page-backdrop" />
         <div className="relative z-10 min-h-screen">
           {children}
         </div>

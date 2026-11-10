@@ -305,3 +305,11 @@ Calibration (6 sample jobs × 4 CVs):
 1. Title window: `jobText.slice(0, 120)` spills into the body for short titles — use the first line instead
 2. Remaining generic aliases to review: "rest", "pipeline", "cache", "terminal", "node"
 3. Tune adaptive keyword cap for very long JDs (> 1200 words)
+
+---
+
+## 2026-11-10 — Push 14 (UI redesign: Daylight theme)
+
+**Status:** ✅ PASS (no scoring changes)
+
+- UI tone thresholds (`toneForScore`: 70 / 45) match the persona tiers in `analyze.ts` ✅

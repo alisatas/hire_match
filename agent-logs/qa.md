@@ -178,3 +178,12 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 - Typing into the CV textarea keeps focus and value (previously unmounted after one character) ✅
 - Score tier boundaries consistent across `analyze.ts` and `cv-analyzer.tsx` — no "Strong Contender" next to a "close gaps" card ✅
+
+---
+
+## 2026-11-10 — Push 14 (UI redesign: Daylight theme)
+
+**Status:** ✅ PASS (0 critical)
+
+- Markup-only rewrite of the analyzer: state, handlers and analysis logic unchanged ✅
+- Apply link now shown inside the recommendation only when a job URL exists (no disabled placeholder banner) ✅

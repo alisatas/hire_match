@@ -221,3 +221,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 **Running improvement backlog (next pushes):**
 1. Add a short "How the score is calculated" section — high-intent query, and builds trust in the number
+
+---
+
+## 2026-11-10 — Push 14 (UI redesign: Daylight theme)
+
+**Status:** ✅ PASS (0 critical)
+
+- H1, meta, JSON-LD and the 13 visible FAQ entries unchanged ✅
+- Added in-page anchors (#analyzer, #how-it-works, #faq) and a "How it works" section with crawlable copy ✅
+- `theme-color` / `color-scheme` updated for the light theme ✅
