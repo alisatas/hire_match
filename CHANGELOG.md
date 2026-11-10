@@ -1,3 +1,10 @@
+# [1.25.0](https://github.com/alisatas/hire_match/compare/v1.24.0...v1.25.0) (2026-11-10)
+
+
+### Features
+
+* enable Google Tag Manager container GTM-TDWWJWMR ([78d1e42](https://github.com/alisatas/hire_match/commit/78d1e426e9381b97b4676cd33fe2ae6b21b2b610))
+
 # [1.24.0](https://github.com/alisatas/hire_match/compare/v1.23.0...v1.24.0) (2026-11-10)
 
 
