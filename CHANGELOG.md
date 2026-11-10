@@ -1,3 +1,10 @@
+## [1.21.4](https://github.com/alisatas/hire_match/compare/v1.21.3...v1.21.4) (2026-11-10)
+
+
+### Bug Fixes
+
+* harden shared result links and clear lint errors in the analyzer ([5e04d28](https://github.com/alisatas/hire_match/commit/5e04d2847b7eff703aa30c6ff5e8b3743c31e14e))
+
 ## [1.21.3](https://github.com/alisatas/hire_match/compare/v1.21.2...v1.21.3) (2026-11-10)
 
 
