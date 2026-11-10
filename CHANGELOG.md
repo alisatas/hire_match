@@ -1,3 +1,10 @@
+# [1.24.0](https://github.com/alisatas/hire_match/compare/v1.23.0...v1.24.0) (2026-11-10)
+
+
+### Features
+
+* add Google Tag Manager with a cookie consent banner ([af93478](https://github.com/alisatas/hire_match/commit/af9347861f1b372558c83c1b1bd63aa3fd362b4c))
+
 # [1.23.0](https://github.com/alisatas/hire_match/compare/v1.22.3...v1.23.0) (2026-11-10)
 
 
