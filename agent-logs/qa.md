@@ -169,3 +169,12 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - History load validates the stored array shape; malformed localStorage no longer reaches render ✅
 - "Change" now also clears the `#r=` hash, so a reset never brings back the previous result ✅
 - 🟡 CV textarea still swaps to the "CV loaded" badge after the first typed character (carried forward)
+
+---
+
+## 2026-11-10 — Push 13 (Score calibration, accessibility, FAQ markup)
+
+**Status:** ✅ PASS (0 critical)
+
+- Typing into the CV textarea keeps focus and value (previously unmounted after one character) ✅
+- Score tier boundaries consistent across `analyze.ts` and `cv-analyzer.tsx` — no "Strong Contender" next to a "close gaps" card ✅

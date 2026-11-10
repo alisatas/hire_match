@@ -348,12 +348,14 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
     const rawScore = (skillScore * 50) + (keywordScore * 35) + (expScore * 15)
 
     // Confidence multiplier: short/low-quality job descriptions are less reliable.
-    // Math Prof improvement: two-tier curve — very short JDs (< 50 words) get a
-    // hard floor of 0.3 to prevent inflated scores from garbage input; longer JDs
-    // ramp from 0.55 → 1.0 over 0–400 words, reaching full confidence at ~400 words.
+    // Very short JDs (< 50 words) keep a hard floor of 0.3 so garbage input can't score high.
+    // Math Prof improvement (Push 13): the ramp now reaches full confidence at 200 words
+    // instead of 400. A typical real posting is 120–250 words; under the old curve a CV that
+    // matched every skill in a 130-word JD was capped at ~63%, so "strong match" (70+) was
+    // unreachable for most real jobs. Now: 50 words → 0.775, 130 → 0.895, 200+ → 1.0.
     const confidence = jobWordCount < 50
         ? Math.max(0.3, jobWordCount / 50 * 0.55)
-        : Math.min(0.55 + (jobWordCount / 400) * 0.45, 1.0)
+        : Math.min(0.7 + (jobWordCount / 200) * 0.3, 1.0)
 
     // Math Prof improvement: CV quality factor — a very short CV paste (< 80 words) is
     // likely incomplete. Dampen the score proportionally so a 3-word CV can't hit 90%.
@@ -410,19 +412,20 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
         : ""
 
     let persona: AnalysisResult["persona"]
-    if (score >= 78) {
+    // Tiers match the UI (Next Steps card, history colours, FAQ): 70+ strong, 45–69 competitive, < 45 gaps
+    if (score >= 80) {
         persona = {
             label: "Top Candidate",
             desc: `Strong alignment — ${topMatched.length > 0 ? topMatched.join(" & ") + " are solid matches. " : ""}${topMissing.length > 0 ? `Adding ${topMissing.join(" & ")} would make you near-perfect for this role. ` : ""}${expNote}`,
             color: "text-emerald-400",
         }
-    } else if (score >= 58) {
+    } else if (score >= 70) {
         persona = {
             label: "Strong Contender",
             desc: `Competitive profile — ${topMatched.length > 0 ? topMatched.join(" & ") + " match well. " : ""}${topMissing.length > 0 ? `This job heavily emphasises ${topMissing.join(" & ")} which aren't prominent on your CV. ` : ""}${expNote}`,
             color: "text-violet-400",
         }
-    } else if (score >= 38) {
+    } else if (score >= 45) {
         persona = {
             label: "Emerging Talent",
             desc: `${topMatched.length > 0 ? topMatched.join(" & ") + " are in your favour. " : ""}${topMissing.length > 0 ? `This role specifically needs ${topMissing.join(" & ")} — high-priority gaps. ` : ""}${expNote}`,

@@ -151,3 +151,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - `tsc --noEmit`: 0 errors ✅; ESLint on `src/`: 0 errors (was 3) ✅
 - Browser: malformed share link → empty state, no crash ✅; Backend sample analysis → 46%, recent-scan history updated from localStorage ✅; "Change" clears result + hash ✅; valid share link reloads the shared result ✅
 - 🟡 Dev-only CSP console error for the Vercel Analytics debug script (carried forward)
+
+---
+
+## 2026-11-10 — Push 13 (Score calibration, accessibility, FAQ markup)
+
+**Status:** ✅ PASS (0 critical)
+
+- `tsc --noEmit` 0 errors, ESLint 0 errors ✅
+- Browser: typed into CV textarea ✅; Frontend sample → 81% / Top Candidate / "strong match — apply now" ✅; buttons measured at 44px ✅; no horizontal overflow ✅
+- Rendered HTML: FAQPage JSON-LD has 13 questions and the page shows 13 `<details>` ✅; no `aggregateRating` ✅

@@ -594,14 +594,14 @@ export default function CVAnalyzer() {
                     </CardHeader>
                     <CardContent className="space-y-6">
                         {/* CV — upload zone OR loaded badge */}
-                        {!cvText ? (
+                        {!cvText || showCvPaste ? (
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center">
                                     <label className="text-sm font-bold uppercase tracking-widest text-silver">Your CV</label>
                                     <button
                                         type="button"
                                         onClick={() => setShowCvPaste(v => !v)}
-                                        className="text-[10px] text-[#999999] hover:text-[#cccccc] font-bold uppercase tracking-widest transition-colors"
+                                        className="text-[10px] text-[#999999] hover:text-[#cccccc] font-bold uppercase tracking-widest transition-colors p-3 -m-3 min-h-11 inline-flex items-center"
                                     >
                                         {showCvPaste ? "↑ Upload PDF instead" : "Paste text instead"}
                                     </button>
@@ -644,7 +644,7 @@ export default function CVAnalyzer() {
                                     </div>
                                     <button
                                         onClick={resetCV}
-                                        className="text-[11px] font-bold text-[#666666] hover:text-[#b3b3b3] uppercase tracking-widest shrink-0 ml-3 transition-colors"
+                                        className="text-[11px] font-bold text-[#666666] hover:text-[#b3b3b3] uppercase tracking-widest shrink-0 ml-3 px-3 -mr-3 py-3 -my-3 min-h-11 inline-flex items-center transition-colors"
                                     >
                                         Change
                                     </button>
@@ -666,7 +666,7 @@ export default function CVAnalyzer() {
                                     type="button"
                                     onClick={() => { setJobInputMode("url"); setJobText(""); setFetchStatus(""); setScrapedCompanyName(""); }}
                                     className={cn(
-                                        "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all",
+                                        "flex-1 min-h-11 text-xs font-bold rounded-lg transition-all",
                                         jobInputMode === "url"
                                             ? "bg-white/10 text-[#cccccc]"
                                             : "text-[#666666] hover:text-[#b3b3b3]"
@@ -678,7 +678,7 @@ export default function CVAnalyzer() {
                                     type="button"
                                     onClick={() => { setJobInputMode("paste"); setJobInput(""); setJobUrl(""); setFetchStatus(""); setScrapedCompanyName(""); }}
                                     className={cn(
-                                        "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all",
+                                        "flex-1 min-h-11 text-xs font-bold rounded-lg transition-all",
                                         jobInputMode === "paste"
                                             ? "bg-white/10 text-[#cccccc]"
                                             : "text-[#666666] hover:text-[#b3b3b3]"
@@ -717,7 +717,7 @@ export default function CVAnalyzer() {
                                     </div>
 
                                     {jobInput && !jobInput.trim().startsWith("http") && (
-                                        <p className="text-rose-400 text-xs font-semibold">Please paste a valid job URL starting with https://</p>
+                                        <p role="alert" className="text-rose-400 text-xs font-semibold">Please paste a valid job URL starting with https://</p>
                                     )}
 
                                     {fetchStatus && (
@@ -798,7 +798,7 @@ export default function CVAnalyzer() {
                         </div>
 
                         {error && (
-                            <p className="text-rose-400 text-sm font-semibold">{error}</p>
+                            <p role="alert" className="text-rose-400 text-sm font-semibold">{error}</p>
                         )}
 
 <div className="space-y-3 pt-2">
@@ -1003,7 +1003,7 @@ export default function CVAnalyzer() {
                                             setShareCopied(true)
                                             setTimeout(() => setShareCopied(false), 2000)
                                         }}
-                                        className="text-[11px] font-bold text-[#666666] hover:text-[#cccccc] transition-colors flex items-center gap-1"
+                                        className="text-[11px] font-bold text-[#666666] hover:text-[#cccccc] transition-colors flex items-center gap-1 p-3 -m-3 min-h-11"
                                     >
                                         {shareCopied ? "✓ Link copied!" : "🔗 Share results"}
                                     </button>
@@ -1141,7 +1141,7 @@ export default function CVAnalyzer() {
                                                                 setKeywordsCopied(true)
                                                                 setTimeout(() => setKeywordsCopied(false), 2000)
                                                             }}
-                                                            className="text-[10px] font-bold text-[#777777] hover:text-[#cccccc] transition-colors uppercase tracking-wider shrink-0"
+                                                            className="text-[10px] font-bold text-[#777777] hover:text-[#cccccc] transition-colors uppercase tracking-wider shrink-0 p-3 -m-3 min-h-11 inline-flex items-center"
                                                         >
                                                             {keywordsCopied ? "✓ Copied" : "Copy all"}
                                                         </button>

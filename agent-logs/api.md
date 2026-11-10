@@ -149,3 +149,11 @@ Agents MUST read this log before running checks and MUST append an entry after e
 **Status:** ✅ PASS (0 critical)
 
 - No API route changes this cycle ✅
+
+---
+
+## 2026-11-10 — Push 13 (Score calibration, accessibility, FAQ markup)
+
+**Status:** ✅ PASS (0 critical)
+
+- No API route changes this cycle ✅

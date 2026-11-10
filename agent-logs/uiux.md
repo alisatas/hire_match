@@ -172,3 +172,14 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 - No visual changes. Shared links can only set one of the four known persona colours; anything else renders neutral ✅
 - 🟡 Tap targets under 44px, error text without `role="alert"`, and the 70/45 vs 78/58/38 score-tier mismatch carried forward
+
+---
+
+## 2026-11-10 — Push 13 (Score calibration, accessibility, FAQ markup)
+
+**Status:** ✅ PASS (0 critical, 0 medium)
+
+- CV paste textarea now stays visible while typing (was replaced by the "CV loaded" badge after the first keystroke) ✅ verified in browser
+- Tap targets: "Paste text instead", "Change", "Share results", "Copy all" and the Job URL / Paste Text tabs are all ≥ 44px tall, with negative margins so the visual layout is unchanged ✅ measured 44px in browser
+- Validation errors use `role="alert"` ✅
+- Score tiers now agree everywhere (persona label, Next Steps card, history colours, FAQ): 70+ strong, 45–69 competitive, < 45 gaps ✅

@@ -283,3 +283,25 @@ Calibration (engine run old → new, 6 sample jobs × 4 CVs):
 
 - Engine untouched; browser spot-check: Backend CV vs Backend sample → 46% with GraphQL + GCP as medium gaps ✅
 - Backlog unchanged (confidence multiplier recalibration is item 1)
+
+---
+
+## 2026-11-10 — Push 13 (Score calibration, accessibility, FAQ markup)
+
+**Status:** ✅ PASS (1 improvement implemented)
+
+**Improvement: confidence multiplier reaches 1.0 at 200 words instead of 400 (`analyze.ts`)** — closes backlog item 1.
+Old curve: `0.55 + (words/400) × 0.45`. New: `0.7 + (words/200) × 0.3`, capped at 1.0; the < 50-word floor is unchanged.
+
+Persona tiers re-aligned to the thresholds the UI already uses (70 / 45): Top Candidate ≥ 80, Strong Contender ≥ 70, Emerging Talent ≥ 45, Upskilling < 45 (was 78 / 58 / 38).
+
+Calibration (6 sample jobs × 4 CVs):
+- Frontend CV vs Frontend job: 63 → 81 (Top Candidate, "strong match — apply now") ✅ meets the 75–95 target
+- Backend CV vs Backend job: 53 → 68 (2 nice-to-have gaps) ✅
+- Cross-role (Backend CV vs Frontend job): 21 → 27; Frontend CV vs UX Designer: 41 → 53
+- Chef / marketer CVs on every tech job: still 5 ✅ — no mismatch inflated
+
+**Running improvement backlog (next pushes):**
+1. Title window: `jobText.slice(0, 120)` spills into the body for short titles — use the first line instead
+2. Remaining generic aliases to review: "rest", "pipeline", "cache", "terminal", "node"
+3. Tune adaptive keyword cap for very long JDs (> 1200 words)

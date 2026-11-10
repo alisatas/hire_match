@@ -187,3 +187,12 @@ Fixes for the two 🟡 findings from Push 10:
 - Shared-link input is now validated before use; persona colour restricted to an allowlist so a crafted link cannot inject class names ✅
 - 🟡 DNS rebinding window in `/api/scrape` and CSP `unsafe-inline` carried forward
 - Vercel environment variables (`TWITTER_*`, `TELEGRAM_BOT_TOKEN`, deploy hooks, `VERCEL_TOKEN`) left in place at the owner's request — unused by the code
+
+---
+
+## 2026-11-10 — Push 13 (Score calibration, accessibility, FAQ markup)
+
+**Status:** ✅ PASS (0 critical)
+
+- FAQ JSON-LD is built from static strings and `<` is escaped before `dangerouslySetInnerHTML` ✅
+- No new inputs or routes ✅

@@ -207,3 +207,17 @@ Agents MUST read this log before running checks and MUST append an entry after e
 **Running improvement backlog (next pushes):**
 1. Either show all 16 FAQs on the page or trim the JSON-LD to the visible 5
 2. Remove or substantiate `aggregateRating`
+
+---
+
+## 2026-11-10 — Push 13 (Score calibration, accessibility, FAQ markup)
+
+**Status:** ✅ PASS (2 improvements)
+
+- FAQ unified into `src/lib/faqs.ts`: the page renders all 13 questions and emits the FAQPage JSON-LD from the same list — structured data now matches visible content (was 16 marked up vs 5 visible) ✅ closes backlog item 1
+- Duplicate questions merged; inaccurate "AI engine" / "top scanner in 2026" claims dropped from the FAQ answers
+- Hardcoded `aggregateRating` (4.9 / 128) removed — no visible reviews backed it ✅ closes backlog item 2
+- FAQPage JSON-LD moved from the root layout to the home page (it no longer appears on `/orchestration`)
+
+**Running improvement backlog (next pushes):**
+1. Add a short "How the score is calculated" section — high-intent query, and builds trust in the number
