@@ -106,7 +106,6 @@ export default function RootLayout({
         url: siteUrl,
         logo: `${siteUrl}/opengraph-image`,
         sameAs: [
-          "https://github.com/alisatas/hire_match",
           "https://x.com/cvxray",
           "https://www.instagram.com/cvxray.ai",
         ],

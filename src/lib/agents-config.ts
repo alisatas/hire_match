@@ -108,7 +108,7 @@ Trace the full flow:
 4. Click Analyze → see loading → see results
 5. Read score, matched skills, gaps, keywords, courses
 6. Click "Share CVXray" → confirm link is copied
-7. Scroll to coffee section → see rating widget
+7. Scroll to the end of the report → see rating widget
 
 For each step ask: Is the feedback immediate? Is the next action obvious? What happens on failure?
 

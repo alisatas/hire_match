@@ -151,7 +151,6 @@ export default function Home() {
           <nav aria-label="Footer" className="flex items-center gap-5">
             <a href="#how-it-works" className="transition-colors hover:text-foreground">How it works</a>
             <a href="#faq" className="transition-colors hover:text-foreground">FAQ</a>
-            <a href="https://github.com/alisatas/hire_match" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-foreground">GitHub</a>
           </nav>
         </div>
       </footer>

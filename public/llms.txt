@@ -146,6 +146,5 @@ CVXray uses a built-in 7-agent AI orchestration system (powered by Ruflo) that a
 ## Links
 
 - App: https://cvxray.com
-- GitHub: https://github.com/alisatas/hire_match
 - llms.txt: https://cvxray.com/llms.txt
 - Sitemap: https://cvxray.com/sitemap.xml

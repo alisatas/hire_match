@@ -11,13 +11,11 @@ import {
     CircleX,
     ClipboardPaste,
     CloudUpload,
-    Coffee,
     Copy,
     FileSearch,
     FileText,
     Gauge,
     GraduationCap,
-    Heart,
     History,
     Link2,
     ListChecks,
@@ -1174,23 +1172,9 @@ export default function CVAnalyzer() {
                                 )}
                             </div>
 
-                            {/* Feedback + support */}
-                            <div className="space-y-5 border-t border-border bg-inset p-6 sm:px-8">
+                            {/* Feedback */}
+                            <div className="border-t border-border bg-inset p-6 sm:px-8">
                                 <FeedbackRating />
-                                <div className="flex flex-col gap-3 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
-                                    <p className="flex items-center gap-2 text-[13px] text-muted-foreground">
-                                        <Heart className="size-3.5 shrink-0 text-danger" />
-                                        CVXray is free and ad-free. If it helped, you can support it.
-                                    </p>
-                                    <a
-                                        href="https://www.paypal.com/ncp/payment/PJQ645FWEKYAU"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-border bg-foreground/[0.03] px-3.5 text-[13px] font-medium text-foreground transition-colors hover:bg-foreground/[0.07]"
-                                    >
-                                        <Coffee className="size-3.5" />Buy me a coffee
-                                    </a>
-                                </div>
                             </div>
                         </div>
                     )}
