@@ -1,3 +1,10 @@
+## [1.21.5](https://github.com/alisatas/hire_match/compare/v1.21.4...v1.21.5) (2026-11-10)
+
+
+### Bug Fixes
+
+* calibrate match score for typical job posts and tidy UX and FAQ markup ([ac63696](https://github.com/alisatas/hire_match/commit/ac6369641e9dfab7ebaddafcd29cc5157bd5a82c))
+
 ## [1.21.4](https://github.com/alisatas/hire_match/compare/v1.21.3...v1.21.4) (2026-11-10)
 
 
