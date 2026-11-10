@@ -1,12 +1,14 @@
 // ─────────────────────────────────────────────
 // Analytics + consent
-// Google Tag Manager is loaded only when NEXT_PUBLIC_GTM_ID is set. Google
+// Google Tag Manager container GTM-TDWWJWMR. Google
 // Consent Mode v2 defaults every storage type to "denied"; tags only use
 // cookies after the visitor accepts in the consent banner.
 // Event parameters never include CV or job-description text.
 // ─────────────────────────────────────────────
 
-export const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID ?? ""
+// The container ID is public (it appears in every page's source), so it is safe to
+// commit. NEXT_PUBLIC_GTM_ID overrides it; set it to an empty string to disable GTM.
+export const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID ?? "GTM-TDWWJWMR"
 
 export type ConsentChoice = "granted" | "denied"
 
