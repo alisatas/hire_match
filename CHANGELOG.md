@@ -1,3 +1,10 @@
+# [1.23.0](https://github.com/alisatas/hire_match/compare/v1.22.3...v1.23.0) (2026-11-10)
+
+
+### Features
+
+* use emoji faces for the score accuracy rating ([9d6f380](https://github.com/alisatas/hire_match/commit/9d6f380d77b100ec4a4a91db70de5b9a2ac0ffad))
+
 ## [1.22.3](https://github.com/alisatas/hire_match/compare/v1.22.2...v1.22.3) (2026-11-10)
 
 
