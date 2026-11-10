@@ -204,3 +204,17 @@ Fixes for the two 🟡 findings from Push 10:
 **Status:** ✅ PASS (0 critical)
 
 - No new inputs, routes or `dangerouslySetInnerHTML` sinks; external links keep `rel="noopener noreferrer"` ✅
+
+---
+
+## 2026-11-10 — Push 15 (Google Tag Manager + consent banner)
+
+**Status:** ✅ PASS (0 critical, 1 medium)
+
+- GTM loads only when `NEXT_PUBLIC_GTM_ID` is set; without it no third-party script, cookie or banner is added ✅
+- Google Consent Mode v2: all storage types default to `denied` before GTM loads; `granted` only after "Accept all"; "Reject all" and the footer "Cookie settings" link let visitors change their choice ✅
+- Event parameters contain only scores, counts and labels — never CV or job-description text ✅
+- CSP `script-src` widened to googletagmanager.com, googleadservices.com, googleads.g.doubleclick.net, google.com; `frame-src` added for GTM/DoubleClick ✅
+- 🟡 Any tag added later inside GTM (e.g. Meta Pixel) needs its domains added to the CSP, and must be configured to respect consent in GTM
+- Privacy copy updated (FAQ, hero, llms.txt) so "private" claims refer to the CV, with analytics disclosed as consent-based ✅
+

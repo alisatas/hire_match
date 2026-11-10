@@ -30,15 +30,35 @@ import {
     Zap,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { track } from "@/lib/analytics"
 import { Badge, Chip, Divider, FeedbackRating, Panel, ScoreRing, Section, SegmentedControl, StatTile, StepLabel, toneDot, toneForScore, toneText, type Tone } from "./analyzer-ui"
 import { analyze, auditCV, type AnalysisResult, type CVAuditResult, type MissingSkillWithPriority } from "@/lib/analyze"
 import { extractCompanyName, extractCultureSignals, getInterviewLinks } from "@/lib/insights"
 
 // ─── Share URL helpers ───────────────────────────────────────────────────────
 
+// Share links carry the result as base64url JSON in the hash (#s=...). The older format
+// (#r= + percent-encoded JSON) produced unreadable %7B%22… URLs; it is still decoded so
+// links that were already shared keep working.
+const SHARE_PREFIX = "#s="
+const LEGACY_SHARE_PREFIX = "#r="
+
+const hasShareHash = (hash: string) => hash.startsWith(SHARE_PREFIX) || hash.startsWith(LEGACY_SHARE_PREFIX)
+
+function toBase64Url(text: string): string {
+    let binary = ""
+    new TextEncoder().encode(text).forEach(b => { binary += String.fromCharCode(b) })
+    return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")
+}
+
+function fromBase64Url(encoded: string): string {
+    const binary = atob(encoded.replace(/-/g, "+").replace(/_/g, "/"))
+    return new TextDecoder().decode(Uint8Array.from(binary, ch => ch.charCodeAt(0)))
+}
+
 function encodeResults(r: AnalysisResult): string {
     try {
-        return encodeURIComponent(JSON.stringify({
+        return toBase64Url(JSON.stringify({
             s: r.score, pl: r.persona.label, pd: r.persona.desc, pc: r.persona.color,
             m: r.matched,
             ms: r.missing.map(x => [x.label, x.key, x.freq, x.priority]),
@@ -49,9 +69,12 @@ function encodeResults(r: AnalysisResult): string {
     } catch { return "" }
 }
 
-function decodeResults(encoded: string): AnalysisResult | null {
+function decodeResults(hash: string): AnalysisResult | null {
     try {
-        const c = JSON.parse(decodeURIComponent(encoded))
+        const json = hash.startsWith(SHARE_PREFIX)
+            ? fromBase64Url(hash.slice(SHARE_PREFIX.length))
+            : decodeURIComponent(hash.slice(LEGACY_SHARE_PREFIX.length))
+        const c = JSON.parse(json)
         // Shared links are untrusted input — reject anything that is not the shape we wrote,
         // otherwise rendering calls .length / .map on undefined and the page crashes
         if (!c || typeof c !== "object") return null
@@ -385,11 +408,11 @@ export default function CVAnalyzer() {
     const historyRaw = useSyncExternalStore(subscribeHistory, readHistoryRaw, readServerSnapshot)
     const history = useMemo(() => parseHistory(historyRaw), [historyRaw])
 
-    // Shared results from the URL hash (#r=...). A fresh analysis takes precedence.
+    // Shared results from the URL hash (#s=...). A fresh analysis takes precedence.
     const hash = useSyncExternalStore(subscribeHash, readHash, readServerSnapshot)
     const sharedResults = useMemo(() => {
-        if (!hash.startsWith("#r=")) return null
-        const decoded = decodeResults(hash.slice(3))
+        if (!hasShareHash(hash)) return null
+        const decoded = decodeResults(hash)
         if (decoded && !PERSONA_COLORS.has(decoded.persona.color)) decoded.persona.color = "text-[#cccccc]"
         return decoded
     }, [hash])
@@ -431,6 +454,7 @@ export default function CVAnalyzer() {
             setCvText(data.text)
             setCvAudit(auditCV(data.text))
             setPdfStatus(`✓ ${file.name} loaded`)
+            track("cv_upload", { method: "pdf" })
         } catch (err: unknown) {
             console.error("PDF Read Error:", err)
             setPdfStatus("Error reading PDF. Paste your CV text below.")
@@ -474,6 +498,7 @@ export default function CVAnalyzer() {
             return
         }
 
+        track("analyze_click", { cv_source: showCvPaste ? "paste" : "pdf", job_source: jobInputMode })
         setError("")
         setIsLoading(true)
         setResults(null)
@@ -518,9 +543,19 @@ export default function CVAnalyzer() {
         try {
             result = analyze(cvText, effectiveJobText)
             setResults(result)
-            // Update URL hash so results are shareable
-            const encoded = encodeResults(result)
-            if (encoded) window.history.replaceState(null, "", `#r=${encoded}`)
+            // Score and coarse counts only — never CV or job text
+            track("analysis_complete", {
+                score: result.score,
+                score_band: result.score >= 70 ? "strong" : result.score >= 45 ? "competitive" : "gaps",
+                job_source: jobUrl ? "url" : "text",
+                missing_skills: result.missing.length,
+            })
+            // Keep the address bar clean: the share link is only built when the user asks
+            // for it. Drop a stale shared-result hash so it cannot outlive this analysis.
+            if (hasShareHash(window.location.hash)) {
+                window.history.replaceState(null, "", window.location.pathname + window.location.search)
+                window.dispatchEvent(new HashChangeEvent("hashchange"))
+            }
         } catch {
             setError("Analysis failed — please try again.")
             setIsLoading(false)
@@ -559,7 +594,7 @@ export default function CVAnalyzer() {
         setResults(null)
         setCvAudit(null)
         setError("")
-        if (window.location.hash.startsWith("#r=")) {
+        if (hasShareHash(window.location.hash)) {
             window.history.replaceState(null, "", window.location.pathname + window.location.search)
             window.dispatchEvent(new HashChangeEvent("hashchange"))
         }
@@ -586,7 +621,7 @@ export default function CVAnalyzer() {
                         key={job.label}
                         type="button"
                         title={job.desc}
-                        onClick={() => onPick(job.text, job.label)}
+                        onClick={() => { onPick(job.text, job.label); track("sample_job_select", { role: job.label }) }}
                         className="inline-flex min-h-9 items-center rounded-md border border-border bg-foreground/[0.02] px-2.5 text-xs font-medium text-foreground/80 transition-colors hover:border-foreground/20 hover:bg-foreground/[0.05] hover:text-foreground"
                     >
                         {job.label}
@@ -887,10 +922,10 @@ export default function CVAnalyzer() {
                                             onClick={() => {
                                                 const encoded = encodeResults(results)
                                                 if (!encoded) return
-                                                const url = `${window.location.origin}${window.location.pathname}#r=${encoded}`
-                                                window.history.replaceState(null, "", `#r=${encoded}`)
+                                                const url = `${window.location.origin}${window.location.pathname}${SHARE_PREFIX}${encoded}`
                                                 navigator.clipboard.writeText(url).catch(() => {})
                                                 setShareCopied(true)
+                                                track("share_result", { score: results.score })
                                                 setTimeout(() => setShareCopied(false), 2000)
                                             }}
                                             className="-ml-1 mt-3 inline-flex min-h-11 items-center gap-1.5 rounded-md px-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -966,6 +1001,7 @@ export default function CVAnalyzer() {
                                             <p className="min-w-0 flex-1 truncate text-xs text-muted-foreground">{applyUrl}</p>
                                             <a
                                                 href={applyUrl}
+                                                onClick={() => track("job_post_open", { score: results.score })}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-foreground px-3.5 text-[13px] font-semibold text-background transition-opacity hover:opacity-90"
@@ -1026,6 +1062,7 @@ export default function CVAnalyzer() {
                                                     onClick={() => {
                                                         navigator.clipboard.writeText(results.topJobSignals.map(s => s.word).join(", ")).catch(() => {})
                                                         setKeywordsCopied(true)
+                                                        track("keywords_copy", { count: results.topJobSignals.length })
                                                         setTimeout(() => setKeywordsCopied(false), 2000)
                                                     }}
                                                     className="-m-2 inline-flex min-h-11 shrink-0 items-center gap-1.5 p-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -1065,6 +1102,7 @@ export default function CVAnalyzer() {
                                                                 <li key={m.key}>
                                                                     <a
                                                                         href={resource.url}
+                                                                        onClick={() => track("course_click", { skill: m.key, priority: m.priority })}
                                                                         target="_blank"
                                                                         rel="noopener noreferrer"
                                                                         className="group flex items-center gap-3 bg-foreground/[0.01] px-4 py-3 transition-colors hover:bg-foreground/[0.04]"

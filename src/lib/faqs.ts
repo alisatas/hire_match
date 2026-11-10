@@ -36,7 +36,7 @@ export const FAQS: { q: string; a: string }[] = [
     },
     {
         q: "Does CVXray store or share my resume data?",
-        a: "No. CVXray never stores or logs your CV. PDF text is extracted server-side and immediately discarded — never written to any database. The match analysis runs in your browser, and nothing is retained after your session ends.",
+        a: "No. CVXray never stores or logs your CV. PDF text is extracted server-side and immediately discarded — never written to any database. The match analysis runs in your browser, and nothing is retained after your session ends. If you accept cookies, anonymous usage statistics (such as page views and whether an analysis was completed) are collected to improve the site and measure our ads — never the content of your CV.",
     },
     {
         q: "Can I use CVXray on my phone?",

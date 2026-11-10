@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import { cn } from "@/lib/utils"
+import { track } from "@/lib/analytics"
 
 // ─────────────────────────────────────────────
 // Presentational primitives for the analyzer.
@@ -249,7 +250,7 @@ export function FeedbackRating() {
                             aria-checked={rating === value}
                             aria-label={r.label}
                             title={r.label}
-                            onClick={() => setRating(value)}
+                            onClick={() => { setRating(value); track("score_rating", { rating: value }) }}
                             onMouseEnter={() => setHover(value)}
                             onFocus={() => setHover(value)}
                             onBlur={() => setHover(0)}

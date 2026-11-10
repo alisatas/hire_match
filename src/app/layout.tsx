@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
+import Script from "next/script";
+import { ConsentBanner } from "@/components/consent/consent-banner";
+import { GTM_ID, consentBootstrapScript, gtmLoaderScript } from "@/lib/analytics";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -131,6 +134,8 @@ export default function RootLayout({
       <head>
         <meta name="color-scheme" content="light" />
         <meta name="theme-color" content="#fafafa" />
+        {/* Consent Mode defaults must run before Google Tag Manager loads */}
+        {GTM_ID && <script dangerouslySetInnerHTML={{ __html: consentBootstrapScript() }} />}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -142,6 +147,12 @@ export default function RootLayout({
           {children}
         </div>
         <Analytics />
+        {GTM_ID && (
+          <>
+            <Script id="gtm-loader" strategy="afterInteractive">{gtmLoaderScript(GTM_ID)}</Script>
+            <ConsentBanner />
+          </>
+        )}
       </body>
     </html>
   );

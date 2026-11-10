@@ -101,7 +101,7 @@ CVXray advantage: completely free, no limits, fully private, instant results.
 
 ## Privacy model
 
-CVXray is privacy-first by design. When a user uploads a PDF, the file is sent to a server-side extraction route which parses the text and immediately discards the data — nothing is written to any database, log, or storage. When a user pastes CV text directly, it never leaves the browser at all. The CV matching analysis always runs client-side in the browser. CVXray stores no user data, no CV content, no session data, and requires no account.
+CVXray is privacy-first by design. When a user uploads a PDF, the file is sent to a server-side extraction route which parses the text and immediately discards the data — nothing is written to any database, log, or storage. When a user pastes CV text directly, it never leaves the browser at all. The CV matching analysis always runs client-side in the browser. CVXray stores no CV content and requires no account. With the visitor's consent, anonymous usage statistics (page views, whether an analysis was completed) are collected to improve the site; CV and job-description text are never included.
 
 ## Tech stack
 

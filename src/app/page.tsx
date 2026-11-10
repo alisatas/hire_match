@@ -1,5 +1,6 @@
 import Link from "next/link";
 import CVAnalyzer from "@/components/features/cv-analyzer";
+import { CookieSettingsButton } from "@/components/consent/consent-banner";
 import { FAQS } from "@/lib/faqs";
 import { ArrowRight, ChevronDown, FileText, Gauge, Link2, Lock, ShieldCheck, Sparkles, Zap } from "lucide-react";
 
@@ -89,7 +90,7 @@ export default function Home() {
             Upload your CV and drop in a job link. See how well you fit the role, which keywords you&apos;re missing, and free courses to close every gap.
           </p>
           <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[13px] text-muted-foreground">
-            <li className="inline-flex items-center gap-1.5"><Lock className="size-3.5 text-primary" />Private — nothing stored</li>
+            <li className="inline-flex items-center gap-1.5"><Lock className="size-3.5 text-primary" />Private — your CV is never stored</li>
             <li className="inline-flex items-center gap-1.5"><Zap className="size-3.5 text-primary" />Results in seconds</li>
             <li className="inline-flex items-center gap-1.5"><ShieldCheck className="size-3.5 text-primary" />No sign-up, no limits</li>
           </ul>
@@ -151,6 +152,7 @@ export default function Home() {
           <nav aria-label="Footer" className="flex items-center gap-5">
             <a href="#how-it-works" className="transition-colors hover:text-foreground">How it works</a>
             <a href="#faq" className="transition-colors hover:text-foreground">FAQ</a>
+            <CookieSettingsButton />
           </nav>
         </div>
       </footer>
