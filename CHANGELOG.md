@@ -1,3 +1,10 @@
+## [1.21.3](https://github.com/alisatas/hire_match/compare/v1.21.2...v1.21.3) (2026-11-10)
+
+
+### Bug Fixes
+
+* validate every redirect hop in scrape route; remove telegram and twitter integrations ([b43b998](https://github.com/alisatas/hire_match/commit/b43b9983446871f1ae7838c55a28ce50db163aa9))
+
 ## [1.21.2](https://github.com/alisatas/hire_match/compare/v1.21.1...v1.21.2) (2026-11-10)
 
 
