@@ -9,8 +9,7 @@
     "lint": "next lint .",
     "prepare": "husky",
     "release": "semantic-release",
-    "instagram:post": "node --env-file=.env.local scripts/instagram-post.mjs",
-    "twitter:post": "node --env-file=.env.local scripts/twitter-post.mjs"
+    "instagram:post": "node --env-file=.env.local scripts/instagram-post.mjs"
   },
   "lint-staged": {
     "*.{ts,tsx}": "eslint --fix"

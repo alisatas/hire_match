@@ -1,4 +1,72 @@
 import { NextResponse } from 'next/server';
+import { lookup } from 'node:dns/promises';
+import { isIP } from 'node:net';
+
+// ── SSRF guard ───────────────────────────────────────────────────────────────
+// A URL is only fetched when its host resolves exclusively to public addresses.
+// The check runs again on every redirect hop, so a public URL cannot bounce the
+// request to localhost, a private range, or a cloud metadata endpoint.
+
+const MAX_REDIRECTS = 5;
+
+function isPrivateIp(ip: string): boolean {
+    const version = isIP(ip);
+    if (version === 4) {
+        const [a, b] = ip.split('.').map(Number);
+        return a === 0 || a === 10 || a === 127 ||
+            (a === 169 && b === 254) ||             // link-local + cloud metadata
+            (a === 172 && b >= 16 && b <= 31) ||
+            (a === 192 && b === 168) ||
+            (a === 100 && b >= 64 && b <= 127) ||   // carrier-grade NAT
+            a >= 224;                               // multicast + reserved
+    }
+    if (version === 6) {
+        const lower = ip.toLowerCase();
+        return lower === '::' || lower === '::1' ||
+            lower.startsWith('::ffff:') ||          // IPv4-mapped (any form)
+            lower.startsWith('fc') || lower.startsWith('fd') || // unique local fc00::/7
+            /^fe[89ab]/.test(lower);                // link-local fe80::/10
+    }
+    return true; // not an IP literal — treat as unsafe
+}
+
+// Returns the parsed URL when it is safe to fetch, otherwise null.
+async function toPublicUrl(raw: string): Promise<URL | null> {
+    let parsed: URL;
+    try {
+        parsed = new URL(raw);
+    } catch {
+        return null;
+    }
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return null;
+
+    // URL.hostname wraps IPv6 literals in brackets ("[::1]") — strip them before checking
+    const host = parsed.hostname.toLowerCase().replace(/^\[|\]$/g, '').replace(/\.$/, '');
+    if (!host || host === 'localhost' || host.endsWith('.localhost') ||
+        host.endsWith('.local') || host.endsWith('.internal')) {
+        return null;
+    }
+
+    if (isIP(host)) return isPrivateIp(host) ? null : parsed;
+
+    // Resolve the name: a public-looking hostname can still point at a private address
+    // DNS has no built-in deadline, so a slow resolver is cut off after 3s
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+        const addresses = await Promise.race([
+            lookup(host, { all: true }),
+            new Promise<never>((_, reject) => {
+                timer = setTimeout(() => reject(new Error('DNS timeout')), 3000);
+            }),
+        ]);
+        if (addresses.length === 0 || addresses.some(a => isPrivateIp(a.address))) return null;
+    } catch {
+        return null;
+    } finally {
+        clearTimeout(timer);
+    }
+    return parsed;
+}
 
 export function extractCompanyFromHtml(html: string): string {
     // LinkedIn: <title>Company Name hiring Job Title ... | LinkedIn</title>
@@ -69,47 +137,44 @@ export async function POST(req: Request) {
 
         const normalized = normalizeLinkedInUrl(url);
 
-        // Block SSRF — reject private/loopback addresses
-        try {
-            const parsed = new URL(normalized);
-            const hostname = parsed.hostname.toLowerCase();
-            // Block SSRF: private/loopback/link-local/metadata addresses
-            const isPrivate =
-                hostname === "localhost" ||
-                hostname === "0.0.0.0" ||
-                hostname === "::1" ||
-                hostname.endsWith(".local") ||
-                hostname.startsWith("127.") ||
-                hostname.startsWith("10.") ||
-                hostname.startsWith("192.168.") ||
-                // Docker bridge + private range 172.16.0.0/12
-                /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(hostname) ||
-                // AWS/GCP/Azure metadata endpoints
-                hostname === "169.254.169.254" ||
-                hostname.startsWith("169.254.") ||
-                hostname === "metadata.google.internal"
-            if (isPrivate) {
-                return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
-            }
-        } catch {
-            return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
-        }
-
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 15000);
 
-        let response: Response;
+        let response: Response | null = null;
         try {
-            response = await fetch(normalized, {
-                signal: controller.signal,
-                headers: {
-                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                    'Accept-Language': 'en-US,en;q=0.9',
+            let current = normalized;
+            for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
+                const safeUrl = await toPublicUrl(current);
+                if (!safeUrl) {
+                    return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
                 }
-            });
+
+                // Redirects are followed by hand so each hop is validated above
+                const res = await fetch(safeUrl, {
+                    signal: controller.signal,
+                    redirect: 'manual',
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+                        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                        'Accept-Language': 'en-US,en;q=0.9',
+                    }
+                });
+
+                const location = res.headers.get('location');
+                if (res.status >= 300 && res.status < 400 && location) {
+                    current = new URL(location, safeUrl).toString();
+                    continue;
+                }
+                response = res;
+                break;
+            }
         } finally {
             clearTimeout(timeout);
+        }
+
+        // Too many redirects
+        if (!response) {
+            return NextResponse.json({ requiresPaste: true }, { status: 422 });
         }
 
         if (!response.ok) {

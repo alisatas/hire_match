@@ -71,7 +71,6 @@ Think like a senior engineer who has dealt with real production breaches. Don't 
 **HTTP security:**
 - Are `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, and `Content-Security-Policy` set in `next.config.ts`?
 - Does CSP allow `unsafe-inline` or `unsafe-eval`? If so, flag it.
-- Is the Telegram webhook protected by secret token validation on every request?
 
 **File upload:**
 - Is PDF size capped before the buffer is read (not after)?
@@ -137,19 +136,14 @@ Think like someone who has designed APIs at scale and knows exactly how they get
 - Is there a page count limit on PDFs? A 10,000-page PDF could exhaust memory even if under 5MB compressed.
 - Does the route return the raw `err.message` from `unpdf` in any code path? Stack traces in API responses are an information leak.
 
-**Telegram webhook:**
-- Is the secret token comparison done with a constant-time comparison? Timing attacks on string equality are a real concern for webhook secrets.
-- If `TELEGRAM_BOT_TOKEN` is undefined, does the route fail safely (500) or proceed with a broken `TG` URL that could leak request structure?
-- Does the `after()` background task have error handling? An unhandled rejection in `after()` is invisible.
-
 **Response hygiene:**
 - Do any routes return stack traces or internal error messages to the caller?
 - Are all `NextResponse.json()` calls using correct `status` codes — no accidental `200` on error paths?
 - Do routes set `Cache-Control: no-store` on sensitive endpoints to prevent CDN caching of error responses?
 
-**Files to read:** `src/app/api/scrape/route.ts`, `src/app/api/extract-pdf/route.ts`, `src/app/api/telegram/webhook/route.ts`
-**Blocks push on:** 🔴 Stack trace leak, missing body size cap before read, broken auth on webhook
-**Warn on:** 🟡 Missing content-type check on scrape response, no constant-time token comparison, no response body size limit
+**Files to read:** `src/app/api/scrape/route.ts`, `src/app/api/extract-pdf/route.ts`
+**Blocks push on:** 🔴 Stack trace leak, missing body size cap before read
+**Warn on:** 🟡 Missing content-type check on scrape response, no response body size limit
 
 ---
 

@@ -7,7 +7,6 @@ const LIMITS: Record<string, number> = {
     "/api/extract-pdf":         10,   // PDF processing
     "/api/scrape":              15,   // External URL fetch
     "/api/interview-questions": 20,
-    "/api/tweet":               10,
     "/api/reddit-comment":      10,
 }
 

@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────
 // SHARED ANALYSIS ENGINE
-// Used by: cv-analyzer.tsx (client) + telegram webhook (server)
+// Used by: cv-analyzer.tsx (client)
 // ─────────────────────────────────────────────
 
 export const SKILL_GROUPS: Record<string, string[]> = {

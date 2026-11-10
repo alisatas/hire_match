@@ -158,3 +158,23 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - 🟡 CSP still allows `script-src 'unsafe-inline'`; `connect-src 'self' https:` is broad (carried forward)
 
 - `tsc --noEmit`: 0 errors ✅ (Node 22.23.4). ESLint: 3 errors, all `react-hooks/set-state-in-effect` in `cv-analyzer.tsx` (lines 313, 322, 329) — not from this cycle's changes; the husky hook treats ESLint as non-blocking.
+
+---
+
+## 2026-11-10 — Push 11 (SSRF guard rewrite + Telegram and Twitter integrations removed)
+
+**Status:** ✅ PASS (0 critical, 1 medium)
+
+Fixes for the two 🟡 findings from Push 10:
+
+- `/api/scrape`: redirects are now followed by hand (`redirect: "manual"`, max 5 hops) and every hop goes through `toPublicUrl()` before it is fetched ✅
+- `toPublicUrl()` strips IPv6 brackets, rejects non-http(s) schemes, blocks loopback / private / link-local / CGNAT / IPv4-mapped ranges, and resolves hostnames via DNS so a public-looking name pointing at a private IP is rejected (3s DNS deadline) ✅
+- Tested against the dev server: `localhost`, `[::1]`, `[::ffff:127.0.0.1]`, `169.254.169.254`, `127.0.0.1.nip.io`, `localtest.me` → all 400; a public http→https redirect is followed and returns 200 ✅
+- Not exercised live: a public URL redirecting to a private address (the public redirector services tried returned 403). Covered by construction — each hop runs the same check.
+- Telegram bot removed entirely (`/api/telegram/webhook` deleted) at the owner's request — the unauthenticated `/deploy` finding no longer applies ✅
+- Twitter/X posting removed: `/api/tweet`, `scripts/twitter-post.mjs`, `scripts/twitter-campaign.mjs` and the `twitter:post` npm script deleted — two fewer credential-bearing endpoints ✅
+- Follow-up outside the repo: delete the bot's webhook with Telegram, and remove the `TELEGRAM_*`, `TWITTER_*` and deploy-hook variables from Vercel if nothing else uses them
+- 🟡 Residual: DNS rebinding between the check and the fetch is still theoretically possible (the fetch resolves the name again). Closing it needs pinning the connection to the checked IP.
+- 🟡 CSP `unsafe-inline` carried forward
+- `tsc --noEmit`: 0 errors; ESLint on `src/app/api`: clean ✅
+

@@ -62,7 +62,6 @@ End with: **Summary: X critical, Y medium, Z minor**`,
             `## analyze.ts (shared engine)\n${readFile("src/lib/analyze.ts")}`,
             `## scrape route\n${readFile("src/app/api/scrape/route.ts")}`,
             `## extract-pdf route\n${readFile("src/app/api/extract-pdf/route.ts")}`,
-            `## telegram webhook\n${readFile("src/app/api/telegram/webhook/route.ts")}`,
         ].join("\n\n"),
     },
 
@@ -114,7 +113,6 @@ For each finding:
             `## extract-pdf route\n${readFile("src/app/api/extract-pdf/route.ts")}`,
             `## agents login\n${readFile("src/app/api/agents/login/route.ts")}`,
             `## agents run\n${readFile("src/app/api/agents/run/route.ts")}`,
-            `## telegram webhook\n${readFile("src/app/api/telegram/webhook/route.ts")}`,
             `## proxy/middleware\n${readFile("src/proxy.ts")}`,
             `## next.config.ts\n${readFile("next.config.ts")}`,
         ].join("\n\n"),
@@ -261,7 +259,6 @@ For each finding:
             `## extract-pdf route\n${readFile("src/app/api/extract-pdf/route.ts")}`,
             `## agents login\n${readFile("src/app/api/agents/login/route.ts")}`,
             `## agents run\n${readFile("src/app/api/agents/run/route.ts")}`,
-            `## telegram webhook\n${readFile("src/app/api/telegram/webhook/route.ts")}`,
         ].join("\n\n"),
     },
 
@@ -276,7 +273,6 @@ For each finding:
 - **Prompt injection**: user-controlled content injected into AI prompts — can the attacker override instructions, extract system prompts, or cause the model to perform unintended actions?
 - **SSRF**: server-side request forgery via user-supplied URLs — can an attacker reach internal services, cloud metadata endpoints (169.254.169.254), or localhost?
 - **Path traversal**: file path inputs that could escape the intended directory
-- **HTML/Script injection**: user content rendered in Telegram HTML mode without sanitisation
 - **PDF polyglot / parser confusion**: malicious PDFs that exploit parser quirks or embed executable payloads
 
 **Authentication Bypass**
@@ -287,7 +283,6 @@ For each finding:
 **Resource Abuse**
 - Can an unauthenticated attacker trigger expensive AI API calls at scale?
 - Can the scraper be weaponised as a proxy to attack third-party sites?
-- Webhook replay: can Telegram webhook calls be replayed or spoofed?
 
 **Information Disclosure**
 - What does an attacker learn from error messages, stack traces, or differing responses?
@@ -302,7 +297,6 @@ For each finding:
             `## scrape route\n${readFile("src/app/api/scrape/route.ts")}`,
             `## extract-pdf route\n${readFile("src/app/api/extract-pdf/route.ts")}`,
             `## agents run\n${readFile("src/app/api/agents/run/route.ts")}`,
-            `## telegram webhook\n${readFile("src/app/api/telegram/webhook/route.ts")}`,
             `## proxy/middleware\n${readFile("src/proxy.ts")}`,
         ].join("\n\n"),
     },

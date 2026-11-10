@@ -31,7 +31,6 @@ Built with **Next.js 16**, **React 19**, **TypeScript**, and powered by a multi-
 2. **Paste a job URL or description** — scraper fetches job listings from any public URL
 3. **Instant analysis** — 40+ skill categories, keyword overlap, and match percentage
 4. **AI Agents Panel** — 9 specialist AI agents that audit the codebase in the browser
-5. **Telegram Bot** — receive match results via Telegram webhook
 
 Your CV data never leaves your device. All analysis is local. Zero accounts required.
 
@@ -256,7 +255,6 @@ The app architecture is visualized on a live [Excalidraw](https://excalidraw.com
 The canvas shows the full app flow:
 - Main user journey: Upload CV → Scrape URL → Analyze → Score → Results
 - Agents Panel branch (left side)
-- Telegram Bot branch (right side)
 
 **The canvas auto-updates** after every Claude Code session via a Stop hook:
 

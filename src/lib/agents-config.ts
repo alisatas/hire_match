@@ -61,7 +61,6 @@ Check for:
 - SSRF: does the scraper block ALL private/loopback/metadata IPs including IPv6 and DNS rebinding vectors?
 - Secrets: are any .env files tracked in git? Any hardcoded tokens? Any console.log that could leak CV text or tokens to Vercel logs?
 - HTTP security headers: X-Frame-Options, X-Content-Type-Options, Referrer-Policy, CSP — are they present? Does CSP allow unsafe-inline or unsafe-eval?
-- Webhook auth: is the Telegram webhook verified on every single request with a constant-time comparison?
 - File upload: is PDF size checked BEFORE the buffer is read? Is MIME type validated server-side?
 - Rate limiting: are /api/scrape and /api/extract-pdf rate-limited? If not, they're open to abuse.
 - Response hygiene: do any routes return stack traces or internal error messages to callers?
@@ -91,11 +90,10 @@ Check for:
 - Stack trace leaks: do any catch blocks return err.message or err.stack in the response body?
 - Status codes: are there any accidental 200 responses on error paths?
 - AbortController: does the 15s timeout actually cancel the upstream fetch or just stop waiting?
-- Constant-time comparison: is the Telegram secret token compared with === (timing-attackable) or a constant-time method?
 - Cache-Control: do sensitive endpoints set no-store to prevent CDN caching of responses?
 
 Rate each: 🔴 Critical / 🟡 Medium / 🟢 Low. Suggest concrete fixes.`,
-        getContext: () => `## scrape route\n${readFile("src/app/api/scrape/route.ts")}\n\n## extract-pdf route\n${readFile("src/app/api/extract-pdf/route.ts")}\n\n## telegram webhook\n${readFile("src/app/api/telegram/webhook/route.ts")}`,
+        getContext: () => `## scrape route\n${readFile("src/app/api/scrape/route.ts")}\n\n## extract-pdf route\n${readFile("src/app/api/extract-pdf/route.ts")}`,
     },
     ui: {
         label: "UI/UX Engineer",
