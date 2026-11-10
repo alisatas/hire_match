@@ -1,3 +1,10 @@
+## [1.21.2](https://github.com/alisatas/hire_match/compare/v1.21.1...v1.21.2) (2026-11-10)
+
+
+### Bug Fixes
+
+* match skill aliases as whole terms; add social profiles to JSON-LD ([8c0d5ac](https://github.com/alisatas/hire_match/commit/8c0d5ac63f7a24629cc2bbcb04fc118dc274f0ef))
+
 ## [1.21.1](https://github.com/alisatas/hire_match/compare/v1.21.0...v1.21.1) (2026-05-17)
 
 
