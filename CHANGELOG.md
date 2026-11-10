@@ -1,3 +1,10 @@
+## [1.22.2](https://github.com/alisatas/hire_match/compare/v1.22.1...v1.22.2) (2026-11-10)
+
+
+### Bug Fixes
+
+* tighten the hero so the analyzer shows above the fold ([d2489d5](https://github.com/alisatas/hire_match/commit/d2489d5e1e3bf681826d34d1b8c073fa12eb794a))
+
 ## [1.22.1](https://github.com/alisatas/hire_match/compare/v1.22.0...v1.22.1) (2026-11-10)
 
 
