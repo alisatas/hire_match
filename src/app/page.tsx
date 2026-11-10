@@ -76,19 +76,19 @@ export default function Home() {
 
       <main>
         {/* Hero */}
-        <section className="mx-auto max-w-4xl px-4 pb-12 pt-16 text-center sm:px-6 sm:pt-24 lg:pb-16">
+        <section className="mx-auto max-w-5xl px-4 pb-8 pt-10 text-center sm:px-6 sm:pt-14 lg:pb-10">
           <span className="inline-flex items-center gap-2 rounded-full border border-border bg-foreground/[0.03] px-3 py-1 text-xs font-medium text-muted-foreground">
             <Sparkles className="size-3.5 text-primary" />
             Free CV-to-job match analysis
           </span>
-          <h1 className="mt-6 text-4xl font-semibold tracking-[-0.035em] text-foreground text-balance sm:text-6xl lg:text-7xl">
+          <h1 className="mt-5 text-4xl font-semibold tracking-[-0.035em] text-foreground text-balance sm:text-5xl lg:text-6xl">
             Does your CV{" "}
             <span className="bg-gradient-to-b from-primary to-primary/60 bg-clip-text text-transparent">match the job?</span>
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground text-pretty sm:text-lg">
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground text-pretty sm:text-[17px]">
             Upload your CV and drop in a job link. See how well you fit the role, which keywords you&apos;re missing, and free courses to close every gap.
           </p>
-          <ul className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[13px] text-muted-foreground">
+          <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[13px] text-muted-foreground">
             <li className="inline-flex items-center gap-1.5"><Lock className="size-3.5 text-primary" />Private — nothing stored</li>
             <li className="inline-flex items-center gap-1.5"><Zap className="size-3.5 text-primary" />Results in seconds</li>
             <li className="inline-flex items-center gap-1.5"><ShieldCheck className="size-3.5 text-primary" />No sign-up, no limits</li>
