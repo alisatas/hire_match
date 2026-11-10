@@ -213,38 +213,67 @@ export function StepLabel({ n, children, action }: { n: number; children: React.
 
 // ── Feedback ────────────────────────────────────────────────────────────────
 
-const RATING_LABELS = ["Way off", "Somewhat off", "About right", "Accurate", "Spot on"]
+const RATINGS = [
+    { emoji: "😔", label: "Way off" },
+    { emoji: "😕", label: "Somewhat off" },
+    { emoji: "😐", label: "About right" },
+    { emoji: "🙂", label: "Accurate" },
+    { emoji: "😍", label: "Spot on" },
+]
 
 export function FeedbackRating() {
     const [rating, setRating] = useState(0)
+    const [hover, setHover] = useState(0)
+    const shown = hover || rating
     return (
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <p className="text-sm font-medium text-foreground">Was this score accurate?</p>
                 <p className="text-xs text-muted-foreground" aria-live="polite">
-                    {rating ? `Thanks — you rated it “${RATING_LABELS[rating - 1]}”.` : "Your rating helps tune the scoring engine."}
+                    {rating
+                        ? `Thanks — you rated it “${RATINGS[rating - 1].label}”.`
+                        : shown
+                        ? RATINGS[shown - 1].label
+                        : "Your rating helps tune the scoring engine."}
                 </p>
             </div>
-            <div className="flex gap-1" role="radiogroup" aria-label="Rate the accuracy of this score">
-                {RATING_LABELS.map((label, i) => (
-                    <button
-                        key={label}
-                        type="button"
-                        role="radio"
-                        aria-checked={rating === i + 1}
-                        aria-label={label}
-                        title={label}
-                        onClick={() => setRating(i + 1)}
-                        className={cn(
-                            "flex size-11 items-center justify-center rounded-lg border text-sm font-medium tabular-nums transition-colors",
-                            rating >= i + 1
-                                ? "border-primary/40 bg-primary/15 text-primary"
-                                : "border-border bg-foreground/[0.02] text-muted-foreground hover:border-foreground/20 hover:text-foreground",
-                        )}
-                    >
-                        {i + 1}
-                    </button>
-                ))}
+            <div className="flex gap-1.5" role="radiogroup" aria-label="Rate the accuracy of this score" onMouseLeave={() => setHover(0)}>
+                {RATINGS.map((r, i) => {
+                    const value = i + 1
+                    const active = shown === value
+                    return (
+                        <button
+                            key={r.label}
+                            type="button"
+                            role="radio"
+                            aria-checked={rating === value}
+                            aria-label={r.label}
+                            title={r.label}
+                            onClick={() => setRating(value)}
+                            onMouseEnter={() => setHover(value)}
+                            onFocus={() => setHover(value)}
+                            onBlur={() => setHover(0)}
+                            className={cn(
+                                "flex size-11 items-center justify-center rounded-xl border text-[22px] leading-none transition-all duration-200",
+                                active
+                                    ? "scale-110 border-primary/40 bg-primary/10 shadow-[0_4px_14px_-6px_color-mix(in_oklch,var(--primary)_60%,transparent)]"
+                                    : rating === value
+                                    ? "border-primary/30 bg-primary/[0.06]"
+                                    : "border-border bg-foreground/[0.02] hover:border-foreground/20",
+                            )}
+                        >
+                            <span
+                                className={cn(
+                                    "select-none transition-[filter,opacity] duration-200",
+                                    active || rating === value ? "opacity-100 grayscale-0" : "opacity-50 grayscale",
+                                )}
+                                aria-hidden
+                            >
+                                {r.emoji}
+                            </span>
+                        </button>
+                    )
+                })}
             </div>
         </div>
     )
