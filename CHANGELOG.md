@@ -1,3 +1,10 @@
+## [1.22.1](https://github.com/alisatas/hire_match/compare/v1.22.0...v1.22.1) (2026-11-10)
+
+
+### Bug Fixes
+
+* exclude the cv-scorer submodule from type-checking and lint ([c8cd56b](https://github.com/alisatas/hire_match/commit/c8cd56bcb605ea924ebaae8cb61c680a2902aad8))
+
 # [1.22.0](https://github.com/alisatas/hire_match/compare/v1.21.5...v1.22.0) (2026-11-10)
 
 
