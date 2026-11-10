@@ -149,3 +149,17 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 - Subheadline: "ATS match score" → "instantly see how well you fit the role, what keywords you're missing" — clearer to non-technical job seekers ✅
 - No layout changes, no tap target regressions ✅
+
+---
+
+## 2026-11-10 — Push 10 (Whole-term skill matching + SEO entity links)
+
+**Status:** ⚠️ WARN (0 critical, 3 medium)
+
+- No UI changes this cycle. Skill chips will change for users: phantom "TypeScript" / "AI / LLM" / "Machine Learning" matches no longer appear (see math log) ✅
+- Score circle `aria-label` is now present (`Match score: N%`, `role="img"`) — recurring warning from Pushes 5–8 is fixed ✅
+- 🟡 Tap targets under 44px: "Paste text instead" (10px text, no padding), "Change", "Share results", "Copy all"
+- 🟡 Error text (`{error}`) has no `role="alert"` / `aria-live`, so screen readers are not told about validation errors
+- 🟡 Score tiers disagree: persona labels switch at 78/58/38, the Next Steps card and FAQ at 70/45 — a 60% result reads "Strong Contender" next to "Decent match — close gaps"
+
+- `tsc --noEmit`: 0 errors ✅ (Node 22.23.4). ESLint: 3 errors, all `react-hooks/set-state-in-effect` in `cv-analyzer.tsx` (lines 313, 322, 329) — not from this cycle's changes; the husky hook treats ESLint as non-blocking.

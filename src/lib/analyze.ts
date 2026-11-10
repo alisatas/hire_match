@@ -40,14 +40,17 @@ export const SKILL_GROUPS: Record<string, string[]> = {
     terraform: ["terraform", "infrastructure as code", "iac"],
     // Testing
     jest: ["jest", "vitest", "unit test", "unit testing"],
-    cypress: ["cypress", "playwright", "selenium", "e2e", "end-to-end"],
+    // "end-to-end" alone is a generic phrase ("own it end-to-end") — require the testing context
+    cypress: ["cypress", "playwright", "selenium", "e2e", "end-to-end test", "end-to-end testing"],
     testing: ["testing", "tdd", "bdd", "qa", "quality assurance"],
     // Tools & Practices
     git: ["git", "github", "gitlab", "version control"],
     agile: ["agile", "scrum", "kanban", "sprint", "jira"],
     api: ["rest", "restful", "api", "microservices", "openapi", "swagger"],
     linux: ["linux", "unix", "bash", "shell", "terminal"],
-    figma: ["figma", "design", "ux", "ui design", "wireframe"],
+    // bare "design" removed: as a verb ("design and build services") it flagged Figma / UX
+    // as a gap on backend and DevOps roles
+    figma: ["figma", "ux", "ui design", "ux design", "product design", "design system", "wireframe"],
     // Data & AI
     ml: ["machine learning", "ml", "tensorflow", "pytorch", "scikit-learn"],
     data: ["data analysis", "pandas", "numpy", "data science", "analytics"],
@@ -110,11 +113,46 @@ function normalizeText(text: string): string {
     return text.toLowerCase().replace(/[^a-z0-9.#+\s]/g, " ")
 }
 
+// Math Prof improvement: whole-term alias matching.
+// Aliases used to be matched with a raw substring test, so short aliases fired
+// inside unrelated words: "ts" in "requirements", "ai" in "maintain", "ml" in
+// "html", "java" in "javascript", "rust" in "trust", "rag" in "leverage".
+// Almost every job and CV therefore "contained" TypeScript, AI, etc., which
+// inflated both the matched list and the missing list and blurred the score.
+// An alias now only counts when it is not glued to other letters/digits.
+// A trailing plural "s" is tolerated for aliases of 3+ chars ("apis", "pipelines").
+function isAlnum(ch: string | undefined): boolean {
+    return ch !== undefined && /[a-z0-9]/.test(ch)
+}
+
+function countAlias(normalized: string, alias: string): number {
+    let count = 0
+    let pos = 0
+    while ((pos = normalized.indexOf(alias, pos)) !== -1) {
+        const end = pos + alias.length
+        const after = normalized[end]
+        const startOk = !isAlnum(normalized[pos - 1])
+        const endOk = !isAlnum(after) ||
+            (alias.length >= 3 && after === "s" && !isAlnum(normalized[end + 1]))
+        if (startOk && endOk) count++
+        pos = end
+    }
+    return count
+}
+
+// Aliases are normalised the same way as the text, so aliases containing "-" or
+// "/" ("end-to-end", "scikit-learn", "ci/cd") can actually match; before this
+// they never did, because normalizeText() turns those characters into spaces.
+// De-duplicated so "ci/cd" and "ci cd" are not counted twice.
+const NORMALIZED_SKILL_GROUPS: [string, string[]][] = Object.entries(SKILL_GROUPS).map(
+    ([key, aliases]) => [key, [...new Set(aliases.map(a => normalizeText(a).trim()))]]
+)
+
 function extractSkills(text: string): Set<string> {
     const normalized = normalizeText(text)
     const found = new Set<string>()
-    for (const [key, aliases] of Object.entries(SKILL_GROUPS)) {
-        if (aliases.some(alias => normalized.includes(alias))) {
+    for (const [key, aliases] of NORMALIZED_SKILL_GROUPS) {
+        if (aliases.some(alias => countAlias(normalized, alias) > 0)) {
             found.add(key)
         }
     }
@@ -125,15 +163,10 @@ function extractSkills(text: string): Set<string> {
 function extractSkillFrequencies(text: string): Map<string, number> {
     const normalized = normalizeText(text)
     const freq = new Map<string, number>()
-    for (const [key, aliases] of Object.entries(SKILL_GROUPS)) {
+    for (const [key, aliases] of NORMALIZED_SKILL_GROUPS) {
         let count = 0
         for (const alias of aliases) {
-            // count non-overlapping occurrences
-            let pos = 0
-            while ((pos = normalized.indexOf(alias, pos)) !== -1) {
-                count++
-                pos += alias.length
-            }
+            count += countAlias(normalized, alias)
         }
         if (count > 0) freq.set(key, count)
     }

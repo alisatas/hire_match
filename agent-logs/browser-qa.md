@@ -127,3 +127,17 @@ Agents MUST read this log before running checks and MUST append an entry after e
 **Status:** ✅ PASS (0 critical)
 
 - Copy-only change — no hydration risk, no console errors ✅
+
+---
+
+## 2026-11-10 — Push 10 (Whole-term skill matching + SEO entity links)
+
+**Status:** ✅ PASS (0 critical, 2 medium)
+
+- `/` loads on the dev server (Next 16.4.6, Node 22.23.4) ✅
+- Flow run in the browser: paste CV text → load "Frontend Dev" sample → Analyze → results render with score 63, 18/18 skill categories, no phantom "AI / LLM" chip ✅
+- Share hash (`#r=`) written to the URL after analysis ✅; no horizontal overflow at 722px ✅
+- `tsc --noEmit`: 0 errors ✅
+- 🟡 ESLint: 3 errors (`react-hooks/set-state-in-effect`) in `cv-analyzer.tsx` effects that call `setState` synchronously (history load, hash load, interview fetch reset)
+- 🟡 Dev-only console error: `@vercel/analytics` debug script (`va.vercel-scripts.com`) is blocked by the CSP `script-src`. Production loads the same-origin `/_vercel/insights/script.js`, so this should not affect prod — not verified against production.
+- Not covered: PDF upload, job-URL scraping, 375px mobile layout, keyboard-only navigation

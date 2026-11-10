@@ -171,3 +171,27 @@ Agents MUST read this log before running checks and MUST append an entry after e
 **Running improvement backlog (next pushes):**
 1. Add `sameAs` entries for Twitter/Instagram social profiles in JSON-LD Organization node
 2. Add schema.org `HowTo` structured data to the "How It Works" section
+
+---
+
+## 2026-11-10 — Push 10 (Whole-term skill matching + SEO entity links)
+
+**Status:** ✅ PASS (2 improvements implemented, 3 medium)
+
+- Title, meta description, OG + Twitter tags, canonical present ✅; JSON-LD graph (WebApplication, Organization, HowTo, FAQPage) well-formed ✅
+- Live `https://cvxray.com/robots.txt` matches `robots.ts` (allows `/`, blocks `/api/`, sitemap on cvxray.com) ✅; `sitemap.ts` ✅; `llms.txt` ✅
+
+**Improvements implemented this cycle:**
+- JSON-LD Organization `sameAs` now lists the X (`x.com/cvxray`) and Instagram (`instagram.com/cvxray.ai`) profiles — closes backlog item 1 (entity disambiguation for Google and AI engines)
+- `llms.txt`: stale "2025" search phrases updated to 2026; duplicate "CVXray" in "Also known as" replaced with "CV X-ray"
+- HowTo schema (old backlog item 2) was already present in `layout.tsx` — removed from backlog
+
+**New warnings:**
+- 🟡 `public/robots.txt` is a stale leftover (sitemap points at `cv-scorer.vercel.app`, no `/api/` disallow). It is shadowed by `robots.ts` in production today, but should be deleted to avoid a conflict or regression.
+- 🟡 `aggregateRating` (4.9 / 128 ratings) is hardcoded with no visible review source — Google treats unsupported self-serving review markup as a structured-data violation.
+- 🟡 FAQPage JSON-LD has 16 questions but only 5 are visible on the page; Google requires marked-up FAQ content to be visible.
+
+**Running improvement backlog (next pushes):**
+1. Delete `public/robots.txt`
+2. Either show all 16 FAQs on the page or trim the JSON-LD to the visible 5
+3. Remove or substantiate `aggregateRating`

@@ -247,3 +247,30 @@ Calibration: CV with "Senior Engineer" but no explicit year count + JD requiring
 **Running improvement backlog (next pushes):**
 1. Tune adaptive keyword cap for very long JDs (> 1200 words)
 2. Investigate confidence multiplier stability for medium-length JDs (200–400 words)
+
+---
+
+## 2026-11-10 — Push 10 (Whole-term skill matching + SEO entity links)
+
+**Status:** ✅ PASS (1 improvement implemented)
+
+**Improvement: whole-term skill alias matching (`analyze.ts`)**
+
+`extractSkills` / `extractSkillFrequencies` matched aliases with a raw substring test, so short aliases fired inside unrelated words: "ts" in "requiremen**ts**", "ai" in "maint**ai**n", "ml" in "ht**ml**", "java" in "**java**script", "rust" in "t**rust**", "rag" in "leve**rag**e". In the old engine every one of 4 test CVs — including a chef and a marketer — "matched" TypeScript on every sample job.
+
+New `countAlias()` only counts an alias when it is not glued to other letters/digits (a plural "s" is tolerated for aliases of 3+ chars). Aliases are also normalised like the text, so "scikit-learn" / "styled-components" can match for the first time. Two aliases tightened as a consequence: bare "design" removed from Figma / UX (it flagged UX as a gap on backend roles via "design and build"), and "end-to-end" now requires "test"/"testing".
+
+Calibration (engine run old → new, 6 sample jobs × 4 CVs):
+- Frontend CV vs Frontend job: 63 → 63 (phantom "AI / LLM" match removed)
+- Backend CV vs Backend job: 53 → 53 (phantom TypeScript + Figma removed)
+- Chef CV vs Frontend job: 11 → 5; vs Product Manager job: 19 → 5 (was "matching" TypeScript, REST API, Figma)
+- Backend CV vs Product Manager job: 25 → 10; vs UX Designer job: 23 → 5
+- No freq=0 skill marked high-priority ✅; missing list still sorted high → medium → low ✅
+
+**Regression note (pre-existing, not caused by this change):** the Phase 1 target "strong match scores 75–95" is NOT met for short job descriptions. A near-perfect CV against the built-in ~150-word sample jobs tops out at 53–63 because the confidence multiplier is ~0.72 at that length. No obvious mismatch scores high, so this does not block.
+
+**Running improvement backlog (next pushes):**
+1. Recalibrate the confidence multiplier so a full skill match on a 150–250-word JD can reach 75+ (e.g. ramp to 1.0 by ~200 words, or apply confidence only to the keyword component)
+2. Title window: `jobText.slice(0, 120)` spills into the body for short titles — use the first line instead
+3. Remaining generic aliases to review: "rest", "pipeline", "cache", "terminal", "node"
+4. Tune adaptive keyword cap for very long JDs (> 1200 words)

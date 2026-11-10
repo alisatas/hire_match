@@ -144,3 +144,17 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 - No API routes, no new inputs, no dangerouslySetInnerHTML — purely copy change ✅
 - All previous security controls unchanged ✅
+
+---
+
+## 2026-11-10 — Push 10 (Whole-term skill matching + SEO entity links)
+
+**Status:** ⚠️ WARN (0 critical, 3 medium — all pre-existing, none introduced this cycle)
+
+- This cycle changes `src/lib/analyze.ts` (pure string matching), `layout.tsx` JSON-LD (static strings) and `public/llms.txt` — no new inputs, routes, or `dangerouslySetInnerHTML` sinks ✅
+- `git ls-files` shows no tracked `.env*` files ✅; webhook secret + agent keys use `timingSafeEqual` ✅
+- 🟡 `/api/scrape` SSRF guard is bypassable: `fetch()` follows redirects, so a public URL that 302s to `http://169.254.169.254/` or `http://localhost/` is fetched and its body returned. Hostname is also only string-checked (no DNS resolution), and `hostname === "::1"` never matches because `URL.hostname` returns `[::1]` with brackets. Low blast radius on Vercel serverless (no internal network), would be 🔴 on a self-hosted/VPC deployment. Fix: `redirect: "manual"` with re-validation per hop, and bracket-aware IPv6 checks.
+- 🟡 Telegram bot has no chat/user allowlist: the webhook secret proves the request came from Telegram, not who sent the message. Any Telegram user who finds the bot can run `/status` (lists preview deployment URLs) and `/deploy` / `/deploy prod` (triggers Vercel deploy hooks). Fix: compare `chat.id` against an allowed-ID env var before handling commands.
+- 🟡 CSP still allows `script-src 'unsafe-inline'`; `connect-src 'self' https:` is broad (carried forward)
+
+- `tsc --noEmit`: 0 errors ✅ (Node 22.23.4). ESLint: 3 errors, all `react-hooks/set-state-in-effect` in `cv-analyzer.tsx` (lines 313, 322, 329) — not from this cycle's changes; the husky hook treats ESLint as non-blocking.

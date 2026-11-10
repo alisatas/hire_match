@@ -142,3 +142,18 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 - expNote fix: `yearsOnCV === 0` now renders "experience not stated on CV" — no null/crash risk ✅
 - All edge input paths and loading states unchanged ✅
+
+---
+
+## 2026-11-10 — Push 10 (Whole-term skill matching + SEO entity links)
+
+**Status:** ✅ PASS (0 critical, 3 medium)
+
+- New `countAlias()` in `analyze.ts`: `indexOf` loop always advances by `alias.length` (≥ 1) — no infinite loop; out-of-range index reads return `undefined`, handled by `isAlnum()` ✅
+- Division guards unchanged: `totalSkillWeight > 0`, `totalKwWeight > 0`, `criticalTotal.length > 0` ✅
+- Verified by running the engine (old vs new) on 6 sample jobs × 4 CVs: no NaN, all scores within [5, 95] ✅
+- 🟡 Shared-result links (`#r=`): `decodeResults` does not validate shape. A hash that is valid JSON but lacks `m` (e.g. `#r={"ms":[],"ts":[]}`) sets `results.matched = undefined` and the render crashes on `.length`/`.slice`. Guard with `Array.isArray` checks.
+- 🟡 CV "Paste text instead": the textarea is rendered only while `cvText` is empty, so typing the first character swaps it for the "CV loaded" badge. Pasting works; typing does not.
+- 🟡 `fetchJobPost` has no stale-request guard — clearing/changing the URL mid-fetch still applies the old response (carried forward)
+
+- `tsc --noEmit`: 0 errors ✅ (Node 22.23.4). ESLint: 3 errors, all `react-hooks/set-state-in-effect` in `cv-analyzer.tsx` (lines 313, 322, 329) — not from this cycle's changes; the husky hook treats ESLint as non-blocking.

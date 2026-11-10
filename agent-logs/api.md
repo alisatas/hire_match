@@ -127,3 +127,17 @@ Agents MUST read this log before running checks and MUST append an entry after e
 **Status:** ✅ PASS (0 critical)
 
 - No API route changes ✅
+
+---
+
+## 2026-11-10 — Push 10 (Whole-term skill matching + SEO entity links)
+
+**Status:** ✅ PASS (0 critical, 3 medium)
+
+- No API route changes this cycle ✅
+- 🟡 `/api/scrape`: redirects followed without re-validating the target host (see security log); `response.text()` reads the whole body when `Content-Length` is absent (chunked responses bypass the 2MB pre-check)
+- 🟡 `/api/extract-pdf`: no page-count limit; the 500 path omits `Cache-Control: no-store`
+- 🟡 `/api/interview-questions`: no upper bound on `company` length; results whose href contains `duckduckgo.com` are dropped — DuckDuckGo's HTML endpoint commonly wraps result links in a `duckduckgo.com/l/?uddg=` redirect, so this may filter out every result (not verified live)
+- `.husky/post-push` is not a real git hook name — git never runs it, so the Instagram/X auto-post does not fire on push
+
+- `tsc --noEmit`: 0 errors ✅ (Node 22.23.4). ESLint: 3 errors, all `react-hooks/set-state-in-effect` in `cv-analyzer.tsx` (lines 313, 322, 329) — not from this cycle's changes; the husky hook treats ESLint as non-blocking.
