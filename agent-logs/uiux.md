@@ -163,3 +163,12 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - 🟡 Score tiers disagree: persona labels switch at 78/58/38, the Next Steps card and FAQ at 70/45 — a 60% result reads "Strong Contender" next to "Decent match — close gaps"
 
 - `tsc --noEmit`: 0 errors ✅ (Node 22.23.4). ESLint: 3 errors, all `react-hooks/set-state-in-effect` in `cv-analyzer.tsx` (lines 313, 322, 329) — not from this cycle's changes; the husky hook treats ESLint as non-blocking.
+
+---
+
+## 2026-11-10 — Push 12 (Lint clean-up, shared-link hardening, stale robots.txt removed)
+
+**Status:** ⚠️ WARN (0 critical, 3 medium)
+
+- No visual changes. Shared links can only set one of the four known persona colours; anything else renders neutral ✅
+- 🟡 Tap targets under 44px, error text without `role="alert"`, and the 70/45 vs 78/58/38 score-tier mismatch carried forward

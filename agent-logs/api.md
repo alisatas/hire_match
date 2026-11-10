@@ -141,3 +141,11 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - `.husky/post-push` is not a real git hook name — git never runs it, so the Instagram/X auto-post does not fire on push
 
 - `tsc --noEmit`: 0 errors ✅ (Node 22.23.4). ESLint: 3 errors, all `react-hooks/set-state-in-effect` in `cv-analyzer.tsx` (lines 313, 322, 329) — not from this cycle's changes; the husky hook treats ESLint as non-blocking.
+
+---
+
+## 2026-11-10 — Push 12 (Lint clean-up, shared-link hardening, stale robots.txt removed)
+
+**Status:** ✅ PASS (0 critical)
+
+- No API route changes this cycle ✅

@@ -195,3 +195,15 @@ Agents MUST read this log before running checks and MUST append an entry after e
 1. Delete `public/robots.txt`
 2. Either show all 16 FAQs on the page or trim the JSON-LD to the visible 5
 3. Remove or substantiate `aggregateRating`
+
+---
+
+## 2026-11-10 — Push 12 (Lint clean-up, shared-link hardening, stale robots.txt removed)
+
+**Status:** ✅ PASS (1 improvement)
+
+- Deleted stale `public/robots.txt` (pointed the sitemap at `cv-scorer.vercel.app`); `robots.ts` is now the only source ✅ — closes backlog item 1
+
+**Running improvement backlog (next pushes):**
+1. Either show all 16 FAQs on the page or trim the JSON-LD to the visible 5
+2. Remove or substantiate `aggregateRating`

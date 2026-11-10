@@ -141,3 +141,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - 🟡 ESLint: 3 errors (`react-hooks/set-state-in-effect`) in `cv-analyzer.tsx` effects that call `setState` synchronously (history load, hash load, interview fetch reset)
 - 🟡 Dev-only console error: `@vercel/analytics` debug script (`va.vercel-scripts.com`) is blocked by the CSP `script-src`. Production loads the same-origin `/_vercel/insights/script.js`, so this should not affect prod — not verified against production.
 - Not covered: PDF upload, job-URL scraping, 375px mobile layout, keyboard-only navigation
+
+---
+
+## 2026-11-10 — Push 12 (Lint clean-up, shared-link hardening, stale robots.txt removed)
+
+**Status:** ✅ PASS (0 critical, 1 medium)
+
+- `tsc --noEmit`: 0 errors ✅; ESLint on `src/`: 0 errors (was 3) ✅
+- Browser: malformed share link → empty state, no crash ✅; Backend sample analysis → 46%, recent-scan history updated from localStorage ✅; "Change" clears result + hash ✅; valid share link reloads the shared result ✅
+- 🟡 Dev-only CSP console error for the Vercel Analytics debug script (carried forward)

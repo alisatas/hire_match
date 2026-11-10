@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useRef, useEffect } from "react"
+import React, { useState, useRef, useEffect, useMemo, useSyncExternalStore } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -38,6 +38,15 @@ function encodeResults(r: AnalysisResult): string {
 function decodeResults(encoded: string): AnalysisResult | null {
     try {
         const c = JSON.parse(decodeURIComponent(encoded))
+        // Shared links are untrusted input — reject anything that is not the shape we wrote,
+        // otherwise rendering calls .length / .map on undefined and the page crashes
+        if (!c || typeof c !== "object") return null
+        if (typeof c.s !== "number" || !Number.isFinite(c.s)) return null
+        if (typeof c.pl !== "string" || typeof c.pd !== "string" || typeof c.pc !== "string") return null
+        if (!Array.isArray(c.m) || !c.m.every((x: unknown) => typeof x === "string")) return null
+        if (!Array.isArray(c.ms) || !c.ms.every((x: unknown) => Array.isArray(x) && x.length === 4)) return null
+        if (!Array.isArray(c.ts) || !c.ts.every((x: unknown) => Array.isArray(x) && x.length === 2)) return null
+        if (typeof c.sm !== "string") return null
         return {
             score: c.s,
             persona: { label: c.pl, desc: c.pd, color: c.pc },
@@ -51,6 +60,59 @@ function decodeResults(encoded: string): AnalysisResult | null {
         }
     } catch { return null }
 }
+
+// Only a fixed set of persona colours is ever produced by analyze(); anything else from a
+// shared link falls back to neutral so the link cannot inject arbitrary class names
+const PERSONA_COLORS = new Set(["text-emerald-400", "text-violet-400", "text-amber-400", "text-rose-400"])
+
+// ─── External stores (localStorage history, URL hash) ────────────────────────
+// Read through useSyncExternalStore instead of setState-in-effect: the server
+// snapshot is empty, the client snapshot is read after hydration, and there is
+// no extra render pass.
+
+type HistoryEntry = { score: number; label: string; matched: number; missing: number; date: string }
+
+const HISTORY_KEY = "cvxray_history"
+const historyListeners = new Set<() => void>()
+
+function subscribeHistory(onChange: () => void) {
+    historyListeners.add(onChange)
+    window.addEventListener("storage", onChange)
+    return () => {
+        historyListeners.delete(onChange)
+        window.removeEventListener("storage", onChange)
+    }
+}
+
+function readHistoryRaw(): string {
+    try { return localStorage.getItem(HISTORY_KEY) ?? "" } catch { return "" }
+}
+
+function parseHistory(raw: string): HistoryEntry[] {
+    if (!raw) return []
+    try {
+        const parsed = JSON.parse(raw)
+        if (!Array.isArray(parsed)) return []
+        return parsed.filter((h): h is HistoryEntry =>
+            !!h && typeof h.score === "number" && typeof h.label === "string" && typeof h.date === "string"
+        ).slice(0, 3)
+    } catch { return [] }
+}
+
+function saveHistory(entries: HistoryEntry[]) {
+    try { localStorage.setItem(HISTORY_KEY, JSON.stringify(entries)) } catch { /* storage blocked or full */ }
+    historyListeners.forEach(l => l())
+}
+
+function subscribeHash(onChange: () => void) {
+    window.addEventListener("hashchange", onChange)
+    return () => window.removeEventListener("hashchange", onChange)
+}
+
+const readHash = () => window.location.hash
+const readServerSnapshot = () => ""
+
+type InterviewResult = { title: string; snippet: string; url: string; source: string }
 
 // Decode common HTML entities returned by search APIs
 function decodeHtmlEntities(str: string): string {
@@ -291,49 +353,48 @@ export default function CVAnalyzer() {
     const [jobUrl, setJobUrl] = useState("")
     const [fetchStatus, setFetchStatus] = useState("")
     const [isLoading, setIsLoading] = useState(false)
-    const [results, setResults] = useState<AnalysisResult | null>(null)
+    const [analysisResults, setResults] = useState<AnalysisResult | null>(null)
     const [pdfStatus, setPdfStatus] = useState("")
     const [error, setError] = useState("")
     const [showCvPaste, setShowCvPaste] = useState(false)
     const [cvAudit, setCvAudit] = useState<CVAuditResult | null>(null)
 
     const [jobInputMode, setJobInputMode] = useState<"url" | "paste">("url")
-    const [history, setHistory] = useState<{ score: number; label: string; matched: number; missing: number; date: string }[]>([])
-    const [interviewResults, setInterviewResults] = useState<{ title: string; snippet: string; url: string; source: string }[]>([])
-    const [interviewLoading, setInterviewLoading] = useState(false)
+    const [interview, setInterview] = useState<{ company: string; results: InterviewResult[] } | null>(null)
     const [scrapedCompanyName, setScrapedCompanyName] = useState("")
     const [keywordsCopied, setKeywordsCopied] = useState(false)
     const [shareCopied, setShareCopied] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const isPdfLoadingRef = useRef(false)
 
-    useEffect(() => {
-        try {
-            const stored = localStorage.getItem("cvxray_history")
-            if (stored) setHistory(JSON.parse(stored))
-        } catch { /* ignore */ }
-    }, [])
+    // Scan history lives in localStorage
+    const historyRaw = useSyncExternalStore(subscribeHistory, readHistoryRaw, readServerSnapshot)
+    const history = useMemo(() => parseHistory(historyRaw), [historyRaw])
 
-    // Load shared results from URL hash (#r=...)
-    useEffect(() => {
-        const hash = window.location.hash
-        if (!hash.startsWith("#r=")) return
+    // Shared results from the URL hash (#r=...). A fresh analysis takes precedence.
+    const hash = useSyncExternalStore(subscribeHash, readHash, readServerSnapshot)
+    const sharedResults = useMemo(() => {
+        if (!hash.startsWith("#r=")) return null
         const decoded = decodeResults(hash.slice(3))
-        if (decoded) setResults(decoded)
-    }, [])
+        if (decoded && !PERSONA_COLORS.has(decoded.persona.color)) decoded.persona.color = "text-[#cccccc]"
+        return decoded
+    }, [hash])
+    const results = analysisResults ?? sharedResults
 
+    // Interview resources for the detected company. Results are keyed by company, so
+    // "loading" is derived (no synchronous setState) and a stale response is ignored.
+    const interviewCompany = results && jobText ? (scrapedCompanyName || extractCompanyName(jobText)) : ""
     useEffect(() => {
-        if (!results || !jobText) return
-        const company = scrapedCompanyName || extractCompanyName(jobText)
-        if (!company) return
-        setInterviewResults([])
-        setInterviewLoading(true)
-        fetch(`/api/interview-questions?company=${encodeURIComponent(company)}`)
+        if (!interviewCompany) return
+        let cancelled = false
+        fetch(`/api/interview-questions?company=${encodeURIComponent(interviewCompany)}`)
             .then(r => r.json())
-            .then(data => { setInterviewResults(data.results ?? []) })
-            .catch(() => {})
-            .finally(() => setInterviewLoading(false))
-    }, [results, jobText, scrapedCompanyName])
+            .then(data => { if (!cancelled) setInterview({ company: interviewCompany, results: data.results ?? [] }) })
+            .catch(() => { if (!cancelled) setInterview({ company: interviewCompany, results: [] }) })
+        return () => { cancelled = true }
+    }, [interviewCompany])
+    const interviewLoading = !!interviewCompany && interview?.company !== interviewCompany
+    const interviewResults = interview && interview.company === interviewCompany ? interview.results : []
 
     const processPdf = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -462,9 +523,7 @@ export default function CVAnalyzer() {
                 missing: result.missing.length,
                 date: new Date().toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }),
             }
-            const updated = [entry, ...history].slice(0, 3)
-            setHistory(updated)
-            localStorage.setItem("cvxray_history", JSON.stringify(updated))
+            saveHistory([entry, ...history].slice(0, 3))
         } catch { /* ignore */ }
     }
 
@@ -486,6 +545,10 @@ export default function CVAnalyzer() {
         setResults(null)
         setCvAudit(null)
         setError("")
+        if (window.location.hash.startsWith("#r=")) {
+            window.history.replaceState(null, "", window.location.pathname + window.location.search)
+            window.dispatchEvent(new HashChangeEvent("hashchange"))
+        }
         if (fileInputRef.current) fileInputRef.current.value = ""
     }
 

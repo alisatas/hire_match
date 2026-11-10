@@ -274,3 +274,12 @@ Calibration (engine run old → new, 6 sample jobs × 4 CVs):
 2. Title window: `jobText.slice(0, 120)` spills into the body for short titles — use the first line instead
 3. Remaining generic aliases to review: "rest", "pipeline", "cache", "terminal", "node"
 4. Tune adaptive keyword cap for very long JDs (> 1200 words)
+
+---
+
+## 2026-11-10 — Push 12 (Lint clean-up, shared-link hardening, stale robots.txt removed)
+
+**Status:** ✅ PASS (no scoring changes this cycle)
+
+- Engine untouched; browser spot-check: Backend CV vs Backend sample → 46% with GraphQL + GCP as medium gaps ✅
+- Backlog unchanged (confidence multiplier recalibration is item 1)

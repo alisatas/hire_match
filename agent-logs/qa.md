@@ -157,3 +157,15 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - 🟡 `fetchJobPost` has no stale-request guard — clearing/changing the URL mid-fetch still applies the old response (carried forward)
 
 - `tsc --noEmit`: 0 errors ✅ (Node 22.23.4). ESLint: 3 errors, all `react-hooks/set-state-in-effect` in `cv-analyzer.tsx` (lines 313, 322, 329) — not from this cycle's changes; the husky hook treats ESLint as non-blocking.
+
+---
+
+## 2026-11-10 — Push 12 (Lint clean-up, shared-link hardening, stale robots.txt removed)
+
+**Status:** ✅ PASS (0 critical, 1 medium)
+
+- Shared-link crash fixed: `decodeResults` now validates every field it reads; a hash like `#r={"ms":[],"ts":[]}` falls back to the empty state instead of crashing (verified in the browser) ✅
+- Interview fetch now has a stale-response guard (`cancelled` flag) and only refetches when the detected company changes ✅
+- History load validates the stored array shape; malformed localStorage no longer reaches render ✅
+- "Change" now also clears the `#r=` hash, so a reset never brings back the previous result ✅
+- 🟡 CV textarea still swaps to the "CV loaded" badge after the first typed character (carried forward)

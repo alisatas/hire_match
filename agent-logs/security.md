@@ -178,3 +178,12 @@ Fixes for the two 🟡 findings from Push 10:
 - 🟡 CSP `unsafe-inline` carried forward
 - `tsc --noEmit`: 0 errors; ESLint on `src/app/api`: clean ✅
 
+---
+
+## 2026-11-10 — Push 12 (Lint clean-up, shared-link hardening, stale robots.txt removed)
+
+**Status:** ✅ PASS (0 critical, 2 medium)
+
+- Shared-link input is now validated before use; persona colour restricted to an allowlist so a crafted link cannot inject class names ✅
+- 🟡 DNS rebinding window in `/api/scrape` and CSP `unsafe-inline` carried forward
+- Vercel environment variables (`TWITTER_*`, `TELEGRAM_BOT_TOKEN`, deploy hooks, `VERCEL_TOKEN`) left in place at the owner's request — unused by the code
