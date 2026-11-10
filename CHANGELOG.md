@@ -1,3 +1,10 @@
+# [1.22.0](https://github.com/alisatas/hire_match/compare/v1.21.5...v1.22.0) (2026-11-10)
+
+
+### Features
+
+* redesign the site with a clean light theme ([06e503e](https://github.com/alisatas/hire_match/commit/06e503ec46a3683ebd79e03a0a6b3ff32234f843))
+
 ## [1.21.5](https://github.com/alisatas/hire_match/compare/v1.21.4...v1.21.5) (2026-11-10)
 
 
