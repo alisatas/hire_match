@@ -540,3 +540,9 @@ Calibration: fitting CVs unchanged (Frontend 81, sales 71, marketer 70, finance 
 **Status:** ✅ PASS (no scoring change this cycle — security-only push)
 
 - Job text reaching `analyze()` from the scraper now has correctly decoded entities and no leftover script/style text, which removes a source of junk keywords; sample calibration unchanged
+
+---
+
+## 2026-11-11 — Push 31 (Home page simplified for scanning readers)
+
+**Status:** ✅ PASS — ⚠️ no scoring change this cycle (UX-only push)

@@ -318,3 +318,11 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 - `tsc` 0, ESLint 0, `next build` OK ✅; Playwright 19/19; unit 108/108
 - After push: CodeQL re-scans and should auto-close alerts #1–#6, #8, #9
+
+---
+
+## 2026-11-11 — Push 31 (Home page simplified for scanning readers)
+
+**Status:** ✅ PASS (0 critical)
+
+- Markup-only change to the home page, footer and report cards; no new inputs, routes or sinks. 108 unit / 19 browser tests green (production build). GitHub Actions was in a **major outage** at commit time (githubstatus.com): the previous push's CI/Release were queued and the CodeQL dynamic run hit `startup_failure` — platform side, not code

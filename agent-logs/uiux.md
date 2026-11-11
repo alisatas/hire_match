@@ -349,3 +349,17 @@ Agents MUST read this log before running checks and MUST append an entry after e
 **Status:** ✅ PASS (0 critical, 1 medium carried)
 
 - No visible changes; interview result titles with entities like "&amp;" render correctly
+
+---
+
+## 2026-11-11 — Push 31 (Home page simplified for scanning readers)
+
+**Status:** ✅ PASS (0 critical) — owner request: "too much text for the AI era"
+
+- Measured before → after: desktop (621 px pane) **6 732 → 3 401 px** (−49 %), mobile 375 px **9.6 → 4.7 screens**, visible words **786 → 381**, footer 418 → 133 px
+- "How it works" + "How the score is calculated" merged: 3 compact step cards + a one-line score strip (Skills 50 % · Keywords 35 % · Experience 15 % · 70 %+ strong) linking to the score guide; separators hidden on mobile so lines don't end with "·"
+- Role guides: 16 cards → 6 featured + "All 16 guides" link
+- FAQ: 6 questions open, the other 9 behind "More questions (9)"; every answer still in the DOM and the FAQPage structured data (15)
+- Footer: the 16-link role row removed; Keywords by role · Guides · FAQ · legal links remain
+- Report: "How to add" cards show the placement advice; the example bullet is behind "Show an example bullet"
+- Verified at 375 px: no horizontal overflow, no console errors; axe WCAG 2 AA passes on the new layout

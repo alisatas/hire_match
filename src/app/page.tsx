@@ -55,26 +55,24 @@ const homeJsonLd = {
   ],
 };
 
-// Mirrors the weights in src/lib/analyze.ts — update both together.
-const SCORE_PARTS = [
-  {
-    weight: "50%",
-    title: "Skills",
-    text: "Skills the job names that also appear on your CV, across 40+ categories. Skills the posting repeats, or puts in its title, count for more.",
-  },
-  {
-    weight: "35%",
-    title: "Keywords",
-    text: "The wording of the posting itself — the terms it uses most — compared with the wording of your CV.",
-  },
-  {
-    weight: "15%",
-    title: "Experience",
-    text: "Years of experience on your CV against the years the job asks for. Leaving years off your CV is treated as unknown, not as zero.",
-  },
-];
+// The six guides shown on the home page; the rest are one click away on /resume-keywords
+const FEATURED_ROLES = ["ai-engineer", "software-engineer", "data-analyst", "product-manager", "account-executive", "digital-marketing-specialist"]
+// Questions shown open-ended on the page; the rest sit behind "More questions" (all stay in the FAQ structured data)
+const FAQ_VISIBLE = 6
 
 
+
+function FaqItem({ q, a }: { q: string; a: string }) {
+  return (
+    <details className="group">
+      <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-left text-[15px] font-medium text-foreground transition-colors hover:bg-foreground/[0.02] [&::-webkit-details-marker]:hidden">
+        {q}
+        <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-open:rotate-180" />
+      </summary>
+      <p className="px-5 pb-5 text-sm leading-relaxed text-muted-foreground text-pretty">{a}</p>
+    </details>
+  );
+}
 
 export default function Home() {
   return (
@@ -109,84 +107,61 @@ export default function Home() {
 
         <CVAnalyzer />
 
-        {/* How it works */}
-        <section id="how-it-works" className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-28 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">How it works</p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
-              From CV to clear next steps in under a minute
-            </h2>
-          </div>
-          <ol className="mt-12 grid gap-4 sm:grid-cols-3">
+        {/* How it works + how the score works — one compact section */}
+        <section id="how-it-works" className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-20 sm:px-6 lg:px-8">
+          <h2 className="text-center text-2xl font-semibold tracking-tight text-foreground text-balance sm:text-3xl">
+            From CV to clear next steps in under a minute
+          </h2>
+          <ol className="mt-8 grid gap-3 sm:grid-cols-3">
             {STEPS.map((step, i) => (
-              <li key={step.title} className="relative rounded-2xl border border-border bg-card/60 p-6">
-                <div className="flex items-center justify-between">
-                  <span className="flex size-10 items-center justify-center rounded-xl border border-border bg-foreground/[0.03] text-primary">
-                    <step.icon className="size-4.5" />
-                  </span>
-                  <span className="text-xs font-medium tabular-nums text-muted-foreground">0{i + 1}</span>
+              <li key={step.title} className="flex items-start gap-4 rounded-2xl border border-border bg-card/60 p-5">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-border bg-foreground/[0.03] text-primary">
+                  <step.icon className="size-4" />
+                </span>
+                <div>
+                  <h3 className="text-[15px] font-semibold tracking-tight text-foreground">
+                    <span className="mr-1.5 tabular-nums text-muted-foreground">{i + 1}.</span>{step.title}
+                  </h3>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{step.text}</p>
                 </div>
-                <h3 className="mt-5 text-base font-semibold tracking-tight text-foreground">{step.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{step.text}</p>
               </li>
             ))}
           </ol>
-        </section>
-
-        {/* How the score is calculated */}
-        <section id="match-score" className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-28 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">The match score</p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
-              How your CV match score is calculated
-            </h2>
-            <p className="mt-4 text-base leading-relaxed text-muted-foreground text-pretty">
-              No black box. The score is a weighted comparison of your CV with the job description, built from
-              three parts.
-            </p>
-          </div>
-          <ul className="mt-12 grid gap-4 sm:grid-cols-3">
-            {SCORE_PARTS.map((part) => (
-              <li key={part.title} className="rounded-2xl border border-border bg-card/60 p-6">
-                <p className="text-3xl font-semibold tracking-tight tabular-nums text-primary">{part.weight}</p>
-                <h3 className="mt-3 text-base font-semibold tracking-tight text-foreground">{part.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{part.text}</p>
-              </li>
-            ))}
-          </ul>
-          <p className="mx-auto mt-8 max-w-3xl text-center text-sm leading-relaxed text-muted-foreground text-pretty">
-            Missing a skill the posting mentions three or more times lowers the score further, and very short job
-            descriptions or CVs are scored more cautiously. Results run from 5% to 95%:{" "}
-            <strong className="font-semibold text-foreground">70% or more</strong> is a strong match,{" "}
-            <strong className="font-semibold text-foreground">45–69%</strong> is competitive, and below 45% means
-            there are significant gaps to close first.
+          {/* The score in one line; the full explanation lives in the guide */}
+          <p id="match-score" className="mx-auto mt-6 flex max-w-4xl scroll-mt-20 flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">How the score works:</span>
+            <span>Skills <strong className="font-semibold text-foreground">50%</strong></span>
+            <span aria-hidden className="hidden sm:inline">·</span>
+            <span>Keywords <strong className="font-semibold text-foreground">35%</strong></span>
+            <span aria-hidden className="hidden sm:inline">·</span>
+            <span>Experience <strong className="font-semibold text-foreground">15%</strong></span>
+            <span aria-hidden className="hidden sm:inline">·</span>
+            <span><strong className="font-semibold text-foreground">70%+</strong> is a strong match</span>
+            <Link href="/blog/what-is-a-good-cv-match-score" className="inline-flex min-h-11 items-center gap-1 font-medium text-primary hover:underline sm:min-h-0">
+              Details <ArrowRight className="size-3.5" />
+            </Link>
           </p>
         </section>
 
-        {/* Resume keywords by role — internal links to the role guides */}
-        <section id="roles" className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-28 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">Keyword guides</p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
-              Resume keywords by role
-            </h2>
-            <p className="mt-4 text-base leading-relaxed text-muted-foreground text-pretty">
-              Not applying yet? See what employers ask for most in your field.
-            </p>
+        {/* Resume keywords by role — six featured guides, the rest one click away */}
+        <section id="roles" className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-20 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">Resume keywords by role</h2>
+              <p className="mt-1.5 text-sm text-muted-foreground">What employers ask for most in your field.</p>
+            </div>
+            <Link href="/resume-keywords" className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-primary hover:underline">
+              All {ROLES.length} guides <ArrowRight className="size-4" />
+            </Link>
           </div>
-          <ul className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {ROLES.map((role) => (
+          <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {ROLES.filter((role) => FEATURED_ROLES.includes(role.slug)).map((role) => (
               <li key={role.slug}>
                 <Link
                   href={`/resume-keywords/${role.slug}`}
-                  className="group flex h-full items-center justify-between gap-3 rounded-2xl border border-border bg-card/60 p-5 transition-colors hover:border-primary/40"
+                  className="group flex h-full min-h-14 items-center justify-between gap-3 rounded-xl border border-border bg-card/60 px-4 py-3 transition-colors hover:border-primary/40"
                 >
-                  <span>
-                    <span className="block text-[15px] font-semibold tracking-tight text-foreground">{role.name} resume keywords</span>
-                    <span className="mt-1 block text-[13px] text-muted-foreground">
-                      {role.groups[0].keywords.slice(0, 4).join(", ")}…
-                    </span>
-                  </span>
+                  <span className="text-[15px] font-medium tracking-tight text-foreground">{role.name}</span>
                   <ArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
                 </Link>
               </li>
@@ -194,22 +169,24 @@ export default function Home() {
           </ul>
         </section>
 
-        {/* FAQ — visible to users and identical to the FAQPage structured data */}
-        <section id="faq" className="mx-auto max-w-3xl scroll-mt-20 px-4 pb-28 pt-28 sm:px-6">
-          <div className="text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">FAQ</p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Questions, answered</h2>
-          </div>
-          <div className="mt-10 divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card/60">
-            {FAQS.map((faq) => (
-              <details key={faq.q} className="group">
-                <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-left text-[15px] font-medium text-foreground transition-colors hover:bg-foreground/[0.02] [&::-webkit-details-marker]:hidden">
-                  {faq.q}
-                  <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-open:rotate-180" />
+        {/* FAQ — the first questions open on the page, the rest behind "More questions".
+            Every question stays in the FAQPage structured data above. */}
+        <section id="faq" className="mx-auto max-w-3xl scroll-mt-20 px-4 pb-24 pt-20 sm:px-6">
+          <h2 className="text-center text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">Questions, answered</h2>
+          <div className="mt-8 divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card/60">
+            {FAQS.slice(0, FAQ_VISIBLE).map((faq) => <FaqItem key={faq.q} q={faq.q} a={faq.a} />)}
+            {FAQS.length > FAQ_VISIBLE && (
+              <details className="group/more">
+                <summary className="flex min-h-14 cursor-pointer list-none items-center justify-center gap-2 px-5 py-4 text-sm font-medium text-primary transition-colors hover:bg-foreground/[0.02] [&::-webkit-details-marker]:hidden">
+                  <span className="group-open/more:hidden">More questions ({FAQS.length - FAQ_VISIBLE})</span>
+                  <span className="hidden group-open/more:inline">Fewer questions</span>
+                  <ChevronDown className="size-4 transition-transform duration-200 group-open/more:rotate-180" />
                 </summary>
-                <p className="px-5 pb-5 text-sm leading-relaxed text-muted-foreground text-pretty">{faq.a}</p>
+                <div className="divide-y divide-border border-t border-border">
+                  {FAQS.slice(FAQ_VISIBLE).map((faq) => <FaqItem key={faq.q} q={faq.q} a={faq.a} />)}
+                </div>
               </details>
-            ))}
+            )}
           </div>
         </section>
       </main>

@@ -428,3 +428,11 @@ Full read of `src/app/api/**`, `src/proxy.ts`, `next.config.ts`, client link ren
 - #7 Server-side request forgery (`safe-fetch.ts`): **false positive** — this is the hardened job-post fetcher itself (public-only DNS resolution with pinned IP, per-hop redirect validation, port/credential/host allow-rules, size + time caps; 16 SSRF unit tests). CodeQL cannot model these checks. Recommend dismissing as "False positive" with this justification (needs owner approval)
 - All HTML→text logic now lives in `src/lib/html-text.ts` (was duplicated in three places with the same bugs); 9 new unit tests incl. the attack strings
 - Dependabot: 3 open (2 moderate, 1 low) — all dev tooling already tracked
+
+---
+
+## 2026-11-11 — Push 31 (Home page simplified for scanning readers)
+
+**Status:** ✅ PASS (0 critical)
+
+- Markup-only change to the home page, footer and report cards; no new inputs, routes or sinks. 108 unit / 19 browser tests green (production build). GitHub Actions was in a **major outage** at commit time (githubstatus.com): the previous push's CI/Release were queued and the CodeQL dynamic run hit `startup_failure` — platform side, not code

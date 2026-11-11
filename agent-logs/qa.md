@@ -323,3 +323,11 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 - 108 unit tests (+9 html-text / link encoding), 19 browser tests on the production build
 - Live smoke tests: scraper still returns clean text (no "<"), interview search returns the same results with old and new code
+
+---
+
+## 2026-11-11 — Push 31 (Home page simplified for scanning readers)
+
+**Status:** ✅ PASS (0 critical)
+
+- Markup-only change to the home page, footer and report cards; no new inputs, routes or sinks. 108 unit / 19 browser tests green (production build). GitHub Actions was in a **major outage** at commit time (githubstatus.com): the previous push's CI/Release were queued and the CodeQL dynamic run hit `startup_failure` — platform side, not code

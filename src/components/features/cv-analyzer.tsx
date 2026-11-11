@@ -1236,7 +1236,7 @@ export default function CVAnalyzer() {
                                         <Section
                                             icon={<PencilLine />}
                                             title="How to add the missing skills"
-                                            description="What the job asks for, where it belongs on your CV, and a bullet to adapt. Only add what you've really done."
+                                            description="Where each gap belongs on your CV. Only add what you've really done."
                                         >
                                             <ol className="space-y-3">
                                                 {suggestions.map((sug) => (
@@ -1253,9 +1253,14 @@ export default function CVAnalyzer() {
                                                             </p>
                                                         )}
                                                         <p className="mt-3 text-sm leading-relaxed text-foreground/90">{sug.where}</p>
-                                                        <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
-                                                            <span className="font-medium text-foreground/80">Example bullet: </span>{sug.example}
-                                                        </p>
+                                                        {/* Example on demand — keeps each card short */}
+                                                        <details className="group/ex mt-2">
+                                                            <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-1 text-[13px] font-medium text-primary [&::-webkit-details-marker]:hidden sm:min-h-0">
+                                                                Show an example bullet
+                                                                <ChevronDown className="size-3.5 transition-transform group-open/ex:rotate-180" />
+                                                            </summary>
+                                                            <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">{sug.example}</p>
+                                                        </details>
                                                     </li>
                                                 ))}
                                             </ol>

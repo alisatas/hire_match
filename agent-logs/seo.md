@@ -471,3 +471,12 @@ Agents MUST read this log before running checks and MUST append an entry after e
 2. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
 3. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)
 4. GA4: mark `analysis_complete`, `score_card` and `entry` as key events
+
+---
+
+## 2026-11-11 — Push 31 (Home page simplified for scanning readers)
+
+**Status:** ✅ PASS (0 critical) — ⚠️ no new SEO improvement this cycle (UX simplification)
+
+- Content preserved for crawlers: all 15 FAQ answers remain in the HTML (collapsed `<details>`) and in FAQPage JSON-LD; role guides stay linked from the header, footer ("Keywords by role"), home (6 featured + all-guides link) and each guide's "other roles" nav; `#match-score` anchor kept (llms.txt links it)
+- Trade-off noted: fewer direct home → guide links (16 → 6); /resume-keywords carries the rest. Watch Search Console coverage for the non-featured guides

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { CookieSettingsButton } from "@/components/consent/consent-banner";
-import { ROLES } from "@/lib/roles";
 
 /**
  * Brand mark: a CV page with a scan beam passing through it.
@@ -75,26 +74,16 @@ export function SiteFooter() {
   return (
     <footer className="border-t border-border">
       <div className="mx-auto max-w-7xl px-4 py-8 text-[13px] text-muted-foreground sm:px-6 lg:px-8">
-        <nav aria-label="Resume keywords by role" className="flex flex-wrap items-center gap-x-5 gap-y-1 border-b border-border pb-6">
-          <Link href="/resume-keywords" className="inline-flex min-h-11 items-center font-medium text-foreground transition-colors hover:text-primary sm:min-h-0">
-            Resume keywords by role
-          </Link>
-          {ROLES.map((role) => (
-            <Link key={role.slug} href={`/resume-keywords/${role.slug}`} className="inline-flex min-h-11 items-center transition-colors hover:text-foreground sm:min-h-0">
-              {role.name}
-            </Link>
-          ))}
-        </nav>
-        <div className="flex flex-col gap-4 pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <Logo />
             <span className="hidden text-border sm:inline">|</span>
             <span>&copy; 2026 · Nothing you upload is stored or shared.</span>
           </div>
           <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-5 gap-y-2">
-            <Link href="/#how-it-works" className="transition-colors hover:text-foreground">How it works</Link>
-            <Link href="/#faq" className="transition-colors hover:text-foreground">FAQ</Link>
+            <Link href="/resume-keywords" className="transition-colors hover:text-foreground">Keywords by role</Link>
             <Link href="/blog" className="transition-colors hover:text-foreground">Guides</Link>
+            <Link href="/#faq" className="transition-colors hover:text-foreground">FAQ</Link>
             <Link href="/terms" className="transition-colors hover:text-foreground">Terms</Link>
             <Link href="/privacy" className="transition-colors hover:text-foreground">Privacy</Link>
             <Link href="/refund-policy" className="transition-colors hover:text-foreground">Refunds</Link>
