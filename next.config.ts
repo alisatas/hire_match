@@ -19,6 +19,17 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   productionBrowserSourceMaps: false,
   poweredByHeader: false,
+  // One canonical host: www.cvxray.com answered 200 with a duplicate copy of every page.
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.cvxray.com" }],
+        destination: "https://cvxray.com/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
@@ -32,6 +43,7 @@ const nextConfig: NextConfig = {
             value: "camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), hid=(), bluetooth=(), browsing-topics=()",
           },
           { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+          { key: "Reporting-Endpoints", value: 'csp-endpoint="/api/csp-report"' },
           { key: "X-Permitted-Cross-Domain-Policies", value: "none" },
           {
             key: "Strict-Transport-Security",
@@ -56,6 +68,10 @@ const nextConfig: NextConfig = {
               "form-action 'self'",
               "worker-src 'self' blob:",
               "manifest-src 'self'",
+              // Violations are reported to our own endpoint (logged, never stored), so a
+              // blocked analytics host or an injection attempt shows up in the logs
+              "report-uri /api/csp-report",
+              "report-to csp-endpoint",
               // Upgrading would break plain-http localhost, so production only
               ...(isDev ? [] : ["upgrade-insecure-requests"]),
             ].join("; "),
@@ -67,6 +83,8 @@ const nextConfig: NextConfig = {
         headers: [
           { key: "X-Robots-Tag", value: "noindex, nofollow" },
           { key: "Cache-Control", value: "no-store" },
+          // API responses are never meant to be embedded by other origins
+          { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
         ],
       },
     ];

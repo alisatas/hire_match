@@ -227,7 +227,8 @@ function extractYearsRequired(text: string): number {
 // (or to 0 → the 0.50 "unknown" experience score). Career length is taken from the
 // earliest start to the latest end of the work ranges found. Lines that look like
 // education ("BSc 2014 – 2018", "University …") are skipped so a degree does not
-// count as work experience. Capped at 40 years.
+// count as work experience. Capped at 40 years. (Push 22: periods are now merged
+// and summed — see yearsFromDateRanges.)
 const YEAR = String.raw`(?:19[6-9]\d|20[0-4]\d)`
 const MONTH = String.raw`(?:[a-z]{3,9}\.?\s+|\d{1,2}[./]\s*)?`
 const RANGE_RE = new RegExp(
@@ -237,27 +238,41 @@ const RANGE_RE = new RegExp(
 const SINCE_RE = new RegExp(String.raw`\b(?:since|sinds)\s+${MONTH}(${YEAR})\b`, "gi")
 const EDUCATION_RE = /\b(university|universiteit|college|school|bachelor|master|bsc|msc|ba|ma|phd|degree|diploma|education|opleiding|hbo|mbo|wo|thesis|graduated|student)\b/i
 
+// Math Prof improvement (Push 22): sum the merged work periods instead of measuring
+// earliest start → latest end. "2010–2012, then 2015–2016" is 3 years of work, not 6.
+// Periods that touch or are one calendar year apart ("…–2018", "2019–…") are merged,
+// because year-only dates can't tell a January start from a December one; only real
+// breaks of two years or more are subtracted.
 export function yearsFromDateRanges(text: string, currentYear = new Date().getFullYear()): number {
-    let earliest = Infinity
-    let latest = -Infinity
+    const periods: [number, number][] = []
     for (const line of text.toLowerCase().split(/\n|•|·|\|/)) {
         if (EDUCATION_RE.test(line)) continue
         for (const m of line.matchAll(RANGE_RE)) {
             const start = Number(m[1])
             const end = /^\d/.test(m[2]) ? Number(m[2]) : currentYear
             if (start > currentYear || end < start) continue
-            earliest = Math.min(earliest, start)
-            latest = Math.max(latest, Math.min(end, currentYear))
+            periods.push([start, Math.min(end, currentYear)])
         }
         for (const m of line.matchAll(SINCE_RE)) {
             const start = Number(m[1])
-            if (start > currentYear) continue
-            earliest = Math.min(earliest, start)
-            latest = currentYear
+            if (start <= currentYear) periods.push([start, currentYear])
         }
     }
-    if (!Number.isFinite(earliest)) return 0
-    return Math.min(Math.max(latest - earliest, 0), 40)
+    if (periods.length === 0) return 0
+
+    periods.sort((a, b) => a[0] - b[0])
+    let total = 0
+    let [curStart, curEnd] = periods[0]
+    for (const [start, end] of periods.slice(1)) {
+        if (start <= curEnd + 1) {
+            curEnd = Math.max(curEnd, end)
+        } else {
+            total += curEnd - curStart
+            ;[curStart, curEnd] = [start, end]
+        }
+    }
+    total += curEnd - curStart
+    return Math.min(Math.max(total, 0), 40)
 }
 
 function extractYearsFromCV(text: string): number {

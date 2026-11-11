@@ -228,3 +228,14 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 - `tsc` 0, ESLint 0, `next build` OK ✅
 - `/`, `/terms`, `/privacy`, `/refund-policy` → 200; no `#support` element and no "€3" copy left on the home page ✅
+
+---
+
+## 2026-11-11 — Push 22 (Corporate hardening: technical SEO assets, CSP reporting, CI gate)
+
+**Status:** ✅ PASS (0 critical)
+
+- `tsc` 0, ESLint 0, `next build` OK ✅
+- `Host: www.cvxray.com` → 308 to `https://cvxray.com/…` (query kept); apex unaffected ✅
+- `/manifest.webmanifest`, `/logo.png` (512²), `/apple-icon` (180²), `/icon.svg`, role `opengraph-image` → 200 with correct types; `<link rel="manifest">` and `apple-touch-icon` present ✅
+- Role pages' `og:image` / `twitter:image` now point at the per-role card ✅

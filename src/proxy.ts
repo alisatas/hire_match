@@ -13,6 +13,7 @@ const LIMITS: Record<string, number> = {
     "/api/scrape":              15,   // External URL fetch
     "/api/interview-questions": 20,
     "/api/reddit-comment":      10,
+    "/api/csp-report":          10,   // browser violation reports — cheap, but cap noise
 }
 
 // Largest request body each route accepts. Checked from Content-Length before the

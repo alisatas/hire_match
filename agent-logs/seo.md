@@ -327,3 +327,22 @@ Agents MUST read this log before running checks and MUST append an entry after e
 2. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
 3. Per-page OG images for role guides
 4. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)
+
+---
+
+## 2026-11-11 — Push 22 (Corporate hardening: technical SEO assets, CSP reporting, CI gate)
+
+**Status:** ✅ PASS (0 critical, 5 improvements)
+
+**Improvements implemented this cycle:**
+- **Canonical host**: `www.cvxray.com` served a full duplicate (200). Now a permanent 308 to `cvxray.com`
+- **Organization logo**: JSON-LD pointed at the 1200×630 share image; now a square 512×512 `/logo.png` ImageObject — eligible for Google's logo / knowledge panel
+- **Per-guide OG images** for all 10 role guides — closes backlog item 3
+- **Web manifest + Apple touch icon** (brand consistency in search, bookmarks and home screens)
+- **Custom 404** with internal links and `noindex` — no soft-404s, crawl paths back into the guides
+
+**Running improvement backlog (next pushes):**
+1. More business guides: project manager, financial analyst, customer success
+2. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
+3. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)
+4. Watch Search Console coverage for the 15 sitemap URLs; request indexing for the newest guides

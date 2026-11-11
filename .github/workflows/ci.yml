@@ -1,0 +1,50 @@
+name: CI
+
+# Runs on every push and pull request. The release workflow only publishes; this one
+# is the gate that catches type errors, lint errors, broken builds and known-vulnerable
+# production dependencies before they reach main.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Typecheck, lint, build, audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+        env:
+          HUSKY: '0'
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npx eslint src
+
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+
+      # Fails only on high/critical advisories in packages that ship to production;
+      # moderate issues in dev tooling are tracked in agent-logs/security.md
+      - name: Dependency audit (production, high+)
+        run: npm audit --omit=dev --audit-level=high

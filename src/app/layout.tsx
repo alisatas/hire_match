@@ -129,7 +129,7 @@ export default function RootLayout({
         "@id": `${siteUrl}/#org`,
         name: "CVXray",
         url: siteUrl,
-        logo: `${siteUrl}/opengraph-image`,
+        logo: { "@type": "ImageObject", url: `${siteUrl}/logo.png`, width: 512, height: 512 },
         sameAs: [
           "https://x.com/cvxray",
           "https://www.instagram.com/cvxray.ai",

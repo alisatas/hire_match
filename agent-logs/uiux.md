@@ -266,3 +266,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 - Owner removed the "Support it if it helped" section from the home page; the role guides now flow straight into the FAQ
 - Terms and Refund Policy reworded to "CVXray may offer…" so they stay accurate without a visible support button
+
+---
+
+## 2026-11-11 — Push 22 (Corporate hardening: technical SEO assets, CSP reporting, CI gate)
+
+**Status:** ✅ PASS (0 critical, 1 medium carried)
+
+- Custom 404: clear message, "Check my CV" CTA and links to six keyword guides instead of the framework default
+- Per-guide share cards (role name + top keywords) for LinkedIn / X previews
+- Apple touch icon and web manifest: home-screen installs show the brand mark

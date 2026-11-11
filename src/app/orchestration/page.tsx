@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { OrchestrationLive } from "@/components/features/orchestration-live";
 import DigitalLoomBackground from "@/components/ui/digital-loom-background";
 
@@ -8,7 +9,12 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
+// Internal tool. Its API is key-protected, but the dashboard itself has no reason to be
+// public: in production it 404s unless explicitly enabled for the deployment.
+const ENABLED = process.env.NODE_ENV !== "production" || process.env.ENABLE_ORCHESTRATION_PAGE === "1";
+
 export default function OrchestrationPage() {
+  if (!ENABLED) notFound();
   return (
     <div className="dark text-foreground">
     <DigitalLoomBackground

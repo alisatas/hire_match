@@ -411,3 +411,17 @@ Verification: 9 parser cases pass. Same CV + "2019 – present" scores 50 vs 46 
 **Running improvement backlog (next pushes):**
 1. Tune adaptive keyword cap for very long JDs (> 1200 words)
 2. Overlapping / gapped ranges: currently earliest-to-latest; summing non-overlapping spans would be more exact for career breaks
+
+---
+
+## 2026-11-11 — Push 22 (Corporate hardening: technical SEO assets, CSP reporting, CI gate)
+
+**Status:** ✅ PASS (1 improvement implemented) — closes backlog item 2
+
+**Improvement: experience = sum of merged work periods** (`yearsFromDateRanges`). Periods touching or one calendar year apart are merged (year-only dates can't distinguish Jan from Dec); real breaks of 2+ years are subtracted. Before: earliest start → latest end, so "2010–2012, 2015–2016" counted 6 years; now 3.
+
+Verification: 12 parser cases pass. Sample calibration unchanged — Frontend 81, Backend 37, Data Analyst 18, PM 38, DevOps 23, UX 52; chef 5–6; analyst 53; sales 68.
+
+**Running improvement backlog (next pushes):**
+1. Tune adaptive keyword cap for very long JDs (> 1200 words)
+2. Month-level precision when months are present ("Mar 2018 – Jan 2022" = 3.8 years, currently 4)

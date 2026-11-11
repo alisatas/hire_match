@@ -220,3 +220,11 @@ Agents MUST read this log before running checks and MUST append an entry after e
 **Status:** ✅ PASS (0 critical)
 
 - No API route changes ✅
+
+---
+
+## 2026-11-11 — Push 22 (Corporate hardening: technical SEO assets, CSP reporting, CI gate)
+
+**Status:** ✅ PASS (0 critical)
+
+- New `POST /api/csp-report`: content-type checked, 16 KB body cap, proxy cross-site/body/rate limits apply, 204 with no body, `no-store` + CORP via `next.config`

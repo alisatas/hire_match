@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { ROLES, getRole } from "@/lib/roles";
-import { OG_IMAGE, SITE_URL, jsonLdScript } from "@/lib/site";
+import { SITE_URL, jsonLdScript } from "@/lib/site";
 
 // Only the roles in ROLES exist; anything else is a 404 rather than an on-demand render.
 export const dynamicParams = false;
@@ -24,8 +24,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description: role.metaDescription,
     alternates: { canonical: path },
-    openGraph: { type: "article", siteName: "CVXray", url: path, title, description: role.metaDescription, images: [OG_IMAGE] },
-    twitter: { card: "summary_large_image", title, description: role.metaDescription, images: [OG_IMAGE.url] },
+    // Share image comes from the colocated opengraph-image.tsx (per-role card)
+    openGraph: { type: "article", siteName: "CVXray", url: path, title, description: role.metaDescription },
+    twitter: { card: "summary_large_image", title, description: role.metaDescription },
   };
 }
 

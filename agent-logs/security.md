@@ -316,3 +316,17 @@ Full read of `src/app/api/**`, `src/proxy.ts`, `next.config.ts`, client link ren
 - Support section removed from the home page; the checkout-URL allowlist in `site.ts` stays for future use ✅
 - New JSON-LD on legal pages is static and passes through `jsonLdScript()` ✅
 - Date-range parser: bounded regexes on line-split CV text, no nested quantifiers — no ReDoS risk at the 200 000-char input cap ✅
+
+---
+
+## 2026-11-11 — Push 22 (Corporate hardening: technical SEO assets, CSP reporting, CI gate)
+
+**Status:** ✅ PASS (0 critical, 2 medium carried)
+
+- `/orchestration` (internal agent dashboard) now 404s in production unless `ENABLE_ORCHESTRATION_PAGE=1` — verified in the production build (prerendered as the 404 page) ✅
+- **CSP violation reporting**: `report-uri` + `report-to` → `/api/csp-report`. Accepts legacy and Reporting API formats, 16 KB cap, rate-limited (10/min/IP), logs directive + blocked origin + page path only (query strings dropped — verified a `?q=secret` never reaches the log), extension noise skipped, nothing stored ✅
+- `Cross-Origin-Resource-Policy: same-origin` on `/api/*`; `Reporting-Endpoints` header ✅
+- `/.well-known/security.txt` (RFC 9116) served once `NEXT_PUBLIC_CONTACT_EMAIL` is set; 404 until then so no dead contact is published ✅
+- **CI gate** (`.github/workflows/ci.yml`): typecheck, lint, build and `npm audit --omit=dev --audit-level=high` on every push / PR, read-only token ✅
+- Decision recorded: nonce-based CSP not adopted — it forces every page to dynamic rendering (no static output, no CDN cache), which costs Core Web Vitals. Revisit if compliance requires removing `unsafe-inline`
+- 🟡 Carried: CSP `unsafe-inline`; per-instance rate limiting

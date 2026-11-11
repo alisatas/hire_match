@@ -237,3 +237,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 - Home page renders without the support section; no leftover `SUPPORT` import ✅
 - `yearsFromDateRanges`: 9 cases pass (present/heden/since, month names, education lines skipped, phone numbers and future years ignored, multiple ranges → earliest start to latest end)
+
+---
+
+## 2026-11-11 — Push 22 (Corporate hardening: technical SEO assets, CSP reporting, CI gate)
+
+**Status:** ✅ PASS (0 critical)
+
+- `yearsFromDateRanges` now merges periods: 12 parser cases pass (career break 2005–2010 + 2020–now → 11, overlapping freelance not double-counted, adjacent jobs merged)
+- CSP report endpoint: 204 valid legacy / Reporting API bodies, 415 wrong type, 400 bad JSON ✅
+- Custom 404 returns a real 404 status with `noindex` ✅
