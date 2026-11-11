@@ -1,3 +1,10 @@
+# [1.27.0](https://github.com/alisatas/hire_match/compare/v1.26.0...v1.27.0) (2026-11-11)
+
+
+### Features
+
+* new brand logo and favicon, tidier cards and breadcrumbs ([ebd5ecf](https://github.com/alisatas/hire_match/commit/ebd5ecfc43c1261ee784e6299508db8ec790e67f))
+
 # [1.26.0](https://github.com/alisatas/hire_match/compare/v1.25.1...v1.26.0) (2026-11-11)
 
 
