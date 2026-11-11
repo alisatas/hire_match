@@ -1,3 +1,10 @@
+## [1.34.1](https://github.com/alisatas/hire_match/compare/v1.34.0...v1.34.1) (2026-11-11)
+
+
+### Bug Fixes
+
+* pin CI to Ubuntu 24.04 so Playwright installs; add HR skills and article images ([4fb8b69](https://github.com/alisatas/hire_match/commit/4fb8b695180889039a3debf6fc410941b18b3c39))
+
 # [1.34.0](https://github.com/alisatas/hire_match/compare/v1.33.0...v1.34.0) (2026-11-11)
 
 
