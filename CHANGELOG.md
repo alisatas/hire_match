@@ -1,3 +1,10 @@
+## [1.34.3](https://github.com/alisatas/hire_match/compare/v1.34.2...v1.34.3) (2026-11-11)
+
+
+### Bug Fixes
+
+* allow Google Ads conversion pings in the CSP; weight nice-to-have skills lower ([2782c3d](https://github.com/alisatas/hire_match/commit/2782c3dfcedac69dcec0266f7fa46b0cfeb3322c))
+
 ## [1.34.2](https://github.com/alisatas/hire_match/compare/v1.34.1...v1.34.2) (2026-11-11)
 
 
