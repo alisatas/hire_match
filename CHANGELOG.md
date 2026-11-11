@@ -1,3 +1,10 @@
+# [1.31.0](https://github.com/alisatas/hire_match/compare/v1.30.0...v1.31.0) (2026-11-11)
+
+
+### Features
+
+* corporate-grade SEO assets, CSP violation reporting and a CI gate ([c58f4c7](https://github.com/alisatas/hire_match/commit/c58f4c7cda03285edd207fb049b2319fc7d559c5))
+
 # [1.30.0](https://github.com/alisatas/hire_match/compare/v1.29.0...v1.30.0) (2026-11-11)
 
 
