@@ -1,3 +1,10 @@
+## [1.34.2](https://github.com/alisatas/hire_match/compare/v1.34.1...v1.34.2) (2026-11-11)
+
+
+### Bug Fixes
+
+* run CI browser tests on the runner's Chrome; boilerplate-proof scoring ([09140c5](https://github.com/alisatas/hire_match/commit/09140c5ead1f2fee1b0f65180a4044ee939a0a5b))
+
 ## [1.34.1](https://github.com/alisatas/hire_match/compare/v1.34.0...v1.34.1) (2026-11-11)
 
 
