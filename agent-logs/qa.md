@@ -198,3 +198,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Header/footer extracted to `site-chrome.tsx` and shared by all pages; home nav anchors changed to `/#…` links so they work from sub-pages ✅
 - `analyze()` title change: empty job text → `split()[0]` is `""` → no title skills, no crash ✅
 - Analyzer component untouched this cycle
+
+---
+
+## 2026-11-11 — Push 18 (New logo, card grid + breadcrumb fixes, HowTo moved, alias clean-up)
+
+**Status:** ✅ PASS (0 critical)
+
+- Alias change only narrows matching; empty / non-technical job text still returns a valid result (sales job → 0 skills detected, score 10, no crash) ✅
+- Home page "How it works" still renders 3 steps; HowTo steps are generated from the same `STEPS` array, so markup and structured data cannot drift ✅
+- Analyzer component untouched

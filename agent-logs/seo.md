@@ -259,3 +259,21 @@ Agents MUST read this log before running checks and MUST append an entry after e
 2. More role guides (data scientist, software engineer, project manager, marketing) and non-tech roles
 3. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
 4. Per-page OG images for role guides
+
+---
+
+## 2026-11-11 — Push 18 (New logo, card grid + breadcrumb fixes, HowTo moved, alias clean-up)
+
+**Status:** ✅ PASS (0 critical, 2 improvements)
+
+- Regression: titles, canonicals, OG/Twitter tags, robots, sitemap, llms.txt unchanged ✅
+
+**Improvements implemented this cycle:**
+- HowTo JSON-LD moved from the root layout to the home page — it was also emitted on the role guides, which show no such steps. Steps are now generated from the visible "How it works" cards — closes backlog item 1
+- Brand favicon (`/icon.svg`) and a share image that matches the site's colours — consistent brand in search results and link previews
+
+**Running improvement backlog (next pushes):**
+1. More role guides (data scientist, software engineer, project manager, marketing) and non-tech roles
+2. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
+3. Per-page OG images for role guides
+4. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)

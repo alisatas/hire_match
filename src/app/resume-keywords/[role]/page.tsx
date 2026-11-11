@@ -74,10 +74,10 @@ export default async function RoleKeywordsPage({ params }: Props) {
       <SiteHeader />
 
       <main className="mx-auto max-w-3xl px-4 pb-24 pt-8 sm:px-6 sm:pt-12">
-        <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1 text-[13px] text-muted-foreground">
-          <Link href="/" className="transition-colors hover:text-foreground">CVXray</Link>
+        <nav aria-label="Breadcrumb" className="-ml-1 flex flex-wrap items-center gap-x-1 text-[13px] text-muted-foreground">
+          <Link href="/" className="inline-flex min-h-11 items-center px-1 transition-colors hover:text-foreground">CVXray</Link>
           <ChevronRight className="size-3.5" aria-hidden />
-          <Link href="/resume-keywords" className="transition-colors hover:text-foreground">Resume keywords</Link>
+          <Link href="/resume-keywords" className="inline-flex min-h-11 items-center px-1 transition-colors hover:text-foreground">Resume keywords</Link>
           <ChevronRight className="size-3.5" aria-hidden />
           <span aria-current="page" className="text-foreground">{role.name}</span>
         </nav>

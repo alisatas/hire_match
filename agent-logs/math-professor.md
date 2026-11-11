@@ -332,3 +332,28 @@ Public copy now states the formula (home page section, FAQ, llms.txt): 50 / 35 /
 **Running improvement backlog (next pushes):**
 1. Remaining generic aliases to review: "rest", "pipeline", "cache", "terminal", "node"
 2. Tune adaptive keyword cap for very long JDs (> 1200 words)
+
+---
+
+## 2026-11-11 — Push 18 (New logo, card grid + breadcrumb fixes, HowTo moved, alias clean-up)
+
+**Status:** ✅ PASS (1 improvement implemented)
+
+**Improvement: generic skill aliases removed or made specific (`analyze.ts` → `SKILL_GROUPS`)** — closes backlog item 1.
+- `rest` → `rest api`, `rest endpoint` (plural "rest apis" still matches); "the rest of the team" no longer counts as REST API
+- `pipeline` → `ci pipeline`, `cd pipeline`, `deployment pipeline`, `build pipeline`; "sales pipeline" no longer counts as CI/CD
+- `cache`, `caching` removed from Redis — caching is not Redis experience
+- `terminal`, `shell` → `shell scripting`, `shell script`
+- `node` kept: postings routinely write "Node" for Node.js
+
+Calibration:
+- 6 sample jobs × frontend / chef CV: identical before and after (Frontend 81 ✅, chef 5 everywhere ✅)
+- Sales job × sales CV: before, CI/CD + REST API "matched" and Linux + Redis "missing"; now 0 tech skills detected. Score 20 → 10 — the old 20 came from the false matches
+- No `freq = 0` skill marked high-priority ✅
+
+**New warning:**
+- 🟡 Non-technical roles score low by design (no skill groups for sales, marketing, finance, etc.) — the score falls back to keywords only
+
+**Running improvement backlog (next pushes):**
+1. Add skill groups for common non-tech roles (sales, marketing, finance, operations) so their scores mean something
+2. Tune adaptive keyword cap for very long JDs (> 1200 words)

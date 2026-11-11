@@ -186,3 +186,14 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Each page emits its own title, canonical, og:url, og:image and twitter:image ✅
 - 🟡 Dev-only CSP console error for the Vercel Analytics debug script (carried forward)
 - Not re-tested this cycle: PDF upload, URL scraping, full analysis flow in the browser (analyzer component unchanged; scoring re-run by script)
+
+---
+
+## 2026-11-11 — Push 18 (New logo, card grid + breadcrumb fixes, HowTo moved, alias clean-up)
+
+**Status:** ✅ PASS (0 critical)
+
+- `tsc --noEmit` 0 errors, ESLint 0 errors, `next build` OK (`/icon.svg` static) ✅
+- `/`, `/resume-keywords`, `/resume-keywords/ux-designer`, `/icon.svg`, `/opengraph-image` → 200; `<link rel="icon">` points at the SVG ✅
+- Verified in browser: header logo at desktop and 375px, share image render, score cards 3-up at ~740px, no horizontal overflow, no console errors from localhost ✅
+- Not re-tested: PDF upload, URL scraping, full analysis flow in the browser (analyzer unchanged; scoring re-run by script)

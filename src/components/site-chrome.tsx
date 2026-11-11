@@ -3,13 +3,42 @@ import { ArrowRight } from "lucide-react";
 import { CookieSettingsButton } from "@/components/consent/consent-banner";
 import { ROLES } from "@/lib/roles";
 
+/**
+ * Brand mark: a CV page with a scan beam passing through it.
+ * Drawn as inline SVG so it stays crisp at any size; `src/app/icon.svg` is the same artwork.
+ */
+export function LogoMark({ className = "size-8" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="cvx-mark" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#3b6cf6" />
+          <stop offset="1" stopColor="#1b3a9e" />
+        </linearGradient>
+      </defs>
+      <rect width="32" height="32" rx="8" fill="url(#cvx-mark)" />
+      <path
+        d="M11.5 7h6.2L22 11.3V23.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 10 23.5v-15A1.5 1.5 0 0 1 11.5 7Z"
+        fill="#fff"
+        fillOpacity="0.14"
+        stroke="#fff"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <path d="M17.5 7.2v4.3h4.3" fill="none" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M13 21h6" stroke="#fff" strokeOpacity="0.65" strokeWidth="1.4" strokeLinecap="round" />
+      <path d="M6.5 16.5h19" stroke="#fff" strokeWidth="1.9" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function Logo() {
   return (
     <span className="flex items-center gap-2.5">
-      <span className="flex size-7 items-center justify-center rounded-lg bg-primary text-[11px] font-bold tracking-tight text-primary-foreground shadow-[0_0_0_1px_color-mix(in_oklch,var(--foreground)_10%,transparent)_inset]">
-        CV
+      <LogoMark />
+      <span className="text-[17px] font-semibold tracking-[-0.02em] text-foreground">
+        CV<span className="text-primary">Xray</span>
       </span>
-      <span className="text-[15px] font-semibold tracking-tight text-foreground">CVXray</span>
     </span>
   );
 }

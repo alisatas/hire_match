@@ -11,14 +11,48 @@ import { ArrowRight, ChevronDown, FileText, Gauge, Link2, Lock, ShieldCheck, Spa
 // inherit a canonical that points back at the home page.
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 
-const faqJsonLd = {
+const STEPS = [
+  {
+    icon: FileText,
+    title: "Add your CV",
+    text: "Upload a PDF or paste the text. It is read once and never stored.",
+  },
+  {
+    icon: Link2,
+    title: "Add the job",
+    text: "Paste a LinkedIn, Indeed or careers-page link — or the description itself.",
+  },
+  {
+    icon: Gauge,
+    title: "Get your report",
+    text: "A match score, missing skills by priority, keywords to add and free courses.",
+  },
+];
+
+const STEPS_LD = STEPS.map((step) => ({ "@type": "HowToStep", name: step.title, text: step.text }));
+
+// Home-page-only structured data. HowTo used to sit in the root layout, which emitted
+// it on every route — including the role guides, where no such steps are shown.
+const homeJsonLd = {
   "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: FAQS.map(({ q, a }) => ({
-    "@type": "Question",
-    name: q,
-    acceptedAnswer: { "@type": "Answer", text: a },
-  })),
+  "@graph": [
+    {
+      "@type": "FAQPage",
+      mainEntity: FAQS.map(({ q, a }) => ({
+        "@type": "Question",
+        name: q,
+        acceptedAnswer: { "@type": "Answer", text: a },
+      })),
+    },
+    {
+      "@type": "HowTo",
+      name: "How to check if your CV matches a job description",
+      description: "Use CVXray to score your resume against any job description and find missing keywords.",
+      step: STEPS_LD,
+      tool: [{ "@type": "HowToTool", name: "CVXray — free CV matcher at cvxray.com" }],
+      totalTime: "PT1M",
+    },
+  ],
 };
 
 // Mirrors the weights in src/lib/analyze.ts — update both together.
@@ -40,30 +74,14 @@ const SCORE_PARTS = [
   },
 ];
 
-const STEPS = [
-  {
-    icon: FileText,
-    title: "Add your CV",
-    text: "Upload a PDF or paste the text. It is read once and never stored.",
-  },
-  {
-    icon: Link2,
-    title: "Add the job",
-    text: "Paste a LinkedIn, Indeed or careers-page link — or the description itself.",
-  },
-  {
-    icon: Gauge,
-    title: "Get your report",
-    text: "A match score, missing skills by priority, keywords to add and free courses.",
-  },
-];
+
 
 export default function Home() {
   return (
     <div className="relative z-10">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: jsonLdScript(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(homeJsonLd) }}
       />
 
       <SiteHeader />
@@ -99,7 +117,7 @@ export default function Home() {
               From CV to clear next steps in under a minute
             </h2>
           </div>
-          <ol className="mt-12 grid gap-4 md:grid-cols-3">
+          <ol className="mt-12 grid gap-4 sm:grid-cols-3">
             {STEPS.map((step, i) => (
               <li key={step.title} className="relative rounded-2xl border border-border bg-card/60 p-6">
                 <div className="flex items-center justify-between">
@@ -127,7 +145,7 @@ export default function Home() {
               three parts.
             </p>
           </div>
-          <ul className="mt-12 grid gap-4 md:grid-cols-3">
+          <ul className="mt-12 grid gap-4 sm:grid-cols-3">
             {SCORE_PARTS.map((part) => (
               <li key={part.title} className="rounded-2xl border border-border bg-card/60 p-6">
                 <p className="text-3xl font-semibold tracking-tight tabular-nums text-primary">{part.weight}</p>

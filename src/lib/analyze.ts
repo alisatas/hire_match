@@ -3,6 +3,12 @@
 // Used by: cv-analyzer.tsx (client)
 // ─────────────────────────────────────────────
 
+// Math Prof improvement (Push 18): generic aliases removed or made specific.
+// "rest" matched "the rest of the team", "pipeline" matched "sales pipeline",
+// "cache"/"caching" credited Redis to anyone who mentioned browser caching,
+// and "terminal"/"shell" fired on "airport terminal" or "shell company". Each now
+// needs its technical context ("rest api", "ci pipeline", "shell scripting"). "node"
+// stays: job posts routinely write "Node" for Node.js and the false-positive rate is low.
 export const SKILL_GROUPS: Record<string, string[]> = {
     // Frontend
     react: ["react", "reactjs", "react.js", "react hooks", "usestate", "useeffect"],
@@ -28,7 +34,7 @@ export const SKILL_GROUPS: Record<string, string[]> = {
     // Database
     sql: ["sql", "mysql", "postgresql", "postgres", "sqlite", "mariadb"],
     mongodb: ["mongodb", "mongo", "nosql", "mongoose"],
-    redis: ["redis", "caching", "cache"],
+    redis: ["redis"],
     elasticsearch: ["elasticsearch", "elastic search", "opensearch"],
     // Cloud & DevOps
     aws: ["aws", "amazon web services", "ec2", "s3", "lambda", "cloudformation"],
@@ -36,7 +42,7 @@ export const SKILL_GROUPS: Record<string, string[]> = {
     azure: ["azure", "microsoft azure"],
     docker: ["docker", "containerization", "dockerfile"],
     kubernetes: ["kubernetes", "k8s", "helm", "kubectl"],
-    cicd: ["ci/cd", "ci cd", "github actions", "gitlab ci", "jenkins", "circleci", "pipeline"],
+    cicd: ["ci/cd", "ci cd", "github actions", "gitlab ci", "jenkins", "circleci", "ci pipeline", "cd pipeline", "deployment pipeline", "build pipeline"],
     terraform: ["terraform", "infrastructure as code", "iac"],
     // Testing
     jest: ["jest", "vitest", "unit test", "unit testing"],
@@ -46,8 +52,8 @@ export const SKILL_GROUPS: Record<string, string[]> = {
     // Tools & Practices
     git: ["git", "github", "gitlab", "version control"],
     agile: ["agile", "scrum", "kanban", "sprint", "jira"],
-    api: ["rest", "restful", "api", "microservices", "openapi", "swagger"],
-    linux: ["linux", "unix", "bash", "shell", "terminal"],
+    api: ["rest api", "restful", "rest endpoint", "api", "microservices", "openapi", "swagger"],
+    linux: ["linux", "unix", "bash", "shell scripting", "shell script"],
     // bare "design" removed: as a verb ("design and build services") it flagged Figma / UX
     // as a gap on backend and DevOps roles
     figma: ["figma", "ux", "ui design", "ux design", "product design", "design system", "wireframe"],

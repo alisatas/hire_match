@@ -231,3 +231,15 @@ Fixes for the two 🟡 findings from Push 10:
 - `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION` are public ownership tokens read from env, not secrets ✅
 - No new routes, inputs, or console logging; `git ls-files .env*` empty ✅
 - 🟡 CSP still allows `unsafe-inline` (carried forward — required by GTM / inline JSON-LD)
+
+---
+
+## 2026-11-11 — Push 18 (New logo, card grid + breadcrumb fixes, HowTo moved, alias clean-up)
+
+**Status:** ✅ PASS (0 critical, 1 medium carried)
+
+- Logo is inline SVG with static paths; `src/app/icon.svg` is a static file — no user input reaches either ✅
+- Removed the `data:` SVG favicon from `metadata.icons`; favicon now served as `/icon.svg` via the file convention ✅
+- HowTo JSON-LD moved to `page.tsx`, still static and passed through `jsonLdScript()` ✅
+- No new routes, inputs or logging ✅
+- 🟡 CSP still allows `unsafe-inline` (carried forward)

@@ -222,3 +222,15 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Verified role page at desktop and 375px: no horizontal overflow
 - 🟡 Breadcrumb links on role pages are 13px text with no padding — under the 44px tap target
 - Not screenshotted: the two new home sections (present in the DOM, same card styles as "How it works")
+
+---
+
+## 2026-11-11 — Push 18 (New logo, card grid + breadcrumb fixes, HowTo moved, alias clean-up)
+
+**Status:** ✅ PASS (0 critical) — closes last cycle's breadcrumb warning
+
+- New brand mark: CV page with a scan beam (the "X-ray"), blue gradient tile, 32px; wordmark two-tone "CV" + "Xray". Replaces the plain "CV" letter tile the owner found too basic
+- Same artwork used for the favicon (`src/app/icon.svg`) and the share image; share image recoloured from cyan to the site blue, ✓ glyphs (rendered as boxes) removed
+- Score and "How it works" cards now go 3-up from 640px (`sm`) instead of 768px (`md`) — at ~740px they stacked into one tall column
+- Breadcrumb links on role pages now 44px tall (measured) ✅
+- 🟡 Cookie banner covers the bottom of the footer until dismissed (not changed)

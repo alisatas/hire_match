@@ -174,3 +174,12 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 - No API route changes this cycle; scrape and extract-pdf re-read — size caps, content-type check, SSRF guard and no-store headers unchanged ✅
 - 🟡 Carried forward: `/api/interview-questions` has no upper bound on `company` length
+
+---
+
+## 2026-11-11 — Push 18 (New logo, card grid + breadcrumb fixes, HowTo moved, alias clean-up)
+
+**Status:** ✅ PASS (0 critical)
+
+- No API route changes this cycle ✅
+- 🟡 Carried forward: `/api/interview-questions` has no upper bound on `company` length

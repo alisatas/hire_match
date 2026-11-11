@@ -65,9 +65,6 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large" },
   },
-  icons: {
-    icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230e7490'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-size='20' font-family='system-ui,sans-serif' font-weight='900' fill='white'%3ECV%3C/text%3E%3C/svg%3E",
-  },
   ...((googleVerification || bingVerification) && {
     verification: {
       ...(googleVerification && { google: googleVerification }),
@@ -137,19 +134,6 @@ export default function RootLayout({
           "https://x.com/cvxray",
           "https://www.instagram.com/cvxray.ai",
         ],
-      },
-      {
-        "@type": "HowTo",
-        name: "How to check if your CV matches a job description",
-        description: "Use CVXray to instantly score your resume against any job description and find missing keywords.",
-        step: [
-          { "@type": "HowToStep", name: "Upload your CV", text: "Upload your PDF resume or paste your CV text into CVXray." },
-          { "@type": "HowToStep", name: "Add the job description", text: "Paste the job description text or a job URL (LinkedIn, Indeed, etc.)." },
-          { "@type": "HowToStep", name: "Get your match score", text: "CVXray instantly calculates your match percentage, shows matched skills, and lists missing keywords." },
-          { "@type": "HowToStep", name: "Close the skill gaps", text: "Follow the personalized course recommendations to improve your CV for the role." },
-        ],
-        tool: [{ "@type": "HowToTool", name: "CVXray — free CV matcher at cvxray.com" }],
-        totalTime: "PT1M",
       }
     ],
   };
