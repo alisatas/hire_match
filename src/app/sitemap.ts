@@ -7,6 +7,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: SITE_URL, lastModified, changeFrequency: "weekly", priority: 1 },
     { url: `${SITE_URL}/resume-keywords`, lastModified, changeFrequency: "monthly", priority: 0.8 },
+    ...["/terms", "/privacy", "/refund-policy"].map((path) => ({
+      url: `${SITE_URL}${path}`,
+      lastModified,
+      changeFrequency: "yearly" as const,
+      priority: 0.3,
+    })),
     ...ROLES.map((role) => ({
       url: `${SITE_URL}/resume-keywords/${role.slug}`,
       lastModified,

@@ -90,9 +90,12 @@ export function SiteFooter() {
             <span className="hidden text-border sm:inline">|</span>
             <span>&copy; 2026 · Nothing you upload is stored or shared.</span>
           </div>
-          <nav aria-label="Footer" className="flex items-center gap-5">
+          <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <Link href="/#how-it-works" className="transition-colors hover:text-foreground">How it works</Link>
             <Link href="/#faq" className="transition-colors hover:text-foreground">FAQ</Link>
+            <Link href="/terms" className="transition-colors hover:text-foreground">Terms</Link>
+            <Link href="/privacy" className="transition-colors hover:text-foreground">Privacy</Link>
+            <Link href="/refund-policy" className="transition-colors hover:text-foreground">Refunds</Link>
             <CookieSettingsButton />
           </nav>
         </div>

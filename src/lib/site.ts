@@ -13,3 +13,36 @@ export function jsonLdScript(data: unknown): string {
 // A page that sets its own `openGraph` replaces the root one wholesale, which drops the
 // share image — so sub-pages pass this explicitly.
 export const OG_IMAGE = { url: "/opengraph-image", width: 1200, height: 630, alt: "CVXray — free CV and resume matcher" };
+
+// ── Optional support payments (Lemon Squeezy) ───────────────────────────────
+// The tool is free. Visitors can make a one-time, pay-what-you-want support payment.
+// Kept here so the home page, Terms and Refund Policy always state the same terms.
+export const SUPPORT = {
+  minimumEur: 3,
+  refundDays: 14,
+  // Set NEXT_PUBLIC_SUPPORT_CHECKOUT_URL to the Lemon Squeezy checkout link once the
+  // product exists. Until then the support button shows "opening soon". Only an https
+  // lemonsqueezy.com URL is accepted, so a typo can never point visitors elsewhere.
+  checkoutUrl: lemonCheckoutUrl(process.env.NEXT_PUBLIC_SUPPORT_CHECKOUT_URL),
+} as const;
+
+function lemonCheckoutUrl(raw: string | undefined): string | null {
+  if (!raw) return null;
+  try {
+    const url = new URL(raw.trim());
+    const host = url.hostname.toLowerCase();
+    return url.protocol === "https:" && (host === "lemonsqueezy.com" || host.endsWith(".lemonsqueezy.com"))
+      ? url.toString()
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+// Shown on the legal pages. Optional: without it, visitors are pointed to the
+// Lemon Squeezy receipt for anything payment-related.
+export const CONTACT_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "")
+  ? (process.env.NEXT_PUBLIC_CONTACT_EMAIL as string)
+  : null;
+
+export const LEGAL_UPDATED = "11 November 2026";
