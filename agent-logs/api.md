@@ -204,3 +204,11 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 - Route changes are the security pass logged above; all attack cases re-verified against the dev server (SSRF 400, cross-site 403, oversize 413, fake / 40-page PDF 400 / 422, owner routes 401, 429 on the 16th call)
 - Closes the carried-forward `/api/interview-questions` company-length warning
+
+---
+
+## 2026-11-11 — Push 20 (Legal pages, optional support, 2 business role guides, short-CV calibration)
+
+**Status:** ✅ PASS (0 critical)
+
+- No API route changes this cycle ✅

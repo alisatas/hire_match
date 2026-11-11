@@ -377,3 +377,23 @@ Course list: free resources added for BI, Excel, CRM, SEO, marketing and sales g
 **Running improvement backlog (next pushes):**
 1. Review the CV confidence factor: a concise 60-word CV that covers the job is dampened to 0.75 — maybe ramp from 40 → 60 words instead of 80
 2. Tune adaptive keyword cap for very long JDs (> 1200 words)
+
+---
+
+## 2026-11-11 — Push 20 (Legal pages, optional support, 2 business role guides, short-CV calibration)
+
+**Status:** ✅ PASS (1 improvement implemented) — closes backlog item 1
+
+**Improvement: CV confidence ramp 25 → 50 words (was 40 → 80)** in `analyze.ts`. Formula: `clamp(0.5 + (words − 25) / 50, 0.5, 1)`.
+
+Calibration (before → after):
+- 50-word analyst CV × Data Analyst sample: 33 → **53**
+- ~55-word sales CV × sales job: 46 → **68**
+- 22-word frontend CV × Frontend: 25 → 25 (still dampened); 10-word keyword list × Frontend: 16 → 16 (still dampened)
+- Full frontend CV: 81, 37, 18, 38, 23, 52 across samples — unchanged
+- Chef CV: 6 on Frontend (was 5), 5 elsewhere; chef / frontend CV × sales job: 5 / 6 ✅
+- No `freq = 0` skill marked high ✅
+
+**Running improvement backlog (next pushes):**
+1. Tune adaptive keyword cap for very long JDs (> 1200 words)
+2. Experience extraction misses "since 2019" / date ranges — years only come from "N years of experience" phrasing

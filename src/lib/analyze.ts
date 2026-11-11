@@ -388,10 +388,13 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
         ? Math.max(0.3, jobWordCount / 50 * 0.55)
         : Math.min(0.7 + (jobWordCount / 200) * 0.3, 1.0)
 
-    // Math Prof improvement: CV quality factor — a very short CV paste (< 80 words) is
-    // likely incomplete. Dampen the score proportionally so a 3-word CV can't hit 90%.
-    // Ramps from 0.5 (40 words) to 1.0 (80+ words), capped at 1.
-    const cvConfidence = Math.min(1.0, Math.max(0.5, cvWordCount / 80))
+    // CV quality factor: a very short paste is probably incomplete (or a bare keyword
+    // list), so its score is dampened to stop a 10-word list of buzzwords hitting 90%.
+    // Math Prof improvement (Push 20): the ramp now runs 25 → 50 words instead of 40 → 80.
+    // The old curve dampened genuine concise CVs: a 50-word analyst CV that covered the
+    // Data Analyst sample almost line for line was cut to ×0.625 and scored 33%. Now
+    // ≤ 25 words → ×0.5 (keyword lists and fragments stay dampened), 50+ words → ×1.0.
+    const cvConfidence = Math.min(1.0, Math.max(0.5, 0.5 + (cvWordCount - 25) / 50))
 
     const adjustedScore = (rawScore * confidence * cvConfidence) - coveragePenalty
 

@@ -208,3 +208,14 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - `/resume-keywords/software-engineer`, `/data-scientist` → 200, unknown slug → 404, sitemap 10 URLs, each new page has its own title, canonical and WebPage + BreadcrumbList + FAQPage JSON-LD ✅
 - No console errors from localhost; dev-only Vercel debug-script CSP error carried
 - Not tested: PDF upload through the UI (the route was tested directly with real and malformed PDFs)
+
+---
+
+## 2026-11-11 — Push 20 (Legal pages, optional support, 2 business role guides, short-CV calibration)
+
+**Status:** ✅ PASS (0 critical)
+
+- `tsc` 0, ESLint 0, `next build` OK (`/terms`, `/privacy`, `/refund-policy` static) ✅
+- `/`, legal pages, `/resume-keywords/account-executive`, `/digital-marketing-specialist` → 200; unknown slug → 404; sitemap 15 URLs ✅
+- New role pages: own title, canonical, WebPage + BreadcrumbList + FAQPage JSON-LD ✅
+- Console: only pre-restart entries (stale-module 500 and HMR reconnects) — none from the current build

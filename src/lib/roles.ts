@@ -113,6 +113,54 @@ export const ROLES: RoleGuide[] = [
     ],
   },
   {
+    slug: "account-executive",
+    name: "Account Executive",
+    alsoCalled: ["Sales Executive", "B2B Sales Representative", "SaaS Account Executive"],
+    metaDescription:
+      "The resume keywords account executive job posts ask for most — quota, pipeline, Salesforce, prospecting, B2B SaaS sales — and a free check of your own CV against any posting.",
+    intro:
+      "Sales postings read like a scorecard: quota, deal size, sales cycle, CRM. Recruiters screen account executive CVs for the same things, and fast — a CV that describes duties instead of numbers, or never names the CRM, rarely makes the shortlist even when the experience is strong.",
+    groups: [
+      { title: "Sales motion", keywords: ["B2B sales", "SaaS sales", "Full sales cycle", "Prospecting", "Cold calling", "Lead generation", "Outbound", "Closing deals"] },
+      { title: "Results & metrics", keywords: ["Quota attainment", "Pipeline management", "Deal size (ACV)", "Win rate", "Forecasting", "Revenue growth", "Upselling", "Renewals"] },
+      { title: "Tools", keywords: ["Salesforce", "HubSpot", "CRM", "LinkedIn Sales Navigator", "Gong", "Outreach", "Excel"] },
+      { title: "Skills & methods", keywords: ["Negotiation", "Account management", "Business development", "Discovery calls", "MEDDIC", "Solution selling", "Stakeholder management"] },
+    ],
+    tips: [
+      { title: "Lead every role with quota attainment", text: "\"Closed €1.2M against a €900k quota (133%)\" is the first thing a sales manager looks for. Put it in the first bullet of each job, not buried at the end." },
+      { title: "State deal size and cycle", text: "Mid-market and enterprise roles hire for the deals you have actually run. Average contract value and cycle length tell a reader instantly whether you fit." },
+      { title: "Name the CRM and the method", text: "Salesforce or HubSpot appears in most postings, and many name a qualification method such as MEDDIC. If you use them, write them out." },
+    ],
+    faqs: [
+      { q: "What keywords should an account executive put on a resume?", a: "B2B or SaaS sales, quota attainment, pipeline management, prospecting and closing, the CRM you use (usually Salesforce or HubSpot), negotiation and account management — each backed by a number such as revenue closed or percentage of quota." },
+      { q: "How do I show sales results on a resume?", a: "Use the same metrics your manager tracked: percentage of quota, revenue closed, average deal size, win rate and ranking on the team. One concrete number per role beats a list of responsibilities." },
+    ],
+  },
+  {
+    slug: "digital-marketing-specialist",
+    name: "Digital Marketing Specialist",
+    alsoCalled: ["Digital Marketing Manager", "Performance Marketer", "Growth Marketer"],
+    metaDescription:
+      "The resume keywords digital marketing job posts ask for most — SEO, Google Ads, content, email, analytics, marketing automation — and a free check of your own CV against any posting.",
+    intro:
+      "Digital marketing postings name channels and tools explicitly: SEO, paid search, social, email, plus the analytics and automation stack behind them. Generalist CVs that say \"managed campaigns\" without naming the channel, the budget or the result are the ones that get skipped.",
+    groups: [
+      { title: "Channels", keywords: ["SEO", "SEM / PPC", "Google Ads", "Meta Ads", "Content marketing", "Email marketing", "Social media marketing", "Affiliate marketing"] },
+      { title: "Analytics & testing", keywords: ["Google Analytics (GA4)", "Google Tag Manager", "A/B testing", "Conversion rate optimisation", "Attribution", "KPI reporting", "Looker Studio"] },
+      { title: "Tools & automation", keywords: ["HubSpot", "Marketing automation", "Mailchimp", "Klaviyo", "Semrush", "Ahrefs", "CMS (WordPress)", "Canva"] },
+      { title: "Strategy", keywords: ["Campaign management", "Budget management", "Customer acquisition", "Funnel optimisation", "Brand marketing", "Copywriting", "Growth marketing"] },
+    ],
+    tips: [
+      { title: "Put a number on every channel", text: "\"Grew organic traffic 180% in 9 months\" or \"Cut cost per lead from €42 to €19 on Google Ads\" — channel, metric and timeframe in one line." },
+      { title: "Mention the budget you managed", text: "Paid-media roles are hired by spend level. \"Managed €25k/month across Google and Meta\" places you immediately." },
+      { title: "List the stack the posting uses", text: "GA4, Tag Manager, HubSpot, Semrush — tool names are simple keyword matches and recruiters filter on them." },
+    ],
+    faqs: [
+      { q: "What keywords should a digital marketing specialist put on a resume?", a: "The channels you work in (SEO, Google Ads, Meta Ads, email, content, social), the analytics tools (GA4, Google Tag Manager), automation and CRM tools such as HubSpot, and outcome terms like conversion rate optimisation, customer acquisition and budget management." },
+      { q: "Should a marketing resume include metrics?", a: "Yes. Traffic, conversion rate, cost per acquisition, return on ad spend and revenue influenced are what hiring managers compare candidates on. Include at least one per role." },
+    ],
+  },
+  {
     slug: "data-analyst",
     name: "Data Analyst",
     alsoCalled: ["Business Analyst", "BI Analyst", "Analytics Specialist"],

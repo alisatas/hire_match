@@ -218,3 +218,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Scrape client handles the new status codes (400 / 415 / 502) — it only reads `data.text`; 429 plain text still lands in the catch ✅
 - Full analyze flow in the browser after the security changes: paste CV → job URL fetched → report rendered, no console errors ✅
 - New skill groups all have labels; generic-alias regressions checked ("dashboards" in a frontend post, "Google Analytics" in the analyst sample) and fixed ✅
+
+---
+
+## 2026-11-11 — Push 20 (Legal pages, optional support, 2 business role guides, short-CV calibration)
+
+**Status:** ✅ PASS (0 critical)
+
+- Support button has two states: active link when the checkout URL is set, inert "Support payments open soon" otherwise (verified) ✅
+- Refund page drops the email bullet cleanly when no contact email is configured ✅
+- Dev incident: after appending `SUPPORT` to `site.ts`, the dev server served a stale module (`SUPPORT` undefined → 500 on `/`, `/terms`, `/refund-policy`). `tsc` and `next build` were clean; a dev-server restart fixed it. Not a production risk

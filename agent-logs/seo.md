@@ -294,3 +294,20 @@ Agents MUST read this log before running checks and MUST append an entry after e
 2. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
 3. Per-page OG images for role guides
 4. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)
+
+---
+
+## 2026-11-11 — Push 20 (Legal pages, optional support, 2 business role guides, short-CV calibration)
+
+**Status:** ✅ PASS (0 critical, 3 improvements)
+
+**Improvements implemented this cycle:**
+- 2 non-tech role guides — `/resume-keywords/account-executive` and `/resume-keywords/digital-marketing-specialist` — now that the engine detects sales, CRM, marketing and SEO skills (closes backlog item 1, partially). 10 role guides in total
+- Trust pages: `/terms`, `/privacy`, `/refund-policy` — linked from every footer, in the sitemap (15 URLs) and llms.txt
+- llms.txt and the "Is CVXray free?" FAQ explain the optional pay-what-you-want support (from €3, unlocks nothing, 14-day refund) so AI answers keep describing CVXray as free
+
+**Running improvement backlog (next pushes):**
+1. More business guides: project manager, financial analyst, customer success
+2. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
+3. Per-page OG images for role guides
+4. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)

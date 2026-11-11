@@ -294,3 +294,15 @@ Full read of `src/app/api/**`, `src/proxy.ts`, `next.config.ts`, client link ren
 - `git ls-files .env*` empty ✅
 - 🟡 Open: CSP `unsafe-inline`; per-instance rate limiting
 - After deploy: check the production console for CSP blocks on Google tag traffic (narrowed `connect-src`)
+
+---
+
+## 2026-11-11 — Push 20 (Legal pages, optional support, 2 business role guides, short-CV calibration)
+
+**Status:** ✅ PASS (0 critical, 2 medium carried)
+
+- Support checkout link comes only from `NEXT_PUBLIC_SUPPORT_CHECKOUT_URL` and is accepted only as an `https` `lemonsqueezy.com` URL — a typo or tampered value cannot send visitors to another site; opens with `rel="noopener noreferrer"` ✅
+- `NEXT_PUBLIC_CONTACT_EMAIL` validated before it reaches a `mailto:` link ✅
+- Legal pages and role guides are static; no new inputs, routes or `dangerouslySetInnerHTML` ✅
+- No personal data (name, address, email) published on the legal pages without the owner's choice
+- 🟡 Carried: CSP `unsafe-inline`; per-instance rate limiting

@@ -245,3 +245,15 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - `/resume-keywords` index shows 8 cards ✅
 - New skill labels appear in the report (e.g. "BI / Dashboards (Tableau, Power BI)", "CRM (Salesforce, HubSpot)"); six new free course links for those gaps
 - 🟡 Cookie banner covers the bottom of the footer until dismissed (carried)
+
+---
+
+## 2026-11-11 — Push 20 (Legal pages, optional support, 2 business role guides, short-CV calibration)
+
+**Status:** ✅ PASS (0 critical, 1 medium carried)
+
+- New "CVXray is free. Support it if it helped." section above the FAQ: states minimum (€3), one-time, Lemon Squeezy checkout and 14-day refund next to the button
+- Inactive state is a non-interactive status (`aria-disabled`), not a dead link
+- Terms / Privacy / Refund pages share one readable layout (breadcrumb with 44px targets, numbered sections, last-updated date); footer gains Terms · Privacy · Refunds and now wraps on narrow screens
+- Verified at 375px: no horizontal overflow on home, legal pages and the new role guides
+- 🟡 Carried: cookie banner covers the bottom of the footer until dismissed
