@@ -1,3 +1,11 @@
+# [1.33.0](https://github.com/alisatas/hire_match/compare/v1.32.0...v1.33.0) (2026-11-11)
+
+
+### Features
+
+* add a financial analyst keyword guide and month-precise experience ([dceb885](https://github.com/alisatas/hire_match/commit/dceb885bfec3db2e5e1295e09bad658070a36127))
+* add sales, marketing and finance sample jobs, drop the UX sample ([a33cf72](https://github.com/alisatas/hire_match/commit/a33cf728f6843fee73da9d637e5777c8c2cfba2c))
+
 # [1.32.0](https://github.com/alisatas/hire_match/compare/v1.31.0...v1.32.0) (2026-11-11)
 
 
