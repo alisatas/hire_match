@@ -8,7 +8,10 @@
 
 // The container ID is public (it appears in every page's source), so it is safe to
 // commit. NEXT_PUBLIC_GTM_ID overrides it; set it to an empty string to disable GTM.
-export const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID ?? "GTM-TDWWJWMR"
+// The value is interpolated into an inline <script>, so anything that is not a
+// well-formed container ID is dropped rather than injected.
+const RAW_GTM_ID = process.env.NEXT_PUBLIC_GTM_ID ?? "GTM-TDWWJWMR"
+export const GTM_ID = /^GTM-[A-Z0-9]{4,12}$/.test(RAW_GTM_ID) ? RAW_GTM_ID : ""
 
 export type ConsentChoice = "granted" | "denied"
 

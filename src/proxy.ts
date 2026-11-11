@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
+// ─────────────────────────────────────────────────────────────────────────────
+// API edge guard: cross-site request blocking, body-size limits and rate limits.
+// Runs before every /api route.
+// ─────────────────────────────────────────────────────────────────────────────
+
 // Per-route request limits (requests per minute per IP)
 const LIMITS: Record<string, number> = {
     "/api/orchestrate":          5,   // Claude API — most expensive
@@ -10,39 +15,83 @@ const LIMITS: Record<string, number> = {
     "/api/reddit-comment":      10,
 }
 
+// Largest request body each route accepts. Checked from Content-Length before the
+// route reads anything; the routes re-check on their own as well.
+const BODY_LIMITS: Record<string, number> = {
+    "/api/extract-pdf": 5 * 1024 * 1024 + 64 * 1024,
+}
+const DEFAULT_BODY_LIMIT = 64 * 1024
+
 const DEFAULT_LIMIT = 30
 const WINDOW_MS = 60_000
+// Hard cap on tracked keys so a flood of spoofed or rotating IPs cannot grow memory without bound
+const MAX_TRACKED = 10_000
 
-// In-memory sliding window — per Vercel function instance.
-// Upgrade to Upstash Redis for multi-region consistency if needed.
+// In-memory fixed window — per server instance. On a multi-instance deployment each
+// instance counts separately; a shared store (e.g. Upstash Redis) makes it global.
 const hits = new Map<string, { count: number; resetAt: number }>()
 
-setInterval(() => {
-    const now = Date.now()
+function prune(now: number) {
     for (const [key, entry] of hits) {
         if (entry.resetAt < now) hits.delete(key)
     }
-}, WINDOW_MS)
+    if (hits.size > MAX_TRACKED) hits.clear()
+}
+
+setInterval(() => prune(Date.now()), WINDOW_MS)
+
+function longestPrefix<T>(table: Record<string, T>, pathname: string): T | undefined {
+    return Object.entries(table)
+        .filter(([path]) => pathname === path || pathname.startsWith(path + "/"))
+        .sort((a, b) => b[0].length - a[0].length)[0]?.[1]
+}
+
+function clientIp(req: NextRequest): string {
+    // x-real-ip is set by the platform (Vercel) from the TCP connection. The first
+    // x-forwarded-for entry is whatever the client sent, so it is only a fallback.
+    return req.headers.get("x-real-ip")?.trim() ||
+        req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+        "unknown"
+}
+
+const json = (body: object, status: number, headers: Record<string, string> = {}) =>
+    NextResponse.json(body, { status, headers: { "Cache-Control": "no-store", ...headers } })
 
 export function proxy(req: NextRequest) {
     const { pathname } = req.nextUrl
+    const method = req.method.toUpperCase()
 
-    // Longest-prefix match for per-route limit
-    const limit =
-        Object.entries(LIMITS)
-            .filter(([path]) => pathname.startsWith(path))
-            .sort((a, b) => b[0].length - a[0].length)[0]?.[1] ?? DEFAULT_LIMIT
+    // ── Cross-site request blocking ──────────────────────────────────────────
+    // Browsers attach Origin / Sec-Fetch-Site to every cross-origin request. Refusing
+    // cross-site writes stops other websites from using visitors' browsers to drive
+    // the scraper or PDF parser. Server-to-server callers send neither header.
+    if (method !== "GET" && method !== "HEAD" && method !== "OPTIONS") {
+        const fetchSite = req.headers.get("sec-fetch-site")
+        const origin = req.headers.get("origin")
+        let crossSite = fetchSite === "cross-site"
+        if (!crossSite && origin && origin !== "null") {
+            try {
+                crossSite = new URL(origin).host !== req.headers.get("host")
+            } catch {
+                crossSite = true
+            }
+        }
+        if (crossSite || origin === "null") return json({ error: "Cross-site request blocked" }, 403)
 
-    const ip =
-        req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
-        req.headers.get("x-real-ip") ||
-        "unknown"
+        // ── Body size ───────────────────────────────────────────────────────
+        const declared = Number(req.headers.get("content-length") || 0)
+        const maxBody = longestPrefix(BODY_LIMITS, pathname) ?? DEFAULT_BODY_LIMIT
+        if (declared > maxBody) return json({ error: "Request too large" }, 413)
+    }
 
-    const key = `${ip}:${pathname}`
+    // ── Rate limit ───────────────────────────────────────────────────────────
+    const limit = longestPrefix(LIMITS, pathname) ?? DEFAULT_LIMIT
+    const key = `${clientIp(req)}:${pathname}`
     const now = Date.now()
 
     const entry = hits.get(key)
     if (!entry || entry.resetAt < now) {
+        if (hits.size >= MAX_TRACKED) prune(now)
         hits.set(key, { count: 1, resetAt: now + WINDOW_MS })
         return NextResponse.next()
     }
@@ -50,15 +99,11 @@ export function proxy(req: NextRequest) {
     entry.count++
     if (entry.count > limit) {
         const retryAfter = Math.ceil((entry.resetAt - now) / 1000)
-        return new NextResponse("Too many requests", {
-            status: 429,
-            headers: {
-                "Retry-After": String(retryAfter),
-                "X-RateLimit-Limit": String(limit),
-                "X-RateLimit-Remaining": "0",
-                "X-RateLimit-Reset": String(Math.ceil(entry.resetAt / 1000)),
-                "Content-Type": "text/plain",
-            },
+        return json({ error: "Too many requests" }, 429, {
+            "Retry-After": String(retryAfter),
+            "X-RateLimit-Limit": String(limit),
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": String(Math.ceil(entry.resetAt / 1000)),
         })
     }
 

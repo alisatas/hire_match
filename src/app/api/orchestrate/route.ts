@@ -1,26 +1,14 @@
 import { anthropic } from "@ai-sdk/anthropic"
 import { streamText } from "ai"
-import { timingSafeEqual } from "crypto"
 import { NextRequest } from "next/server"
 import { AGENTS, type AgentKey } from "@/lib/agents-config"
+import { isOwnerRequest } from "@/lib/server/auth"
 
 export const runtime = "nodejs"
 export const maxDuration = 60
 
-function isAuthorized(req: NextRequest): boolean {
-    const key = process.env.AGENT_ACTIONS_KEY
-    if (!key) return false
-    const provided = req.headers.get("x-agent-key") ?? req.headers.get("authorization")?.replace("Bearer ", "")
-    if (!provided) return false
-    try {
-        const a = Buffer.from(key)
-        const b = Buffer.from(provided)
-        return key.length === provided.length && timingSafeEqual(a, b)
-    } catch { return false }
-}
-
 export async function POST(req: NextRequest) {
-    if (!isAuthorized(req)) {
+    if (!isOwnerRequest(req)) {
         return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401 })
     }
 
@@ -35,7 +23,9 @@ export async function POST(req: NextRequest) {
 
     // ── Swarm mode: run agents sequentially, multiplexed over one SSE stream ──
     if (swarm && Array.isArray(swarm)) {
-        const valid = swarm.filter((k): k is AgentKey => k in AGENTS)
+        // Own-property check (not `in`, which also matches "toString", "__proto__"…),
+        // de-duplicated and capped so one request cannot queue unbounded model calls
+        const valid = [...new Set(swarm)].filter((k): k is AgentKey => typeof k === "string" && Object.hasOwn(AGENTS, k)).slice(0, 10)
         if (valid.length === 0) {
             return new Response(JSON.stringify({ error: "No valid agent keys in swarm" }), { status: 400 })
         }
@@ -66,7 +56,8 @@ export async function POST(req: NextRequest) {
                         }
                         send({ type: "agent_done", key })
                     } catch (err) {
-                        send({ type: "agent_error", key, error: String(err) })
+                        console.error("Agent run failed:", key, err instanceof Error ? err.message : "unknown")
+                        send({ type: "agent_error", key, error: "Agent run failed" })
                     }
                 }
 
@@ -85,7 +76,7 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Single agent mode ─────────────────────────────────────────────────────
-    if (!agentKey || !(agentKey in AGENTS)) {
+    if (typeof agentKey !== "string" || !Object.hasOwn(AGENTS, agentKey)) {
         return new Response(
             JSON.stringify({ error: `Unknown agent. Valid keys: ${Object.keys(AGENTS).join(", ")}` }),
             { status: 400 },

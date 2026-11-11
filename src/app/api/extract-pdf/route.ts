@@ -1,40 +1,54 @@
 import { NextResponse } from 'next/server'
-import { extractText } from 'unpdf'
+import { extractText, getDocumentProxy } from 'unpdf'
+
+export const maxDuration = 20
+
+const MAX_FILE_BYTES = 5 * 1024 * 1024
+// multipart framing adds a little on top of the file itself
+const MAX_BODY_BYTES = MAX_FILE_BYTES + 64 * 1024
+// A CV is a few pages. A tiny file can still declare thousands of pages and pin the CPU.
+const MAX_PAGES = 30
+
+const noStore = { 'Cache-Control': 'no-store' }
+const fail = (error: string, status: number) => NextResponse.json({ error }, { status, headers: noStore })
 
 export async function POST(req: Request) {
+    // Reject oversized uploads from the header, before formData() buffers the body.
+    // A missing length (chunked upload) is refused too — browsers always send one for a file.
+    const declared = Number(req.headers.get('content-length'))
+    if (!Number.isFinite(declared) || declared <= 0) return fail('Length required', 411)
+    if (declared > MAX_BODY_BYTES) return fail('File too large (max 5MB)', 413)
+
+    let pdf: Awaited<ReturnType<typeof getDocumentProxy>> | null = null
     try {
         const formData = await req.formData()
-        const file = formData.get('file') as File | null
+        const file = formData.get('file')
 
-        if (!file || file.type !== 'application/pdf') {
-            return NextResponse.json({ error: 'Invalid file' }, { status: 400 })
-        }
-
-        if (file.size > 5 * 1024 * 1024) {
-            return NextResponse.json({ error: 'File too large (max 5MB)' }, { status: 400 })
-        }
+        if (!(file instanceof File) || file.type !== 'application/pdf') return fail('Invalid file', 400)
+        if (file.size > MAX_FILE_BYTES) return fail('File too large (max 5MB)', 413)
 
         const buffer = new Uint8Array(await file.arrayBuffer())
 
-        // Validate PDF magic bytes — guards against MIME-type spoofing from the client
-        const magic = String.fromCharCode(buffer[0], buffer[1], buffer[2], buffer[3], buffer[4])
-        if (!magic.startsWith('%PDF-')) {
-            return NextResponse.json({ error: 'Invalid file' }, { status: 400, headers: { "Cache-Control": "no-store" } })
-        }
+        // Magic bytes — the client-declared MIME type alone is trivially spoofed
+        const magic = String.fromCharCode(...buffer.subarray(0, 5))
+        if (magic !== '%PDF-') return fail('Invalid file', 400)
 
-        const { text } = await extractText(buffer, { mergePages: true })
+        // The bundled PDF.js (v6) never evaluates code from the document; fonts are not
+        // loaded either, since only the text layer is needed
+        pdf = await getDocumentProxy(buffer, { disableFontFace: true, useSystemFonts: false, enableXfa: false })
+        if (pdf.numPages > MAX_PAGES) return fail(`PDF has too many pages (max ${MAX_PAGES})`, 422)
 
-        if (!text || text.trim().length < 10) {
-            return NextResponse.json({ error: 'Could not extract text from PDF' }, { status: 422, headers: { "Cache-Control": "no-store" } })
-        }
+        const { text } = await extractText(pdf, { mergePages: true })
+
+        if (!text || text.trim().length < 10) return fail('Could not extract text from PDF', 422)
 
         // Cap extracted text to prevent memory exhaustion from pathological PDFs
-        const safeText = text.trim().slice(0, 150_000)
-
-        return NextResponse.json({ text: safeText }, { headers: { "Cache-Control": "no-store" } })
-
+        return NextResponse.json({ text: text.trim().slice(0, 150_000) }, { headers: noStore })
     } catch (err: unknown) {
-        console.error('PDF extract error:', err instanceof Error ? err.message : err)
-        return NextResponse.json({ error: 'Failed to read PDF' }, { status: 500 })
+        // Log the message only (no stack, no file content); the client gets a generic error
+        console.error('PDF extract error:', err instanceof Error ? err.message : 'unknown')
+        return fail('Failed to read PDF', 500)
+    } finally {
+        await pdf?.loadingTask.destroy().catch(() => {})
     }
 }

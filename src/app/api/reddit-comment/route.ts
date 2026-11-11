@@ -1,19 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { timingSafeEqual } from 'crypto'
-
-// ── Auth guard ────────────────────────────────────────────────────────────────
-
-function isAuthorized(req: NextRequest): boolean {
-    const key = process.env.AGENT_ACTIONS_KEY
-    if (!key) return false
-    const provided = req.headers.get('x-agent-key') ?? req.headers.get('authorization')?.replace('Bearer ', '')
-    if (!provided) return false
-    try {
-        const a = Buffer.from(key.padEnd(provided.length, '\0').slice(0, provided.length))
-        const b = Buffer.from(provided.padEnd(key.length, '\0').slice(0, key.length))
-        return key.length === provided.length && timingSafeEqual(a, b)
-    } catch { return false }
-}
+import { isOwnerRequest } from '@/lib/server/auth'
 
 // ── Reddit OAuth helpers ──────────────────────────────────────────────────────
 
@@ -37,7 +23,7 @@ async function getRedditToken(clientId: string, clientSecret: string, username: 
 
     if (!res.ok) {
         const err = await res.text()
-        throw new Error(`Reddit auth failed: ${res.status} ${err}`)
+        throw new Error(`Reddit auth failed: ${res.status} ${err.slice(0, 200)}`)
     }
 
     const data = await res.json()
@@ -48,7 +34,7 @@ async function getRedditToken(clientId: string, clientSecret: string, username: 
 // ── Route handler ─────────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
-    if (!isAuthorized(req)) {
+    if (!isOwnerRequest(req)) {
         return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
     }
 
@@ -72,7 +58,9 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
     }
 
-    if (!postId || typeof postId !== 'string') {
+    // Only a bare post id or its t3_ fullname — never another thing type (t1_ comment,
+    // t4_ message, t5_ subreddit) that would make the bot act somewhere unintended
+    if (typeof postId !== 'string' || !/^(t3_)?[a-z0-9]{4,12}$/i.test(postId)) {
         return NextResponse.json({ error: 'postId is required (the ID from the Reddit thread URL)' }, { status: 400 })
     }
 
@@ -85,7 +73,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Reddit thing_id for a post is t3_{postId}
-    const thingId = postId.startsWith('t') ? postId : `t3_${postId}`
+    const thingId = postId.toLowerCase().startsWith('t3_') ? postId : `t3_${postId}`
 
     let accessToken: string
     try {
@@ -112,7 +100,7 @@ export async function POST(req: NextRequest) {
 
     if (!res.ok) {
         const err = await res.text()
-        console.error('Reddit comment error:', res.status, err)
+        console.error('Reddit comment error:', res.status, err.slice(0, 200))
         return NextResponse.json({ error: 'Reddit API error', status: res.status }, { status: 502 })
     }
 

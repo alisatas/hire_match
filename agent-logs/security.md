@@ -243,3 +243,42 @@ Fixes for the two 🟡 findings from Push 10:
 - HowTo JSON-LD moved to `page.tsx`, still static and passed through `jsonLdScript()` ✅
 - No new routes, inputs or logging ✅
 - 🟡 CSP still allows `unsafe-inline` (carried forward)
+
+---
+
+## 2026-11-11 — Security hardening pass (senior security review of the whole project)
+
+**Status:** ✅ PASS (0 critical open, 2 medium open)
+
+Full read of `src/app/api/**`, `src/proxy.ts`, `next.config.ts`, client link rendering, share-link decoding, scripts and dependencies. Every fix below was exercised against the running server with attack inputs.
+
+**Fixed — high**
+- **SSRF via DNS rebinding (`/api/scrape`)**: the old guard resolved DNS, then `fetch()` resolved again — a rebinding DNS server could answer the check with a public IP and the connection with 127.0.0.1 / 169.254.169.254. New `src/lib/server/safe-fetch.ts` resolves once, requires *every* record to be public, and pins the socket to that address (no second lookup). Redirects re-validated per hop.
+- **Unbounded body read (`/api/scrape`)**: `response.text()` read the whole body when `Content-Length` was absent (chunked). Now streamed with a 2 MB cap counted *after* decompression (gzip/deflate/br bomb safe).
+- **Vulnerable dependency**: `pdfjs-dist@5.7` (GHSA-hq66-cqwq-w95j, JS execution from a malicious PDF) was a direct dependency used nowhere — removed. `unpdf` bundles PDF.js 6.4.299 (patched).
+
+**Fixed — medium**
+- SSRF range gaps: added NAT64 `64:ff9b::`, 6to4 `2002::`, IPv4-mapped/compatible forms judged by their embedded IPv4, TEST-NETs, benchmarking, IPv6 multicast/discard/documentation. Non-80/443 ports, credentials in URL, `.lan` hosts refused. DNS has its own 3 s deadline.
+- **Cross-site request forgery on API writes**: other sites could make visitors' browsers drive the scraper (text/plain form post of a JSON body). `proxy.ts` now refuses non-GET requests with a foreign `Origin` or `Sec-Fetch-Site: cross-site`; `/api/scrape` requires `application/json` (forces a preflight).
+- **PDF upload buffered before the size check**: `formData()` ran before the 5 MB check. Now refused from `Content-Length` (proxy + route; missing length → 411). Page cap 30 (a tiny PDF can declare thousands of pages); fonts/XFA disabled; document destroyed after use.
+- **Third-party URLs in `href`**: interview-search result links (scraped from DuckDuckGo HTML) and the Apply link went straight into `<a href>` — a `javascript:` URL would run in our origin. Server now unwraps `uddg` redirects and keeps only http(s); client filters through `safeHttpUrl()` as a second layer.
+- **Owner-route auth**: two copies of the key check, one with odd padding logic and a length leak. Replaced by `src/lib/server/auth.ts` — SHA-256 both sides + `timingSafeEqual`, key < 24 chars never authorises.
+- `/api/orchestrate`: `in` check matched prototype keys (`toString`, `__proto__`) → `Object.hasOwn`; swarm de-duplicated and capped at 10; raw error text no longer streamed to the client.
+- `/api/reddit-comment`: `postId` accepted any thing type (`t1_` comment, `t4_` message…) → only `[t3_]<id>`.
+- Rate limiter: keyed on the client-controlled first `X-Forwarded-For` entry → `x-real-ip` first; tracked-key map capped at 10 000.
+- `scripts/instagram-post.mjs` printed the live Instagram access token in its expiry warning (CI logs) → placeholder.
+
+**Fixed — low / hardening**
+- CSP: added `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`, `worker-src`, `manifest-src`, `upgrade-insecure-requests` (prod); `connect-src` narrowed from any `https:` to the Google tag hosts — limits exfiltration if script is ever injected.
+- Added `Cross-Origin-Opener-Policy: same-origin`, `X-Permitted-Cross-Domain-Policies: none`, wider `Permissions-Policy`, `poweredByHeader: false`; `/api/*` responses `X-Robots-Tag: noindex` + `no-store`.
+- `NEXT_PUBLIC_GTM_ID` is interpolated into an inline script → validated against `^GTM-[A-Z0-9]{4,12}$`.
+- `/api/interview-questions`: company length 2–80, control characters stripped, result fields truncated.
+
+**Verified (dev server):** 16 SSRF inputs → 400 (loopback, metadata, `[::ffff:7f00:1]`, decimal/hex/short IPv4, port 22, credentials, `localtest.me`, `*.nip.io`, `file:`); public page → 200; cross-site Origin / Sec-Fetch-Site → 403; text/plain → 415; 100 KB JSON → 413; 6.5 MB PDF → 413; fake PDF → 400; real 2-page PDF → 200; 40-page PDF → 422; owner routes without/with wrong key → 401; 200-char company → 400; 16th request/min → 429. Full analyze flow in the browser works, no new CSP violations.
+
+**Still open**
+- 🟡 CSP `script-src 'unsafe-inline'` — needs per-request nonces (proxy-generated) for the GTM bootstrap and JSON-LD; GTM would need nonce-aware config
+- 🟡 Rate limiting is per server instance (in memory); a shared store (Upstash / Vercel KV) is needed for a real global limit
+- 🟢 Remaining `npm audit`: moderate/low only, in dev tooling (`shadcn` CLI chain) and `@anthropic-ai/sdk` (used by a local script; the advisory concerns a feature not used)
+- Not verified: Google tag traffic under the narrowed `connect-src` (GTM did not load locally without consent) — check the browser console on production after deploy
+- `/orchestration` page is public (noindex); its API is key-protected

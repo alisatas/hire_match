@@ -1,5 +1,27 @@
 import { NextResponse } from "next/server"
 
+const noStore = { "Cache-Control": "no-store" }
+
+// Result links come from third-party HTML and end up in an <a href>. Only plain
+// http(s) URLs to sites other than the search engine itself are passed through —
+// a "javascript:" or "data:" href would run script when clicked.
+// DuckDuckGo wraps results as //duckduckgo.com/l/?uddg=<encoded target>; unwrap those.
+function resolveResultUrl(raw: string): string | null {
+    try {
+        let u = new URL(raw.replace(/&amp;/g, "&"), "https://duckduckgo.com")
+        if (u.hostname.endsWith("duckduckgo.com")) {
+            const target = u.searchParams.get("uddg")
+            if (!target) return null
+            u = new URL(target)
+        }
+        if (u.protocol !== "https:" && u.protocol !== "http:") return null
+        if (u.hostname.endsWith("duckduckgo.com")) return null
+        return u.toString()
+    } catch {
+        return null
+    }
+}
+
 function extractQuestions(html: string): { title: string; snippet: string; url: string; source: string }[] {
     const results: { title: string; snippet: string; url: string; source: string }[] = []
 
@@ -32,8 +54,9 @@ function extractQuestions(html: string): { title: string; snippet: string; url: 
         else if (url.includes("igotanoffer")) source = "IGotAnOffer"
         else if (url.includes("leetcode")) source = "LeetCode"
 
-        if (title && url && !url.includes("duckduckgo.com")) {
-            results.push({ title, snippet, url, source })
+        const target = resolveResultUrl(url)
+        if (title && target) {
+            results.push({ title: title.slice(0, 200), snippet: snippet.slice(0, 400), url: target, source })
         }
     }
 
@@ -42,10 +65,11 @@ function extractQuestions(html: string): { title: string; snippet: string; url: 
 
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
-    const company = searchParams.get("company")?.trim()
+    // Company names come from scraped job pages: bound the length and drop control characters
+    const company = searchParams.get("company")?.replace(/[\u0000-\u001f\u007f]/g, " ").trim()
 
-    if (!company || company.length < 2) {
-        return NextResponse.json({ error: "Company name required" }, { status: 400 })
+    if (!company || company.length < 2 || company.length > 80) {
+        return NextResponse.json({ error: "Company name required" }, { status: 400, headers: noStore })
     }
 
     try {
@@ -64,7 +88,7 @@ export async function GET(req: Request) {
         })
 
         if (!res.ok) {
-            return NextResponse.json({ results: [] })
+            return NextResponse.json({ results: [] }, { headers: noStore })
         }
 
         const html = await res.text()
@@ -92,9 +116,9 @@ export async function GET(req: Request) {
 
         // If fewer than 2 company-specific results, return empty so UI falls back to static links
         const results = relevant.length >= 2 ? relevant : []
-        return NextResponse.json({ results, company })
+        return NextResponse.json({ results, company }, { headers: noStore })
 
     } catch {
-        return NextResponse.json({ results: [] })
+        return NextResponse.json({ results: [] }, { headers: noStore })
     }
 }

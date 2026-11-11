@@ -31,7 +31,7 @@ import {
     TriangleAlert,
     Zap,
 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn, safeHttpUrl } from "@/lib/utils"
 import { track } from "@/lib/analytics"
 import { Badge, Chip, Divider, FeedbackRating, Panel, ScoreRing, Section, SegmentedControl, StatTile, StepLabel, toneDot, toneForScore, toneText, type Tone } from "./analyzer-ui"
 import { analyze, auditCV, type AnalysisResult, type CVAuditResult, type MissingSkillWithPriority } from "@/lib/analyze"
@@ -610,7 +610,8 @@ export default function CVAnalyzer() {
 
     const validUrl = jobInput.trim().startsWith("http")
     const canAnalyze = !!cvText && (!!jobText || validUrl)
-    const applyUrl = jobUrl || (validUrl ? jobInput.trim() : "")
+    // Only an http(s) URL is ever turned into the Apply link
+    const applyUrl = safeHttpUrl(jobUrl || (validUrl ? jobInput.trim() : "")) ?? ""
 
     const tone = results ? toneForScore(results.score) : "neutral"
     const highGaps = results ? results.missing.filter(m => m.priority === "high") : []
@@ -1237,7 +1238,7 @@ export default function CVAnalyzer() {
                                                     )}
                                                     {!interviewLoading && interviewResults.length > 0 && (
                                                         <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border">
-                                                            {interviewResults.map((r, i) => (
+                                                            {interviewResults.filter(r => safeHttpUrl(r.url)).map((r, i) => (
                                                                 <li key={i}>
                                                                     <a href={r.url} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-3 bg-foreground/[0.01] px-4 py-3 transition-colors hover:bg-foreground/[0.04]">
                                                                         <span className="w-20 shrink-0 truncate text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{r.source}</span>

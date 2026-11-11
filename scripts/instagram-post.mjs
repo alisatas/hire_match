@@ -22,7 +22,7 @@ if (TOKEN_EXPIRY) {
   if (daysLeft < 10) {
     console.warn(`\n⚠️  Instagram token expires in ${daysLeft} day(s)! Refresh at:`)
     console.warn(
-      `   https://graph.facebook.com/v22.0/oauth/access_token?grant_type=ig_exchange_token&client_id=YOUR_APP_ID&client_secret=YOUR_APP_SECRET&access_token=${TOKEN}\n`
+      `   https://graph.facebook.com/v22.0/oauth/access_token?grant_type=ig_exchange_token&client_id=YOUR_APP_ID&client_secret=YOUR_APP_SECRET&access_token=<YOUR_CURRENT_TOKEN>\n`
     )
   }
 }

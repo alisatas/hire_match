@@ -183,3 +183,15 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 - No API route changes this cycle ✅
 - 🟡 Carried forward: `/api/interview-questions` has no upper bound on `company` length
+
+---
+
+## 2026-11-11 — Security hardening pass (senior security review of the whole project)
+
+**Status:** ✅ PASS (0 critical)
+
+- `/api/scrape`: SSRF-safe fetch (resolve once + pinned IP), streamed 2 MB cap after decompression, JSON content type required, URL ≤ 2048 chars, all responses `no-store`, upstream errors → generic 502
+- `/api/extract-pdf`: `Content-Length` checked before parsing (411/413), 30-page cap, `no-store` on every path incl. 500
+- `/api/interview-questions`: bounded company input, http(s)-only result URLs (DDG `uddg` redirects unwrapped — previously every result was dropped), `no-store`. Closes the carried-forward `company` length warning
+- `/api/orchestrate`, `/api/reddit-comment`: shared constant-time auth, strict input validation
+- Proxy: body-size limits per route, cross-site write blocking
