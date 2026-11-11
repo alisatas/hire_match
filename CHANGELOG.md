@@ -1,3 +1,10 @@
+# [1.30.0](https://github.com/alisatas/hire_match/compare/v1.29.0...v1.30.0) (2026-11-11)
+
+
+### Features
+
+* remove the support section, read experience from CV date ranges ([3119144](https://github.com/alisatas/hire_match/commit/3119144fc71c514951dfb102b6c28f4569b5e77b))
+
 # [1.29.0](https://github.com/alisatas/hire_match/compare/v1.28.0...v1.29.0) (2026-11-11)
 
 
