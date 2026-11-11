@@ -300,3 +300,12 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Playwright 19/19 (dev + production build, system Chrome, 1 worker); unit 89/89
 - Feed `<link rel="alternate">` now on every page; canonicals verified unchanged on /, /terms, /blog
 - Confirm after push: CI "Browser tests" passes in GitHub Actions
+
+---
+
+## 2026-11-11 — Push 29 (GitHub security features, dependency clean-up, SECURITY.md, years-required parsing)
+
+**Status:** ✅ PASS (0 critical)
+
+- `tsc` 0, ESLint 0, `next build` OK, prod audit clean at high+ ✅
+- Playwright 19/19 (production build, system Chrome); unit 99/99

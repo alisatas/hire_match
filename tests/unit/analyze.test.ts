@@ -188,3 +188,23 @@ Nice to have:
     expect(analyze(withoutCore, job).score).toBeLessThan(analyze(cvWithCore, job).score);
   });
 });
+
+import { extractYearsRequired } from "@/lib/analyze";
+
+describe("years of experience required by the job", () => {
+  const cases: [string, number][] = [
+    ["3+ years of experience with React", 3],
+    ["3-5 years of experience in sales", 3],
+    ["2–4 years experience as an analyst", 2],
+    ["2+ years’ experience in recruiting", 2],
+    ["At least 4 years in a similar role", 4],
+    ["A minimum of 6 years working in finance", 6],
+    ["Minimaal 3 jaar werkervaring als ontwikkelaar", 3],
+    ["Founded 40 years ago in Utrecht", 0],
+    ["2 years warranty on all devices", 0],
+    ["5+ years of experience overall, including 2 years of experience with Go", 5],
+  ];
+  for (const [text, expected] of cases) {
+    it(`"${text}" → ${expected}`, () => expect(extractYearsRequired(text)).toBe(expected));
+  }
+});

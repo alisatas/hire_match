@@ -50,7 +50,6 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.68",
     "@ai-sdk/google": "^3.0.61",
-    "@anthropic-ai/sdk": "^0.82.0",
     "@base-ui/react": "^1.3.0",
     "@radix-ui/react-slot": "^1.2.4",
     "@vercel/analytics": "^2.0.1",
@@ -72,6 +71,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^0.82.0",
     "@axe-core/playwright": "^4.14.0",
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
@@ -80,7 +80,7 @@
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^12.0.6",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^22.20.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
@@ -90,7 +90,6 @@
     "semantic-release": "^25.0.3",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vercel": "^50.41.0",
-    "vitest": "^3.2.7"
+    "vitest": "^5.1.0"
   }
 }

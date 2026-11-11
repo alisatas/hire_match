@@ -306,3 +306,11 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 - The e2e analyzer test's CV covered every required skill, so after the nice-to-have change its only gaps were low priority and the suggestions section (high/medium only) correctly disappeared. CV now omits two required skills (Redux, GraphQL)
 - 89 unit tests (+3 nice-to-have), 19 browser tests — green on dev and CI-mode production build
+
+---
+
+## 2026-11-11 — Push 29 (GitHub security features, dependency clean-up, SECURITY.md, years-required parsing)
+
+**Status:** ✅ PASS (0 critical)
+
+- vitest 5 runs the suite unchanged: 99 unit tests (+10 years-required cases); Playwright 19/19 on the production build (1 worker, to avoid parallel Chrome windows locally)

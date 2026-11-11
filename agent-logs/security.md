@@ -397,3 +397,18 @@ Full read of `src/app/api/**`, `src/proxy.ts`, `next.config.ts`, client link ren
 - **Production bug caught by the new CI browser tests**: on `analysis_complete` the Google tag calls `https://pagead2.googlesyndication.com/measurement/conversion` (Google Ads conversion ping, sent cookieless even with consent denied). The narrowed `connect-src` from Push 22 blocked it, so Ads conversion measurement has been failing live since then. Host added to `GOOGLE_TAG_HOSTS`. This is the "Google tag traffic under the narrowed connect-src — not verified" item from Push 19/22, now closed
 - CI itself works: install hang fixed last push, audit/typecheck/lint/unit/build/Chrome all green; only the browser test failed — on the real bug above
 - 🟡 Carried: CSP `unsafe-inline` (by decision)
+
+---
+
+## 2026-11-11 — Push 29 (GitHub security features, dependency clean-up, SECURITY.md, years-required parsing)
+
+**Status:** ✅ PASS (0 critical, 1 medium carried)
+
+**GitHub security review (owner approved the setting changes):**
+- Secret scanning: on, **0 alerts**; push protection: on. Local scan of all 188 commits for AWS/GitHub/Anthropic/OpenAI/Stripe/Google/Meta/Slack keys, JWTs, private keys and `.env` files: **nothing** (one `sk-ant-...` placeholder in an old guide)
+- Enabled: **Dependabot alerts** (+ dependency graph), **private vulnerability reporting**, **CodeQL default setup** (JavaScript/TypeScript + GitHub Actions; first full scan runs in the background). Dependabot *security update PRs* left off — Renovate handles updates
+- Added `SECURITY.md` (private reporting link, response times, scope, safe-harbour expectations)
+- Workflows: CI `contents: read`, release only `contents: write`, no `pull_request_target` ✅
+
+**Dependencies:** 91 → 48 findings, **critical 3 → 0, high 26 → 0**. Removed the unused `vercel` CLI (source of almost all highs — not referenced by any script, hook or workflow); vitest 3 → 5 (critical tinypool/mocker), `@types/node` 20 → 22 to match the Node 22 runtime; `npm audit fix` for the rest; `@anthropic-ai/sdk` moved to devDependencies (only a local script uses it). Production audit: 0 high/critical (6 moderate/low via `shadcn`, build-time CSS only). Remaining 48 dev-tooling moderates: the suggested "fixes" are downgrades (semantic-release 21, eslint-config-next 15) — left for Renovate
+- 🟡 Carried: CSP `unsafe-inline` (by decision)

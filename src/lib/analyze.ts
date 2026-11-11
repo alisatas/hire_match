@@ -314,9 +314,33 @@ function extractKeywords(text: string): Set<string> {
     return new Set(extractKeywordFrequencies(text).keys())
 }
 
-function extractYearsRequired(text: string): number {
-    const matches = text.match(/(\d+)\+?\s*years?\s*(of\s*)?(experience|exp)/gi) || []
-    const years = matches.map(m => parseInt(m)).filter(n => !isNaN(n))
+// Math Prof improvement (Push 29): read the requirement the way postings phrase it.
+// The old pattern only knew "N years of experience": a range "3-5 years of experience"
+// was read as 5 (the bar is 3), and "at least 4 years in a similar role", "2+ years’
+// experience" (curly apostrophe) and Dutch "3 jaar werkervaring" were missed entirely,
+// so the experience part fell back to the neutral default. Ranges now use the lower
+// bound; a year count counts when experience words follow it or "at least / minimum"
+// precede it. Values outside 1–25 are ignored (e.g. "founded 40 years ago").
+const YEARS_UNIT = String.raw`(?:years?|yrs?|jaar)`
+const YEARS_RANGE_RE = new RegExp(String.raw`\b(\d{1,2})\s*(?:-|–|—|to|tot)\s*\d{1,2}\+?\s*${YEARS_UNIT}['’]?\s+(?:of\s+)?(?:[\w-]+\s+){0,4}?(?:experience|exp|ervaring|werkervaring|expertise|working|in\s+(?:a|an|the)\b)`, "gi")
+const YEARS_SINGLE_RE = new RegExp(String.raw`\b(\d{1,2})\+?\s*${YEARS_UNIT}['’]?\s+(?:of\s+)?(?:[\w-]+\s+){0,4}?(?:experience|exp|ervaring|werkervaring|expertise|working|in\s+(?:a|an|the)\b)`, "gi")
+const YEARS_MINIMUM_RE = new RegExp(String.raw`\b(?:at\s+least|minimum(?:\s+of)?|min\.?|minimaal|ten\s+minste)\s+(\d{1,2})\+?\s*${YEARS_UNIT}\b`, "gi")
+
+export function extractYearsRequired(text: string): number {
+    const found: number[] = []
+    const ranged = new Set<number>() // start index of numbers already read as a range
+    for (const m of text.matchAll(YEARS_RANGE_RE)) {
+        found.push(Number(m[1]))
+        ranged.add(m.index ?? -1)
+    }
+    for (const m of text.matchAll(YEARS_SINGLE_RE)) {
+        // "3-5 years" also matches "5 years …" — skip the upper bound of a range
+        const before = text.slice(Math.max(0, (m.index ?? 0) - 6), m.index ?? 0)
+        if (/\d\s*(?:-|–|—|to|tot)\s*$/.test(before)) continue
+        found.push(Number(m[1]))
+    }
+    for (const m of text.matchAll(YEARS_MINIMUM_RE)) found.push(Number(m[1]))
+    const years = found.filter(n => n >= 1 && n <= 25)
     return years.length > 0 ? Math.max(...years) : 0
 }
 

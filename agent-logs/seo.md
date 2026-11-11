@@ -441,3 +441,18 @@ Agents MUST read this log before running checks and MUST append an entry after e
 2. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
 3. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)
 4. GA4: mark `analysis_complete`, `score_card` and `entry` as key events; Ads conversions now unblocked
+
+---
+
+## 2026-11-11 — Push 29 (GitHub security features, dependency clean-up, SECURITY.md, years-required parsing)
+
+**Status:** ✅ PASS (0 critical, 1 improvement)
+
+**Improvement implemented this cycle:**
+- WebApplication `featureList` updated with the features shipped since it was written (16 role guides, where-to-add suggestions, score card, boilerplate-proof scoring, month-precise experience) — keeps the structured description AI engines and Google read in line with the product
+
+**Running improvement backlog (next pushes):**
+1. More articles: "ATS-friendly CV format", "CV keywords vs. skills section", "How to read a job description"
+2. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
+3. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)
+4. GA4: mark `analysis_complete`, `score_card` and `entry` as key events

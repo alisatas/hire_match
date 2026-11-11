@@ -518,3 +518,17 @@ Calibration (before → after): sales CV × sales job 68 → **71** (its one gap
 **Running improvement backlog (next pushes):**
 1. Healthcare and logistics skill groups before adding samples from those sectors
 2. Detect seniority mismatch (e.g. "Lead"/"Head of" title vs junior CV) as a separate signal
+
+---
+
+## 2026-11-11 — Push 29 (GitHub security features, dependency clean-up, SECURITY.md, years-required parsing)
+
+**Status:** ✅ PASS (1 improvement implemented)
+
+**Improvement: years-required parsing** (`extractYearsRequired`, now exported and tested). Ranges use the lower bound ("3-5 years" → 3, was 5); "at least / minimum (of) / minimaal N years"; curly apostrophes ("2+ years’ experience"); Dutch "jaar (werk)ervaring"; a count only counts when experience words follow it or a minimum word precedes it, and values outside 1–25 are ignored ("founded 40 years ago", "2 years warranty" → 0). 10 unit tests.
+
+Calibration: fitting CVs unchanged (Frontend 81, sales 71, marketer 70, finance 77, AI 70, analyst 57); unrelated CVs stay low (frontend × DevOps 24 → 28, × PM 36 → 39 — their requirements are now read correctly); chef 5–6; boilerplate invariance intact.
+
+**Running improvement backlog (next pushes):**
+1. Healthcare and logistics skill groups before adding samples from those sectors
+2. Seniority mismatch signal ("Lead / Head of" title vs a junior CV)

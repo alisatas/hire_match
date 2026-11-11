@@ -333,3 +333,11 @@ Agents MUST read this log before running checks and MUST append an entry after e
 **Status:** ✅ PASS (0 critical, 1 medium carried)
 
 - Optional extras ("Nice to have", "is a plus") now appear as low priority in Missing and no longer get "How to add" cards — the report focuses on what the job requires
+
+---
+
+## 2026-11-11 — Push 29 (GitHub security features, dependency clean-up, SECURITY.md, years-required parsing)
+
+**Status:** ✅ PASS (0 critical, 1 medium carried)
+
+- No visible UI changes; the experience tile now reflects requirements written as ranges, "at least …" or in Dutch
