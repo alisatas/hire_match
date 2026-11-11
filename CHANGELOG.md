@@ -1,3 +1,15 @@
+# [1.28.0](https://github.com/alisatas/hire_match/compare/v1.27.0...v1.28.0) (2026-11-11)
+
+
+### Bug Fixes
+
+* **security:** close DNS-rebinding SSRF and harden every API route ([998fb02](https://github.com/alisatas/hire_match/commit/998fb025e251cc56e7296599a9e0c8dc049a2d62))
+
+
+### Features
+
+* data scientist and software engineer guides, business skill detection ([8d5b427](https://github.com/alisatas/hire_match/commit/8d5b427900a401cb7996d7e0430460138bfb3bfe))
+
 # [1.27.0](https://github.com/alisatas/hire_match/compare/v1.26.0...v1.27.0) (2026-11-11)
 
 
