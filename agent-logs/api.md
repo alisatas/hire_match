@@ -253,3 +253,11 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 - New `POST /api/client-error`: JSON body ≤ 8 KB, 204/400/413, proxy cross-site + body-size + rate limits, `no-store` + CORP via config
 - `proxy.ts` is now async (Upstash call), unchanged behaviour when Upstash is not configured
+
+---
+
+## 2026-11-11 — Push 26 (CI runner fix, HR skill group, per-article share images)
+
+**Status:** ✅ PASS (0 critical)
+
+- No API route changes ✅

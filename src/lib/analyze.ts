@@ -91,6 +91,16 @@ export const SKILL_GROUPS: Record<string, string[]> = {
     // Google Analytics / GA4 deliberately not here: analyst and PM postings use them, and
     // listing them under SEO flagged "SEO / SEM" as a gap on the Data Analyst sample
     seo: ["seo", "sem", "search engine optimization", "search engine optimisation", "google ads", "ppc", "keyword research"],
+    // Math Prof improvement (Push 26): recruiting / HR. Recruiter postings had no skill
+    // group, so the score for that role rested on raw keyword overlap alone. Tool names
+    // and multi-word phrases only — "hiring" or "talent" alone appear in every posting.
+    // "workday", "greenhouse" and "lever" alone are everyday words ("a typical workday",
+    // "greenhouse gas", "a key lever") — only their ATS forms count.
+    hr: ["applicant tracking system", "greenhouse ats", "workday recruiting", "workday hcm", "lever ats",
+        "smartrecruiters", "bamboohr",
+        "linkedin recruiter", "boolean search", "full-cycle recruiting", "full cycle recruiting",
+        "talent acquisition", "candidate sourcing", "sourcing candidates", "time to hire", "employer branding",
+        "onboarding programme", "onboarding program", "hris"],
     finance: ["financial modelling", "financial modeling", "financial analysis", "fp&a", "ifrs", "gaap", "accounts payable", "accounts receivable", "reconciliation", "budgeting"],
 }
 
@@ -146,6 +156,7 @@ export function getSkillLabel(key: string): string {
         bi: "BI / Dashboards (Tableau, Power BI)", excel: "Excel", product: "Product Management",
         projectmgmt: "Project Management", sales: "B2B Sales", crm: "CRM (Salesforce, HubSpot)",
         marketing: "Digital Marketing", seo: "SEO / SEM", finance: "Finance & Accounting",
+        hr: "Recruiting / HR Tools",
     }
     return labels[key] || key
 }

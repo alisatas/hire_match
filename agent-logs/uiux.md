@@ -308,3 +308,12 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Header gains "Guides"; footer gains "Guides"
 - **Accessibility audit (#14)**: axe WCAG 2 A/AA on home, guides index, two role guides, blog index, a blog post, Terms, Privacy and the cookie banner — 0 serious/critical violations; now enforced in CI
 - 🟡 Carried: cookie banner covers the bottom of the footer until dismissed
+
+---
+
+## 2026-11-11 — Push 26 (CI runner fix, HR skill group, per-article share images)
+
+**Status:** ✅ PASS (0 critical, 1 medium carried)
+
+- Shared blog links now preview with the article headline and reading time instead of the generic site card
+- Recruiter reports gain a "Recruiting / HR Tools" skill line, an example bullet and a course link

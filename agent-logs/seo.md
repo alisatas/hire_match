@@ -396,3 +396,18 @@ Agents MUST read this log before running checks and MUST append an entry after e
 2. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
 3. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)
 4. GA4: mark `analysis_complete`, `score_card` and `entry` as key events and build the funnel exploration
+
+---
+
+## 2026-11-11 — Push 26 (CI runner fix, HR skill group, per-article share images)
+
+**Status:** ✅ PASS (0 critical, 1 improvement)
+
+**Improvement implemented this cycle:**
+- Per-article share images for the 3 blog guides (headline + reading time); `BlogPosting.image` points at the article's own image
+
+**Running improvement backlog (next pushes):**
+1. More articles: "ATS-friendly CV format", "CV keywords vs. skills section", "How to read a job description"
+2. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
+3. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)
+4. GA4: mark `analysis_complete`, `score_card` and `entry` as key events

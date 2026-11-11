@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { analyze, yearsFromDateRanges } from "@/lib/analyze";
-import { CHEF_CV, FRONTEND_CV, FRONTEND_JOB, SALES_CV, SALES_JOB } from "./fixtures";
+import { CHEF_CV, FRONTEND_CV, FRONTEND_JOB, RECRUITER_CV, RECRUITER_JOB, SALES_CV, SALES_JOB } from "./fixtures";
 
 describe("match score calibration", () => {
   it("scores a strong match in the 75–95 band", () => {
@@ -19,6 +19,13 @@ describe("match score calibration", () => {
     const tech = analyze(FRONTEND_CV, SALES_JOB).score;
     expect(fit).toBeGreaterThanOrEqual(55);
     expect(tech).toBeLessThanOrEqual(20);
+  });
+
+  it("scores a fitting recruiter CV well above an unrelated one", () => {
+    const fit = analyze(RECRUITER_CV, RECRUITER_JOB);
+    expect(fit.matched).toContain("Recruiting / HR Tools");
+    expect(fit.score).toBeGreaterThanOrEqual(50);
+    expect(analyze(FRONTEND_CV, RECRUITER_JOB).score).toBeLessThanOrEqual(20);
   });
 
   it("always stays inside 5–95", () => {
@@ -62,6 +69,9 @@ describe("generic words do not count as skills", () => {
     ["airport terminal operations", "Linux / Bash"],
     ["fine tuning your pitch", "AI / LLM"],
     ["we build dashboards in React", "BI / Dashboards (Tableau, Power BI)"],
+    ["a typical workday in our team", "Recruiting / HR Tools"],
+    ["cut greenhouse gas emissions", "Recruiting / HR Tools"],
+    ["pricing is a key lever for growth", "Recruiting / HR Tools"],
   ];
   for (const [phrase, label] of cases) {
     it(`"${phrase}" is not ${label}`, () => {

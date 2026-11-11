@@ -269,3 +269,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - `tsc` 0, ESLint 0, `next build` OK; blog + 4 new guides prerendered; sitemap 25 URLs ✅
 - Playwright suite (13) green against dev and production build; CI now runs unit tests, builds, installs Chromium and runs the browser suite, uploading the report on failure
 - Console: only third-party / Vercel-only noise (filtered in tests with explicit reasons)
+
+---
+
+## 2026-11-11 — Push 26 (CI runner fix, HR skill group, per-article share images)
+
+**Status:** ✅ PASS (0 critical)
+
+- `tsc` 0, ESLint 0, `next build` OK ✅
+- Playwright 18/18 (5 new share-image checks) on dev and production build; unit 80/80
+- CI: previous run failed at "Install Playwright browser" on Ubuntu 26 — runner pinned to 24.04; confirm the next CI run reaches the browser tests

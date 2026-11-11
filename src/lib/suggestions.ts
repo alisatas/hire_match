@@ -30,7 +30,7 @@ const CATEGORY: Record<string, Category> = {
     linux: "cloud", jest: "quality", cypress: "quality", testing: "quality", git: "practice", agile: "practice",
     figma: "design", ml: "ai", ai: "ai", vectordb: "ai", mlops: "ai", data: "data", bi: "data", excel: "finance",
     product: "product", projectmgmt: "product", sales: "sales", crm: "sales", marketing: "marketing", seo: "marketing",
-    finance: "finance",
+    finance: "finance", hr: "sales",
 }
 
 // Patterns with a measurable result — the shape recruiters respond to.
@@ -89,6 +89,7 @@ const EXAMPLE_BY_KEY: Record<string, string> = {
     testing: "Introduced automated tests for the core flows, halving production bugs within a quarter.",
     cicd: "Built CI/CD pipelines that cut release time from 45 to 8 minutes.",
     api: "Designed REST APIs used by three client apps and 40k monthly users.",
+    hr: "Ran full-cycle recruiting for 45 roles a year in Greenhouse, cutting time to hire from 52 to 34 days.",
     data: "Analysed product usage data to find the drop-off step in onboarding, leading to a fix that lifted conversion 12%.",
 }
 

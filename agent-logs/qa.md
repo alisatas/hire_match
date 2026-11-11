@@ -278,3 +278,12 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Found while testing: desktop Chrome on macOS opened the system share sheet for the score card (hang) → share sheet now only on touch devices, desktop downloads
 - Found while testing: `upgrade-insecure-requests` would break the CI production build on http://localhost → Vercel-only
 - Suggestions only appear for a live analysis (shared links have no CV text) and reset with the result
+
+---
+
+## 2026-11-11 — Push 26 (CI runner fix, HR skill group, per-article share images)
+
+**Status:** ✅ PASS (0 critical)
+
+- Found while adding per-article OG images: the image renderer rejects a `div` with two text children (500). Fixed, and the suite now checks that every share image endpoint (site, role, article, logo, apple icon) returns a PNG — this class of bug is caught automatically from now on
+- 80 unit tests, 18 browser tests — green on dev and on a production build (CI mode)

@@ -19,7 +19,9 @@ concurrency:
 jobs:
   verify:
     name: Typecheck, lint, tests, build, audit
-    runs-on: ubuntu-latest
+    # Pinned: ubuntu-latest moved to Ubuntu 26, whose system packages Playwright's
+    # --with-deps install does not support yet. Revisit when Playwright adds it.
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4

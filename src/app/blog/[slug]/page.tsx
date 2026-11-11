@@ -6,7 +6,7 @@ import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { PostBlock } from "@/components/post-body";
 import { POSTS, getPost } from "@/lib/posts";
 import { getRole } from "@/lib/roles";
-import { OG_IMAGE, SITE_URL, jsonLdScript } from "@/lib/site";
+import { SITE_URL, jsonLdScript } from "@/lib/site";
 
 export const dynamicParams = false;
 
@@ -26,9 +26,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     alternates: { canonical: path },
     openGraph: {
       type: "article", siteName: "CVXray", url: path, title: post.title, description: post.description,
-      publishedTime: post.published, modifiedTime: post.updated, images: [OG_IMAGE],
+      publishedTime: post.published, modifiedTime: post.updated,
     },
-    twitter: { card: "summary_large_image", title: post.title, description: post.description, images: [OG_IMAGE.url] },
+    // Share image comes from the colocated opengraph-image.tsx (per-article card)
+    twitter: { card: "summary_large_image", title: post.title, description: post.description },
   };
 }
 
@@ -53,7 +54,7 @@ export default async function PostPage({ params }: Props) {
         datePublished: post.published,
         dateModified: post.updated,
         inLanguage: "en",
-        image: `${SITE_URL}/opengraph-image`,
+        image: `${url}/opengraph-image`,
         author: { "@id": `${SITE_URL}/#org` },
         publisher: { "@id": `${SITE_URL}/#org` },
         isPartOf: { "@id": `${SITE_URL}/blog` },

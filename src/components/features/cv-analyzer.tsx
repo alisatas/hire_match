@@ -225,6 +225,7 @@ const SKILL_RESOURCES: Record<string, SkillResource> = {
     crm: { label: "Salesforce Trailhead", url: "https://trailhead.salesforce.com/", platform: "Salesforce", type: "course", duration: "Self-paced", free: true },
     seo: { label: "SEO Starter Guide", url: "https://developers.google.com/search/docs/fundamentals/seo-starter-guide", platform: "Google Search Central", type: "guide", duration: "~2 hrs", free: true },
     marketing: { label: "HubSpot Academy", url: "https://academy.hubspot.com/", platform: "HubSpot", type: "course", duration: "Self-paced", free: true },
+    hr: { label: "LinkedIn Talent Blog — recruiting guides", url: "https://www.linkedin.com/business/talent/blog", platform: "LinkedIn", type: "guide", duration: "Self-paced", free: true },
     sales: { label: "HubSpot Academy — sales courses", url: "https://academy.hubspot.com/", platform: "HubSpot", type: "course", duration: "Self-paced", free: true },
     vectordb: { label: "Pinecone Learning Center — vector search & RAG", url: "https://www.pinecone.io/learn/", platform: "Pinecone", type: "guide", duration: "Self-paced", free: true },
     mlops: { label: "Made With ML — MLOps course", url: "https://madewithml.com/", platform: "Made With ML", type: "course", duration: "Self-paced", free: true },

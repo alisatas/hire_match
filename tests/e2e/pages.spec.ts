@@ -46,6 +46,22 @@ test.describe("public pages", () => {
   });
 });
 
+test.describe("share images", () => {
+  for (const path of [
+    "/opengraph-image",
+    "/resume-keywords/ai-engineer/opengraph-image",
+    "/blog/how-ats-reads-your-cv/opengraph-image",
+    "/logo.png",
+    "/apple-icon",
+  ]) {
+    test(`${path} renders a PNG`, async ({ request }) => {
+      const res = await request.get(path);
+      expect(res.status()).toBe(200);
+      expect(res.headers()["content-type"]).toContain("image/png");
+    });
+  }
+});
+
 test.describe("API guards", () => {
   test("scraper refuses private addresses and cross-site posts", async ({ request }) => {
     const priv = await request.post("/api/scrape", { data: { url: "http://169.254.169.254/latest/meta-data/" } });

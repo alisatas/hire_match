@@ -472,3 +472,17 @@ Verification: 17 parser cases pass. New cross-sector samples separate fitting fr
 **Running improvement backlog (next pushes):**
 1. Tune adaptive keyword cap for very long JDs (> 1200 words)
 2. Skill groups for HR (ATS tools, sourcing) so the Recruiter guide's role scores meaningfully
+
+---
+
+## 2026-11-11 — Push 26 (CI runner fix, HR skill group, per-article share images)
+
+**Status:** ✅ PASS (1 improvement implemented) — closes backlog item 2
+
+**Improvement: Recruiting / HR skill group** (`hr` in `SKILL_GROUPS`): applicant tracking system, Greenhouse ATS, Workday Recruiting/HCM, LinkedIn Recruiter, Boolean search, full-cycle recruiting, talent acquisition, candidate sourcing, time to hire, employer branding, HRIS… "workday", "greenhouse" and "lever" alone were rejected — everyday words ("a typical workday", "greenhouse gas", "a key lever"); unit tests now guard all three.
+
+Calibration on a Talent Acquisition post: recruiter CV **73**, frontend CV 6, chef CV 5 (locked by a unit test: fit ≥ 50, unrelated ≤ 20). All other samples unchanged.
+
+**Running improvement backlog (next pushes):**
+1. Tune adaptive keyword cap for very long JDs (> 1200 words)
+2. Healthcare and logistics skill groups before adding samples from those sectors

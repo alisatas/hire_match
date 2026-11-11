@@ -44,3 +44,20 @@ Nice to have:
 - Familiarity with LinkedIn Sales Navigator
 
 We offer an uncapped commission plan, a hybrid work culture and a training budget.`;
+
+export const RECRUITER_CV = `Technical Recruiter with 5 years of experience in talent acquisition for SaaS companies. Ran full-cycle recruiting for 45 engineering and sales roles a year using Greenhouse ATS and LinkedIn Recruiter, with Boolean search for candidate sourcing. Cut time to hire from 52 to 34 days, partnered with hiring managers on stakeholder management, and led employer branding campaigns. Recruiter, Nimbus, 2021 – present.`;
+
+export const RECRUITER_JOB = `Talent Acquisition Specialist — Amsterdam (Hybrid)
+
+We are looking for a Talent Acquisition Specialist to own full-cycle recruiting for our engineering and commercial teams.
+
+Requirements:
+- 3+ years of experience in talent acquisition or technical recruiting
+- Proven full-cycle recruiting experience, from candidate sourcing to offer
+- Hands-on with an applicant tracking system such as Greenhouse ATS or Workday Recruiting
+- Strong LinkedIn Recruiter and Boolean search skills
+- Track record of improving time to hire and candidate experience
+- Excellent stakeholder management with hiring managers
+- Experience with employer branding is a plus
+
+We offer a hybrid work culture and a learning budget.`;

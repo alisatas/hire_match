@@ -365,3 +365,13 @@ Full read of `src/app/api/**`, `src/proxy.ts`, `next.config.ts`, client link ren
 - Nonce CSP (#15): owner chose to skip (performance / SEO trade-off) — decision recorded
 - Tests: 76 unit (incl. SSRF guard, URL screening, safeHttpUrl, scrubbing) + 13 browser tests run in CI
 - 🟡 Carried: CSP `unsafe-inline` (by decision)
+
+---
+
+## 2026-11-11 — Push 26 (CI runner fix, HR skill group, per-article share images)
+
+**Status:** ✅ PASS (0 critical, 1 medium carried)
+
+- CI job pinned to `ubuntu-24.04`: on `ubuntu-latest` (now Ubuntu 26) the "Install Playwright browser" step failed, so the browser and dependency-audit steps were skipped on the last push. Push 25's code passed typecheck, lint, unit tests and build in CI
+- New HR aliases and article images are static; no new inputs or routes ✅
+- 🟡 Carried: CSP `unsafe-inline` (by decision)
