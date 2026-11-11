@@ -7,7 +7,7 @@ import { OG_IMAGE, SITE_URL, jsonLdScript } from "@/lib/site";
 
 const title = "Resume Keywords by Job Role — Free Lists & CV Check";
 const description =
-  "The keywords employers ask for most in software, data, product, design, sales, marketing and finance job posts — then check your own CV against any job description for free.";
+  "The keywords employers ask for most in tech, AI, data, product, sales, marketing, finance and HR job posts — then check your own CV against any job description for free.";
 
 export const metadata: Metadata = {
   title,
@@ -86,7 +86,7 @@ export default function ResumeKeywordsIndex() {
             keywords for you.
           </p>
           <Link
-            href="/#analyzer"
+            href="/?ref=guides#analyzer"
             className="mt-5 inline-flex h-11 items-center gap-2 rounded-lg bg-foreground px-5 text-sm font-semibold text-background transition-opacity hover:opacity-90"
           >
             Check my CV against a job

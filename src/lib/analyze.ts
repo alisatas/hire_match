@@ -189,6 +189,23 @@ const NORMALIZED_SKILL_GROUPS: [string, string[]][] = Object.entries(SKILL_GROUP
     ([key, aliases]) => [key, [...new Set(aliases.map(a => normalizeText(a).trim()))]]
 )
 
+/**
+ * The first line or sentence of `text` that mentions one of the skill's aliases,
+ * trimmed for display. Used to quote the job post back to the user.
+ */
+export function findSkillMention(text: string, key: string): string | null {
+    const aliases = NORMALIZED_SKILL_GROUPS.find(([k]) => k === key)?.[1]
+    if (!aliases) return null
+    const pieces = text.split(/\n|(?<=[.!?])\s+/).map(p => p.replace(/^[\s\-•*·]+/, "").trim()).filter(p => p.length > 8)
+    const hits = pieces
+        .map((piece, index) => ({ piece, index }))
+        .filter(({ piece }) => { const n = normalizeText(piece); return aliases.some(alias => countAlias(n, alias) > 0) })
+    if (hits.length === 0) return null
+    // The job title ("AI Engineer — Amsterdam") says little; prefer a requirement line
+    const best = hits.length > 1 && hits[0].index === 0 ? hits[1].piece : hits[0].piece
+    return best.length > 180 ? best.slice(0, 177).trimEnd() + "…" : best
+}
+
 function extractSkills(text: string): Set<string> {
     const normalized = normalizeText(text)
     const found = new Set<string>()

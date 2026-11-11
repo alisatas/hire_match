@@ -244,3 +244,12 @@ Agents MUST read this log before running checks and MUST append an entry after e
 **Status:** ✅ PASS (0 critical)
 
 - No API route changes ✅
+
+---
+
+## 2026-11-11 — Push 25 (Suggestions, score card, funnel events, 4 guides, blog, tests, monitoring, global rate limit)
+
+**Status:** ✅ PASS (0 critical)
+
+- New `POST /api/client-error`: JSON body ≤ 8 KB, 204/400/413, proxy cross-site + body-size + rate limits, `no-store` + CORP via config
+- `proxy.ts` is now async (Upstash call), unchanged behaviour when Upstash is not configured

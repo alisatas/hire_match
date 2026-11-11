@@ -21,7 +21,7 @@ export default function NotFound() {
           The link may be old or mistyped. You can check your CV against a job right away, or browse the keyword guides.
         </p>
         <Link
-          href="/#analyzer"
+          href="/?ref=404#analyzer"
           className="mt-8 inline-flex h-11 items-center gap-2 rounded-lg bg-foreground px-5 text-sm font-semibold text-background transition-opacity hover:opacity-90"
         >
           Check my CV

@@ -56,6 +56,7 @@ export function SiteHeader() {
         <nav aria-label="Primary" className="flex items-center gap-1">
           <Link href="/#how-it-works" className={navLink}>How it works</Link>
           <Link href="/resume-keywords" className={navLink}>Keywords by role</Link>
+          <Link href="/blog" className={navLink}>Guides</Link>
           <Link href="/#faq" className={navLink}>FAQ</Link>
           <Link
             href="/#analyzer"
@@ -93,6 +94,7 @@ export function SiteFooter() {
           <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <Link href="/#how-it-works" className="transition-colors hover:text-foreground">How it works</Link>
             <Link href="/#faq" className="transition-colors hover:text-foreground">FAQ</Link>
+            <Link href="/blog" className="transition-colors hover:text-foreground">Guides</Link>
             <Link href="/terms" className="transition-colors hover:text-foreground">Terms</Link>
             <Link href="/privacy" className="transition-colors hover:text-foreground">Privacy</Link>
             <Link href="/refund-policy" className="transition-colors hover:text-foreground">Refunds</Link>

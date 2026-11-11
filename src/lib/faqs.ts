@@ -60,6 +60,6 @@ export const FAQS: { q: string; a: string }[] = [
     },
     {
         q: "What keywords should I put on my resume for my job role?",
-        a: "It depends on the role and the specific posting. CVXray publishes free keyword guides for AI engineers, software engineers, frontend developers, backend engineers, data analysts, data scientists, product managers, DevOps engineers, UX designers, account executives, digital marketing specialists and financial analysts at cvxray.com/resume-keywords — and for any other role, paste the job description into the checker to see the keywords it asks for.",
+        a: "It depends on the role and the specific posting. CVXray publishes free keyword guides for AI engineers, machine learning engineers, software engineers, frontend developers, backend engineers, data analysts, data scientists, product managers, DevOps engineers, UX designers, project managers, recruiters, customer success managers, account executives, digital marketing specialists and financial analysts at cvxray.com/resume-keywords — and for any other role, paste the job description into the checker to see the keywords it asks for.",
     },
 ]

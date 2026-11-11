@@ -72,8 +72,9 @@ const nextConfig: NextConfig = {
               // blocked analytics host or an injection attempt shows up in the logs
               "report-uri /api/csp-report",
               "report-to csp-endpoint",
-              // Upgrading would break plain-http localhost, so production only
-              ...(isDev ? [] : ["upgrade-insecure-requests"]),
+              // Only where the site is actually served over https (Vercel). A production
+              // build served on http://localhost — CI browser tests — would break with it.
+              ...(process.env.VERCEL === "1" ? ["upgrade-insecure-requests"] : []),
             ].join("; "),
           },
         ],

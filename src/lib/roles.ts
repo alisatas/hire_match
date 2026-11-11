@@ -89,6 +89,30 @@ export const ROLES: RoleGuide[] = [
     ],
   },
   {
+    slug: "machine-learning-engineer",
+    name: "Machine Learning Engineer",
+    alsoCalled: ["ML Engineer", "MLOps Engineer", "Applied ML Engineer"],
+    metaDescription:
+      "The resume keywords machine learning engineer job posts ask for most — Python, PyTorch, model training, MLOps, deployment — and a free check of your own CV against any posting.",
+    intro:
+      "Machine learning engineer postings sit between data science and software engineering: they want models that are trained well and run reliably in production. CVs that show only notebooks, or only infrastructure, miss half of what is being screened for. The strongest show the full loop — data, training, evaluation, deployment, monitoring.",
+    groups: [
+      { title: "Modelling", keywords: ["Machine learning", "Deep learning", "PyTorch", "TensorFlow", "scikit-learn", "Feature engineering", "Model evaluation"] },
+      { title: "Data", keywords: ["Python", "SQL", "Pandas", "Spark", "Data pipelines", "Airflow", "Feature store"] },
+      { title: "MLOps & deployment", keywords: ["MLOps", "Model deployment", "Model serving", "MLflow", "Kubeflow", "SageMaker", "Vertex AI", "Model monitoring"] },
+      { title: "Engineering", keywords: ["Docker", "Kubernetes", "AWS", "CI/CD", "REST APIs", "Git", "Unit testing"] },
+    ],
+    tips: [
+      { title: "Show a model in production, with a metric", text: "\"Deployed a ranking model serving 5M predictions a day, lifting click-through 8%\" covers modelling, scale and impact in one line." },
+      { title: "Name your MLOps stack", text: "Experiment tracking, model registry, serving and monitoring tools are explicit in most postings. MLflow, SageMaker or Vertex AI are simple keyword matches." },
+      { title: "Don't hide the software engineering", text: "Testing, CI/CD, containers and APIs are what separate ML engineers from data scientists in screening." },
+    ],
+    faqs: [
+      { q: "What keywords should a machine learning engineer put on a resume?", a: "Python and a deep learning framework (PyTorch or TensorFlow), scikit-learn and feature engineering, data tools such as SQL and Spark, MLOps and deployment terms (MLflow, model serving, monitoring, SageMaker or Vertex AI) and engineering basics like Docker, Kubernetes and CI/CD." },
+      { q: "What is the difference between an ML engineer and a data scientist resume?", a: "Data scientist CVs emphasise analysis, statistics and experimentation. ML engineer CVs emphasise building, deploying and operating models in production — pipelines, serving, monitoring and software engineering practice." },
+    ],
+  },
+  {
     slug: "software-engineer",
     name: "Software Engineer",
     alsoCalled: ["Software Developer", "Full-Stack Engineer", "Application Developer"],
@@ -206,6 +230,78 @@ export const ROLES: RoleGuide[] = [
     faqs: [
       { q: "What keywords should a financial analyst put on a resume?", a: "FP&A, financial modelling, budgeting, forecasting and variance analysis; reporting terms such as management reporting, month-end close and IFRS or GAAP; and the tools the posting names — almost always Excel, often Power BI, SQL or an ERP such as SAP." },
       { q: "How do I show impact on a finance resume?", a: "Tie your work to money or decisions: savings identified, forecast accuracy improved, a budget you owned, a business case that was approved. One concrete number per role is enough." },
+    ],
+  },
+  {
+    slug: "project-manager",
+    name: "Project Manager",
+    alsoCalled: ["IT Project Manager", "Program Manager", "Project Lead"],
+    metaDescription:
+      "The resume keywords project manager job posts ask for most — planning, risk management, stakeholder management, Agile, PMP, budgets — and a free check of your own CV against any posting.",
+    intro:
+      "Project manager postings screen for three things: the methods you use, the size of what you have delivered, and how you handle people and risk. Recruiters look for the method names (Agile, Scrum, PRINCE2, PMP) and for numbers — budget, team size, timeline — that show the scale you can handle.",
+    groups: [
+      { title: "Methods & certifications", keywords: ["Project management", "Agile", "Scrum", "Waterfall", "PRINCE2", "PMP", "Kanban"] },
+      { title: "Delivery", keywords: ["Project planning", "Scope management", "Risk management", "Budget management", "Resource planning", "Milestones", "Change management"] },
+      { title: "People", keywords: ["Stakeholder management", "Cross-functional teams", "Vendor management", "Communication", "Status reporting", "Steering committee"] },
+      { title: "Tools", keywords: ["Jira", "Confluence", "MS Project", "Asana", "Smartsheet", "Excel"] },
+    ],
+    tips: [
+      { title: "Lead with scale and outcome", text: "\"Delivered a €2M ERP rollout across 4 countries, on time and 6% under budget\" tells a hiring manager exactly what you can carry." },
+      { title: "Name the method and the certification", text: "PRINCE2, PMP, Scrum Master — if you hold one, put it near the top. Many postings filter on them." },
+      { title: "Show how you handled risk", text: "One line about a risk you spotted early and the action you took signals seniority more than a list of tools." },
+    ],
+    faqs: [
+      { q: "What keywords should a project manager put on a resume?", a: "Project management, the methods you use (Agile, Scrum, Waterfall, PRINCE2), certifications such as PMP, delivery terms (planning, scope, risk and budget management), people skills (stakeholder and vendor management) and the tools you run projects in — usually Jira, Confluence or MS Project." },
+      { q: "Is PMP or PRINCE2 better on a resume?", a: "Use whichever the posting names. PRINCE2 is more common in the UK and Europe, PMP in the US and global companies; both are valued, and listing the one the employer asks for is a direct keyword match." },
+    ],
+  },
+  {
+    slug: "recruiter",
+    name: "Recruiter",
+    alsoCalled: ["Talent Acquisition Specialist", "Technical Recruiter", "HR Recruiter"],
+    metaDescription:
+      "The resume keywords recruiter job posts ask for most — sourcing, full-cycle recruiting, ATS, stakeholder management, time to hire — and a free check of your own CV against any posting.",
+    intro:
+      "Recruiters write job posts all day, yet their own CVs are often the vaguest in the pile. Talent acquisition roles are screened on the hiring volume you have handled, the roles you recruit for, the tools you source with and the metrics you were measured on.",
+    groups: [
+      { title: "Recruiting", keywords: ["Full-cycle recruiting", "Sourcing", "Headhunting", "Technical recruiting", "Candidate screening", "Interviewing", "Offer negotiation"] },
+      { title: "Tools", keywords: ["Applicant tracking system (ATS)", "Greenhouse", "Workday", "LinkedIn Recruiter", "Boolean search", "Lever", "Excel"] },
+      { title: "Metrics", keywords: ["Time to hire", "Cost per hire", "Offer acceptance rate", "Pipeline reporting", "Quality of hire", "Hiring targets"] },
+      { title: "Partnering", keywords: ["Stakeholder management", "Hiring manager partnership", "Employer branding", "Candidate experience", "Diversity hiring", "Onboarding"] },
+    ],
+    tips: [
+      { title: "Quantify your hiring", text: "\"Hired 45 engineers in 12 months with a 92% offer acceptance rate\" is the recruiter equivalent of a sales quota — put it first." },
+      { title: "Say what you recruit for", text: "Tech, sales, executive, volume — postings usually specialise, and so should your summary." },
+      { title: "List the ATS and sourcing tools", text: "Greenhouse, Workday, LinkedIn Recruiter and Boolean search are direct keyword matches in talent acquisition postings." },
+    ],
+    faqs: [
+      { q: "What keywords should a recruiter put on a resume?", a: "Full-cycle recruiting, sourcing and the roles you hire for; the applicant tracking system and sourcing tools you use (Greenhouse, Workday, LinkedIn Recruiter, Boolean search); metrics such as time to hire and offer acceptance rate; and partnering terms like stakeholder management and employer branding." },
+      { q: "How should a recruiter show results on a resume?", a: "Use hiring numbers: roles filled, time to hire, offer acceptance rate, cost per hire or hiring targets met. They are the metrics your next manager will judge you on." },
+    ],
+  },
+  {
+    slug: "customer-success-manager",
+    name: "Customer Success Manager",
+    alsoCalled: ["Account Manager", "Client Success Manager", "Customer Success Lead"],
+    metaDescription:
+      "The resume keywords customer success manager job posts ask for most — retention, churn, onboarding, renewals, upselling, CRM — and a free check of your own CV against any posting.",
+    intro:
+      "Customer success postings are measured in retention: churn, renewals, expansion and customer health. Recruiters look for the size of the book you managed, the motions you ran — onboarding, QBRs, renewals — and the tools behind them. A CSM CV without a retention number is easy to pass over.",
+    groups: [
+      { title: "Retention & growth", keywords: ["Customer retention", "Churn reduction", "Renewals", "Upselling", "Expansion revenue", "Net revenue retention (NRR)"] },
+      { title: "Customer lifecycle", keywords: ["Onboarding", "Adoption", "Quarterly business reviews (QBRs)", "Customer health score", "Escalation management", "Customer journey"] },
+      { title: "Tools", keywords: ["Salesforce", "HubSpot", "Gainsight", "Zendesk", "Intercom", "CRM", "Excel"] },
+      { title: "Skills", keywords: ["Account management", "Stakeholder management", "SaaS", "Product knowledge", "Communication", "Negotiation"] },
+    ],
+    tips: [
+      { title: "Put retention first", text: "\"Managed a €3M book of 40 accounts with 96% gross retention and 118% NRR\" is the line hiring managers scan for." },
+      { title: "Show the motions you run", text: "Onboarding programmes, QBRs, health scoring, renewal playbooks — name them and the result they produced." },
+      { title: "Name your CS stack", text: "Gainsight, Salesforce, HubSpot or Zendesk appear in most postings and are easy keyword matches." },
+    ],
+    faqs: [
+      { q: "What keywords should a customer success manager put on a resume?", a: "Customer retention, churn reduction, renewals, upselling and NRR; lifecycle terms such as onboarding, adoption, QBRs and health scores; the tools you use (Gainsight, Salesforce, HubSpot, Zendesk); and account and stakeholder management." },
+      { q: "What metrics belong on a customer success resume?", a: "Gross and net revenue retention, churn rate, renewal rate, expansion revenue, number and value of accounts managed, and customer satisfaction scores such as NPS." },
     ],
   },
   {

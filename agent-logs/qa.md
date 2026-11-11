@@ -267,3 +267,14 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Samples: UX Designer removed; Account Executive, Digital Marketer, Financial Analyst added; order alternates tech / business; "Financial Analyst" loads as "Sample job: Financial Analyst" (verified) ✅
 - `yearsFromDateRanges` month precision: 17 cases pass (English + Dutch months, numeric "03/2018", unknown words before a year ignored, one-month job = 0.2)
 - Dev-only: a new role slug 404'd once until the dev server picked up the updated list; production build prerenders it
+
+---
+
+## 2026-11-11 — Push 25 (Suggestions, score card, funnel events, 4 guides, blog, tests, monitoring, global rate limit)
+
+**Status:** ✅ PASS (0 critical)
+
+- **Automated tests now exist**: `npm test` (vitest, 76 tests: calibration bands, priority ordering, 6 generic-word false positives, 10 date-range cases, suggestions, SSRF, scrubbing) and `npm run test:e2e` (Playwright, 13 tests: analyzer flow, score card PNG download, 8 pages render + JSON-LD + canonical, real 404, API guards). Both green locally on the dev server and on a production build (CI mode)
+- Found while testing: desktop Chrome on macOS opened the system share sheet for the score card (hang) → share sheet now only on touch devices, desktop downloads
+- Found while testing: `upgrade-insecure-requests` would break the CI production build on http://localhost → Vercel-only
+- Suggestions only appear for a live analysis (shared links have no CV text) and reset with the result

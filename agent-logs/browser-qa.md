@@ -259,3 +259,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - `tsc` 0, ESLint 0, `next build` OK (`/resume-keywords/financial-analyst` + OG image prerendered) ✅
 - Financial Analyst guide: 200, own title + canonical, WebPage + BreadcrumbList + FAQPage JSON-LD; 375px no overflow; sitemap 17 URLs ✅
 - No server errors in the dev log
+
+---
+
+## 2026-11-11 — Push 25 (Suggestions, score card, funnel events, 4 guides, blog, tests, monitoring, global rate limit)
+
+**Status:** ✅ PASS (0 critical)
+
+- `tsc` 0, ESLint 0, `next build` OK; blog + 4 new guides prerendered; sitemap 25 URLs ✅
+- Playwright suite (13) green against dev and production build; CI now runs unit tests, builds, installs Chromium and runs the browser suite, uploading the report on failure
+- Console: only third-party / Vercel-only noise (filtered in tests with explicit reasons)

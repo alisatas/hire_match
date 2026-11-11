@@ -350,3 +350,18 @@ Full read of `src/app/api/**`, `src/proxy.ts`, `next.config.ts`, client link ren
 - Static content only (sample job texts, role guide, month table); new regex groups are bounded (`[a-z]{3,9}`, `\d{1,2}`) on line-split input — no ReDoS risk ✅
 - No new inputs, routes or sinks; `git ls-files .env*` empty ✅
 - 🟡 Carried: CSP `unsafe-inline`; per-instance rate limiting
+
+---
+
+## 2026-11-11 — Push 25 (Suggestions, score card, funnel events, 4 guides, blog, tests, monitoring, global rate limit)
+
+**Status:** ✅ PASS (0 critical, 1 medium carried)
+
+- **Error monitoring** without a third party: `instrumentation.ts` (`onRequestError`) logs server errors as one JSON line — message scrubbed, path without query, route, kind; never headers or bodies. Browser errors → `POST /api/client-error` (8 KB cap, 10/min/IP, cross-site blocked, max 5 per page view client-side). Verified: email → `[email]`, 0612345678 → `[number]`, `?secret=1` dropped; 413 / 400 / 403 / 429 on abuse ✅
+- **Global rate limit**: Upstash REST pipeline (`INCR` + `EXPIRE`) when `UPSTASH_REDIS_REST_URL` / `_TOKEN` are set; 400 ms timeout and fall-back to the in-memory limiter so the API never fails closed; token only in the Authorization header, never logged. Closes the per-instance warning once the env vars are configured ✅
+- Score card is rendered client-side and contains only score, label, role and matched skill names — no CV or job text ✅
+- Funnel events carry no PII: outcomes, counts and an allow-listed `ref` slug (`^[a-z0-9-]{1,48}$`), removed from the URL after reading ✅
+- `upgrade-insecure-requests` now emitted only on Vercel (`VERCEL=1`) — the CI production build is served over http ✅
+- Nonce CSP (#15): owner chose to skip (performance / SEO trade-off) — decision recorded
+- Tests: 76 unit (incl. SSRF guard, URL screening, safeHttpUrl, scrubbing) + 13 browser tests run in CI
+- 🟡 Carried: CSP `unsafe-inline` (by decision)

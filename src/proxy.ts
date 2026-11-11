@@ -14,6 +14,7 @@ const LIMITS: Record<string, number> = {
     "/api/interview-questions": 20,
     "/api/reddit-comment":      10,
     "/api/csp-report":          10,   // browser violation reports — cheap, but cap noise
+    "/api/client-error":        10,
 }
 
 // Largest request body each route accepts. Checked from Content-Length before the
@@ -28,9 +29,35 @@ const WINDOW_MS = 60_000
 // Hard cap on tracked keys so a flood of spoofed or rotating IPs cannot grow memory without bound
 const MAX_TRACKED = 10_000
 
-// In-memory fixed window — per server instance. On a multi-instance deployment each
-// instance counts separately; a shared store (e.g. Upstash Redis) makes it global.
+// Two backends:
+// - Upstash Redis (when UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN are set): one
+//   counter shared by every server instance, so the limit is global.
+// - In-memory fixed window: per instance. Used when Upstash is not configured, and as a
+//   fallback if Upstash is slow or down — the API keeps working, just with local limits.
+const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL?.replace(/\/$/, "")
+const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN
 const hits = new Map<string, { count: number; resetAt: number }>()
+
+/** Returns the request count in the current window, or null if Upstash is unavailable. */
+async function upstashCount(key: string, windowStart: number): Promise<number | null> {
+    if (!UPSTASH_URL || !UPSTASH_TOKEN) return null
+    const redisKey = `rl:${key}:${windowStart}`
+    try {
+        const res = await fetch(`${UPSTASH_URL}/pipeline`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${UPSTASH_TOKEN}`, "Content-Type": "application/json" },
+            body: JSON.stringify([["INCR", redisKey], ["EXPIRE", redisKey, String(Math.ceil(WINDOW_MS / 1000) + 5)]]),
+            signal: AbortSignal.timeout(400),
+            cache: "no-store",
+        })
+        if (!res.ok) return null
+        const data = (await res.json()) as { result?: unknown }[]
+        const count = Number(data?.[0]?.result)
+        return Number.isFinite(count) ? count : null
+    } catch {
+        return null
+    }
+}
 
 function prune(now: number) {
     for (const [key, entry] of hits) {
@@ -58,7 +85,7 @@ function clientIp(req: NextRequest): string {
 const json = (body: object, status: number, headers: Record<string, string> = {}) =>
     NextResponse.json(body, { status, headers: { "Cache-Control": "no-store", ...headers } })
 
-export function proxy(req: NextRequest) {
+export async function proxy(req: NextRequest) {
     const { pathname } = req.nextUrl
     const method = req.method.toUpperCase()
 
@@ -89,6 +116,21 @@ export function proxy(req: NextRequest) {
     const limit = longestPrefix(LIMITS, pathname) ?? DEFAULT_LIMIT
     const key = `${clientIp(req)}:${pathname}`
     const now = Date.now()
+
+    const windowStart = Math.floor(now / WINDOW_MS) * WINDOW_MS
+    const shared = await upstashCount(key, windowStart)
+    if (shared !== null) {
+        if (shared > limit) {
+            const resetAt = windowStart + WINDOW_MS
+            return json({ error: "Too many requests" }, 429, {
+                "Retry-After": String(Math.ceil((resetAt - now) / 1000)),
+                "X-RateLimit-Limit": String(limit),
+                "X-RateLimit-Remaining": "0",
+                "X-RateLimit-Reset": String(Math.ceil(resetAt / 1000)),
+            })
+        }
+        return NextResponse.next()
+    }
 
     const entry = hits.get(key)
     if (!entry || entry.resetAt < now) {

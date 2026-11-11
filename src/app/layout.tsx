@@ -4,6 +4,7 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import Script from "next/script";
 import { ConsentBanner } from "@/components/consent/consent-banner";
+import { ErrorReporter } from "@/components/error-reporter";
 import { GTM_ID, consentBootstrapScript, gtmLoaderScript } from "@/lib/analytics";
 import { SITE_URL, jsonLdScript } from "@/lib/site";
 
@@ -156,6 +157,7 @@ export default function RootLayout({
           {children}
         </div>
         <Analytics />
+        <ErrorReporter />
         {GTM_ID && (
           <>
             <Script id="gtm-loader" strategy="afterInteractive">{gtmLoaderScript(GTM_ID)}</Script>

@@ -378,3 +378,21 @@ Agents MUST read this log before running checks and MUST append an entry after e
 2. More business guides: project manager, customer success, HR
 3. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
 4. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)
+
+---
+
+## 2026-11-11 — Push 25 (Suggestions, score card, funnel events, 4 guides, blog, tests, monitoring, global rate limit)
+
+**Status:** ✅ PASS (0 critical, 4 improvements)
+
+**Improvements implemented this cycle:**
+- **Blog** (`/blog`) with 3 in-depth guides: how ATS read CVs (debunks the unsourced "75% auto-rejected" claim), tailoring a CV in 15 minutes, what a good match score is. BlogPosting + BreadcrumbList JSON-LD, related role guides, CTA into the analyzer — closes the "blog / content hub" item
+- **4 role guides**: Machine Learning Engineer, Project Manager, Recruiter, Customer Success Manager (16 guides)
+- Sitemap 25 URLs; header/footer link to Guides; llms.txt lists guides and articles
+- **Shareable score card** — every shared card carries "cvxray.com" (organic acquisition)
+
+**Running improvement backlog (next pushes):**
+1. More articles: "ATS-friendly CV format", "CV keywords vs. skills section", "How to read a job description"
+2. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
+3. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)
+4. GA4: mark `analysis_complete`, `score_card` and `entry` as key events and build the funnel exploration

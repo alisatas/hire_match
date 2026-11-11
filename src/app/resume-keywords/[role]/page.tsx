@@ -97,7 +97,7 @@ export default async function RoleKeywordsPage({ params }: Props) {
             See which of its keywords your CV is missing — free, no sign-up.
           </p>
           <Link
-            href="/#analyzer"
+            href={`/?ref=guide-${role.slug}#analyzer`}
             className="inline-flex h-11 shrink-0 items-center gap-2 rounded-lg bg-foreground px-4 text-sm font-semibold text-background transition-opacity hover:opacity-90"
           >
             Check my CV
@@ -167,7 +167,7 @@ export default async function RoleKeywordsPage({ params }: Props) {
             priority. Your CV is never stored.
           </p>
           <Link
-            href="/#analyzer"
+            href={`/?ref=guide-${role.slug}#analyzer`}
             className="mt-5 inline-flex h-11 items-center gap-2 rounded-lg bg-foreground px-5 text-sm font-semibold text-background transition-opacity hover:opacity-90"
           >
             Get my match score

@@ -5,6 +5,8 @@ import {
     ArrowRight,
     ArrowUpRight,
     Briefcase,
+    ImageDown,
+    PencilLine,
     Building2,
     Check,
     ChevronDown,
@@ -35,6 +37,8 @@ import { cn, safeHttpUrl } from "@/lib/utils"
 import { track } from "@/lib/analytics"
 import { Badge, Chip, Divider, FeedbackRating, Panel, ScoreRing, Section, SegmentedControl, StatTile, StepLabel, toneDot, toneForScore, toneText, type Tone } from "./analyzer-ui"
 import { analyze, auditCV, type AnalysisResult, type CVAuditResult, type MissingSkillWithPriority } from "@/lib/analyze"
+import { buildSuggestions, type KeywordSuggestion } from "@/lib/suggestions"
+import { renderScoreCard, shareOrDownloadCard } from "@/lib/score-card"
 import { extractCompanyName, extractCultureSignals, getInterviewLinks } from "@/lib/insights"
 
 // ─── Share URL helpers ───────────────────────────────────────────────────────
@@ -467,6 +471,9 @@ We run fully on AWS with a large Kubernetes cluster and need someone who can own
 export default function CVAnalyzer() {
     const [cvText, setCvText] = useState("")
     const [jobText, setJobText] = useState("")
+    // "Where and how to add it" — only for a live analysis, never for a shared link (no CV text)
+    const [suggestions, setSuggestions] = useState<KeywordSuggestion[]>([])
+    const [cardState, setCardState] = useState<"idle" | "working" | "done">("idle")
     const [jobInput, setJobInput] = useState("")
     const [jobUrl, setJobUrl] = useState("")
     const [fetchStatus, setFetchStatus] = useState("")
@@ -517,6 +524,18 @@ export default function CVAnalyzer() {
     const interviewLoading = !!interviewCompany && interview?.company !== interviewCompany
     const interviewResults = interview && interview.company === interviewCompany ? interview.results : []
 
+    // Where the visitor came from inside the site (role guide, blog, 404). Only a short
+    // slug from our own links is accepted; the parameter is removed after it is read.
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search)
+        const ref = params.get("ref")
+        if (!ref) return
+        if (/^[a-z0-9-]{1,48}$/.test(ref)) track("entry", { ref })
+        params.delete("ref")
+        const query = params.toString()
+        window.history.replaceState(null, "", window.location.pathname + (query ? `?${query}` : "") + window.location.hash)
+    }, [])
+
     const processPdf = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (!file || file.type !== "application/pdf") return
@@ -524,6 +543,7 @@ export default function CVAnalyzer() {
 
         if (file.size > 5 * 1024 * 1024) {
             setPdfStatus("File too large (max 5MB). Paste your CV text below.")
+            track("cv_upload_failed", { reason: "too_large" })
             return
         }
 
@@ -542,6 +562,7 @@ export default function CVAnalyzer() {
         } catch (err: unknown) {
             console.error("PDF Read Error:", err)
             setPdfStatus("Error reading PDF. Paste your CV text below.")
+            track("cv_upload_failed", { reason: "unreadable" })
         } finally {
             isPdfLoadingRef.current = false
         }
@@ -568,11 +589,14 @@ export default function CVAnalyzer() {
                 setJobText(data.text)
                 setScrapedCompanyName(data.companyName || "")
                 setFetchStatus("✓ Job post fetched")
+                track("job_fetch", { result: "success" })
             } else {
                 setFetchStatus("Could not fetch — paste the text below")
+                track("job_fetch", { result: "failed" })
             }
         } catch {
             setFetchStatus("Could not fetch — paste the text below")
+            track("job_fetch", { result: "failed" })
         }
     }
 
@@ -586,6 +610,7 @@ export default function CVAnalyzer() {
         setError("")
         setIsLoading(true)
         setResults(null)
+        setSuggestions([])
 
         // Auto-fetch job post if URL is set but text not yet loaded
         let effectiveJobText = jobText
@@ -603,13 +628,16 @@ export default function CVAnalyzer() {
                     setJobText(data.text)
                     setScrapedCompanyName(data.companyName || "")
                     setFetchStatus("✓ Job post fetched")
+                    track("job_fetch", { result: "success" })
                 } else {
                     setFetchStatus("Could not fetch — paste the text below")
+                    track("job_fetch", { result: "failed" })
                     setIsLoading(false)
                     return
                 }
             } catch {
                 setFetchStatus("Could not fetch — paste the text below")
+                track("job_fetch", { result: "failed" })
                 setIsLoading(false)
                 return
             }
@@ -627,12 +655,15 @@ export default function CVAnalyzer() {
         try {
             result = analyze(cvText, effectiveJobText)
             setResults(result)
+            const nextSuggestions = buildSuggestions(cvText, effectiveJobText, result.missing)
+            setSuggestions(nextSuggestions)
             // Score and coarse counts only — never CV or job text
             track("analysis_complete", {
                 score: result.score,
                 score_band: result.score >= 70 ? "strong" : result.score >= 45 ? "competitive" : "gaps",
                 job_source: sampleRole ? "sample" : jobUrl ? "url" : "text",
                 missing_skills: result.missing.length,
+                suggestions: nextSuggestions.length,
             })
             // Keep the address bar clean: the share link is only built when the user asks
             // for it. Drop a stale shared-result hash so it cannot outlive this analysis.
@@ -678,6 +709,7 @@ export default function CVAnalyzer() {
         setCvText("")
         setPdfStatus("")
         setResults(null)
+        setSuggestions([])
         setCvAudit(null)
         setError("")
         if (hasShareHash(window.location.hash)) {
@@ -1042,6 +1074,7 @@ export default function CVAnalyzer() {
                                             {results.lowQuality && <Badge tone="warning">Low confidence</Badge>}
                                         </div>
                                         <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground text-pretty">{results.persona.desc}</p>
+                                        <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 sm:justify-start">
                                         <button
                                             type="button"
                                             onClick={() => {
@@ -1053,10 +1086,39 @@ export default function CVAnalyzer() {
                                                 track("share_result", { score: results.score })
                                                 setTimeout(() => setShareCopied(false), 2000)
                                             }}
-                                            className="-ml-1 mt-3 inline-flex min-h-11 items-center gap-1.5 rounded-md px-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                            className="-ml-1 inline-flex min-h-11 items-center gap-1.5 rounded-md px-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
                                         >
                                             {shareCopied ? <><Check className="size-3.5 text-success" />Link copied</> : <><Share2 className="size-3.5" />Share result</>}
                                         </button>
+                                        <button
+                                            type="button"
+                                            disabled={cardState === "working"}
+                                            onClick={async () => {
+                                                setCardState("working")
+                                                try {
+                                                    const blob = await renderScoreCard({
+                                                        score: results.score,
+                                                        label: results.persona.label,
+                                                        role: sampleRole ? `${sampleRole} role` : (scrapedCompanyName ? `Role at ${scrapedCompanyName}` : "Job match"),
+                                                        matched: results.matched,
+                                                    }, getComputedStyle(document.body).fontFamily || "sans-serif")
+                                                    const outcome = await shareOrDownloadCard(blob)
+                                                    track("score_card", { method: outcome, score: results.score })
+                                                    setCardState(outcome === "cancelled" ? "idle" : "done")
+                                                    setTimeout(() => setCardState("idle"), 2500)
+                                                } catch {
+                                                    setCardState("idle")
+                                                }
+                                            }}
+                                            className="inline-flex min-h-11 items-center gap-1.5 rounded-md px-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground disabled:opacity-60"
+                                        >
+                                            {cardState === "done"
+                                                ? <><Check className="size-3.5 text-success" />Card ready</>
+                                                : cardState === "working"
+                                                    ? <><LoaderCircle className="size-3.5 animate-spin" />Creating card…</>
+                                                    : <><ImageDown className="size-3.5" />Score card</>}
+                                        </button>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -1172,6 +1234,40 @@ export default function CVAnalyzer() {
                                         </div>
                                     )}
                                 </Section>
+
+                                {/* Where and how to add the missing skills */}
+                                {suggestions.length > 0 && (
+                                    <>
+                                        <Divider />
+                                        <Section
+                                            icon={<PencilLine />}
+                                            title="How to add the missing skills"
+                                            description="What the job asks for, where it belongs on your CV, and a bullet to adapt. Only add what you've really done."
+                                        >
+                                            <ol className="space-y-3">
+                                                {suggestions.map((sug) => (
+                                                    <li key={sug.key} className="rounded-xl border border-border bg-foreground/[0.015] p-4">
+                                                        <div className="flex items-center gap-2">
+                                                            <Chip tone={priorityTone(sug.priority)} dot>{sug.skill}</Chip>
+                                                            <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                                                                {sug.priority === "high" ? "High priority" : "Mentioned in the post"}
+                                                            </span>
+                                                        </div>
+                                                        {sug.jobQuote && (
+                                                            <p className="mt-3 border-l-2 border-border pl-3 text-[13px] italic leading-relaxed text-muted-foreground">
+                                                                &ldquo;{sug.jobQuote}&rdquo;
+                                                            </p>
+                                                        )}
+                                                        <p className="mt-3 text-sm leading-relaxed text-foreground/90">{sug.where}</p>
+                                                        <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
+                                                            <span className="font-medium text-foreground/80">Example bullet: </span>{sug.example}
+                                                        </p>
+                                                    </li>
+                                                ))}
+                                            </ol>
+                                        </Section>
+                                    </>
+                                )}
 
                                 {/* Keywords */}
                                 {results.topJobSignals.length > 0 && (

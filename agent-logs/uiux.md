@@ -296,3 +296,15 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Owner asked for samples beyond IT: 9 sample buttons now mix tech with sales, marketing and finance; wraps cleanly at narrow widths
 - UX Designer sample removed (its keyword guide page stays — it is an SEO asset)
 - Experience tile can now show one decimal ("3.9y / 5y")
+
+---
+
+## 2026-11-11 — Push 25 (Suggestions, score card, funnel events, 4 guides, blog, tests, monitoring, global rate limit)
+
+**Status:** ✅ PASS (0 critical, 1 medium carried)
+
+- **"How to add the missing skills"** (report): up to 5 high/medium gaps, each with the job-post line that asks for it, where it belongs on this CV (detects a Skills section and dated roles) and an example bullet with a measurable result; copy reminds users to add only real experience
+- **Score card** button next to "Share result": 1200×630 PNG (score ring, label, role, top matched skills); share sheet on phones, download on desktop
+- Header gains "Guides"; footer gains "Guides"
+- **Accessibility audit (#14)**: axe WCAG 2 A/AA on home, guides index, two role guides, blog index, a blog post, Terms, Privacy and the cookie banner — 0 serious/critical violations; now enforced in CI
+- 🟡 Carried: cookie banner covers the bottom of the footer until dismissed

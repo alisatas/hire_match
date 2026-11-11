@@ -458,3 +458,17 @@ Verification: 17 parser cases pass. New cross-sector samples separate fitting fr
 **Running improvement backlog (next pushes):**
 1. Tune adaptive keyword cap for very long JDs (> 1200 words)
 2. Skill groups for further sectors (healthcare, logistics, HR) before adding samples from them
+
+---
+
+## 2026-11-11 — Push 25 (Suggestions, score card, funnel events, 4 guides, blog, tests, monitoring, global rate limit)
+
+**Status:** ✅ PASS (1 improvement implemented)
+
+**Improvement: actionable gap ranking (`src/lib/suggestions.ts`).** The missing-skill list now drives concrete guidance: the top 5 high/medium gaps (low-priority nice-to-haves excluded, order preserved: high → medium, then frequency), each with the job-post line that asks for it (`findSkillMention`; the job-title line is skipped when a requirement line exists), placement advice based on the CV's structure and a category- or skill-specific example bullet. Unit-tested (6 tests), grammar checked ("an LLM…", no "a AI").
+
+**Calibration guard:** the scoring bands are now locked by unit tests — strong match 75–95, unrelated CV ≤ 15, fitting business CV ≥ 55 vs tech CV ≤ 20, scores always within 5–95, keyword list dampened, generic words never counted as skills. A future scoring change that breaks these fails CI.
+
+**Running improvement backlog (next pushes):**
+1. Tune adaptive keyword cap for very long JDs (> 1200 words)
+2. Skill groups for HR (ATS tools, sourcing) so the Recruiter guide's role scores meaningfully

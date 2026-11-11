@@ -45,15 +45,25 @@ The score is a transparent weighted comparison, not a language-model opinion:
 - [Frontend developer resume keywords](https://cvxray.com/resume-keywords/frontend-developer): React, TypeScript, Next.js, testing, accessibility
 - [Backend engineer resume keywords](https://cvxray.com/resume-keywords/backend-engineer): languages, databases, cloud, containers, API design
 - [AI engineer resume keywords](https://cvxray.com/resume-keywords/ai-engineer): LLMs, RAG, embeddings, vector databases, evals
+- [Machine learning engineer resume keywords](https://cvxray.com/resume-keywords/machine-learning-engineer): PyTorch, model training, MLOps, deployment
 - [Software engineer resume keywords](https://cvxray.com/resume-keywords/software-engineer): languages, frameworks, cloud, testing, system design
 - [Data scientist resume keywords](https://cvxray.com/resume-keywords/data-scientist): Python, machine learning, statistics, SQL, deployment
 - [Account executive resume keywords](https://cvxray.com/resume-keywords/account-executive): quota, pipeline, Salesforce, B2B SaaS sales
 - [Digital marketing specialist resume keywords](https://cvxray.com/resume-keywords/digital-marketing-specialist): SEO, Google Ads, content, email, analytics
 - [Financial analyst resume keywords](https://cvxray.com/resume-keywords/financial-analyst): financial modelling, FP&A, budgeting, Excel, Power BI
+- [Project manager resume keywords](https://cvxray.com/resume-keywords/project-manager): Agile, PRINCE2, PMP, risk and stakeholder management
+- [Recruiter resume keywords](https://cvxray.com/resume-keywords/recruiter): sourcing, full-cycle recruiting, ATS, time to hire
+- [Customer success manager resume keywords](https://cvxray.com/resume-keywords/customer-success-manager): retention, churn, renewals, onboarding, CRM
 - [Data analyst resume keywords](https://cvxray.com/resume-keywords/data-analyst): SQL, Python, Tableau, Power BI, A/B testing
 - [Product manager resume keywords](https://cvxray.com/resume-keywords/product-manager): roadmap, discovery, metrics, stakeholder management
 - [DevOps engineer resume keywords](https://cvxray.com/resume-keywords/devops-engineer): Kubernetes, Terraform, AWS, CI/CD, monitoring
 - [UX designer resume keywords](https://cvxray.com/resume-keywords/ux-designer): Figma, user research, prototyping, usability testing
+
+## Guides
+
+- [How applicant tracking systems (ATS) actually read your CV](https://cvxray.com/blog/how-ats-reads-your-cv): what an ATS does, why "75% auto-rejected" is a myth, formatting and keyword habits
+- [How to tailor your CV to a job description in 15 minutes](https://cvxray.com/blog/tailor-cv-to-job-description): a five-step method without keyword stuffing
+- [What is a good CV match score](https://cvxray.com/blog/what-is-a-good-cv-match-score): how the score is calculated and what to do at each level
 
 ## How CVXray differs from similar tools
 
