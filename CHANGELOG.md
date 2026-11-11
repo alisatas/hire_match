@@ -1,3 +1,10 @@
+# [1.26.0](https://github.com/alisatas/hire_match/compare/v1.25.1...v1.26.0) (2026-11-11)
+
+
+### Features
+
+* add role keyword pages, score explainer and wider AI crawler access ([9c4ec6a](https://github.com/alisatas/hire_match/commit/9c4ec6af1978fb91eedc5876efc2970394849c19))
+
 ## [1.25.1](https://github.com/alisatas/hire_match/compare/v1.25.0...v1.25.1) (2026-11-11)
 
 
