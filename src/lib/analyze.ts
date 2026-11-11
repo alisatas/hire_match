@@ -60,7 +60,18 @@ export const SKILL_GROUPS: Record<string, string[]> = {
     // Data & AI
     ml: ["machine learning", "ml", "tensorflow", "pytorch", "scikit-learn"],
     data: ["data analysis", "pandas", "numpy", "data science", "analytics"],
-    ai: ["ai", "llm", "openai", "langchain", "rag", "prompt engineering"],
+    // Math Prof improvement (Push 23): AI engineering vocabulary. The old group knew only
+    // "ai / llm / openai / langchain / rag / prompt engineering", so an AI Engineer post
+    // scored a generic Python ML engineer almost the same as someone who had shipped
+    // RAG systems. Retrieval and deployment now have their own groups.
+    ai: ["ai", "llm", "llms", "large language models", "generative ai", "genai", "openai", "anthropic",
+        "langchain", "llamaindex", "rag", "retrieval-augmented generation", "prompt engineering",
+        "fine-tuning", "fine tuning", "hugging face", "huggingface", "ai agents", "agentic",
+        "function calling", "tool calling"],
+    vectordb: ["vector database", "vector databases", "vector search", "embeddings", "semantic search",
+        "pgvector", "pinecone", "weaviate", "qdrant", "chromadb", "faiss", "milvus"],
+    mlops: ["mlops", "llmops", "model deployment", "model serving", "mlflow", "kubeflow", "sagemaker",
+        "vertex ai", "model monitoring", "evals", "llm evaluation", "experiment tracking"],
     // Math Prof improvement (Push 19): BI, spreadsheet, product and business-role groups.
     // Before this, Tableau / Power BI / Excel were invisible, so an analyst CV that matched
     // the Data Analyst sample almost line for line scored 31%; and sales or marketing jobs
@@ -129,6 +140,7 @@ export function getSkillLabel(key: string): string {
         testing: "Testing / QA", git: "Git / GitHub", agile: "Agile / Scrum",
         api: "REST API", linux: "Linux / Bash", figma: "Figma / UX",
         ml: "Machine Learning", data: "Data Analysis", ai: "AI / LLM",
+        vectordb: "Vector DBs / Embeddings", mlops: "MLOps / Evals",
         bi: "BI / Dashboards (Tableau, Power BI)", excel: "Excel", product: "Product Management",
         projectmgmt: "Project Management", sales: "B2B Sales", crm: "CRM (Salesforce, HubSpot)",
         marketing: "Digital Marketing", seo: "SEO / SEM", finance: "Finance & Accounting",

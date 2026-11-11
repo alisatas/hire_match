@@ -17,6 +17,30 @@ export interface RoleGuide {
 
 export const ROLES: RoleGuide[] = [
   {
+    slug: "ai-engineer",
+    name: "AI Engineer",
+    alsoCalled: ["LLM Engineer", "Generative AI Engineer", "Applied AI Engineer"],
+    metaDescription:
+      "The resume keywords AI engineer job posts ask for most — LLMs, RAG, embeddings, vector databases, evals, deployment — and a free check of your own CV against any posting.",
+    intro:
+      "AI engineer is the fastest-growing title in tech, and its postings are unusually specific: which model APIs, which retrieval stack, how you evaluate quality, how you ship. Hiring managers screen for evidence that you have taken an LLM feature from prototype to production — not just called an API in a notebook.",
+    groups: [
+      { title: "LLMs & frameworks", keywords: ["LLMs", "OpenAI API", "Anthropic API", "LangChain", "LlamaIndex", "Prompt engineering", "Function calling", "AI agents"] },
+      { title: "Retrieval (RAG)", keywords: ["RAG", "Embeddings", "Vector database", "pgvector", "Pinecone", "Weaviate", "Semantic search", "Chunking"] },
+      { title: "Quality & deployment", keywords: ["Evals", "LLM evaluation", "Fine-tuning", "Hugging Face", "Model deployment", "MLOps", "MLflow", "Guardrails"] },
+      { title: "Engineering foundation", keywords: ["Python", "FastAPI", "TypeScript", "Docker", "AWS", "SQL", "CI/CD", "Git"] },
+    ],
+    tips: [
+      { title: "Show a shipped LLM feature, end to end", text: "\"Built a RAG assistant over 40k support articles, serving 3k queries a day\" proves more than a list of frameworks. Name the model, the retrieval stack and the scale." },
+      { title: "Quantify quality, latency and cost", text: "AI teams live on evals. \"Raised answer accuracy from 71% to 89% on a 500-question eval set while cutting cost per query 40%\" is exactly what a hiring manager looks for." },
+      { title: "Keep the software engineering visible", text: "Most AI engineer roles are engineering roles first. APIs, testing, CI/CD and cloud deployment belong on the CV next to the LLM work." },
+    ],
+    faqs: [
+      { q: "What keywords should an AI engineer put on a resume?", a: "The model APIs and frameworks you have used (OpenAI or Anthropic APIs, LangChain, LlamaIndex), retrieval terms (RAG, embeddings, a vector database such as pgvector or Pinecone), quality and deployment terms (evals, fine-tuning, MLOps, model deployment) and the engineering basics — Python, FastAPI, Docker, cloud and CI/CD." },
+      { q: "What is the difference between an AI engineer and a machine learning engineer resume?", a: "ML engineer CVs centre on training models — feature engineering, PyTorch or TensorFlow, model performance. AI engineer CVs centre on building products on top of large language models — prompting, RAG, evals, agents and shipping LLM features to users." },
+    ],
+  },
+  {
     slug: "frontend-developer",
     name: "Frontend Developer",
     alsoCalled: ["Front-End Engineer", "React Developer", "UI Developer"],

@@ -222,6 +222,8 @@ const SKILL_RESOURCES: Record<string, SkillResource> = {
     seo: { label: "SEO Starter Guide", url: "https://developers.google.com/search/docs/fundamentals/seo-starter-guide", platform: "Google Search Central", type: "guide", duration: "~2 hrs", free: true },
     marketing: { label: "HubSpot Academy", url: "https://academy.hubspot.com/", platform: "HubSpot", type: "course", duration: "Self-paced", free: true },
     sales: { label: "HubSpot Academy — sales courses", url: "https://academy.hubspot.com/", platform: "HubSpot", type: "course", duration: "Self-paced", free: true },
+    vectordb: { label: "Pinecone Learning Center — vector search & RAG", url: "https://www.pinecone.io/learn/", platform: "Pinecone", type: "guide", duration: "Self-paced", free: true },
+    mlops: { label: "Made With ML — MLOps course", url: "https://madewithml.com/", platform: "Made With ML", type: "course", duration: "Self-paced", free: true },
     ai: { label: "Prompt Engineering — Anthropic", url: "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview", platform: "Anthropic", type: "guide", duration: "~3 hrs", free: true },
 }
 
@@ -230,6 +232,31 @@ const SKILL_RESOURCES: Record<string, SkillResource> = {
 // ─────────────────────────────────────────────
 
 const SAMPLE_JOBS = [
+    {
+        label: "AI Engineer",
+        emoji: "🤖",
+        desc: "Python, LLMs, RAG, embeddings, vector databases, LangChain, evals, FastAPI, AWS",
+        text: `AI Engineer — Amsterdam (Hybrid)
+
+We are hiring an AI Engineer to build LLM-powered features used by thousands of customers. You will take generative AI from prototype to production: retrieval, evaluation, deployment and monitoring.
+
+Requirements:
+- 3+ years of experience as a software or machine learning engineer, with strong Python
+- Hands-on experience building LLM applications with the OpenAI or Anthropic APIs
+- Retrieval-augmented generation (RAG): embeddings, chunking and a vector database such as pgvector, Pinecone or Weaviate
+- Frameworks such as LangChain or LlamaIndex; AI agents and function calling
+- Evals: designing LLM evaluation sets and measuring quality, latency and cost
+- Model deployment behind APIs (FastAPI), Docker and AWS
+- Prompt engineering and fine-tuning with Hugging Face
+- CI/CD, Git and working in Agile teams
+
+Nice to have:
+- MLOps experience (MLflow, SageMaker or Vertex AI)
+- TypeScript for internal tools
+- SQL and PostgreSQL
+
+We offer a competitive salary, a learning budget and a hybrid work culture.`,
+    },
     {
         label: "Frontend Dev",
         emoji: "🎨",

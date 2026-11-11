@@ -44,6 +44,7 @@ The score is a transparent weighted comparison, not a language-model opinion:
 - [Resume keywords by job role](https://cvxray.com/resume-keywords): index of all role guides
 - [Frontend developer resume keywords](https://cvxray.com/resume-keywords/frontend-developer): React, TypeScript, Next.js, testing, accessibility
 - [Backend engineer resume keywords](https://cvxray.com/resume-keywords/backend-engineer): languages, databases, cloud, containers, API design
+- [AI engineer resume keywords](https://cvxray.com/resume-keywords/ai-engineer): LLMs, RAG, embeddings, vector databases, evals
 - [Software engineer resume keywords](https://cvxray.com/resume-keywords/software-engineer): languages, frameworks, cloud, testing, system design
 - [Data scientist resume keywords](https://cvxray.com/resume-keywords/data-scientist): Python, machine learning, statistics, SQL, deployment
 - [Account executive resume keywords](https://cvxray.com/resume-keywords/account-executive): quota, pipeline, Salesforce, B2B SaaS sales
