@@ -1,3 +1,10 @@
+## [1.25.1](https://github.com/alisatas/hire_match/compare/v1.25.0...v1.25.1) (2026-11-11)
+
+
+### Bug Fixes
+
+* offer sample jobs as a fallback and show which one is loaded ([ad166c0](https://github.com/alisatas/hire_match/commit/ad166c01d56c34d611406e994afb2d85f4c9fc40))
+
 # [1.25.0](https://github.com/alisatas/hire_match/compare/v1.24.0...v1.25.0) (2026-11-10)
 
 
