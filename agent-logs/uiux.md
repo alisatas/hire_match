@@ -196,3 +196,16 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - New structure: sticky header with nav + CTA, hero, numbered input steps with a sticky input panel, results report (score ring, 3 stat tiles, recommendation, skills, keywords, training, CV quality, company), skeleton loading state, "How it works", FAQ accordion, footer
 - Owner picked Daylight after comparing four themes (Graphite, Midnight, Mono, Daylight) live on localhost
 - Verified at 1440px and 375px: no horizontal overflow; tap targets ≥ 44px; segmented control uses tab roles; rating uses radio roles
+
+---
+
+## 2026-11-11 — Push 16 (Sample jobs as a fallback, not a step)
+
+**Status:** ✅ PASS (0 critical)
+
+- Six always-visible sample-role buttons replaced by one collapsed line ("No job post handy? Try a sample job") — the fallback no longer outweighs the real input
+- A chosen sample now shows as a card ("Sample job: Frontend Dev") with a Remove button, instead of an empty URL field with a green tick
+- Samples offered once per mode and hidden as soon as the visitor starts typing a link
+- `analysis_complete` now reports `job_source: "sample"` so demo runs can be separated from real postings in GA4
+- Verified in browser: collapsed by default, expands, loads, Remove restores the inputs, no overflow
+

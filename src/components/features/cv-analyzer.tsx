@@ -4,8 +4,10 @@ import React, { useState, useRef, useEffect, useMemo, useSyncExternalStore } fro
 import {
     ArrowRight,
     ArrowUpRight,
+    Briefcase,
     Building2,
     Check,
+    ChevronDown,
     CircleAlert,
     CircleCheck,
     CircleX,
@@ -397,6 +399,9 @@ export default function CVAnalyzer() {
     const [cvAudit, setCvAudit] = useState<CVAuditResult | null>(null)
 
     const [jobInputMode, setJobInputMode] = useState<"url" | "paste">("url")
+    // Name of the built-in sample job in use ("" when the visitor supplied their own)
+    const [sampleRole, setSampleRole] = useState("")
+    const [showSamples, setShowSamples] = useState(false)
     const [interview, setInterview] = useState<{ company: string; results: InterviewResult[] } | null>(null)
     const [scrapedCompanyName, setScrapedCompanyName] = useState("")
     const [keywordsCopied, setKeywordsCopied] = useState(false)
@@ -547,7 +552,7 @@ export default function CVAnalyzer() {
             track("analysis_complete", {
                 score: result.score,
                 score_band: result.score >= 70 ? "strong" : result.score >= 45 ? "competitive" : "gaps",
-                job_source: jobUrl ? "url" : "text",
+                job_source: sampleRole ? "sample" : jobUrl ? "url" : "text",
                 missing_skills: result.missing.length,
             })
             // Keep the address bar clean: the share link is only built when the user asks
@@ -583,6 +588,8 @@ export default function CVAnalyzer() {
         setJobUrl("")
         setScrapedCompanyName("")
         setFetchStatus("")
+        setSampleRole("")
+        setShowSamples(false)
         setError("")
         // NOTE: results intentionally NOT cleared — stays visible until new analysis runs
     }
@@ -612,22 +619,46 @@ export default function CVAnalyzer() {
     const culture = jobText ? extractCultureSignals(jobText) : []
     const priorityTone = (p: MissingSkillWithPriority["priority"]): Tone => p === "high" ? "danger" : p === "medium" ? "warning" : "neutral"
 
-    const sampleButtons = (onPick: (text: string, label: string) => void) => (
+    const loadSample = (job: typeof SAMPLE_JOBS[number]) => {
+        setJobInput("")
+        setJobUrl("")
+        setScrapedCompanyName("")
+        setJobText(job.text)
+        setSampleRole(job.label)
+        setFetchStatus(`✓ ${job.label} sample loaded`)
+        setShowSamples(false)
+        setError("")
+        track("sample_job_select", { role: job.label })
+    }
+
+    // Samples are a fallback, not a step: one quiet line that expands on request
+    const sampleChooser = (
         <div className="space-y-2">
-            <p className="text-xs text-muted-foreground">No job post handy? Try a sample role:</p>
-            <div className="flex flex-wrap gap-1.5">
-                {SAMPLE_JOBS.map(job => (
-                    <button
-                        key={job.label}
-                        type="button"
-                        title={job.desc}
-                        onClick={() => { onPick(job.text, job.label); track("sample_job_select", { role: job.label }) }}
-                        className="inline-flex min-h-9 items-center rounded-md border border-border bg-foreground/[0.02] px-2.5 text-xs font-medium text-foreground/80 transition-colors hover:border-foreground/20 hover:bg-foreground/[0.05] hover:text-foreground"
-                    >
-                        {job.label}
-                    </button>
-                ))}
-            </div>
+            <button
+                type="button"
+                onClick={() => setShowSamples(v => !v)}
+                aria-expanded={showSamples}
+                className="-my-2 inline-flex min-h-11 items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >
+                No job post handy?
+                <span className="font-medium text-primary">Try a sample job</span>
+                <ChevronDown className={cn("size-3.5 text-primary transition-transform", showSamples && "rotate-180")} />
+            </button>
+            {showSamples && (
+                <div className="flex flex-wrap gap-1.5">
+                    {SAMPLE_JOBS.map(job => (
+                        <button
+                            key={job.label}
+                            type="button"
+                            title={job.desc}
+                            onClick={() => loadSample(job)}
+                            className="inline-flex min-h-9 items-center rounded-md border border-border bg-foreground/[0.02] px-2.5 text-xs font-medium text-foreground/80 transition-colors hover:border-foreground/20 hover:bg-foreground/[0.05] hover:text-foreground"
+                        >
+                            {job.label}
+                        </button>
+                    ))}
+                </div>
+            )}
         </div>
     )
 
@@ -720,6 +751,27 @@ export default function CVAnalyzer() {
                         {/* Step 2 — Job description */}
                         <div className="space-y-3">
                             <StepLabel n={2}>Job description</StepLabel>
+                            {sampleRole ? (
+                                <div className="flex items-center justify-between gap-3 rounded-xl border border-primary/25 bg-primary/[0.06] px-3.5 py-3">
+                                    <div className="flex min-w-0 items-center gap-3">
+                                        <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
+                                            <Briefcase className="size-4" />
+                                        </span>
+                                        <div className="min-w-0">
+                                            <p className="truncate text-sm font-medium text-foreground">Sample job: {sampleRole}</p>
+                                            <p className="text-xs text-muted-foreground">A demo posting — replace it with a real job any time</p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={resetForNewJob}
+                                        className="-my-3 -mr-3 inline-flex min-h-11 shrink-0 items-center px-3 py-3 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                    >
+                                        Remove
+                                    </button>
+                                </div>
+                            ) : (
+                            <>
                             <SegmentedControl
                                 label="Job description input"
                                 value={jobInputMode}
@@ -774,12 +826,7 @@ export default function CVAnalyzer() {
                                                 : fetchStatus.replace("✓ ", "")}
                                         </p>
                                     )}
-                                    {!jobText && !fetchStatus.startsWith("✓") && sampleButtons((text, label) => {
-                                        setJobInput("")
-                                        setJobText(text)
-                                        setFetchStatus(`✓ ${label} sample loaded`)
-                                        setError("")
-                                    })}
+                                    {!jobText && !jobInput && sampleChooser}
                                 </div>
                             ) : (
                                 <div className="space-y-3">
@@ -794,12 +841,10 @@ export default function CVAnalyzer() {
                                     {jobText.length > 50 && (
                                         <p className="inline-flex items-center gap-1.5 text-xs text-success"><Check className="size-3.5" />{fetchStatus.replace("✓ ", "") || "Job description ready"}</p>
                                     )}
-                                    {!jobText && sampleButtons((text, label) => {
-                                        setJobText(text)
-                                        setFetchStatus(`✓ ${label} sample loaded`)
-                                        setError("")
-                                    })}
+                                    {!jobText && sampleChooser}
                                 </div>
+                            )}
+                            </>
                             )}
                         </div>
 
