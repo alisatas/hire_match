@@ -195,3 +195,12 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - `/api/interview-questions`: bounded company input, http(s)-only result URLs (DDG `uddg` redirects unwrapped — previously every result was dropped), `no-store`. Closes the carried-forward `company` length warning
 - `/api/orchestrate`, `/api/reddit-comment`: shared constant-time auth, strict input validation
 - Proxy: body-size limits per route, cross-site write blocking
+
+---
+
+## 2026-11-11 — Push 19 (Security hardening, 2 role guides, business skill groups)
+
+**Status:** ✅ PASS (0 critical)
+
+- Route changes are the security pass logged above; all attack cases re-verified against the dev server (SSRF 400, cross-site 403, oversize 413, fake / 40-page PDF 400 / 422, owner routes 401, 429 on the 16th call)
+- Closes the carried-forward `/api/interview-questions` company-length warning

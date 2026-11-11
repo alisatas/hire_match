@@ -357,3 +357,23 @@ Calibration:
 **Running improvement backlog (next pushes):**
 1. Add skill groups for common non-tech roles (sales, marketing, finance, operations) so their scores mean something
 2. Tune adaptive keyword cap for very long JDs (> 1200 words)
+
+---
+
+## 2026-11-11 — Push 19 (Security hardening, 2 role guides, business skill groups)
+
+**Status:** ✅ PASS (1 improvement implemented) — closes backlog item 1
+
+**Improvement: 9 new skill groups (`analyze.ts` → `SKILL_GROUPS`)** — `bi` (Tableau, Power BI, Looker), `excel`, `product`, `projectmgmt`, `sales`, `crm`, `marketing`, `seo`, `finance`. Aliases are tool names or multi-word phrases; single generic words were rejected. Two caught during calibration and removed: bare "dashboards" (flagged BI on a frontend post) and "Google Analytics"/"GA4" under SEO (flagged "SEO / SEM" on the analyst sample).
+
+Calibration (before → after):
+- Sales CV × sales job: 22 → **46**; chef × sales job 11 → 5; frontend CV × sales job 14 → 6 — the score now separates a fitting sales CV from an unrelated one
+- Frontend CV × Product Manager sample: 49 → 38 (product skills now counted as gaps — correct direction)
+- Analyst CV × Data Analyst sample: 31 → 33 — Tableau/Power BI now matched; the score stays low because this test CV is ~60 words (CV confidence factor 0.75)
+- Frontend 81 ✅, Backend 37, DevOps 23, UX 52 unchanged; chef CV 5 on every sample ✅; no `freq = 0` skill marked high ✅
+
+Course list: free resources added for BI, Excel, CRM, SEO, marketing and sales gaps.
+
+**Running improvement backlog (next pushes):**
+1. Review the CV confidence factor: a concise 60-word CV that covers the job is dampened to 0.75 — maybe ramp from 40 → 60 words instead of 80
+2. Tune adaptive keyword cap for very long JDs (> 1200 words)

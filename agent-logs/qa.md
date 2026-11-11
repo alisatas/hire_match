@@ -208,3 +208,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Alias change only narrows matching; empty / non-technical job text still returns a valid result (sales job → 0 skills detected, score 10, no crash) ✅
 - Home page "How it works" still renders 3 steps; HowTo steps are generated from the same `STEPS` array, so markup and structured data cannot drift ✅
 - Analyzer component untouched
+
+---
+
+## 2026-11-11 — Push 19 (Security hardening, 2 role guides, business skill groups)
+
+**Status:** ✅ PASS (0 critical)
+
+- Scrape client handles the new status codes (400 / 415 / 502) — it only reads `data.text`; 429 plain text still lands in the catch ✅
+- Full analyze flow in the browser after the security changes: paste CV → job URL fetched → report rendered, no console errors ✅
+- New skill groups all have labels; generic-alias regressions checked ("dashboards" in a frontend post, "Google Analytics" in the analyst sample) and fixed ✅

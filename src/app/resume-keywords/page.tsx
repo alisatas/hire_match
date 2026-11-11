@@ -7,7 +7,7 @@ import { OG_IMAGE, SITE_URL, jsonLdScript } from "@/lib/site";
 
 const title = "Resume Keywords by Job Role — Free Lists & CV Check";
 const description =
-  "The keywords employers ask for most in frontend, backend, data, product, DevOps and UX job posts — then check your own CV against any job description for free.";
+  "The keywords employers ask for most in software, frontend, backend, data, product, DevOps and UX job posts — then check your own CV against any job description for free.";
 
 export const metadata: Metadata = {
   title,

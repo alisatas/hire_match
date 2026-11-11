@@ -61,6 +61,24 @@ export const SKILL_GROUPS: Record<string, string[]> = {
     ml: ["machine learning", "ml", "tensorflow", "pytorch", "scikit-learn"],
     data: ["data analysis", "pandas", "numpy", "data science", "analytics"],
     ai: ["ai", "llm", "openai", "langchain", "rag", "prompt engineering"],
+    // Math Prof improvement (Push 19): BI, spreadsheet, product and business-role groups.
+    // Before this, Tableau / Power BI / Excel were invisible, so an analyst CV that matched
+    // the Data Analyst sample almost line for line scored 31%; and sales or marketing jobs
+    // had no skill groups at all, so the score could not separate a matching sales CV (22%)
+    // from a chef's CV (11%). Aliases are multi-word or tool names on purpose — single
+    // generic words ("sales", "marketing", "budget") fire on almost any posting.
+    // bare "dashboards" left out: "we build dashboards in React" is a frontend task, not BI
+    bi: ["tableau", "power bi", "powerbi", "looker", "qlik", "data visualization", "data visualisation"],
+    excel: ["excel", "microsoft excel", "vlookup", "pivot tables", "pivot table", "power query"],
+    product: ["product management", "product roadmap", "product strategy", "product discovery", "roadmap", "user stories", "okrs", "go-to-market"],
+    projectmgmt: ["project management", "pmp", "prince2", "stakeholder management", "risk management"],
+    sales: ["b2b sales", "b2c sales", "saas sales", "account executive", "lead generation", "prospecting", "cold calling", "quota", "closing deals", "business development", "account management"],
+    crm: ["crm", "salesforce", "hubspot", "pipedrive", "zoho crm", "microsoft dynamics"],
+    marketing: ["digital marketing", "content marketing", "email marketing", "social media marketing", "performance marketing", "growth marketing", "marketing automation", "brand marketing", "campaign management"],
+    // Google Analytics / GA4 deliberately not here: analyst and PM postings use them, and
+    // listing them under SEO flagged "SEO / SEM" as a gap on the Data Analyst sample
+    seo: ["seo", "sem", "search engine optimization", "search engine optimisation", "google ads", "ppc", "keyword research"],
+    finance: ["financial modelling", "financial modeling", "financial analysis", "fp&a", "ifrs", "gaap", "accounts payable", "accounts receivable", "reconciliation", "budgeting"],
 }
 
 const STOP_WORDS = new Set([
@@ -111,6 +129,9 @@ export function getSkillLabel(key: string): string {
         testing: "Testing / QA", git: "Git / GitHub", agile: "Agile / Scrum",
         api: "REST API", linux: "Linux / Bash", figma: "Figma / UX",
         ml: "Machine Learning", data: "Data Analysis", ai: "AI / LLM",
+        bi: "BI / Dashboards (Tableau, Power BI)", excel: "Excel", product: "Product Management",
+        projectmgmt: "Project Management", sales: "B2B Sales", crm: "CRM (Salesforce, HubSpot)",
+        marketing: "Digital Marketing", seo: "SEO / SEM", finance: "Finance & Accounting",
     }
     return labels[key] || key
 }

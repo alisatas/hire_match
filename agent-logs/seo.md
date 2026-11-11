@@ -277,3 +277,20 @@ Agents MUST read this log before running checks and MUST append an entry after e
 2. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
 3. Per-page OG images for role guides
 4. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)
+
+---
+
+## 2026-11-11 — Push 19 (Security hardening, 2 role guides, business skill groups)
+
+**Status:** ✅ PASS (0 critical, 3 improvements)
+
+**Improvements implemented this cycle:**
+- 2 new role guides — `/resume-keywords/software-engineer` (broadest tech title) and `/resume-keywords/data-scientist` — each with unique copy, keyword groups, tips and FAQ; sitemap now 10 URLs
+- llms.txt and the role FAQ answer list both new guides
+- "What skills does CVXray detect?" FAQ now covers data and business skills (Tableau, Power BI, Excel, Salesforce, SEO, marketing, finance) — widens the queries the page can answer beyond engineering roles
+
+**Running improvement backlog (next pushes):**
+1. Non-tech role guides now that the engine supports them: sales, marketing, project manager, financial analyst
+2. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
+3. Per-page OG images for role guides
+4. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)

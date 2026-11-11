@@ -216,6 +216,12 @@ const SKILL_RESOURCES: Record<string, SkillResource> = {
     figma: { label: "Figma — UI Design Essentials", url: "https://www.figma.com/resources/learn-design/", platform: "Figma", type: "course", duration: "~5 hrs", free: true },
     ml: { label: "Machine Learning Crash Course", url: "https://developers.google.com/machine-learning/crash-course", platform: "Google", type: "course", duration: "~15 hrs", free: true },
     data: { label: "Kaggle — Intro to ML", url: "https://www.kaggle.com/learn/intro-to-machine-learning", platform: "Kaggle", type: "course", duration: "~5 hrs", free: true },
+    bi: { label: "Power BI — Microsoft Learn", url: "https://learn.microsoft.com/en-us/power-bi/", platform: "Microsoft Learn", type: "docs", duration: "Self-paced", free: true },
+    excel: { label: "Excel help & learning", url: "https://support.microsoft.com/en-us/excel", platform: "Microsoft", type: "guide", duration: "Self-paced", free: true },
+    crm: { label: "Salesforce Trailhead", url: "https://trailhead.salesforce.com/", platform: "Salesforce", type: "course", duration: "Self-paced", free: true },
+    seo: { label: "SEO Starter Guide", url: "https://developers.google.com/search/docs/fundamentals/seo-starter-guide", platform: "Google Search Central", type: "guide", duration: "~2 hrs", free: true },
+    marketing: { label: "HubSpot Academy", url: "https://academy.hubspot.com/", platform: "HubSpot", type: "course", duration: "Self-paced", free: true },
+    sales: { label: "HubSpot Academy — sales courses", url: "https://academy.hubspot.com/", platform: "HubSpot", type: "course", duration: "Self-paced", free: true },
     ai: { label: "Prompt Engineering — Anthropic", url: "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview", platform: "Anthropic", type: "guide", duration: "~3 hrs", free: true },
 }
 

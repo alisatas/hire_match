@@ -234,3 +234,14 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Score and "How it works" cards now go 3-up from 640px (`sm`) instead of 768px (`md`) — at ~740px they stacked into one tall column
 - Breadcrumb links on role pages now 44px tall (measured) ✅
 - 🟡 Cookie banner covers the bottom of the footer until dismissed (not changed)
+
+---
+
+## 2026-11-11 — Push 19 (Security hardening, 2 role guides, business skill groups)
+
+**Status:** ✅ PASS (0 critical, 1 medium carried)
+
+- Two new role guides use the existing template; Software Engineer page checked at 375px — keyword chips wrap, no overflow ✅
+- `/resume-keywords` index shows 8 cards ✅
+- New skill labels appear in the report (e.g. "BI / Dashboards (Tableau, Power BI)", "CRM (Salesforce, HubSpot)"); six new free course links for those gaps
+- 🟡 Cookie banner covers the bottom of the footer until dismissed (carried)

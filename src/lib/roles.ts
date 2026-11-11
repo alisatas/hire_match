@@ -65,6 +65,54 @@ export const ROLES: RoleGuide[] = [
     ],
   },
   {
+    slug: "software-engineer",
+    name: "Software Engineer",
+    alsoCalled: ["Software Developer", "Full-Stack Engineer", "Application Developer"],
+    metaDescription:
+      "The resume keywords software engineer job posts ask for most — languages, frameworks, cloud, testing, system design — and a free check of your own CV against any posting.",
+    intro:
+      "\"Software engineer\" is the broadest title in tech, so the posting itself defines the role: one company means a Java backend, another a TypeScript full stack, another embedded C++. Generic CVs struggle here. The keywords that matter are the specific language, framework and platform in the posting — plus the engineering practices that every software team screens for.",
+    groups: [
+      { title: "Languages", keywords: ["Java", "Python", "TypeScript", "JavaScript", "C#", "Go", "C++", "Kotlin"] },
+      { title: "Frameworks & platforms", keywords: ["React", "Node.js", "Spring Boot", ".NET", "Django", "REST APIs", "GraphQL", "Microservices"] },
+      { title: "Data & cloud", keywords: ["SQL", "PostgreSQL", "MongoDB", "Redis", "AWS", "Azure", "Docker", "Kubernetes"] },
+      { title: "Engineering practice", keywords: ["System design", "Data structures & algorithms", "Unit testing", "Code review", "CI/CD", "Git", "Agile / Scrum", "Clean code"] },
+    ],
+    tips: [
+      { title: "Lead with the posting's primary language", text: "If the role is a Java role, Java belongs in your summary and your most recent job, not halfway down a skills list. Recruiters often filter on the first language they read." },
+      { title: "Show scope, not just stack", text: "\"Designed the payments service handling 3M transactions a month\" signals system-design ability. Interviewers and screeners both look for evidence you built something end to end." },
+      { title: "Name the practices", text: "Code review, testing, CI/CD and on-call are in most software engineering postings. One concrete line on each beats claiming them in a list." },
+    ],
+    faqs: [
+      { q: "What keywords should a software engineer put on a resume?", a: "The language and framework the posting names (for example Java with Spring Boot, or TypeScript with React and Node.js), the databases and cloud platform you have used, and engineering practices such as system design, unit testing, code review, CI/CD and Git." },
+      { q: "Should a software engineer resume list data structures and algorithms?", a: "Rarely as a keyword on its own. Show it through work instead — performance improvements, scaling problems you solved — and leave the algorithm questions to the interview." },
+    ],
+  },
+  {
+    slug: "data-scientist",
+    name: "Data Scientist",
+    alsoCalled: ["Machine Learning Engineer", "Applied Scientist", "ML Scientist"],
+    metaDescription:
+      "The resume keywords data scientist job posts ask for most — Python, machine learning, statistics, SQL, deployment — and a free check of your own CV against any posting.",
+    intro:
+      "Data scientist postings test two things at once: modelling depth (statistics, machine learning, experimentation) and the engineering needed to get a model used (SQL, pipelines, deployment). CVs heavy on algorithms but silent on business impact or production use are the ones that stall at screening.",
+    groups: [
+      { title: "Languages & libraries", keywords: ["Python", "R", "SQL", "Pandas", "NumPy", "scikit-learn", "PyTorch", "TensorFlow"] },
+      { title: "Modelling & statistics", keywords: ["Machine learning", "Statistics", "Regression", "Classification", "Time series forecasting", "A/B testing", "Causal inference", "Feature engineering"] },
+      { title: "Data & deployment", keywords: ["Spark", "BigQuery", "Snowflake", "Airflow", "MLflow", "Docker", "AWS SageMaker", "Model deployment"] },
+      { title: "AI & communication", keywords: ["NLP", "LLMs", "Deep learning", "Data visualisation", "Stakeholder communication", "Experiment design"] },
+    ],
+    tips: [
+      { title: "Tie every model to a metric that moved", text: "\"Built a churn model that cut cancellations 12%\" is what screeners look for. Model accuracy alone doesn't tell a reader the work mattered." },
+      { title: "Prove it reached production", text: "Mention deployment, monitoring or the pipeline that serves predictions. Many postings separate notebook-only candidates from those who ship." },
+      { title: "Match the posting's flavour", text: "Experimentation-heavy roles want A/B testing and causal inference; ML-engineering roles want deployment and MLOps. Weight your CV toward the one in front of you." },
+    ],
+    faqs: [
+      { q: "What keywords should a data scientist put on a resume?", a: "Python and SQL first, then the libraries you use (Pandas, scikit-learn, PyTorch or TensorFlow), modelling and statistics terms (machine learning, regression, A/B testing, forecasting) and the data or deployment tools the posting names, such as Spark, Airflow or MLflow." },
+      { q: "What is the difference between data scientist and data analyst keywords?", a: "Analyst postings centre on SQL, dashboards and BI tools such as Tableau or Power BI. Data scientist postings add machine learning, statistics, Python libraries and model deployment." },
+    ],
+  },
+  {
     slug: "data-analyst",
     name: "Data Analyst",
     alsoCalled: ["Business Analyst", "BI Analyst", "Analytics Specialist"],

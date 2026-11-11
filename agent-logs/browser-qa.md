@@ -197,3 +197,14 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - `/`, `/resume-keywords`, `/resume-keywords/ux-designer`, `/icon.svg`, `/opengraph-image` → 200; `<link rel="icon">` points at the SVG ✅
 - Verified in browser: header logo at desktop and 375px, share image render, score cards 3-up at ~740px, no horizontal overflow, no console errors from localhost ✅
 - Not re-tested: PDF upload, URL scraping, full analysis flow in the browser (analyzer unchanged; scoring re-run by script)
+
+---
+
+## 2026-11-11 — Push 19 (Security hardening, 2 role guides, business skill groups)
+
+**Status:** ✅ PASS (0 critical)
+
+- `tsc` 0 errors, ESLint 0 errors, `next build` OK ✅
+- `/resume-keywords/software-engineer`, `/data-scientist` → 200, unknown slug → 404, sitemap 10 URLs, each new page has its own title, canonical and WebPage + BreadcrumbList + FAQPage JSON-LD ✅
+- No console errors from localhost; dev-only Vercel debug-script CSP error carried
+- Not tested: PDF upload through the UI (the route was tested directly with real and malformed PDFs)

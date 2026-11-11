@@ -282,3 +282,15 @@ Full read of `src/app/api/**`, `src/proxy.ts`, `next.config.ts`, client link ren
 - 🟢 Remaining `npm audit`: moderate/low only, in dev tooling (`shadcn` CLI chain) and `@anthropic-ai/sdk` (used by a local script; the advisory concerns a feature not used)
 - Not verified: Google tag traffic under the narrowed `connect-src` (GTM did not load locally without consent) — check the browser console on production after deploy
 - `/orchestration` page is public (noindex); its API is key-protected
+
+---
+
+## 2026-11-11 — Push 19 (Security hardening, 2 role guides, business skill groups)
+
+**Status:** ✅ PASS (0 critical, 2 medium open)
+
+- Ships the hardening pass logged above (commit 8ce51d7): DNS-rebinding-safe scraper, cross-site write blocking, pre-parse PDF size checks, safe hrefs, shared constant-time auth, `pdfjs-dist` removed, tighter CSP
+- This cycle's other changes are static data (role guides, skill aliases, course links) — no new inputs or sinks; new course URLs are fixed https links ✅
+- `git ls-files .env*` empty ✅
+- 🟡 Open: CSP `unsafe-inline`; per-instance rate limiting
+- After deploy: check the production console for CSP blocks on Google tag traffic (narrowed `connect-src`)

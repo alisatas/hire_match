@@ -36,7 +36,7 @@ export const FAQS: { q: string; a: string }[] = [
     },
     {
         q: "What skills does CVXray detect?",
-        a: "CVXray detects 40+ skill categories including React, TypeScript, Python, Node.js, AWS, Docker, Kubernetes, SQL, PostgreSQL, machine learning, agile, CI/CD, GraphQL and Terraform — plus the raw keywords in the job description.",
+        a: "CVXray detects 50+ skill categories: engineering skills such as React, TypeScript, Python, Node.js, AWS, Docker, Kubernetes, SQL, CI/CD and machine learning, plus data and business skills such as Tableau, Power BI, Excel, Salesforce, SEO, digital marketing, product management and financial modelling — and the raw keywords in the job description.",
     },
     {
         q: "Does CVXray store or share my resume data?",
@@ -60,6 +60,6 @@ export const FAQS: { q: string; a: string }[] = [
     },
     {
         q: "What keywords should I put on my resume for my job role?",
-        a: "It depends on the role and the specific posting. CVXray publishes free keyword guides for frontend developers, backend engineers, data analysts, product managers, DevOps engineers and UX designers at cvxray.com/resume-keywords — and for any other role, paste the job description into the checker to see the keywords it asks for.",
+        a: "It depends on the role and the specific posting. CVXray publishes free keyword guides for software engineers, frontend developers, backend engineers, data analysts, data scientists, product managers, DevOps engineers and UX designers at cvxray.com/resume-keywords — and for any other role, paste the job description into the checker to see the keywords it asks for.",
     },
 ]
