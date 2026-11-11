@@ -1,3 +1,15 @@
+# [1.32.0](https://github.com/alisatas/hire_match/compare/v1.31.0...v1.32.0) (2026-11-11)
+
+
+### Bug Fixes
+
+* stop "fine-tuning your pitch" from counting as an AI skill ([d49d877](https://github.com/alisatas/hire_match/commit/d49d87724caabc5a1e9ead3f7825e05b92035903))
+
+
+### Features
+
+* add an AI engineer sample job and keyword guide, wider AI skill detection ([89be91d](https://github.com/alisatas/hire_match/commit/89be91d42723179d99437f4bb48c342f4f6d7381))
+
 # [1.31.0](https://github.com/alisatas/hire_match/compare/v1.30.0...v1.31.0) (2026-11-11)
 
 
