@@ -28,7 +28,9 @@ export function extractCompanyName(jobText: string): string {
 // ── Interview question links ──────────────────────────────────────────────────
 
 export function getInterviewLinks(companyName: string): { label: string; url: string; icon: string; color: string }[] {
-    const qPlus = companyName.trim().replace(/\s+/g, "+")
+    // Encoded like the Glassdoor query: a scraped name such as "Acme&x=1#y" must not
+    // add parameters or a fragment to the link (spaces as "+" for Indeed's search)
+    const qPlus = encodeURIComponent(companyName.trim().replace(/\s+/g, " ")).replace(/%20/g, "+")
     const qEncoded = encodeURIComponent(companyName)
     return [
         {

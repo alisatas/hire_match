@@ -412,3 +412,19 @@ Full read of `src/app/api/**`, `src/proxy.ts`, `next.config.ts`, client link ren
 
 **Dependencies:** 91 → 48 findings, **critical 3 → 0, high 26 → 0**. Removed the unused `vercel` CLI (source of almost all highs — not referenced by any script, hook or workflow); vitest 3 → 5 (critical tinypool/mocker), `@types/node` 20 → 22 to match the Node 22 runtime; `npm audit fix` for the rest; `@anthropic-ai/sdk` moved to devDependencies (only a local script uses it). Production audit: 0 high/critical (6 moderate/low via `shadcn`, build-time CSS only). Remaining 48 dev-tooling moderates: the suggested "fixes" are downgrades (semantic-release 21, eslint-config-next 15) — left for Renovate
 - 🟡 Carried: CSP `unsafe-inline` (by decision)
+
+---
+
+## 2026-11-11 — Push 30 (CodeQL findings fixed, shared HTML-to-text module)
+
+**Status:** ✅ PASS (0 critical, 1 medium carried, 1 false positive pending dismissal)
+
+**CodeQL first scan: 9 alerts (1 critical, 8 high). Triage:**
+- #8, #9 Incomplete URL substring sanitization (`interview-questions`): `hostname.endsWith("duckduckgo.com")` accepted `evilduckduckgo.com`; source labels used `url.includes("glassdoor")` → exact-host `isHost()` checks on the parsed hostname. **Fixed**
+- #4, #5 Double unescaping (`scrape`, `cv-analyzer`): `&amp;` decoded before `&lt;` turned "&amp;lt;" into "<". Output is rendered as React text (not exploitable), still wrong → single-pass `decodeEntities`. **Fixed**
+- #6 Bad HTML filtering regexp (`scrape`): `</script>` missed `</script >` / `</SCRIPT foo>`; unterminated scripts kept → whitespace-tolerant closing tags + unterminated-block removal. **Fixed**
+- #2, #3 Incomplete multi-character sanitization: one-pass tag stripping → repeated until stable, stray `<>` removed. **Fixed**
+- #1 DOM text reinterpreted as HTML (interview links): scraped company name went unencoded into the Indeed URL (`Acme&x=1#y` could add parameters/fragment; host fixed to https://www.indeed.com, so not XSS) → encoded. **Fixed**
+- #7 Server-side request forgery (`safe-fetch.ts`): **false positive** — this is the hardened job-post fetcher itself (public-only DNS resolution with pinned IP, per-hop redirect validation, port/credential/host allow-rules, size + time caps; 16 SSRF unit tests). CodeQL cannot model these checks. Recommend dismissing as "False positive" with this justification (needs owner approval)
+- All HTML→text logic now lives in `src/lib/html-text.ts` (was duplicated in three places with the same bugs); 9 new unit tests incl. the attack strings
+- Dependabot: 3 open (2 moderate, 1 low) — all dev tooling already tracked

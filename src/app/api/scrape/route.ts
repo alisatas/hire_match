@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { BlockedUrlError, TooLargeError, safeFetchText } from '@/lib/server/safe-fetch';
+import { htmlToText } from '@/lib/html-text';
 
 // The SSRF guard (private ranges, DNS rebinding, redirect re-validation, port and
 // size limits) lives in safe-fetch.ts so it is enforced at connect time.
@@ -51,23 +52,9 @@ function normalizeLinkedInUrl(url: string): string {
     return url;
 }
 
-function stripHtml(html: string): string {
-    // Cap input to 500KB before regex to bound backtracking on malicious HTML
-    const safe = html.length > 512_000 ? html.slice(0, 512_000) : html
-    // Remove script/style blocks (lazy quantifier, bounded input prevents ReDoS)
-    let text = safe.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, ' ');
-    text = text.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, ' ');
-    // Block-level tags → newline
-    text = text.replace(/<\/(p|div|li|h[1-6]|section|article|tr)[^>]*>/gi, '\n');
-    // Inline elements → space
-    text = text.replace(/<[^>]*>/g, ' ');
-    // Decode common entities
-    text = text.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
-               .replace(/&nbsp;/g, ' ').replace(/&#39;/g, "'").replace(/&quot;/g, '"');
-    // Collapse whitespace while preserving newlines
-    text = text.split('\n').map(l => l.replace(/\s+/g, ' ').trim()).filter(Boolean).join('\n');
-    return text.trim();
-}
+// HTML → text lives in src/lib/html-text.ts (single-pass entity decoding,
+// whitespace-tolerant script/style removal, repeated tag stripping).
+const stripHtml = (html: string) => htmlToText(html);
 
 export async function POST(req: Request) {
     // A JSON content type forces a CORS preflight, so other sites cannot drive this

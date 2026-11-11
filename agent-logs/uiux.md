@@ -341,3 +341,11 @@ Agents MUST read this log before running checks and MUST append an entry after e
 **Status:** ✅ PASS (0 critical, 1 medium carried)
 
 - No visible UI changes; the experience tile now reflects requirements written as ranges, "at least …" or in Dutch
+
+---
+
+## 2026-11-11 — Push 30 (CodeQL findings fixed, shared HTML-to-text module)
+
+**Status:** ✅ PASS (0 critical, 1 medium carried)
+
+- No visible changes; interview result titles with entities like "&amp;" render correctly

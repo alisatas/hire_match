@@ -309,3 +309,12 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 - `tsc` 0, ESLint 0, `next build` OK, prod audit clean at high+ ✅
 - Playwright 19/19 (production build, system Chrome); unit 99/99
+
+---
+
+## 2026-11-11 — Push 30 (CodeQL findings fixed, shared HTML-to-text module)
+
+**Status:** ✅ PASS (0 critical)
+
+- `tsc` 0, ESLint 0, `next build` OK ✅; Playwright 19/19; unit 108/108
+- After push: CodeQL re-scans and should auto-close alerts #1–#6, #8, #9

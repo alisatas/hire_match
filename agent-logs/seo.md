@@ -456,3 +456,18 @@ Agents MUST read this log before running checks and MUST append an entry after e
 2. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
 3. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)
 4. GA4: mark `analysis_complete`, `score_card` and `entry` as key events
+
+---
+
+## 2026-11-11 — Push 30 (CodeQL findings fixed, shared HTML-to-text module)
+
+**Status:** ✅ PASS (0 critical, 1 improvement)
+
+**Improvement implemented this cycle:**
+- `SECURITY.md` + private vulnerability reporting are now linked from GitHub's Security tab — a trust signal for the public repository (shipped last push, verified live this cycle); no page changes needed for SEO this cycle beyond keeping structured data accurate
+
+**Running improvement backlog (next pushes):**
+1. More articles: "ATS-friendly CV format", "CV keywords vs. skills section", "How to read a job description"
+2. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
+3. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)
+4. GA4: mark `analysis_complete`, `score_card` and `entry` as key events

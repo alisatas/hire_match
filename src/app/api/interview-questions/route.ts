@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { decodeEntities, inlineText } from "@/lib/html-text"
 
 const noStore = { "Cache-Control": "no-store" }
 
@@ -6,21 +7,31 @@ const noStore = { "Cache-Control": "no-store" }
 // http(s) URLs to sites other than the search engine itself are passed through —
 // a "javascript:" or "data:" href would run script when clicked.
 // DuckDuckGo wraps results as //duckduckgo.com/l/?uddg=<encoded target>; unwrap those.
+// Host checks are exact (or a real subdomain): "evilduckduckgo.com" must not pass.
+const isHost = (hostname: string, domain: string) => hostname === domain || hostname.endsWith(`.${domain}`)
+
 function resolveResultUrl(raw: string): string | null {
     try {
-        let u = new URL(raw.replace(/&amp;/g, "&"), "https://duckduckgo.com")
-        if (u.hostname.endsWith("duckduckgo.com")) {
+        let u = new URL(decodeEntities(raw), "https://duckduckgo.com")
+        if (isHost(u.hostname, "duckduckgo.com")) {
             const target = u.searchParams.get("uddg")
             if (!target) return null
             u = new URL(target)
         }
         if (u.protocol !== "https:" && u.protocol !== "http:") return null
-        if (u.hostname.endsWith("duckduckgo.com")) return null
+        if (isHost(u.hostname, "duckduckgo.com")) return null
         return u.toString()
     } catch {
         return null
     }
 }
+
+const SOURCE_LABELS: [string, string][] = [
+    ["glassdoor.com", "Glassdoor"], ["glassdoor.co.uk", "Glassdoor"], ["glassdoor.nl", "Glassdoor"],
+    ["indeed.com", "Indeed"], ["indeed.nl", "Indeed"], ["reddit.com", "Reddit"], ["linkedin.com", "LinkedIn"],
+    ["teamblind.com", "Blind"], ["ambitionbox.com", "AmbitionBox"], ["interviewbit.com", "InterviewBit"],
+    ["levels.fyi", "Levels.fyi"], ["igotanoffer.com", "IGotAnOffer"], ["leetcode.com", "LeetCode"],
+]
 
 function extractQuestions(html: string): { title: string; snippet: string; url: string; source: string }[] {
     const results: { title: string; snippet: string; url: string; source: string }[] = []
@@ -32,29 +43,21 @@ function extractQuestions(html: string): { title: string; snippet: string; url: 
     for (const block of resultBlocks.slice(0, 10)) {
         // Extract title + URL from result__a
         const titleMatch = block.match(/<a[^>]*class="result__a"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/i)
-        const title = titleMatch ? titleMatch[2].replace(/<[^>]+>/g, "").trim() : ""
+        const title = titleMatch ? inlineText(titleMatch[2]) : ""
         const url = titleMatch ? titleMatch[1] : ""
 
         // Extract snippet from result__snippet
         const snippetMatch = block.match(/<a[^>]*class="result__snippet"[^>]*>([\s\S]*?)<\/a>/i)
         const snippet = snippetMatch
-            ? snippetMatch[1].replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim()
+            ? inlineText(snippetMatch[1])
             : ""
 
-        // Determine source label
-        let source = "Web"
-        if (url.includes("glassdoor")) source = "Glassdoor"
-        else if (url.includes("indeed")) source = "Indeed"
-        else if (url.includes("reddit")) source = "Reddit"
-        else if (url.includes("linkedin")) source = "LinkedIn"
-        else if (url.includes("blind")) source = "Blind"
-        else if (url.includes("ambitionbox")) source = "AmbitionBox"
-        else if (url.includes("interviewbit")) source = "InterviewBit"
-        else if (url.includes("levels.fyi")) source = "Levels.fyi"
-        else if (url.includes("igotanoffer")) source = "IGotAnOffer"
-        else if (url.includes("leetcode")) source = "LeetCode"
-
+        // Source label from the parsed hostname (never a substring of the whole URL,
+        // which "evil.com/?glassdoor" would satisfy)
         const target = resolveResultUrl(url)
+        const host = target ? new URL(target).hostname : ""
+        const source = SOURCE_LABELS.find(([domain]) => isHost(host, domain))?.[1] ?? "Web"
+
         if (title && target) {
             results.push({ title: title.slice(0, 200), snippet: snippet.slice(0, 400), url: target, source })
         }

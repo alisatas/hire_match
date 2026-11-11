@@ -39,6 +39,7 @@ import { Badge, Chip, Divider, FeedbackRating, Panel, ScoreRing, Section, Segmen
 import { analyze, auditCV, type AnalysisResult, type CVAuditResult, type MissingSkillWithPriority } from "@/lib/analyze"
 import { buildSuggestions, type KeywordSuggestion } from "@/lib/suggestions"
 import { renderScoreCard, shareOrDownloadCard } from "@/lib/score-card"
+import { decodeEntities } from "@/lib/html-text"
 import { extractCompanyName, extractCultureSignals, getInterviewLinks } from "@/lib/insights"
 
 // ─── Share URL helpers ───────────────────────────────────────────────────────
@@ -157,16 +158,8 @@ const readServerSnapshot = () => ""
 
 type InterviewResult = { title: string; snippet: string; url: string; source: string }
 
-// Decode common HTML entities returned by search APIs
-function decodeHtmlEntities(str: string): string {
-    return str
-        .replace(/&amp;/g, "&")
-        .replace(/&lt;/g, "<")
-        .replace(/&gt;/g, ">")
-        .replace(/&quot;/g, '"')
-        .replace(/&#39;/g, "'")
-        .replace(/&apos;/g, "'")
-}
+// Search-result titles are decoded with the shared single-pass decoder (src/lib/html-text.ts)
+const decodeHtmlEntities = decodeEntities
 
 // ─────────────────────────────────────────────
 // SKILL RESOURCES (UI-only: links for missing skills)

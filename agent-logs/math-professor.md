@@ -532,3 +532,11 @@ Calibration: fitting CVs unchanged (Frontend 81, sales 71, marketer 70, finance 
 **Running improvement backlog (next pushes):**
 1. Healthcare and logistics skill groups before adding samples from those sectors
 2. Seniority mismatch signal ("Lead / Head of" title vs a junior CV)
+
+---
+
+## 2026-11-11 — Push 30 (CodeQL findings fixed, shared HTML-to-text module)
+
+**Status:** ✅ PASS (no scoring change this cycle — security-only push)
+
+- Job text reaching `analyze()` from the scraper now has correctly decoded entities and no leftover script/style text, which removes a source of junk keywords; sample calibration unchanged

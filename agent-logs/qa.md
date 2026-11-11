@@ -314,3 +314,12 @@ Agents MUST read this log before running checks and MUST append an entry after e
 **Status:** ✅ PASS (0 critical)
 
 - vitest 5 runs the suite unchanged: 99 unit tests (+10 years-required cases); Playwright 19/19 on the production build (1 worker, to avoid parallel Chrome windows locally)
+
+---
+
+## 2026-11-11 — Push 30 (CodeQL findings fixed, shared HTML-to-text module)
+
+**Status:** ✅ PASS (0 critical)
+
+- 108 unit tests (+9 html-text / link encoding), 19 browser tests on the production build
+- Live smoke tests: scraper still returns clean text (no "<"), interview search returns the same results with old and new code

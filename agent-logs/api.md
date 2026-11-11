@@ -285,3 +285,11 @@ Agents MUST read this log before running checks and MUST append an entry after e
 **Status:** ✅ PASS (0 critical)
 
 - No API changes ✅
+
+---
+
+## 2026-11-11 — Push 30 (CodeQL findings fixed, shared HTML-to-text module)
+
+**Status:** ✅ PASS (0 critical)
+
+- `/api/scrape` and `/api/interview-questions` use the shared `html-text` helpers; result-source labels now come from the parsed hostname; behaviour otherwise unchanged
