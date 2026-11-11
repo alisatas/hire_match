@@ -23,6 +23,10 @@ export const FAQS: { q: string; a: string }[] = [
         a: "A score of 70% or above means you're a strong match and should apply. 45–69% is competitive — you can apply, but closing 1–2 skill gaps first will help. Below 45% suggests significant gaps; focus on the recommended courses before applying to that specific role.",
     },
     {
+        q: "How is the CV match score calculated?",
+        a: "The score combines three parts: skills (50%) — the skills the job names that also appear on your CV, weighted by how often the posting mentions them; keywords (35%) — how much of the posting's own wording your CV shares; and experience (15%) — your years of experience against what the job asks for. Missing a skill the posting repeats three or more times lowers the score further. Results range from 5% to 95%.",
+    },
+    {
         q: "Can CVXray read LinkedIn job descriptions automatically?",
         a: "Yes. Paste any LinkedIn job URL and CVXray fetches the job description automatically. The same works for Indeed, Glassdoor, and most company careers pages. If a page blocks automated fetching, copy the job description and use the Paste Text tab instead.",
     },
@@ -53,5 +57,9 @@ export const FAQS: { q: string; a: string }[] = [
     {
         q: "How do I check if my CV is ATS-friendly?",
         a: "Upload your CV to CVXray and add a job description. The match score shows how well your keywords align with the role, and the HR Quick Scan checks for quantified impact, strong action verbs, professional keywords, career progression and online presence.",
+    },
+    {
+        q: "What keywords should I put on my resume for my job role?",
+        a: "It depends on the role and the specific posting. CVXray publishes free keyword guides for frontend developers, backend engineers, data analysts, product managers, DevOps engineers and UX designers at cvxray.com/resume-keywords — and for any other role, paste the job description into the checker to see the keywords it asks for.",
     },
 ]

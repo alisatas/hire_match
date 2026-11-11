@@ -209,3 +209,16 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - `analysis_complete` now reports `job_source: "sample"` so demo runs can be separated from real postings in GA4
 - Verified in browser: collapsed by default, expands, loads, Remove restores the inputs, no overflow
 
+
+---
+
+## 2026-11-11 — Push 17 (SEO: role keyword pages, score explainer, AI crawler access)
+
+**Status:** ⚠️ WARN (0 critical, 1 medium)
+
+- New: `/resume-keywords` index + 6 role guides (breadcrumb, keyword groups, 3 tips, FAQ, two CTAs back to the analyzer, links to other roles)
+- New on home: "How your CV match score is calculated" (50 / 35 / 15 cards + score bands) and "Resume keywords by role" link grid
+- Header gains "Keywords by role" (≥ sm); footer gains a role-link row with 44px targets on mobile
+- Verified role page at desktop and 375px: no horizontal overflow
+- 🟡 Breadcrumb links on role pages are 13px text with no padding — under the 44px tap target
+- Not screenshotted: the two new home sections (present in the DOM, same card styles as "How it works")

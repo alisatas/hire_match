@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import CVAnalyzer from "@/components/features/cv-analyzer";
-import { CookieSettingsButton } from "@/components/consent/consent-banner";
+import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { FAQS } from "@/lib/faqs";
+import { ROLES } from "@/lib/roles";
+import { jsonLdScript } from "@/lib/site";
 import { ArrowRight, ChevronDown, FileText, Gauge, Link2, Lock, ShieldCheck, Sparkles, Zap } from "lucide-react";
+
+// The canonical lives on each page (not the root layout) so sub-pages never
+// inherit a canonical that points back at the home page.
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 const faqJsonLd = {
   "@context": "https://schema.org",
@@ -14,16 +21,24 @@ const faqJsonLd = {
   })),
 };
 
-function Logo() {
-  return (
-    <span className="flex items-center gap-2.5">
-      <span className="flex size-7 items-center justify-center rounded-lg bg-primary text-[11px] font-bold tracking-tight text-primary-foreground shadow-[0_0_0_1px_color-mix(in_oklch,var(--foreground)_10%,transparent)_inset]">
-        CV
-      </span>
-      <span className="text-[15px] font-semibold tracking-tight text-foreground">CVXray</span>
-    </span>
-  );
-}
+// Mirrors the weights in src/lib/analyze.ts — update both together.
+const SCORE_PARTS = [
+  {
+    weight: "50%",
+    title: "Skills",
+    text: "Skills the job names that also appear on your CV, across 40+ categories. Skills the posting repeats, or puts in its title, count for more.",
+  },
+  {
+    weight: "35%",
+    title: "Keywords",
+    text: "The wording of the posting itself — the terms it uses most — compared with the wording of your CV.",
+  },
+  {
+    weight: "15%",
+    title: "Experience",
+    text: "Years of experience on your CV against the years the job asks for. Leaving years off your CV is treated as unknown, not as zero.",
+  },
+];
 
 const STEPS = [
   {
@@ -48,39 +63,17 @@ export default function Home() {
     <div className="relative z-10">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd).replace(/</g, "\\u003c") }}
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(faqJsonLd) }}
       />
 
-      {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/70 backdrop-blur-xl">
-        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link href="/" aria-label="CVXray home" className="rounded-md focus-visible:outline-2 focus-visible:outline-offset-4">
-            <Logo />
-          </Link>
-          <nav aria-label="Primary" className="flex items-center gap-1">
-            <a href="#how-it-works" className="hidden rounded-md px-3 py-2 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground sm:inline-flex">
-              How it works
-            </a>
-            <a href="#faq" className="hidden rounded-md px-3 py-2 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground sm:inline-flex">
-              FAQ
-            </a>
-            <a
-              href="#analyzer"
-              className="ml-2 inline-flex h-9 items-center gap-1.5 rounded-lg bg-foreground px-3.5 text-[13px] font-semibold text-background transition-opacity hover:opacity-90"
-            >
-              Check my CV
-              <ArrowRight className="size-3.5" />
-            </a>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main>
         {/* Hero */}
         <section className="mx-auto max-w-5xl px-4 pb-8 pt-10 text-center sm:px-6 sm:pt-14 lg:pb-10">
           <span className="inline-flex items-center gap-2 rounded-full border border-border bg-foreground/[0.03] px-3 py-1 text-xs font-medium text-muted-foreground">
             <Sparkles className="size-3.5 text-primary" />
-            Free CV-to-job match analysis
+            Free CV &amp; resume matcher — no sign-up
           </span>
           <h1 className="mt-5 text-4xl font-semibold tracking-[-0.035em] text-foreground text-balance sm:text-5xl lg:text-6xl">
             Does your CV{" "}
@@ -122,6 +115,67 @@ export default function Home() {
           </ol>
         </section>
 
+        {/* How the score is calculated */}
+        <section id="match-score" className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-28 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">The match score</p>
+            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
+              How your CV match score is calculated
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-muted-foreground text-pretty">
+              No black box. The score is a weighted comparison of your CV with the job description, built from
+              three parts.
+            </p>
+          </div>
+          <ul className="mt-12 grid gap-4 md:grid-cols-3">
+            {SCORE_PARTS.map((part) => (
+              <li key={part.title} className="rounded-2xl border border-border bg-card/60 p-6">
+                <p className="text-3xl font-semibold tracking-tight tabular-nums text-primary">{part.weight}</p>
+                <h3 className="mt-3 text-base font-semibold tracking-tight text-foreground">{part.title}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{part.text}</p>
+              </li>
+            ))}
+          </ul>
+          <p className="mx-auto mt-8 max-w-3xl text-center text-sm leading-relaxed text-muted-foreground text-pretty">
+            Missing a skill the posting mentions three or more times lowers the score further, and very short job
+            descriptions or CVs are scored more cautiously. Results run from 5% to 95%:{" "}
+            <strong className="font-semibold text-foreground">70% or more</strong> is a strong match,{" "}
+            <strong className="font-semibold text-foreground">45–69%</strong> is competitive, and below 45% means
+            there are significant gaps to close first.
+          </p>
+        </section>
+
+        {/* Resume keywords by role — internal links to the role guides */}
+        <section id="roles" className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-28 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">Keyword guides</p>
+            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
+              Resume keywords by role
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-muted-foreground text-pretty">
+              Not applying yet? See what employers ask for most in your field.
+            </p>
+          </div>
+          <ul className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {ROLES.map((role) => (
+              <li key={role.slug}>
+                <Link
+                  href={`/resume-keywords/${role.slug}`}
+                  className="group flex h-full items-center justify-between gap-3 rounded-2xl border border-border bg-card/60 p-5 transition-colors hover:border-primary/40"
+                >
+                  <span>
+                    <span className="block text-[15px] font-semibold tracking-tight text-foreground">{role.name} resume keywords</span>
+                    <span className="mt-1 block text-[13px] text-muted-foreground">
+                      {role.groups[0].keywords.slice(0, 4).join(", ")}…
+                    </span>
+                  </span>
+                  <ArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+
         {/* FAQ — visible to users and identical to the FAQPage structured data */}
         <section id="faq" className="mx-auto max-w-3xl scroll-mt-20 px-4 pb-28 pt-28 sm:px-6">
           <div className="text-center">
@@ -142,20 +196,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="border-t border-border">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 text-[13px] text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3">
-            <Logo />
-            <span className="hidden text-border sm:inline">|</span>
-            <span>&copy; 2026 · Nothing you upload is stored or shared.</span>
-          </div>
-          <nav aria-label="Footer" className="flex items-center gap-5">
-            <a href="#how-it-works" className="transition-colors hover:text-foreground">How it works</a>
-            <a href="#faq" className="transition-colors hover:text-foreground">FAQ</a>
-            <CookieSettingsButton />
-          </nav>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

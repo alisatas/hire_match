@@ -174,3 +174,15 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Removed unused components: shader-background, emoji-rating, dotted-surface ✅
 - 🟡 Dev-only CSP console error for the Vercel Analytics debug script (carried forward)
 - Not re-tested this cycle: PDF upload and job-URL scraping (logic unchanged, markup only)
+
+---
+
+## 2026-11-11 — Push 17 (SEO: role keyword pages, score explainer, AI crawler access)
+
+**Status:** ✅ PASS (0 critical)
+
+- `tsc --noEmit` 0 errors, ESLint 0 errors, `next build` OK — 6 role pages prerendered (SSG), index static ✅
+- HTTP: `/`, `/resume-keywords`, `/resume-keywords/devops-engineer` → 200; unknown slug → 404; `/robots.txt`, `/sitemap.xml` (8 URLs), `/llms.txt` → 200 ✅
+- Each page emits its own title, canonical, og:url, og:image and twitter:image ✅
+- 🟡 Dev-only CSP console error for the Vercel Analytics debug script (carried forward)
+- Not re-tested this cycle: PDF upload, URL scraping, full analysis flow in the browser (analyzer component unchanged; scoring re-run by script)

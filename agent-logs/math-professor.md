@@ -313,3 +313,22 @@ Calibration (6 sample jobs × 4 CVs):
 **Status:** ✅ PASS (no scoring changes)
 
 - UI tone thresholds (`toneForScore`: 70 / 45) match the persona tiers in `analyze.ts` ✅
+
+---
+
+## 2026-11-11 — Push 17 (SEO: role keyword pages, score explainer, AI crawler access)
+
+**Status:** ✅ PASS (1 improvement implemented)
+
+**Improvement: job title = first non-empty line (capped at 120 chars), not a fixed 120-char window (`analyze.ts`)** — closes backlog item 1.
+With a short title the old window ran into the body, so body-only skills got the +2 title boost and an automatic high priority.
+
+Calibration (frontend CV / chef CV × 6 sample jobs), identical before and after — sample titles are long enough that the window did not spill:
+- Frontend CV: Frontend 81 ✅ (75–95 target), UX 52, PM 49, Backend 37, DevOps 23, Data Analyst 20
+- Chef CV: 5 on every job ✅; no `freq = 0` skill marked high-priority ✅
+
+Public copy now states the formula (home page section, FAQ, llms.txt): 50 / 35 / 15, up to −8 for missing skills mentioned 3+ times, 5–95 range. Keep it in sync with `analyze.ts`.
+
+**Running improvement backlog (next pushes):**
+1. Remaining generic aliases to review: "rest", "pipeline", "cache", "terminal", "node"
+2. Tune adaptive keyword cap for very long JDs (> 1200 words)

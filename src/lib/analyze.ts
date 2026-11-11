@@ -249,10 +249,14 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
     const cvSkills = extractSkills(cvText)
     const jobSkillFreq = extractSkillFrequencies(jobText)
 
-    // Math Prof improvement: skills in the job title (first 120 chars) are the
-    // strongest signal — double their frequency weight so they surface as
-    // high-priority gaps and drive the score more accurately.
-    const jobTitle = jobText.slice(0, 120)
+    // Math Prof improvement: skills in the job title are the strongest signal — they
+    // get +2 frequency so they surface as high-priority gaps and drive the score.
+    // Math Prof improvement (Push 17): the title is the first non-empty line, capped at
+    // 120 chars. The old fixed 120-char window spilled into the body whenever the title
+    // was short ("UX Designer\nWe use Figma, Jira…"), so body-only skills were boosted
+    // and marked high-priority as if they were in the title. Scraped text that arrives
+    // as one long line still falls back to the 120-char cap.
+    const jobTitle = (jobText.trim().split("\n", 1)[0] ?? "").slice(0, 120)
     const titleSkills = extractSkills(jobTitle)
     for (const key of titleSkills) {
         jobSkillFreq.set(key, (jobSkillFreq.get(key) || 0) + 2)

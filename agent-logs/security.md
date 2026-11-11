@@ -218,3 +218,16 @@ Fixes for the two 🟡 findings from Push 10:
 - 🟡 Any tag added later inside GTM (e.g. Meta Pixel) needs its domains added to the CSP, and must be configured to respect consent in GTM
 - Privacy copy updated (FAQ, hero, llms.txt) so "private" claims refer to the CV, with analytics disclosed as consent-based ✅
 
+
+---
+
+## 2026-11-11 — Push 17 (SEO: role keyword pages, score explainer, AI crawler access)
+
+**Status:** ✅ PASS (0 critical, 1 medium carried)
+
+- 3 new `dangerouslySetInnerHTML` sinks (JSON-LD on `/resume-keywords` and `/resume-keywords/[role]`) — all built from static data in `roles.ts` and passed through the shared `jsonLdScript()` which escapes `<`; the root-layout JSON-LD now uses the same helper ✅
+- `[role]` param is only used as a lookup key against the static `ROLES` list (`dynamicParams = false` → unknown slugs 404); it is never rendered or fetched ✅
+- `robots.ts`: named AI-crawler group now repeats `Disallow: /api/` — previously those bots matched only their own group and were not told to stay out of the API ✅
+- `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION` are public ownership tokens read from env, not secrets ✅
+- No new routes, inputs, or console logging; `git ls-files .env*` empty ✅
+- 🟡 CSP still allows `unsafe-inline` (carried forward — required by GTM / inline JSON-LD)

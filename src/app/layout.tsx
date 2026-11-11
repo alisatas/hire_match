@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next";
 import Script from "next/script";
 import { ConsentBanner } from "@/components/consent/consent-banner";
 import { GTM_ID, consentBootstrapScript, gtmLoaderScript } from "@/lib/analytics";
+import { SITE_URL, jsonLdScript } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,23 +19,27 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
-const siteUrl = "https://cvxray.com";
+const siteUrl = SITE_URL;
+
+// Search Console / Bing Webmaster ownership tokens — set in the Vercel project env.
+const googleVerification = process.env.GOOGLE_SITE_VERIFICATION;
+const bingVerification = process.env.BING_SITE_VERIFICATION;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "CVXray — Free Resume Matcher & Keyword Checker",
+    default: "Free CV & Resume Matcher — Job Match Score | CVXray",
     template: "%s | CVXray",
   },
   description:
-    "Instantly match your CV to any job. Get your ATS score, see matched skills across 40+ categories, find missing keywords & get course recommendations. Free, no sign-up.",
+    "Check your CV or resume against any job description. Free match score, missing keywords, skill gaps and courses to close them — instant, private, no sign-up.",
   keywords: [
     "cv matcher", "resume matcher", "job fit analyzer", "cv analyzer",
     "resume scanner", "job match score", "skill gap analysis",
     "resume keywords", "job description match", "cv match percentage",
     "free resume checker", "ai resume analyzer", "cv scoring tool",
     "resume to job match", "check resume against job description",
-    "resume keyword checker", "cvxray",
+    "resume keyword checker", "ats resume checker", "resume keywords by role",
     "cvxray", "cv xray", "resume xray",
   ],
   authors: [{ name: "CVXray" }],
@@ -63,7 +68,12 @@ export const metadata: Metadata = {
   icons: {
     icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230e7490'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-size='20' font-family='system-ui,sans-serif' font-weight='900' fill='white'%3ECV%3C/text%3E%3C/svg%3E",
   },
-  alternates: { canonical: siteUrl },
+  ...((googleVerification || bingVerification) && {
+    verification: {
+      ...(googleVerification && { google: googleVerification }),
+      ...(bingVerification && { other: { "msvalidate.01": bingVerification } }),
+    },
+  }),
 };
 
 export default function RootLayout({
@@ -75,13 +85,23 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@graph": [
       {
+        "@type": "WebSite",
+        "@id": `${siteUrl}/#website`,
+        url: siteUrl,
+        name: "CVXray",
+        alternateName: ["CV Xray", "CVXray.com"],
+        description: "Free CV and resume matcher: compare your CV with any job description and see your match score and missing keywords.",
+        inLanguage: "en",
+        publisher: { "@id": `${siteUrl}/#org` },
+      },
+      {
         "@type": "WebApplication",
         "@id": `${siteUrl}/#app`,
         name: "CVXray",
         alternateName: ["CV Xray", "CVXray.com"],
         url: siteUrl,
         description:
-          "CVXray is a free AI-powered resume and CV matcher. Upload your PDF CV, paste a job description or LinkedIn URL, and get an instant match score with skill gap analysis and course recommendations. No sign-up, no data stored.",
+          "CVXray is a free resume and CV matcher. Upload your PDF CV, paste a job description or LinkedIn URL, and get an instant match score with skill gap analysis and course recommendations. No sign-up, no data stored.",
         applicationCategory: "BusinessApplication",
         applicationSubCategory: "Career Tools",
         operatingSystem: "All",
@@ -93,6 +113,8 @@ export default function RootLayout({
           "40+ skill category detection",
           "Missing keyword identification",
           "Personalized course recommendations",
+          "Transparent scoring — skills 50%, keywords 35%, experience 15%",
+          "Resume keyword guides by job role",
           "Company Insights — company name, culture signals, and real interview resources",
           "LinkedIn job URL auto-scraping",
           "PDF resume upload support",
@@ -101,6 +123,9 @@ export default function RootLayout({
           "Free forever",
         ],
         screenshot: `${siteUrl}/opengraph-image`,
+        isAccessibleForFree: true,
+        inLanguage: "en",
+        publisher: { "@id": `${siteUrl}/#org` },
       },
       {
         "@type": "Organization",
@@ -138,7 +163,7 @@ export default function RootLayout({
         {GTM_ID && <script dangerouslySetInnerHTML={{ __html: consentBootstrapScript() }} />}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }}
         />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} style={{ backgroundColor: 'transparent' }} suppressHydrationWarning>

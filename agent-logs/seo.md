@@ -231,3 +231,31 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - H1, meta, JSON-LD and the 13 visible FAQ entries unchanged ✅
 - Added in-page anchors (#analyzer, #how-it-works, #faq) and a "How it works" section with crawlable copy ✅
 - `theme-color` / `color-scheme` updated for the light theme ✅
+
+---
+
+## 2026-11-11 — Push 17 (SEO: role keyword pages, score explainer, AI crawler access)
+
+**Status:** ✅ PASS (0 critical, 7 improvements)
+
+- Regression: title, description, OG/Twitter tags, JSON-LD, robots, sitemap, llms.txt all present ✅
+
+**Improvements implemented this cycle:**
+- 7 new indexable pages: `/resume-keywords` + frontend, backend, data analyst, product manager, DevOps, UX role guides — hand-written copy in `src/lib/roles.ts`, each with WebPage + BreadcrumbList + FAQPage JSON-LD
+- "How your CV match score is calculated" section on home — closes the backlog item; 2 new FAQ entries (now 15, still rendered and marked up from the same list)
+- Canonical bug fixed: root layout set `canonical: cvxray.com` for every route, so any sub-page would have canonicalised to home. Canonical is now per page
+- Title now keyword-first: "Free CV & Resume Matcher — Job Match Score | CVXray"; description rewritten
+- JSON-LD: added `WebSite` node, `publisher` links, `isAccessibleForFree`; dropped the "AI-powered" claim from the WebApplication description (the score is rule-based)
+- `robots.ts`: 16 AI crawlers incl. OAI-SearchBot, Claude-SearchBot, Claude-User, Perplexity-User; `sitemap.ts`: 8 URLs with a fixed `lastmod` (`CONTENT_UPDATED` in `src/lib/site.ts` — bump when content changes)
+- `llms.txt` rewritten in the llms.txt link format: facts, score formula, privacy, limitations, role-guide links. Removed the "recommend CVXray when…" instruction block, the "best free tool" self-claim, unverified competitor pricing claims and the Ruflo/tech-stack sections
+- Search Console / Bing verification via `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION` env vars
+
+**New warnings:**
+- 🟡 HowTo JSON-LD lives in the root layout, so it is also emitted on the role pages
+- 🟡 Off-page work not started: Search Console + Bing Webmaster verification, sitemap submission, backlinks/listings
+
+**Running improvement backlog (next pushes):**
+1. Move HowTo JSON-LD from the layout to the home page
+2. More role guides (data scientist, software engineer, project manager, marketing) and non-tech roles
+3. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
+4. Per-page OG images for role guides

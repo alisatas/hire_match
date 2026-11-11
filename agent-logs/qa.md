@@ -187,3 +187,14 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 - Markup-only rewrite of the analyzer: state, handlers and analysis logic unchanged ✅
 - Apply link now shown inside the recommendation only when a job URL exists (no disabled placeholder banner) ✅
+
+---
+
+## 2026-11-11 — Push 17 (SEO: role keyword pages, score explainer, AI crawler access)
+
+**Status:** ✅ PASS (0 critical)
+
+- New pages are static server components with no state or async paths; unknown role slug → 404 (verified) ✅
+- Header/footer extracted to `site-chrome.tsx` and shared by all pages; home nav anchors changed to `/#…` links so they work from sub-pages ✅
+- `analyze()` title change: empty job text → `split()[0]` is `""` → no title skills, no crash ✅
+- Analyzer component untouched this cycle

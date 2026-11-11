@@ -165,3 +165,12 @@ Agents MUST read this log before running checks and MUST append an entry after e
 **Status:** ✅ PASS (0 critical)
 
 - No API route changes this cycle ✅
+
+---
+
+## 2026-11-11 — Push 17 (SEO: role keyword pages, score explainer, AI crawler access)
+
+**Status:** ✅ PASS (0 critical)
+
+- No API route changes this cycle; scrape and extract-pdf re-read — size caps, content-type check, SSRF guard and no-store headers unchanged ✅
+- 🟡 Carried forward: `/api/interview-questions` has no upper bound on `company` length
