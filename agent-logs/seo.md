@@ -426,3 +426,18 @@ Agents MUST read this log before running checks and MUST append an entry after e
 2. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
 3. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)
 4. GA4: mark `analysis_complete`, `score_card` and `entry` as key events
+
+---
+
+## 2026-11-11 — Push 28 (CSP fix for Google Ads conversions, nice-to-have weighting, site-wide feed link)
+
+**Status:** ✅ PASS (0 critical, 1 improvement)
+
+**Improvement implemented this cycle:**
+- RSS discovery link on every page (in the root `<head>`, not `metadata.alternates` — pages that set a canonical replace that object, which would have dropped the link or, worse, the canonical)
+
+**Running improvement backlog (next pushes):**
+1. More articles: "ATS-friendly CV format", "CV keywords vs. skills section", "How to read a job description"
+2. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
+3. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)
+4. GA4: mark `analysis_complete`, `score_card` and `entry` as key events; Ads conversions now unblocked

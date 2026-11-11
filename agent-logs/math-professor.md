@@ -504,3 +504,17 @@ Tried and rejected: (1) dampening every one-off word — also dampened real requ
 **Running improvement backlog (next pushes):**
 1. Healthcare and logistics skill groups before adding samples from those sectors
 2. Detect requirement vs nice-to-have sections and weight "nice to have" skills lower
+
+---
+
+## 2026-11-11 — Push 28 (CSP fix for Google Ads conversions, nice-to-have weighting, site-wide feed link)
+
+**Status:** ✅ PASS (1 improvement implemented) — closes backlog item 2
+
+**Improvement: nice-to-have weighting** (`splitOptional` in `analyze.ts`). Lines under "Nice to have / Bonus points / Preferred / Pluspunten" headings, and lines saying "is a plus / preferred / a bonus", are optional. A skill found **only** there (and not in the title) counts half in the skill score and is priority **low**; a skill that is also required elsewhere keeps full weight.
+
+Calibration (before → after): sales CV × sales job 68 → **71** (its one gap, Digital Marketing, was a nice-to-have); marketer 66 → **70**; analyst 53 → **57**; AI CV 69 → 70; Frontend fit 81 (unchanged — it had no gaps). Unrelated CVs unchanged in the 5–39 band (frontend × AI 28 → 27). Locked by 3 unit tests (optional gap = low priority; same gap costs less as optional than as required; missing a core skill costs more).
+
+**Running improvement backlog (next pushes):**
+1. Healthcare and logistics skill groups before adding samples from those sectors
+2. Detect seniority mismatch (e.g. "Lead"/"Head of" title vs junior CV) as a separate signal

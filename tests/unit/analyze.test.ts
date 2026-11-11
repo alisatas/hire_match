@@ -158,3 +158,33 @@ By submitting your application you agree that we process your personal data for 
     expect(out).not.toMatch(/leasefiets/);
   });
 });
+
+describe("nice-to-have skills", () => {
+  const job = `Backend Engineer
+We build APIs for thousands of customers. 3+ years of experience.
+
+Requirements:
+- Python and PostgreSQL in production
+- Docker and AWS
+
+Nice to have:
+- Kubernetes
+- Terraform`;
+  const cvWithCore = "Backend engineer with 5 years of experience building Python services on PostgreSQL, shipped with Docker on AWS for thousands of customers across Europe, owning APIs end to end, on call, testing and reviews. Engineer, Acme, 2020 – present. " .repeat(1);
+
+  it("marks optional-only skills as low priority", () => {
+    const r = analyze(cvWithCore, job);
+    const k8s = r.missing.find((m) => m.key === "kubernetes");
+    expect(k8s?.priority).toBe("low");
+  });
+
+  it("the same gap costs less as a nice-to-have than as a requirement", () => {
+    const required = job.replace("Nice to have:", "Also required:");
+    expect(analyze(cvWithCore, job).score).toBeGreaterThan(analyze(cvWithCore, required).score);
+  });
+
+  it("missing a core requirement costs more than missing a nice-to-have", () => {
+    const withoutCore = cvWithCore.replace("PostgreSQL", "spreadsheets");
+    expect(analyze(withoutCore, job).score).toBeLessThan(analyze(cvWithCore, job).score);
+  });
+});

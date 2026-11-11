@@ -256,6 +256,28 @@ function extractSkillFrequencies(text: string): Map<string, number> {
 const BOILERPLATE_HEADING = new RegExp(String.raw`^(about (?!the role\b|the job\b|the position\b|this role\b|you\b)[\w&.' -]{1,40}|who we are|our (story|mission|culture|values|company|team|offices|hiring process|benefits)|what we offer|we offer|what('|’)s in it for you|benefits|perks|compensation|why (join|work|you('|’)ll love)\b.*|(the )?(hiring|interview|recruitment|application) process|how to apply|next steps|diversity|equal opportunit|inclusion|privacy|data protection|legal|disclaimer|over ons|wie zijn wij|wij bieden|wat bieden wij|arbeidsvoorwaarden|sollicitatieprocedure)\b`, "i")
 const JOB_HEADING = new RegExp(String.raw`^(requirements?|responsibilities|key responsibilities|what you('|’)ll do|what you will do|what you('|’)ll bring|what you bring|your role|the role|about the role|about the job|about this role|about you|qualifications|must[- ]haves?|nice[- ]to[- ]haves?|bonus points|skills|your profile|who you are|you have|you are|we('|’)re looking for|what we('|’)re looking for|what we are looking for|tasks|duties|functie-eisen|wat ga je doen|wat vragen wij|wie ben jij|jouw profiel)\b`, "i")
 
+// Math Prof improvement (Push 28): "nice to have" skills weigh less.
+// Postings separate must-haves from extras ("Nice to have:", "Bonus points", "is a plus").
+// A skill that appears ONLY in those places was weighted and prioritised exactly like a
+// hard requirement, so missing an optional extra cost as much as missing the core stack.
+const NICE_HEADING = /^(nice[- ]to[- ]haves?|good[- ]to[- ]haves?|bonus( points)?|pluspunten|preferred( qualifications)?|desirable|a plus)\b/i
+const NICE_INLINE = /\b(is a (big )?plus|are a plus|a bonus|nice to have|preferred|is een pr?e)\b/i
+
+/** Splits a posting into its required and explicitly optional lines. */
+export function splitOptional(jobText: string): { required: string; optional: string } {
+    const required: string[] = []
+    const optional: string[] = []
+    let inNice = false
+    for (const raw of jobText.split("\n")) {
+        const line = raw.trim().replace(/^[#*\-•\s]+/, "")
+        const isHeading = line.length > 0 && line.length <= 60 && line.split(/\s+/).length <= 8 && !/[.!?]$/.test(line.replace(/:$/, ""))
+        if (isHeading && NICE_HEADING.test(line)) { inNice = true; continue }
+        if (isHeading && (JOB_HEADING.test(line) || BOILERPLATE_HEADING.test(line))) inNice = false
+        ;(inNice || NICE_INLINE.test(line) ? optional : required).push(raw)
+    }
+    return { required: required.join("\n"), optional: optional.join("\n") }
+}
+
 export function stripBoilerplate(jobText: string): string {
     const kept: string[] = []
     let skipping = false
@@ -452,6 +474,12 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
     }
 
     const jobSkills = new Set(jobSkillFreq.keys())
+    // Skills that only ever appear in "nice to have" lines (and not in the title)
+    const { required: requiredText, optional: optionalText } = splitOptional(jobText)
+    const requiredSkills = extractSkills(requiredText)
+    const optionalOnly = new Set(
+        [...extractSkills(optionalText)].filter(k => !requiredSkills.has(k) && !titleSkills.has(k)),
+    )
     const matched = [...jobSkills].filter(s => cvSkills.has(s))
     const missingKeys = [...jobSkills].filter(s => !cvSkills.has(s))
 
@@ -481,7 +509,8 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
     let totalSkillWeight = 0
     let matchedSkillWeight = 0
     for (const [key, freq] of jobSkillFreq.entries()) {
-        const weight = 1 + Math.log(1 + freq) // log-dampened frequency weight
+        // log-dampened frequency weight; optional-only skills count half
+        const weight = (1 + Math.log(1 + freq)) * (optionalOnly.has(key) ? 0.5 : 1)
         totalSkillWeight += weight
         if (cvSkills.has(key)) matchedSkillWeight += weight
     }
@@ -584,7 +613,9 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
         // expression of what the role needs — "React Developer" means React is essential
         // even if the body only mentions it once.
         const priority: "high" | "medium" | "low" =
-            (freq >= 3 || titleSkills.has(key)) ? "high" : freq >= 1 ? "medium" : "low"
+            titleSkills.has(key) ? "high"
+                : optionalOnly.has(key) ? "low"
+                    : freq >= 3 ? "high" : freq >= 1 ? "medium" : "low"
         return { label: getSkillLabel(key), key, freq, priority }
     }).sort((a, b) => {
         // Math Prof improvement: sort by priority first (high → medium → low), then by

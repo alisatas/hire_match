@@ -387,3 +387,13 @@ Full read of `src/app/api/**`, `src/proxy.ts`, `next.config.ts`, client link ren
 - Tooling incident: a Python edit turned `\b` into backspace characters inside two regexes; found by a failing measurement, fixed, and the whole repo scanned (only binary fonts contain 0x08)
 - RSS feed is static XML with escaped content ✅
 - 🟡 Carried: CSP `unsafe-inline` (by decision)
+
+---
+
+## 2026-11-11 — Push 28 (CSP fix for Google Ads conversions, nice-to-have weighting, site-wide feed link)
+
+**Status:** ✅ PASS (0 critical, 1 medium carried)
+
+- **Production bug caught by the new CI browser tests**: on `analysis_complete` the Google tag calls `https://pagead2.googlesyndication.com/measurement/conversion` (Google Ads conversion ping, sent cookieless even with consent denied). The narrowed `connect-src` from Push 22 blocked it, so Ads conversion measurement has been failing live since then. Host added to `GOOGLE_TAG_HOSTS`. This is the "Google tag traffic under the narrowed connect-src — not verified" item from Push 19/22, now closed
+- CI itself works: install hang fixed last push, audit/typecheck/lint/unit/build/Chrome all green; only the browser test failed — on the real bug above
+- 🟡 Carried: CSP `unsafe-inline` (by decision)

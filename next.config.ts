@@ -13,6 +13,9 @@ const GOOGLE_TAG_HOSTS = [
   "https://googleads.g.doubleclick.net",
   "https://www.googleadservices.com",
   "https://www.google.com",
+  // Google Ads conversion measurement (fires on analysis_complete). Missing from the
+  // first narrowed list — caught by the CI browser tests, it was blocked in production.
+  "https://pagead2.googlesyndication.com",
 ].join(" ");
 
 const nextConfig: NextConfig = {

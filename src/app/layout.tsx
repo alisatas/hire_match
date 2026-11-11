@@ -144,6 +144,9 @@ export default function RootLayout({
       <head>
         <meta name="color-scheme" content="light" />
         <meta name="theme-color" content="#fafafa" />
+        {/* Site-wide feed discovery. Set here rather than in metadata.alternates, which
+            each page replaces when it sets its own canonical. */}
+        <link rel="alternate" type="application/rss+xml" title="CVXray guides" href="/blog/feed.xml" />
         {/* Consent Mode defaults must run before Google Tag Manager loads */}
         {GTM_ID && <script dangerouslySetInnerHTML={{ __html: consentBootstrapScript() }} />}
         <script

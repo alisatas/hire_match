@@ -289,3 +289,14 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - `tsc` 0, ESLint 0, `next build` OK (`/blog/feed.xml` static) ✅
 - Playwright 19/19 on dev and on the production build using system Chrome (the CI configuration); unit 86/86; prod audit clean
 - Confirm after push: CI reaches and passes "Browser tests"
+
+---
+
+## 2026-11-11 — Push 28 (CSP fix for Google Ads conversions, nice-to-have weighting, site-wide feed link)
+
+**Status:** ✅ PASS (0 critical)
+
+- `tsc` 0, ESLint 0, `next build` OK, prod audit clean ✅
+- Playwright 19/19 (dev + production build, system Chrome, 1 worker); unit 89/89
+- Feed `<link rel="alternate">` now on every page; canonicals verified unchanged on /, /terms, /blog
+- Confirm after push: CI "Browser tests" passes in GitHub Actions

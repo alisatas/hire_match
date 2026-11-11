@@ -297,3 +297,12 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - 86 unit tests (+6: boilerplate invariance incl. boilerplate 4× longer than the job, section resume after "About the role", Dutch headings, no-heading fallback), 19 browser tests (+RSS)
 - Exactly the CI sequence verified locally: audit → typecheck → lint → unit → build → Chrome check → browser tests on the production build
 - Note for future edits: write regex-bearing TS through heredocs or raw strings, never Python non-raw strings
+
+---
+
+## 2026-11-11 — Push 28 (CSP fix for Google Ads conversions, nice-to-have weighting, site-wide feed link)
+
+**Status:** ✅ PASS (0 critical)
+
+- The e2e analyzer test's CV covered every required skill, so after the nice-to-have change its only gaps were low priority and the suggestions section (high/medium only) correctly disappeared. CV now omits two required skills (Redux, GraphQL)
+- 89 unit tests (+3 nice-to-have), 19 browser tests — green on dev and CI-mode production build

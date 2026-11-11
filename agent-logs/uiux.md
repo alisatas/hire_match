@@ -325,3 +325,11 @@ Agents MUST read this log before running checks and MUST append an entry after e
 **Status:** ✅ PASS (0 critical, 1 medium carried)
 
 - No visible UI changes; scores on scraped postings no longer swing with how much company text the page includes
+
+---
+
+## 2026-11-11 — Push 28 (CSP fix for Google Ads conversions, nice-to-have weighting, site-wide feed link)
+
+**Status:** ✅ PASS (0 critical, 1 medium carried)
+
+- Optional extras ("Nice to have", "is a plus") now appear as low priority in Missing and no longer get "How to add" cards — the report focuses on what the job requires

@@ -2,9 +2,10 @@ import { test, expect } from "@playwright/test";
 import fs from "node:fs";
 import { collectConsoleErrors, dismissConsent } from "./helpers";
 
+// Deliberately missing two required skills (Redux, GraphQL) so the report has gaps to explain
 const CV = `Senior Frontend Developer with 5 years of experience building web applications with React, TypeScript and Next.js.
 Skills
-React, TypeScript, Next.js, Tailwind CSS, Redux, GraphQL, Jest, Cypress, Git
+React, TypeScript, Next.js, Tailwind CSS, Jest, Cypress, Git
 Experience
 Frontend Developer, Acme — 2019 – present
 Built REST API integrations and CI/CD pipelines with GitHub Actions in Agile Scrum teams; collaborated with designers in Figma.`;

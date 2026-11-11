@@ -11,7 +11,7 @@ const description = "Practical guides on how applicant tracking systems read you
 export const metadata: Metadata = {
   title,
   description,
-  alternates: { canonical: "/blog", types: { "application/rss+xml": "/blog/feed.xml" } },
+  alternates: { canonical: "/blog" },
   openGraph: { type: "website", siteName: "CVXray", url: "/blog", title, description, images: [OG_IMAGE] },
   twitter: { card: "summary_large_image", title, description, images: [OG_IMAGE.url] },
 };
