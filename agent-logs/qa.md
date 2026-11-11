@@ -287,3 +287,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 - Found while adding per-article OG images: the image renderer rejects a `div` with two text children (500). Fixed, and the suite now checks that every share image endpoint (site, role, article, logo, apple icon) returns a PNG — this class of bug is caught automatically from now on
 - 80 unit tests, 18 browser tests — green on dev and on a production build (CI mode)
+
+---
+
+## 2026-11-11 — Push 27 (CI uses the runner's Chrome, boilerplate-proof scoring, RSS feed)
+
+**Status:** ✅ PASS (0 critical)
+
+- 86 unit tests (+6: boilerplate invariance incl. boilerplate 4× longer than the job, section resume after "About the role", Dutch headings, no-heading fallback), 19 browser tests (+RSS)
+- Exactly the CI sequence verified locally: audit → typecheck → lint → unit → build → Chrome check → browser tests on the production build
+- Note for future edits: write regex-bearing TS through heredocs or raw strings, never Python non-raw strings

@@ -375,3 +375,15 @@ Full read of `src/app/api/**`, `src/proxy.ts`, `next.config.ts`, client link ren
 - CI job pinned to `ubuntu-24.04`: on `ubuntu-latest` (now Ubuntu 26) the "Install Playwright browser" step failed, so the browser and dependency-audit steps were skipped on the last push. Push 25's code passed typecheck, lint, unit tests and build in CI
 - New HR aliases and article images are static; no new inputs or routes ✅
 - 🟡 Carried: CSP `unsafe-inline` (by decision)
+
+---
+
+## 2026-11-11 — Push 27 (CI uses the runner's Chrome, boilerplate-proof scoring, RSS feed)
+
+**Status:** ✅ PASS (0 critical, 1 medium carried)
+
+- **CI root cause**: both failed runs stopped at "Install Playwright browser" after ~605 s — a download/apt hang hitting a 10-minute limit, not an OS incompatibility (pinning Ubuntu 24.04 did not help). Fix: no browser download at all — tests use the Google Chrome preinstalled on GitHub's Ubuntu image (`google-chrome --version` check step); browser step capped at 8 minutes
+- Dependency audit moved to right after `npm ci` so it runs even when a later step fails (it was skipped in both failed runs)
+- Tooling incident: a Python edit turned `\b` into backspace characters inside two regexes; found by a failing measurement, fixed, and the whole repo scanned (only binary fonts contain 0x08)
+- RSS feed is static XML with escaped content ✅
+- 🟡 Carried: CSP `unsafe-inline` (by decision)

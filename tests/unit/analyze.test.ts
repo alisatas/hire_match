@@ -102,3 +102,59 @@ describe("years of experience from CV dates", () => {
     });
   }
 });
+
+import { stripBoilerplate } from "@/lib/analyze";
+
+describe("boilerplate sections in job posts", () => {
+  const BOILER = `
+About us
+Founded in 2012, Northwind is a fast-growing scale-up headquartered in Amsterdam with offices across Europe. Our mission is to make everyday logistics simpler for millions of households and thousands of merchants. Our culture is built on ownership, curiosity and kindness.
+
+What we offer
+A competitive salary and an annual bonus. Twenty-eight vacation days, a learning budget, a home-office allowance, a pension plan, travel reimbursement, team events and daily lunch at the office. Relocation support including visa sponsorship.
+
+Our hiring process
+After you apply, our recruitment team will review your application within five working days, followed by an introductory call, a practical assignment and a final meeting.
+
+Diversity and inclusion
+Northwind is an equal opportunity employer. We welcome applications from people of every background.
+
+Privacy notice
+By submitting your application you agree that we process your personal data for this recruitment procedure.`;
+
+  it("strips boilerplate even when it is much longer than the job itself", () => {
+    const long = FRONTEND_JOB + BOILER.repeat(4);
+    expect(analyze(FRONTEND_CV, long).score).toBe(analyze(FRONTEND_CV, FRONTEND_JOB).score);
+  });
+
+  it("gives the same score with or without company boilerplate", () => {
+    expect(analyze(FRONTEND_CV, FRONTEND_JOB + BOILER).score).toBe(analyze(FRONTEND_CV, FRONTEND_JOB).score);
+    expect(analyze(SALES_CV, SALES_JOB + BOILER).score).toBe(analyze(SALES_CV, SALES_JOB).score);
+  });
+
+  it("keeps the requirements and drops the boilerplate", () => {
+    const out = stripBoilerplate(FRONTEND_JOB + BOILER);
+    expect(out).toMatch(/Redux/);
+    expect(out).not.toMatch(/vacation days/);
+    expect(out).not.toMatch(/equal opportunity/);
+  });
+
+  it("resumes at a job heading after a boilerplate section", () => {
+    const job = "About Acme\nWe are a friendly company in Utrecht with great coffee and a dog-friendly office.\n\nAbout the role\nYou will build React and TypeScript apps with GraphQL, Jest and Cypress, shipping weekly to thousands of customers across Europe and working closely with designers and product managers every day.";
+    const out = stripBoilerplate(job);
+    expect(out).toMatch(/GraphQL/);
+    expect(out).not.toMatch(/coffee/);
+  });
+
+  it("falls back to the full text when no job heading follows", () => {
+    const job = "About Acme\nWe build React and TypeScript apps with GraphQL. You will write tests with Jest and Cypress and deploy with Docker on AWS for thousands of customers.";
+    expect(stripBoilerplate(job)).toBe(job);
+  });
+
+  it("understands Dutch section headings", () => {
+    const job = "Wat ga je doen\nJe bouwt webapplicaties met React, TypeScript en Next.js voor duizenden klanten, schrijft tests met Jest en werkt samen met ontwerpers en productmanagers in een agile team van zes ontwikkelaars.\n\nWij bieden\nEen goed salaris, dertig vakantiedagen en een leasefiets.";
+    const out = stripBoilerplate(job);
+    expect(out).toMatch(/React/);
+    expect(out).not.toMatch(/leasefiets/);
+  });
+});

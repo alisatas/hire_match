@@ -217,6 +217,12 @@ export function findSkillMention(text: string, key: string): string | null {
     return best.length > 180 ? best.slice(0, 177).trimEnd() + "…" : best
 }
 
+// Every single-word skill alias ("redux", "salesforce", "pgvector"), used to tell real
+// requirements apart from boilerplate when weighting job keywords.
+const SKILL_ALIAS_WORDS = new Set(
+    NORMALIZED_SKILL_GROUPS.flatMap(([, aliases]) => aliases).filter(a => !a.includes(" ")),
+)
+
 function extractSkills(text: string): Set<string> {
     const normalized = normalizeText(text)
     const found = new Set<string>()
@@ -240,6 +246,35 @@ function extractSkillFrequencies(text: string): Map<string, number> {
         if (count > 0) freq.set(key, count)
     }
     return freq
+}
+
+// Math Prof improvement (Push 27): skip boilerplate sections when reading job keywords.
+// Postings wrap the actual job in company story, benefits, hiring process, diversity and
+// privacy text — hundreds of words that are not requirements. Those sections almost
+// always sit under recognisable headings, so lines under them are dropped until a
+// job-content heading ("Requirements", "About the role", "Wat ga je doen") starts again.
+const BOILERPLATE_HEADING = new RegExp(String.raw`^(about (?!the role\b|the job\b|the position\b|this role\b|you\b)[\w&.' -]{1,40}|who we are|our (story|mission|culture|values|company|team|offices|hiring process|benefits)|what we offer|we offer|what('|’)s in it for you|benefits|perks|compensation|why (join|work|you('|’)ll love)\b.*|(the )?(hiring|interview|recruitment|application) process|how to apply|next steps|diversity|equal opportunit|inclusion|privacy|data protection|legal|disclaimer|over ons|wie zijn wij|wij bieden|wat bieden wij|arbeidsvoorwaarden|sollicitatieprocedure)\b`, "i")
+const JOB_HEADING = new RegExp(String.raw`^(requirements?|responsibilities|key responsibilities|what you('|’)ll do|what you will do|what you('|’)ll bring|what you bring|your role|the role|about the role|about the job|about this role|about you|qualifications|must[- ]haves?|nice[- ]to[- ]haves?|bonus points|skills|your profile|who you are|you have|you are|we('|’)re looking for|what we('|’)re looking for|what we are looking for|tasks|duties|functie-eisen|wat ga je doen|wat vragen wij|wie ben jij|jouw profiel)\b`, "i")
+
+export function stripBoilerplate(jobText: string): string {
+    const kept: string[] = []
+    let skipping = false
+    for (const raw of jobText.split("\n")) {
+        const line = raw.trim().replace(/^[#*\-•\s]+/, "")
+        const isHeading = line.length > 0 && line.length <= 60 && line.split(/\s+/).length <= 8 && !/[.!?]$/.test(line.replace(/:$/, ""))
+        if (isHeading && JOB_HEADING.test(line)) skipping = false
+        else if (isHeading && BOILERPLATE_HEADING.test(line)) skipping = true
+        // Stand-alone legal sentences outside any heading
+        if (/equal opportunity employer|acquisition in response to this vacancy/i.test(line)) continue
+        if (!skipping) kept.push(raw)
+    }
+    const stripped = kept.join("\n")
+    // Safety net: a posting that opens with "About Acme" and never uses a job heading
+    // would lose its requirements. If too little is left, use the full text instead.
+    // (A ratio test was tried and rejected: long boilerplate is exactly the case where
+    // most of the text should go.)
+    const words = stripped.trim().split(/\s+/).filter(Boolean).length
+    return words < 25 ? jobText : stripped
 }
 
 function extractKeywordFrequencies(text: string): Map<string, number> {
@@ -422,7 +457,11 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
 
     // ── 2. Keyword extraction ────────────────────────────────────────────────
     const cvKeywords = extractKeywords(cvText)
-    const jobFreq = extractKeywordFrequencies(jobText)
+    // Requirements only: company story, benefits and legal sections are left out of the
+    // keyword pool AND of the length used for the confidence factor below — otherwise
+    // boilerplate both diluted the keywords and made a posting look more "substantial".
+    const jobContent = stripBoilerplate(jobText)
+    const jobFreq = extractKeywordFrequencies(jobContent)
     const jobKeywords = new Set(jobFreq.keys())
     const rawMatched = [...jobKeywords].filter(w => cvKeywords.has(w)).length
     const rawTotal = jobKeywords.size
@@ -431,7 +470,7 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
     const yearsRequired = extractYearsRequired(jobText)
     const yearsOnCV = extractYearsFromCV(cvText)
 
-    const jobWordCount = jobText.trim().split(/\s+/).length
+    const jobWordCount = jobContent.trim().split(/\s+/).length
     const cvWordCount = cvText.trim().split(/\s+/).length
     const lowQuality = jobWordCount < 80 || (jobSkills.size < 3 && rawTotal < 20)
 
@@ -458,8 +497,16 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
     // Hard ceiling at 10: prevents keyword-stuffed JDs (>1200 words) from extreme weight disparities.
     // e.g. 300-word JD → cap 4, 600-word → cap 4, 1200-word → cap 8, 2000-word → cap 10 (capped)
     const keywordFreqCap = Math.min(Math.ceil(Math.max(4, jobWordCount / 150)), 10)
+    // Math Prof improvement (Push 27): boilerplate dampening. Scraped postings carry
+    // hundreds of words of company story, benefits, hiring process and legal text, almost
+    // all mentioned once. Every one of them counted as a "keyword", so adding ~380 words of
+    // boilerplate to the Frontend sample dropped a fitting CV from 81 to 72. In postings
+    // over 250 words, a word mentioned once now weighs 250 / words (floor 0.25) — unless it
+    // is a recognised skill term ("redux", "salesforce"), because real requirements are
+    // often listed once too. Repeated words keep full weight; short postings are unchanged.
+    const singleMentionWeight = jobWordCount <= 250 ? 1 : Math.max(0.25, 250 / jobWordCount)
     for (const [word, freq] of jobFreq.entries()) {
-        const weight = Math.min(freq, keywordFreqCap) // adaptive cap scales with JD length
+        const weight = freq === 1 && !SKILL_ALIAS_WORDS.has(word) ? singleMentionWeight : Math.min(freq, keywordFreqCap)
         totalKwWeight += weight
         if (cvKeywords.has(word)) matchedKwWeight += weight
     }

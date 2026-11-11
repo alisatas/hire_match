@@ -317,3 +317,11 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 - Shared blog links now preview with the article headline and reading time instead of the generic site card
 - Recruiter reports gain a "Recruiting / HR Tools" skill line, an example bullet and a course link
+
+---
+
+## 2026-11-11 — Push 27 (CI uses the runner's Chrome, boilerplate-proof scoring, RSS feed)
+
+**Status:** ✅ PASS (0 critical, 1 medium carried)
+
+- No visible UI changes; scores on scraped postings no longer swing with how much company text the page includes

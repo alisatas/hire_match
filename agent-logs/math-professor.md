@@ -486,3 +486,21 @@ Calibration on a Talent Acquisition post: recruiter CV **73**, frontend CV 6, ch
 **Running improvement backlog (next pushes):**
 1. Tune adaptive keyword cap for very long JDs (> 1200 words)
 2. Healthcare and logistics skill groups before adding samples from those sectors
+
+---
+
+## 2026-11-11 — Push 27 (CI uses the runner's Chrome, boilerplate-proof scoring, RSS feed)
+
+**Status:** ✅ PASS (1 improvement implemented) — closes backlog item 1 (long JDs)
+
+**Problem measured:** adding ~380 words of company story, benefits, hiring process, diversity and privacy text to the Frontend sample dropped a fitting CV from **81 to 72** (sales 68 → 62): the keyword pool grew from 52 to 211 one-off words.
+
+**Fix (`stripBoilerplate` in `analyze.ts`):** lines under boilerplate headings (About us, What we offer, Benefits, Hiring process, Diversity, Privacy; Dutch: Over ons, Wij bieden, Arbeidsvoorwaarden…) are left out of the keyword pool until a job heading (Requirements, About the role, Responsibilities, Wat ga je doen…) resumes. The confidence factor now uses the stripped length too — otherwise boilerplate made a posting look *more* reliable (81 → 92 in testing). Fallback to the full text if fewer than 25 words remain. Secondary guard for postings without headings: in postings over 250 words, one-off words weigh 250/words (floor 0.25) unless they are recognised skill terms.
+
+Tried and rejected: (1) dampening every one-off word — also dampened real requirements, 72 → 71; (2) a 35% "too much removed" ratio fallback — triggered exactly on long boilerplate.
+
+**Result:** with boilerplate 81 / 68 / 6 = without boilerplate 81 / 68 / 6 (frontend / sales / chef); also with boilerplate 4× the job length. All samples unchanged. Locked by unit tests.
+
+**Running improvement backlog (next pushes):**
+1. Healthcare and logistics skill groups before adding samples from those sectors
+2. Detect requirement vs nice-to-have sections and weight "nice to have" skills lower

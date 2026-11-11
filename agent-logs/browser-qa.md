@@ -279,3 +279,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - `tsc` 0, ESLint 0, `next build` OK ✅
 - Playwright 18/18 (5 new share-image checks) on dev and production build; unit 80/80
 - CI: previous run failed at "Install Playwright browser" on Ubuntu 26 — runner pinned to 24.04; confirm the next CI run reaches the browser tests
+
+---
+
+## 2026-11-11 — Push 27 (CI uses the runner's Chrome, boilerplate-proof scoring, RSS feed)
+
+**Status:** ✅ PASS (0 critical)
+
+- `tsc` 0, ESLint 0, `next build` OK (`/blog/feed.xml` static) ✅
+- Playwright 19/19 on dev and on the production build using system Chrome (the CI configuration); unit 86/86; prod audit clean
+- Confirm after push: CI reaches and passes "Browser tests"

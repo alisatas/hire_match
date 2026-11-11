@@ -16,8 +16,9 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
-      // Locally the installed Chrome is used, so no browser download is needed
-      use: { ...devices["Desktop Chrome"], channel: process.env.E2E_CHANNEL ?? (isCI ? undefined : "chrome") },
+      // Google Chrome is used both locally and in CI (GitHub's Ubuntu runners ship it), so
+      // no browser download is ever needed — `playwright install` timed out in CI.
+      use: { ...devices["Desktop Chrome"], channel: process.env.E2E_CHANNEL ?? "chrome" },
     },
   ],
   // CI builds first, then serves the production build; locally a running dev server is reused

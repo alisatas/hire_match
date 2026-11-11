@@ -86,5 +86,6 @@ Tools in the same category include Jobscan, Resume Worded and Teal. Those are ac
 - [Privacy Policy](https://cvxray.com/privacy)
 - [Refund Policy](https://cvxray.com/refund-policy)
 - [Sitemap](https://cvxray.com/sitemap.xml)
+- [Guides RSS feed](https://cvxray.com/blog/feed.xml)
 - X: https://x.com/cvxray
 - Instagram: https://www.instagram.com/cvxray.ai

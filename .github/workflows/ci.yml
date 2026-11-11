@@ -19,8 +19,7 @@ concurrency:
 jobs:
   verify:
     name: Typecheck, lint, tests, build, audit
-    # Pinned: ubuntu-latest moved to Ubuntu 26, whose system packages Playwright's
-    # --with-deps install does not support yet. Revisit when Playwright adds it.
+    # Pinned to a known image that ships Google Chrome (used by the browser tests)
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
@@ -34,6 +33,11 @@ jobs:
       - run: npm ci
         env:
           HUSKY: '0'
+
+      # Early, so it runs even when a later step fails. Fails only on high/critical
+      # advisories in production packages; dev-tooling issues are tracked in agent-logs/security.md
+      - name: Dependency audit (production, high+)
+        run: npm audit --omit=dev --audit-level=high
 
       - name: Typecheck
         run: npx tsc --noEmit
@@ -49,11 +53,14 @@ jobs:
         env:
           NEXT_TELEMETRY_DISABLED: '1'
 
-      - name: Install Playwright browser
-        run: npx playwright install --with-deps chromium
+      # The runner image already includes Google Chrome; the browser tests use it directly.
+      # `npx playwright install --with-deps chromium` hung for 10 minutes and failed in CI.
+      - name: Check Chrome is available
+        run: google-chrome --version
 
       # End-to-end flow + WCAG 2 AA accessibility checks against the production build
       - name: Browser tests (e2e + accessibility)
+        timeout-minutes: 8
         run: npm run test:e2e
         env:
           NEXT_TELEMETRY_DISABLED: '1'
@@ -65,8 +72,3 @@ jobs:
           name: playwright-report
           path: test-results/
           retention-days: 7
-
-      # Fails only on high/critical advisories in packages that ship to production;
-      # moderate issues in dev tooling are tracked in agent-logs/security.md
-      - name: Dependency audit (production, high+)
-        run: npm audit --omit=dev --audit-level=high

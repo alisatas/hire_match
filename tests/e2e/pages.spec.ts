@@ -62,6 +62,15 @@ test.describe("share images", () => {
   }
 });
 
+test("blog RSS feed is valid XML listing every guide", async ({ request }) => {
+  const res = await request.get("/blog/feed.xml");
+  expect(res.status()).toBe(200);
+  expect(res.headers()["content-type"]).toContain("application/rss+xml");
+  const xml = await res.text();
+  expect(xml).toContain("<rss version=\"2.0\"");
+  expect((xml.match(/<item>/g) ?? []).length).toBeGreaterThanOrEqual(3);
+});
+
 test.describe("API guards", () => {
   test("scraper refuses private addresses and cross-site posts", async ({ request }) => {
     const priv = await request.post("/api/scrape", { data: { url: "http://169.254.169.254/latest/meta-data/" } });

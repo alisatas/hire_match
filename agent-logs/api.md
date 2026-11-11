@@ -261,3 +261,11 @@ Agents MUST read this log before running checks and MUST append an entry after e
 **Status:** ✅ PASS (0 critical)
 
 - No API route changes ✅
+
+---
+
+## 2026-11-11 — Push 27 (CI uses the runner's Chrome, boilerplate-proof scoring, RSS feed)
+
+**Status:** ✅ PASS (0 critical)
+
+- New static route `GET /blog/feed.xml` (RSS 2.0, `application/rss+xml`); no API changes
