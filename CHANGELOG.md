@@ -1,3 +1,10 @@
+# [1.34.0](https://github.com/alisatas/hire_match/compare/v1.33.0...v1.34.0) (2026-11-11)
+
+
+### Features
+
+* keyword suggestions, score card, blog, test suite and error monitoring ([f1882f9](https://github.com/alisatas/hire_match/commit/f1882f93b795650c70902df85520f019f252f3c3))
+
 # [1.33.0](https://github.com/alisatas/hire_match/compare/v1.32.0...v1.33.0) (2026-11-11)
 
 
