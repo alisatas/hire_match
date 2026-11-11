@@ -1,3 +1,15 @@
+# [1.35.0](https://github.com/alisatas/hire_match/compare/v1.34.4...v1.35.0) (2026-11-11)
+
+
+### Bug Fixes
+
+* **security:** resolve CodeQL findings in HTML handling and link building ([8cac926](https://github.com/alisatas/hire_match/commit/8cac926c287fca1c15f771af0cea1a2921f85b96))
+
+
+### Features
+
+* simplify the home page for scanning readers ([88591cf](https://github.com/alisatas/hire_match/commit/88591cf564402bcdea67f10068244d2658256929))
+
 ## [1.34.4](https://github.com/alisatas/hire_match/compare/v1.34.3...v1.34.4) (2026-11-11)
 
 
