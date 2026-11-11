@@ -1,3 +1,10 @@
+## [1.34.4](https://github.com/alisatas/hire_match/compare/v1.34.3...v1.34.4) (2026-11-11)
+
+
+### Bug Fixes
+
+* **security:** clear critical and high dev-dependency advisories, add SECURITY.md ([b62aa0d](https://github.com/alisatas/hire_match/commit/b62aa0d1517f8436868e8988db6595de9a016fe6))
+
 ## [1.34.3](https://github.com/alisatas/hire_match/compare/v1.34.2...v1.34.3) (2026-11-11)
 
 
