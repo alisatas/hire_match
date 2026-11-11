@@ -49,6 +49,7 @@ The score is a transparent weighted comparison, not a language-model opinion:
 - [Data scientist resume keywords](https://cvxray.com/resume-keywords/data-scientist): Python, machine learning, statistics, SQL, deployment
 - [Account executive resume keywords](https://cvxray.com/resume-keywords/account-executive): quota, pipeline, Salesforce, B2B SaaS sales
 - [Digital marketing specialist resume keywords](https://cvxray.com/resume-keywords/digital-marketing-specialist): SEO, Google Ads, content, email, analytics
+- [Financial analyst resume keywords](https://cvxray.com/resume-keywords/financial-analyst): financial modelling, FP&A, budgeting, Excel, Power BI
 - [Data analyst resume keywords](https://cvxray.com/resume-keywords/data-analyst): SQL, Python, Tableau, Power BI, A/B testing
 - [Product manager resume keywords](https://cvxray.com/resume-keywords/product-manager): roadmap, discovery, metrics, stakeholder management
 - [DevOps engineer resume keywords](https://cvxray.com/resume-keywords/devops-engineer): Kubernetes, Terraform, AWS, CI/CD, monitoring

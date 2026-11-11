@@ -257,3 +257,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - "AI Engineer" is the first sample button and loads as "Sample job: AI Engineer" (verified in the browser) ✅
 - New groups `vectordb`, `mlops` have labels and course entries ✅
 - False-positive sweep on non-AI posts (sales, finance, operations, recruiting): bare "fine tuning" flagged AI on a sales post ("fine tuning your pitch") — replaced with model-specific phrases; re-tested clean ✅
+
+---
+
+## 2026-11-11 — Push 24 (Cross-sector samples, Financial Analyst guide, month-precise experience)
+
+**Status:** ✅ PASS (0 critical)
+
+- Samples: UX Designer removed; Account Executive, Digital Marketer, Financial Analyst added; order alternates tech / business; "Financial Analyst" loads as "Sample job: Financial Analyst" (verified) ✅
+- `yearsFromDateRanges` month precision: 17 cases pass (English + Dutch months, numeric "03/2018", unknown words before a year ignored, one-month job = 0.2)
+- Dev-only: a new role slug 404'd once until the dev server picked up the updated list; production build prerenders it

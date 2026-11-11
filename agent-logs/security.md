@@ -340,3 +340,13 @@ Full read of `src/app/api/**`, `src/proxy.ts`, `next.config.ts`, client link ren
 - Static data only (sample job text, role guide, skill aliases); two new fixed https course links (pinecone.io, madewithml.com) rendered with `rel="noopener noreferrer"` ✅
 - No new inputs, routes or sinks; `git ls-files .env*` empty ✅
 - 🟡 Carried: CSP `unsafe-inline`; per-instance rate limiting
+
+---
+
+## 2026-11-11 — Push 24 (Cross-sector samples, Financial Analyst guide, month-precise experience)
+
+**Status:** ✅ PASS (0 critical, 2 medium carried)
+
+- Static content only (sample job texts, role guide, month table); new regex groups are bounded (`[a-z]{3,9}`, `\d{1,2}`) on line-split input — no ReDoS risk ✅
+- No new inputs, routes or sinks; `git ls-files .env*` empty ✅
+- 🟡 Carried: CSP `unsafe-inline`; per-instance rate limiting

@@ -444,3 +444,17 @@ Calibration on the new AI Engineer sample:
 **Running improvement backlog (next pushes):**
 1. Tune adaptive keyword cap for very long JDs (> 1200 words)
 2. Month-level precision for dated ranges ("Mar 2018 – Jan 2022" = 3.8 years, currently 4)
+
+---
+
+## 2026-11-11 — Push 24 (Cross-sector samples, Financial Analyst guide, month-precise experience)
+
+**Status:** ✅ PASS (1 improvement implemented) — closes backlog item 2
+
+**Improvement: month-precise experience.** Months (English/Dutch names or numeric "03/2018") are read when present: a start counts from the beginning of its month, an end through the end of it, "present" to the current month; year-only dates use mid-year so "2018 – 2020" stays 2. "Mar 2018 – Jan 2022" is now 3.9 years (was 4). Result rounded to 0.1. Gaps ≤ 1 year merged, longer breaks subtracted.
+
+Verification: 17 parser cases pass. New cross-sector samples separate fitting from unrelated CVs — Account Executive 68 vs 7/5, Digital Marketer 66 vs 12/5, Financial Analyst 77 vs 7/6 (fit vs frontend/chef). Tech samples unchanged.
+
+**Running improvement backlog (next pushes):**
+1. Tune adaptive keyword cap for very long JDs (> 1200 words)
+2. Skill groups for further sectors (healthcare, logistics, HR) before adding samples from them

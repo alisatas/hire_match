@@ -244,7 +244,9 @@ function extractYearsRequired(text: string): number {
 // count as work experience. Capped at 40 years. (Push 22: periods are now merged
 // and summed — see yearsFromDateRanges.)
 const YEAR = String.raw`(?:19[6-9]\d|20[0-4]\d)`
-const MONTH = String.raw`(?:[a-z]{3,9}\.?\s+|\d{1,2}[./]\s*)?`
+// Optional month before a year: a word ("Mar", "maart", "Sept.") or a number ("03/").
+// Captured so the period can be measured in months; unknown words ("Acme 2019") are ignored.
+const MONTH = String.raw`(?:([a-z]{3,9})\.?\s+|(\d{1,2})[./]\s*)?`
 const RANGE_RE = new RegExp(
     String.raw`${MONTH}(${YEAR})\s*(?:-|–|—|to|until|tot)\s*${MONTH}(${YEAR}|present|current|now|today|heden|nu)\b`,
     "gi",
@@ -252,24 +254,50 @@ const RANGE_RE = new RegExp(
 const SINCE_RE = new RegExp(String.raw`\b(?:since|sinds)\s+${MONTH}(${YEAR})\b`, "gi")
 const EDUCATION_RE = /\b(university|universiteit|college|school|bachelor|master|bsc|msc|ba|ma|phd|degree|diploma|education|opleiding|hbo|mbo|wo|thesis|graduated|student)\b/i
 
+// English and Dutch month prefixes
+const MONTHS: Record<string, number> = {
+    jan: 1, feb: 2, mar: 3, mrt: 3, maa: 3, apr: 4, may: 5, mei: 5, jun: 6, jul: 7,
+    aug: 8, sep: 9, oct: 10, okt: 10, nov: 11, dec: 12,
+}
+
+function monthOf(name: string | undefined, num: string | undefined): number | null {
+    if (num) {
+        const n = Number(num)
+        return n >= 1 && n <= 12 ? n : null
+    }
+    return name ? MONTHS[name.slice(0, 3)] ?? null : null
+}
+
+// A date as a fractional year. Without a month the middle of the year is assumed, so a
+// year-only range "2018 – 2020" still measures 2 years. With a month, a start counts from
+// the beginning of that month and an end through the end of it ("Mar 2018 – Jan 2022"
+// = 47 months = 3.9 years).
+function yearPoint(year: number, month: number | null, edge: "start" | "end"): number {
+    if (month === null) return year + 0.5
+    return edge === "start" ? year + (month - 1) / 12 : year + month / 12
+}
+
 // Math Prof improvement (Push 22): sum the merged work periods instead of measuring
 // earliest start → latest end. "2010–2012, then 2015–2016" is 3 years of work, not 6.
-// Periods that touch or are one calendar year apart ("…–2018", "2019–…") are merged,
-// because year-only dates can't tell a January start from a December one; only real
-// breaks of two years or more are subtracted.
-export function yearsFromDateRanges(text: string, currentYear = new Date().getFullYear()): number {
+// Gaps of up to a year are merged (job changes, notice periods, year-only dates); only
+// longer career breaks are subtracted.
+// Math Prof improvement (Push 24): month precision. Months are read when the CV gives
+// them, so "Mar 2018 – Jan 2022" is 3.9 years instead of 4, and "present" runs to the
+// current month. Results are rounded to one decimal.
+export function yearsFromDateRanges(text: string, now: Date = new Date()): number {
+    const nowPoint = now.getFullYear() + (now.getMonth() + 1) / 12
     const periods: [number, number][] = []
     for (const line of text.toLowerCase().split(/\n|•|·|\|/)) {
         if (EDUCATION_RE.test(line)) continue
         for (const m of line.matchAll(RANGE_RE)) {
-            const start = Number(m[1])
-            const end = /^\d/.test(m[2]) ? Number(m[2]) : currentYear
-            if (start > currentYear || end < start) continue
-            periods.push([start, Math.min(end, currentYear)])
+            const start = yearPoint(Number(m[3]), monthOf(m[1], m[2]), "start")
+            const end = /^\d/.test(m[6]) ? yearPoint(Number(m[6]), monthOf(m[4], m[5]), "end") : nowPoint
+            if (start > nowPoint || end < start) continue
+            periods.push([start, Math.min(end, nowPoint)])
         }
         for (const m of line.matchAll(SINCE_RE)) {
-            const start = Number(m[1])
-            if (start <= currentYear) periods.push([start, currentYear])
+            const start = yearPoint(Number(m[3]), monthOf(m[1], m[2]), "start")
+            if (start <= nowPoint) periods.push([start, nowPoint])
         }
     }
     if (periods.length === 0) return 0
@@ -286,7 +314,7 @@ export function yearsFromDateRanges(text: string, currentYear = new Date().getFu
         }
     }
     total += curEnd - curStart
-    return Math.min(Math.max(total, 0), 40)
+    return Math.round(Math.min(Math.max(total, 0), 40) * 10) / 10
 }
 
 function extractYearsFromCV(text: string): number {

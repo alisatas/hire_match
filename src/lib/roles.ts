@@ -185,6 +185,30 @@ export const ROLES: RoleGuide[] = [
     ],
   },
   {
+    slug: "financial-analyst",
+    name: "Financial Analyst",
+    alsoCalled: ["FP&A Analyst", "Finance Business Partner", "Corporate Finance Analyst"],
+    metaDescription:
+      "The resume keywords financial analyst job posts ask for most — financial modelling, FP&A, budgeting, forecasting, Excel, Power BI — and a free check of your own CV against any posting.",
+    intro:
+      "Financial analyst postings are built around a cycle — budget, forecast, close, report — and the tools used to run it. Recruiters look for the same words on your CV, along with proof that your numbers changed a decision. A CV that lists \"Excel\" without saying what was modelled, or for whom, rarely stands out.",
+    groups: [
+      { title: "Planning & analysis", keywords: ["FP&A", "Financial modelling", "Budgeting", "Forecasting", "Variance analysis", "Scenario analysis", "Business cases"] },
+      { title: "Reporting & accounting", keywords: ["Management reporting", "Month-end close", "Reconciliation", "IFRS", "GAAP", "P&L", "Cash flow"] },
+      { title: "Tools", keywords: ["Excel (pivot tables, advanced formulas)", "Power BI", "SQL", "SAP", "Oracle NetSuite", "Anaplan"] },
+      { title: "Skills", keywords: ["Stakeholder management", "Financial analysis", "Data storytelling", "KPI reporting", "Cost control", "Process improvement"] },
+    ],
+    tips: [
+      { title: "Show the decision your analysis drove", text: "\"Built the pricing model that supported a 6% price increase worth €1.8M\" says far more than \"responsible for financial models\"." },
+      { title: "Name the cycle you owned", text: "Annual budget, rolling forecast, month-end close — say which ones you ran and for how large a business (revenue, cost centres, entities)." },
+      { title: "Be specific about Excel and BI", text: "\"Excel\" is on every finance CV. Mention the level — financial models, pivot tables, Power Query — and the BI tool the posting names, such as Power BI." },
+    ],
+    faqs: [
+      { q: "What keywords should a financial analyst put on a resume?", a: "FP&A, financial modelling, budgeting, forecasting and variance analysis; reporting terms such as management reporting, month-end close and IFRS or GAAP; and the tools the posting names — almost always Excel, often Power BI, SQL or an ERP such as SAP." },
+      { q: "How do I show impact on a finance resume?", a: "Tie your work to money or decisions: savings identified, forecast accuracy improved, a budget you owned, a business case that was approved. One concrete number per role is enough." },
+    ],
+  },
+  {
     slug: "data-analyst",
     name: "Data Analyst",
     alsoCalled: ["Business Analyst", "BI Analyst", "Analytics Specialist"],

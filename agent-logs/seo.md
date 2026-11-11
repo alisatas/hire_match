@@ -362,3 +362,19 @@ Agents MUST read this log before running checks and MUST append an entry after e
 2. More business guides: project manager, financial analyst, customer success
 3. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
 4. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)
+
+---
+
+## 2026-11-11 — Push 24 (Cross-sector samples, Financial Analyst guide, month-precise experience)
+
+**Status:** ✅ PASS (0 critical, 2 improvements)
+
+**Improvements implemented this cycle:**
+- `/resume-keywords/financial-analyst` — first finance guide, matching the new Financial Analyst sample (12 guides, 17 sitemap URLs)
+- Sample jobs now cover sales, marketing and finance — the tool visibly serves non-IT job seekers, widening the audience the home page converts; llms.txt, FAQ and the guides index list finance
+
+**Running improvement backlog (next pushes):**
+1. More AI-era guides: ML engineer, prompt engineer / AI product manager
+2. More business guides: project manager, customer success, HR
+3. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
+4. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)

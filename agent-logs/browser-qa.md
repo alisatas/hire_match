@@ -249,3 +249,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - `tsc` 0, ESLint 0, `next build` OK (`/resume-keywords/ai-engineer` + its OG image prerendered) ✅
 - AI guide: 200, own title + canonical, WebPage + BreadcrumbList + FAQPage JSON-LD; sitemap 16 URLs ✅
 - No server errors in the dev log; console entries were from earlier dev-server restarts
+
+---
+
+## 2026-11-11 — Push 24 (Cross-sector samples, Financial Analyst guide, month-precise experience)
+
+**Status:** ✅ PASS (0 critical)
+
+- `tsc` 0, ESLint 0, `next build` OK (`/resume-keywords/financial-analyst` + OG image prerendered) ✅
+- Financial Analyst guide: 200, own title + canonical, WebPage + BreadcrumbList + FAQPage JSON-LD; 375px no overflow; sitemap 17 URLs ✅
+- No server errors in the dev log

@@ -286,3 +286,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Sample chooser now 7 buttons, AI Engineer first; wraps cleanly at narrow widths
 - AI Engineer guide first on `/resume-keywords`, home and footer; own share card
 - New report labels: "Vector DBs / Embeddings", "MLOps / Evals"
+
+---
+
+## 2026-11-11 — Push 24 (Cross-sector samples, Financial Analyst guide, month-precise experience)
+
+**Status:** ✅ PASS (0 critical, 1 medium carried)
+
+- Owner asked for samples beyond IT: 9 sample buttons now mix tech with sales, marketing and finance; wraps cleanly at narrow widths
+- UX Designer sample removed (its keyword guide page stays — it is an SEO asset)
+- Experience tile can now show one decimal ("3.9y / 5y")
