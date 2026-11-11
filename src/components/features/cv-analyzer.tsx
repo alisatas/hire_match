@@ -231,6 +231,9 @@ const SKILL_RESOURCES: Record<string, SkillResource> = {
 // SAMPLE JOBS
 // ─────────────────────────────────────────────
 
+// Mixed on purpose: tech roles alternate with sales, marketing and finance so the
+// samples show that CVXray is not only for IT jobs. Every role here has skill groups
+// in analyze.ts, so its sample produces a meaningful score.
 const SAMPLE_JOBS = [
     {
         label: "AI Engineer",
@@ -258,6 +261,28 @@ Nice to have:
 We offer a competitive salary, a learning budget and a hybrid work culture.`,
     },
     {
+        label: "Account Executive",
+        emoji: "🤝",
+        desc: "B2B SaaS sales, prospecting, quota, Salesforce, HubSpot, negotiation",
+        text: `Account Executive — B2B SaaS Sales, Rotterdam (Hybrid)
+
+We are hiring an Account Executive to own the full sales cycle for mid-market customers across the Benelux. You will run prospecting and lead generation, manage your pipeline in Salesforce and close deals against a quarterly quota.
+
+Requirements:
+- 3+ years of experience in B2B sales or SaaS sales, ideally as an account executive
+- Proven track record of quota attainment and closing deals
+- Hands-on experience with Salesforce or HubSpot CRM
+- Strong negotiation, discovery and account management skills
+- Comfortable with cold calling and outbound prospecting
+- Business development mindset and excellent communication in English and Dutch
+
+Nice to have:
+- Experience with marketing automation and Excel forecasting
+- Familiarity with LinkedIn Sales Navigator
+
+We offer an uncapped commission plan, a hybrid work culture and a training budget.`,
+    },
+    {
         label: "Frontend Dev",
         emoji: "🎨",
         desc: "React, TypeScript, Next.js, Tailwind, GraphQL, Jest, CI/CD",
@@ -281,6 +306,30 @@ Nice to have:
 - Docker for local development
 
 We offer a competitive salary, flexible hybrid work, and a collaborative team culture.`,
+    },
+    {
+        label: "Digital Marketer",
+        emoji: "📣",
+        desc: "SEO, Google Ads, content and email marketing, GA4, HubSpot, campaign management",
+        text: `Digital Marketing Specialist — Utrecht (Hybrid)
+
+We are looking for a Digital Marketing Specialist to grow our online customer acquisition. You will own SEO and paid search, run campaigns across channels and report on what works.
+
+Requirements:
+- 2+ years of experience in digital marketing
+- Strong SEO skills: keyword research, on-page optimisation and content briefs
+- Hands-on Google Ads (PPC / SEM) campaign management with a monthly budget
+- Content marketing and email marketing experience
+- Social media marketing on LinkedIn and Meta
+- Comfortable with Google Analytics and Google Tag Manager for reporting
+- Experience with HubSpot or another marketing automation tool
+- Data-driven: A/B testing and conversion rate optimisation
+
+Nice to have:
+- Growth marketing experience at a scale-up
+- Basic Excel or Looker Studio skills
+
+We offer a marketing budget you can experiment with, flexible hours and a hybrid office.`,
     },
     {
         label: "Backend Engineer",
@@ -307,6 +356,29 @@ Nice to have:
 - Experience with message queues (RabbitMQ, Kafka)
 
 We're a fully remote team with async-first culture and 5+ years of runway.`,
+    },
+    {
+        label: "Financial Analyst",
+        emoji: "💶",
+        desc: "Financial modelling, FP&A, budgeting, forecasting, Excel, Power BI, IFRS",
+        text: `Financial Analyst (FP&A) — Amsterdam
+
+Our finance team is looking for a Financial Analyst to support budgeting, forecasting and business decisions across the company.
+
+Requirements:
+- 3+ years of experience in FP&A, financial analysis or corporate finance
+- Strong financial modelling skills in Excel (pivot tables, advanced formulas)
+- Experience leading the annual budgeting cycle and monthly forecasting
+- Variance analysis and management reporting for senior stakeholders
+- Knowledge of IFRS; month-end close and reconciliation experience is a plus
+- Comfortable building dashboards in Power BI
+- Strong stakeholder management and communication skills
+
+Nice to have:
+- SQL for pulling data from the warehouse
+- Experience in a fast-growing company or at a Big Four firm
+
+We offer a competitive salary, a study budget for CFA or RA certification and a hybrid work week.`,
     },
     {
         label: "Data Analyst",
@@ -385,32 +457,6 @@ Nice to have:
 - Python or Go for automation scripting
 
 We run fully on AWS with a large Kubernetes cluster and need someone who can own it end-to-end.`,
-    },
-    {
-        label: "UX Designer",
-        emoji: "🎨",
-        desc: "Figma, user research, wireframing, prototyping, usability testing, design systems",
-        text: `UX/Product Designer — Amsterdam (Hybrid)
-
-We are looking for a UX Designer to craft intuitive, beautiful product experiences for our growing user base.
-
-Requirements:
-- 3+ years of UX or product design experience in a digital product environment
-- Expert-level Figma skills — components, auto-layout, prototyping
-- Strong portfolio demonstrating end-to-end design process
-- Experience conducting user research, interviews, and usability testing
-- Ability to translate research insights into wireframes and high-fidelity designs
-- Familiarity with design systems and component libraries
-- Understanding of accessibility standards (WCAG)
-- Close collaboration with product managers and engineers
-
-Nice to have:
-- Motion design and micro-interactions (Framer, Principle)
-- Basic front-end knowledge (HTML, CSS, React)
-- Experience with Maze, Hotjar, or FullStory for research
-- Mobile app design (iOS/Android HIG)
-
-We care deeply about craft and ship thoughtful, user-tested features.`,
     },
 ]
 
