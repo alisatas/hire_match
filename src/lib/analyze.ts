@@ -66,7 +66,9 @@ export const SKILL_GROUPS: Record<string, string[]> = {
     // RAG systems. Retrieval and deployment now have their own groups.
     ai: ["ai", "llm", "llms", "large language models", "generative ai", "genai", "openai", "anthropic",
         "langchain", "llamaindex", "rag", "retrieval-augmented generation", "prompt engineering",
-        "fine-tuning", "fine tuning", "hugging face", "huggingface", "ai agents", "agentic",
+        // bare "fine-tuning" left out: "fine-tuning your pitch" flagged AI on a sales post
+        "model fine-tuning", "llm fine-tuning", "fine-tuning llms", "peft", "qlora",
+        "hugging face", "huggingface", "ai agents", "agentic",
         "function calling", "tool calling"],
     vectordb: ["vector database", "vector databases", "vector search", "embeddings", "semantic search",
         "pgvector", "pinecone", "weaviate", "qdrant", "chromadb", "faiss", "milvus"],

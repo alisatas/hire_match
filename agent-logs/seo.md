@@ -346,3 +346,19 @@ Agents MUST read this log before running checks and MUST append an entry after e
 2. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
 3. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)
 4. Watch Search Console coverage for the 15 sitemap URLs; request indexing for the newest guides
+
+---
+
+## 2026-11-11 — Push 23 (AI Engineer sample job + guide, AI skill vocabulary)
+
+**Status:** ✅ PASS (0 critical, 2 improvements)
+
+**Improvements implemented this cycle:**
+- `/resume-keywords/ai-engineer` — the fastest-growing tech title; guide placed first everywhere it is listed, with its own share card (11 guides, 16 sitemap URLs)
+- FAQ "What skills does CVXray detect?" and llms.txt now name AI skills (LLMs, RAG, vector databases, MLOps) — matches queries like "AI engineer resume keywords" / "check resume for AI engineer job"
+
+**Running improvement backlog (next pushes):**
+1. More AI-era guides: ML engineer, prompt engineer / AI product manager
+2. More business guides: project manager, financial analyst, customer success
+3. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
+4. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)

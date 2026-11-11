@@ -425,3 +425,22 @@ Verification: 12 parser cases pass. Sample calibration unchanged — Frontend 81
 **Running improvement backlog (next pushes):**
 1. Tune adaptive keyword cap for very long JDs (> 1200 words)
 2. Month-level precision when months are present ("Mar 2018 – Jan 2022" = 3.8 years, currently 4)
+
+---
+
+## 2026-11-11 — Push 23 (AI Engineer sample job + guide, AI skill vocabulary)
+
+**Status:** ✅ PASS (1 improvement implemented)
+
+**Improvement: AI engineering vocabulary.** `ai` group widened (LLMs, generative AI, Anthropic, LlamaIndex, agents, function calling, Hugging Face, model fine-tuning / PEFT) and two new groups: `vectordb` (embeddings, pgvector, Pinecone, Weaviate, semantic search…) and `mlops` (model deployment/serving, MLflow, SageMaker, Vertex AI, evals…).
+
+Calibration on the new AI Engineer sample:
+- AI CV: 67 → 69, now also matching Vector DBs + MLOps/Evals (previously a generic Python ML CV would score the same)
+- Frontend CV: 33 → 28 — three AI gaps flagged high-priority
+- Chef CV: 6
+- All other samples unchanged (Frontend 81, Backend 37, Data Analyst 18, PM 38, DevOps 23, UX 52; chef 5–6; sales 68)
+- False-positive sweep on 4 non-AI posts: clean after narrowing "fine-tuning"
+
+**Running improvement backlog (next pushes):**
+1. Tune adaptive keyword cap for very long JDs (> 1200 words)
+2. Month-level precision for dated ranges ("Mar 2018 – Jan 2022" = 3.8 years, currently 4)

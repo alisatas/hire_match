@@ -276,3 +276,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Custom 404: clear message, "Check my CV" CTA and links to six keyword guides instead of the framework default
 - Per-guide share cards (role name + top keywords) for LinkedIn / X previews
 - Apple touch icon and web manifest: home-screen installs show the brand mark
+
+---
+
+## 2026-11-11 — Push 23 (AI Engineer sample job + guide, AI skill vocabulary)
+
+**Status:** ✅ PASS (0 critical, 1 medium carried)
+
+- Sample chooser now 7 buttons, AI Engineer first; wraps cleanly at narrow widths
+- AI Engineer guide first on `/resume-keywords`, home and footer; own share card
+- New report labels: "Vector DBs / Embeddings", "MLOps / Evals"

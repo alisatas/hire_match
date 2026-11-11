@@ -330,3 +330,13 @@ Full read of `src/app/api/**`, `src/proxy.ts`, `next.config.ts`, client link ren
 - **CI gate** (`.github/workflows/ci.yml`): typecheck, lint, build and `npm audit --omit=dev --audit-level=high` on every push / PR, read-only token ✅
 - Decision recorded: nonce-based CSP not adopted — it forces every page to dynamic rendering (no static output, no CDN cache), which costs Core Web Vitals. Revisit if compliance requires removing `unsafe-inline`
 - 🟡 Carried: CSP `unsafe-inline`; per-instance rate limiting
+
+---
+
+## 2026-11-11 — Push 23 (AI Engineer sample job + guide, AI skill vocabulary)
+
+**Status:** ✅ PASS (0 critical, 2 medium carried)
+
+- Static data only (sample job text, role guide, skill aliases); two new fixed https course links (pinecone.io, madewithml.com) rendered with `rel="noopener noreferrer"` ✅
+- No new inputs, routes or sinks; `git ls-files .env*` empty ✅
+- 🟡 Carried: CSP `unsafe-inline`; per-instance rate limiting

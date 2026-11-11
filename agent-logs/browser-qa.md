@@ -239,3 +239,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - `Host: www.cvxray.com` → 308 to `https://cvxray.com/…` (query kept); apex unaffected ✅
 - `/manifest.webmanifest`, `/logo.png` (512²), `/apple-icon` (180²), `/icon.svg`, role `opengraph-image` → 200 with correct types; `<link rel="manifest">` and `apple-touch-icon` present ✅
 - Role pages' `og:image` / `twitter:image` now point at the per-role card ✅
+
+---
+
+## 2026-11-11 — Push 23 (AI Engineer sample job + guide, AI skill vocabulary)
+
+**Status:** ✅ PASS (0 critical)
+
+- `tsc` 0, ESLint 0, `next build` OK (`/resume-keywords/ai-engineer` + its OG image prerendered) ✅
+- AI guide: 200, own title + canonical, WebPage + BreadcrumbList + FAQPage JSON-LD; sitemap 16 URLs ✅
+- No server errors in the dev log; console entries were from earlier dev-server restarts

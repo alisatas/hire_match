@@ -247,3 +247,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - `yearsFromDateRanges` now merges periods: 12 parser cases pass (career break 2005–2010 + 2020–now → 11, overlapping freelance not double-counted, adjacent jobs merged)
 - CSP report endpoint: 204 valid legacy / Reporting API bodies, 415 wrong type, 400 bad JSON ✅
 - Custom 404 returns a real 404 status with `noindex` ✅
+
+---
+
+## 2026-11-11 — Push 23 (AI Engineer sample job + guide, AI skill vocabulary)
+
+**Status:** ✅ PASS (0 critical)
+
+- "AI Engineer" is the first sample button and loads as "Sample job: AI Engineer" (verified in the browser) ✅
+- New groups `vectordb`, `mlops` have labels and course entries ✅
+- False-positive sweep on non-AI posts (sales, finance, operations, recruiting): bare "fine tuning" flagged AI on a sales post ("fine tuning your pitch") — replaced with model-specific phrases; re-tested clean ✅
