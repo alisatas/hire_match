@@ -1,3 +1,11 @@
+# [1.29.0](https://github.com/alisatas/hire_match/compare/v1.28.0...v1.29.0) (2026-11-11)
+
+
+### Features
+
+* sales and marketing keyword guides, fairer scores for concise CVs ([4070c00](https://github.com/alisatas/hire_match/commit/4070c0019d2bfa1532b042adb26a1bb962ccd142))
+* terms, privacy and refund pages plus an optional support section ([4b44eb6](https://github.com/alisatas/hire_match/commit/4b44eb67ac749e90b8634f36c19419b84de94040))
+
 # [1.28.0](https://github.com/alisatas/hire_match/compare/v1.27.0...v1.28.0) (2026-11-11)
 
 
