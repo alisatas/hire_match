@@ -212,3 +212,11 @@ Agents MUST read this log before running checks and MUST append an entry after e
 **Status:** ✅ PASS (0 critical)
 
 - No API route changes this cycle ✅
+
+---
+
+## 2026-11-11 — Push 21 (Support section removed, legal-page JSON-LD, date-range experience)
+
+**Status:** ✅ PASS (0 critical)
+
+- No API route changes ✅

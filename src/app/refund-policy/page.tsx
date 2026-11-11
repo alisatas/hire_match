@@ -16,11 +16,14 @@ export const metadata: Metadata = {
 export default function RefundPolicyPage() {
   return (
     <LegalPage
+      path="/refund-policy"
       title={title}
+      description={description}
       intro={
         <p>
-          CVXray is free. The only thing you can pay for is an optional, one-time support payment (any amount from
-          €{SUPPORT.minimumEur}), processed by Lemon Squeezy. If you change your mind, you get your money back.
+          CVXray is free. The only payment CVXray may offer is a voluntary, one-time support payment (any amount
+          from €{SUPPORT.minimumEur}), processed by Lemon Squeezy. If you make one and change your mind, you get your
+          money back.
         </p>
       }
       sections={[

@@ -257,3 +257,12 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Terms / Privacy / Refund pages share one readable layout (breadcrumb with 44px targets, numbered sections, last-updated date); footer gains Terms · Privacy · Refunds and now wraps on narrow screens
 - Verified at 375px: no horizontal overflow on home, legal pages and the new role guides
 - 🟡 Carried: cookie banner covers the bottom of the footer until dismissed
+
+---
+
+## 2026-11-11 — Push 21 (Support section removed, legal-page JSON-LD, date-range experience)
+
+**Status:** ✅ PASS (0 critical, 1 medium carried)
+
+- Owner removed the "Support it if it helped" section from the home page; the role guides now flow straight into the FAQ
+- Terms and Refund Policy reworded to "CVXray may offer…" so they stay accurate without a visible support button

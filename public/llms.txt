@@ -7,7 +7,6 @@
 - Name: CVXray (also written "CV Xray", "CV X-ray", cvxray.com)
 - Category: resume matcher / CV-to-job-description checker / resume keyword checker
 - Price: free. No sign-up, no credit card, no API key, no limit on the number of checks
-- Optional support: a one-time, pay-what-you-want payment from €3 via Lemon Squeezy (merchant of record). It unlocks nothing — the tool stays free — and is refundable within 14 days
 - Input: a PDF CV (up to 5 MB) or pasted CV text, plus a job description — pasted text or a job URL from LinkedIn, Indeed, Glassdoor or most company careers pages
 - Output: match score (5–95%), matched skills, missing skills ranked high / medium / low priority, missing job keywords, course recommendations, company insights, and an "HR Quick Scan" of CV quality
 - Speed: results in seconds

@@ -4,7 +4,7 @@ import { ContactLine, LegalPage } from "@/components/legal-page";
 import { OG_IMAGE, SUPPORT } from "@/lib/site";
 
 const title = "Terms of Service";
-const description = "The terms for using CVXray, the free CV and resume matcher, including optional pay-what-you-want support payments processed by Lemon Squeezy.";
+const description = "The terms for using CVXray, the free CV and resume matcher: acceptable use, your data, liability and any optional support payments processed by Lemon Squeezy.";
 
 export const metadata: Metadata = {
   title,
@@ -16,7 +16,9 @@ export const metadata: Metadata = {
 export default function TermsPage() {
   return (
     <LegalPage
+      path="/terms"
       title={title}
+      description={description}
       intro={
         <p>
           These terms apply when you use CVXray at cvxray.com. CVXray is run by an individual based in the
@@ -64,9 +66,8 @@ export default function TermsPage() {
           body: (
             <>
               <p>
-                You can choose to support CVXray with a one-time payment of any amount from €{SUPPORT.minimumEur}.
-                Support payments are voluntary: they don&apos;t unlock features, and the tool stays free whether or
-                not you pay.
+                CVXray may offer a voluntary, one-time support payment (any amount from €{SUPPORT.minimumEur}).
+                Support payments don&apos;t unlock features — the tool stays free whether or not you pay.
               </p>
               <p>
                 Payments are sold and processed by <a href="https://www.lemonsqueezy.com" target="_blank" rel="noopener noreferrer">Lemon Squeezy</a>,

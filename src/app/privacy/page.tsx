@@ -15,7 +15,9 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <LegalPage
+      path="/privacy"
       title={title}
+      description={description}
       intro={
         <p>
           CVXray is built so that your CV stays yours. This page explains exactly what is processed, where, and

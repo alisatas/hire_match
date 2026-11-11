@@ -221,10 +221,52 @@ function extractYearsRequired(text: string): number {
     return years.length > 0 ? Math.max(...years) : 0
 }
 
+// Math Prof improvement (Push 21): read career length from date ranges.
+// Most CVs list jobs as "2019 – present" or "Mar 2018 – Jan 2022" and never write
+// "N years of experience", so those candidates fell through to the title heuristic
+// (or to 0 → the 0.50 "unknown" experience score). Career length is taken from the
+// earliest start to the latest end of the work ranges found. Lines that look like
+// education ("BSc 2014 – 2018", "University …") are skipped so a degree does not
+// count as work experience. Capped at 40 years.
+const YEAR = String.raw`(?:19[6-9]\d|20[0-4]\d)`
+const MONTH = String.raw`(?:[a-z]{3,9}\.?\s+|\d{1,2}[./]\s*)?`
+const RANGE_RE = new RegExp(
+    String.raw`${MONTH}(${YEAR})\s*(?:-|–|—|to|until|tot)\s*${MONTH}(${YEAR}|present|current|now|today|heden|nu)\b`,
+    "gi",
+)
+const SINCE_RE = new RegExp(String.raw`\b(?:since|sinds)\s+${MONTH}(${YEAR})\b`, "gi")
+const EDUCATION_RE = /\b(university|universiteit|college|school|bachelor|master|bsc|msc|ba|ma|phd|degree|diploma|education|opleiding|hbo|mbo|wo|thesis|graduated|student)\b/i
+
+export function yearsFromDateRanges(text: string, currentYear = new Date().getFullYear()): number {
+    let earliest = Infinity
+    let latest = -Infinity
+    for (const line of text.toLowerCase().split(/\n|•|·|\|/)) {
+        if (EDUCATION_RE.test(line)) continue
+        for (const m of line.matchAll(RANGE_RE)) {
+            const start = Number(m[1])
+            const end = /^\d/.test(m[2]) ? Number(m[2]) : currentYear
+            if (start > currentYear || end < start) continue
+            earliest = Math.min(earliest, start)
+            latest = Math.max(latest, Math.min(end, currentYear))
+        }
+        for (const m of line.matchAll(SINCE_RE)) {
+            const start = Number(m[1])
+            if (start > currentYear) continue
+            earliest = Math.min(earliest, start)
+            latest = currentYear
+        }
+    }
+    if (!Number.isFinite(earliest)) return 0
+    return Math.min(Math.max(latest - earliest, 0), 40)
+}
+
 function extractYearsFromCV(text: string): number {
     const matches = text.match(/(\d+)\+?\s*years?\s*(of\s*)?(experience|exp)/gi) || []
     const years = matches.map(m => parseInt(m)).filter(n => !isNaN(n))
     if (years.length > 0) return Math.max(...years)
+
+    const fromRanges = yearsFromDateRanges(text)
+    if (fromRanges > 0) return fromRanges
 
     // Math Prof improvement: infer seniority from title/role signals when no
     // explicit year count is written. "Senior React Developer" is far more

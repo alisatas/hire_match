@@ -306,3 +306,13 @@ Full read of `src/app/api/**`, `src/proxy.ts`, `next.config.ts`, client link ren
 - Legal pages and role guides are static; no new inputs, routes or `dangerouslySetInnerHTML` ✅
 - No personal data (name, address, email) published on the legal pages without the owner's choice
 - 🟡 Carried: CSP `unsafe-inline`; per-instance rate limiting
+
+---
+
+## 2026-11-11 — Push 21 (Support section removed, legal-page JSON-LD, date-range experience)
+
+**Status:** ✅ PASS (0 critical, 2 medium carried)
+
+- Support section removed from the home page; the checkout-URL allowlist in `site.ts` stays for future use ✅
+- New JSON-LD on legal pages is static and passes through `jsonLdScript()` ✅
+- Date-range parser: bounded regexes on line-split CV text, no nested quantifiers — no ReDoS risk at the 200 000-char input cap ✅

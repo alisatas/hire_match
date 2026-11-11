@@ -16,7 +16,7 @@ export const FAQS: { q: string; a: string }[] = [
     },
     {
         q: "Is CVXray free?",
-        a: "Yes, CVXray is completely free. No account, no credit card, no API key and no scan limits. If it helped, you can optionally support it with a one-time, pay-what-you-want payment from €3 — it doesn't unlock anything, and every support payment can be refunded within 14 days.",
+        a: "Yes, CVXray is completely free. No account, no credit card, no API key and no scan limits.",
     },
     {
         q: "What is a good CV match score?",

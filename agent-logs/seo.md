@@ -311,3 +311,19 @@ Agents MUST read this log before running checks and MUST append an entry after e
 2. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
 3. Per-page OG images for role guides
 4. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)
+
+---
+
+## 2026-11-11 — Push 21 (Support section removed, legal-page JSON-LD, date-range experience)
+
+**Status:** ✅ PASS (0 critical, 2 improvements)
+
+**Improvements implemented this cycle:**
+- Legal pages emit WebPage + BreadcrumbList JSON-LD linked to the `#website` and `#org` entities — trust pages now read as official CVXray policy
+- FAQ and llms.txt no longer describe a support payment that the site does not offer — keeps AI answers and structured data consistent with the visible page
+
+**Running improvement backlog (next pushes):**
+1. More business guides: project manager, financial analyst, customer success
+2. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
+3. Per-page OG images for role guides
+4. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)

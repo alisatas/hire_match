@@ -228,3 +228,12 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Support button has two states: active link when the checkout URL is set, inert "Support payments open soon" otherwise (verified) ✅
 - Refund page drops the email bullet cleanly when no contact email is configured ✅
 - Dev incident: after appending `SUPPORT` to `site.ts`, the dev server served a stale module (`SUPPORT` undefined → 500 on `/`, `/terms`, `/refund-policy`). `tsc` and `next build` were clean; a dev-server restart fixed it. Not a production risk
+
+---
+
+## 2026-11-11 — Push 21 (Support section removed, legal-page JSON-LD, date-range experience)
+
+**Status:** ✅ PASS (0 critical)
+
+- Home page renders without the support section; no leftover `SUPPORT` import ✅
+- `yearsFromDateRanges`: 9 cases pass (present/heden/since, month names, education lines skipped, phone numbers and future years ignored, multiple ranges → earliest start to latest end)

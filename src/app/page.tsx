@@ -4,8 +4,8 @@ import CVAnalyzer from "@/components/features/cv-analyzer";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { FAQS } from "@/lib/faqs";
 import { ROLES } from "@/lib/roles";
-import { SUPPORT, jsonLdScript } from "@/lib/site";
-import { ArrowRight, ChevronDown, FileText, Gauge, Heart, Link2, Lock, ShieldCheck, Sparkles, Zap } from "lucide-react";
+import { jsonLdScript } from "@/lib/site";
+import { ArrowRight, ChevronDown, FileText, Gauge, Link2, Lock, ShieldCheck, Sparkles, Zap } from "lucide-react";
 
 // The canonical lives on each page (not the root layout) so sub-pages never
 // inherit a canonical that points back at the home page.
@@ -192,49 +192,6 @@ export default function Home() {
               </li>
             ))}
           </ul>
-        </section>
-
-        {/* Optional support — pay what you want, the tool stays free */}
-        <section id="support" className="mx-auto max-w-3xl scroll-mt-20 px-4 pt-28 sm:px-6">
-          <div className="rounded-2xl border border-border bg-card/60 p-6 text-center sm:p-10">
-            <span className="mx-auto flex size-11 items-center justify-center rounded-xl border border-border bg-foreground/[0.03] text-primary">
-              <Heart className="size-5" />
-            </span>
-            <h2 className="mt-5 text-2xl font-semibold tracking-tight text-foreground text-balance sm:text-3xl">
-              CVXray is free. Support it if it helped.
-            </h2>
-            <p className="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-muted-foreground text-pretty">
-              No account, no limits, no paywall — and it stays that way. If CVXray saved you time, you can chip in
-              any amount from <strong className="font-semibold text-foreground">€{SUPPORT.minimumEur}</strong>. It&apos;s a one-time payment and
-              doesn&apos;t change what you get.
-            </p>
-            <div className="mt-6 flex flex-col items-center gap-3">
-              {SUPPORT.checkoutUrl ? (
-                <a
-                  href={SUPPORT.checkoutUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex h-11 items-center gap-2 rounded-lg bg-foreground px-5 text-sm font-semibold text-background transition-opacity hover:opacity-90"
-                >
-                  Support CVXray — from €{SUPPORT.minimumEur}
-                  <ArrowRight className="size-4" />
-                </a>
-              ) : (
-                <span
-                  aria-disabled="true"
-                  className="inline-flex h-11 cursor-not-allowed items-center gap-2 rounded-lg border border-border bg-foreground/[0.03] px-5 text-sm font-semibold text-muted-foreground"
-                >
-                  Support payments open soon
-                </span>
-              )}
-              <p className="text-[13px] text-muted-foreground">
-                Pay what you want, from €{SUPPORT.minimumEur} · Secure checkout by Lemon Squeezy ·{" "}
-                <Link href="/refund-policy" className="underline-offset-2 hover:text-foreground hover:underline">
-                  {SUPPORT.refundDays}-day refund
-                </Link>
-              </p>
-            </div>
-          </div>
         </section>
 
         {/* FAQ — visible to users and identical to the FAQPage structured data */}

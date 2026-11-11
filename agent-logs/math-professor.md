@@ -397,3 +397,17 @@ Calibration (before → after):
 **Running improvement backlog (next pushes):**
 1. Tune adaptive keyword cap for very long JDs (> 1200 words)
 2. Experience extraction misses "since 2019" / date ranges — years only come from "N years of experience" phrasing
+
+---
+
+## 2026-11-11 — Push 21 (Support section removed, legal-page JSON-LD, date-range experience)
+
+**Status:** ✅ PASS (1 improvement implemented) — closes backlog item 2
+
+**Improvement: career length from CV date ranges (`yearsFromDateRanges` in `analyze.ts`).** Order of evidence: explicit "N years of experience" → date ranges ("2019 – present", "Mar 2018 – Jan 2022", "since 2021", Dutch "heden"/"sinds") → title heuristic. Earliest start to latest end, education lines skipped, capped at 40.
+
+Verification: 9 parser cases pass. Same CV + "2019 – present" scores 50 vs 46 with "2025 – present" against a 5+-year post — experience now moves the score in the right direction. Sample calibration unchanged (Frontend 81; chef 5–6; analyst 53; sales 68).
+
+**Running improvement backlog (next pushes):**
+1. Tune adaptive keyword cap for very long JDs (> 1200 words)
+2. Overlapping / gapped ranges: currently earliest-to-latest; summing non-overlapping spans would be more exact for career breaks

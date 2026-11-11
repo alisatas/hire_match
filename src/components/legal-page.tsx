@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
-import { CONTACT_EMAIL, LEGAL_UPDATED } from "@/lib/site";
+import { CONTACT_EMAIL, LEGAL_UPDATED, SITE_URL, jsonLdScript } from "@/lib/site";
 
 export interface LegalSection {
   title: string;
@@ -9,9 +9,38 @@ export interface LegalSection {
 }
 
 /** Shared layout for Terms, Refund Policy and Privacy. */
-export function LegalPage({ title, intro, sections }: { title: string; intro: React.ReactNode; sections: LegalSection[] }) {
+export function LegalPage({ path, title, description, intro, sections }: {
+  path: string; title: string; description: string; intro: React.ReactNode; sections: LegalSection[];
+}) {
+  const url = `${SITE_URL}${path}`;
+  // Ties each legal page to the site and organisation entities, so search engines
+  // read it as CVXray's official policy rather than a stray page.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": url,
+        url,
+        name: title,
+        description,
+        inLanguage: "en",
+        dateModified: "2026-11-11",
+        isPartOf: { "@id": `${SITE_URL}/#website` },
+        publisher: { "@id": `${SITE_URL}/#org` },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "CVXray", item: SITE_URL },
+          { "@type": "ListItem", position: 2, name: title, item: url },
+        ],
+      },
+    ],
+  };
   return (
     <div className="relative z-10">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }} />
       <SiteHeader />
       <main className="mx-auto max-w-3xl px-4 pb-24 pt-8 sm:px-6 sm:pt-12">
         <nav aria-label="Breadcrumb" className="-ml-1 flex flex-wrap items-center gap-x-1 text-[13px] text-muted-foreground">

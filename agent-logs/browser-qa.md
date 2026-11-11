@@ -219,3 +219,12 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - `/`, legal pages, `/resume-keywords/account-executive`, `/digital-marketing-specialist` → 200; unknown slug → 404; sitemap 15 URLs ✅
 - New role pages: own title, canonical, WebPage + BreadcrumbList + FAQPage JSON-LD ✅
 - Console: only pre-restart entries (stale-module 500 and HMR reconnects) — none from the current build
+
+---
+
+## 2026-11-11 — Push 21 (Support section removed, legal-page JSON-LD, date-range experience)
+
+**Status:** ✅ PASS (0 critical)
+
+- `tsc` 0, ESLint 0, `next build` OK ✅
+- `/`, `/terms`, `/privacy`, `/refund-policy` → 200; no `#support` element and no "€3" copy left on the home page ✅
