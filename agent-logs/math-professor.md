@@ -569,3 +569,19 @@ Calibration: nurse CV × ward-nurse job **33 → 75**; frontend CV × nurse job 
 **Running improvement backlog (next pushes):**
 1. Seniority mismatch signal ("Lead / Head of" title vs a junior CV)
 2. Course resources for healthcare and logistics gaps (currently none shown)
+
+---
+
+## 2026-11-12 — Push 34 (Automated attack + SEO crawl suites, IndexNow, healthcare/logistics courses)
+
+**Status:** ✅ PASS (1 improvement)
+
+**Improvement:** course resources for the healthcare and logistics groups (backlog #2). Push 33 made those gaps visible as high priority, but the training list had nothing for them.
+- healthcare → CDC Project Firstline infection control training (free; verified live in a browser — cdc.gov blocks curl)
+- logistics → Supply Chain Management Specialization, Coursera / Rutgers (paid certificate; duration "2 months to complete" taken from the course page)
+- OpenWHO was tried first and dropped: its course URLs have changed and the channel page is a generic list
+
+Regression check: share links can no longer inject an unknown skill key or priority (decoder accepts only `SKILL_GROUPS` keys and high/medium/low). Scores unchanged this cycle.
+
+**Running improvement backlog (next pushes):**
+1. Seniority mismatch signal ("Lead / Head of" title vs a junior CV)

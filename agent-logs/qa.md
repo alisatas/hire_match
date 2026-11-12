@@ -347,3 +347,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Paste box opens automatically on too-large and unreadable PDFs; the error stays visible above it in paste mode; 'Upload a PDF instead' returns to the drop zone and keeps the message
 - Verified with a deliberately broken PDF in the browser: textarea focused, error shown, no dev-overlay issue
 - 111 unit / 19 browser tests green on the production build; tsc 0, ESLint 0
+
+---
+
+## 2026-11-12 — Push 34 (Automated attack + SEO crawl suites, IndexNow, healthcare/logistics courses)
+
+**Status:** ✅ PASS (0 critical)
+
+- Share-link decoding now rejects any field with the wrong type instead of crashing; 7 crafted-link cases in e2e
+- PDF route error statuses corrected (400 / 422)
+- 119 unit / 64 browser tests green on the production build (was 111 / 19); tsc 0, ESLint 0; prod audit 0 high/critical

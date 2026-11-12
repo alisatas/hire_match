@@ -513,3 +513,21 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - URL Inspection, home page: **indexed**; stored copy (crawled 2026-11-03) flagged "meta description too long or too short", live test shows **no SEO/GEO issues** — clears on recrawl
 - Why it matters: ChatGPT search and Microsoft Copilot answer from Bing's index
 - Next: IndexNow (key file + ping on deploy) so new and updated pages reach Bing, Yandex, Seznam and Naver within minutes instead of waiting for a crawl
+
+---
+
+## 2026-11-12 — Push 34 (Automated attack + SEO crawl suites, IndexNow, healthcare/logistics courses)
+
+**Status:** ✅ PASS (0 critical, 3 improvements)
+
+**Improvements implemented this cycle:**
+- New `tests/e2e/seo.spec.ts` crawls every sitemap URL as raw HTML (titles, descriptions, canonical, single h1, noindex, lang, OG/Twitter, JSON-LD parse + @type, duplicates, broken internal links, orphan pages, AI crawlers in robots.txt, llms.txt links, no-JS rendering, IndexNow key)
+- It found 15 problems, all fixed: 13 role guides + 2 posts had titles (up to 81 chars) or descriptions (up to 186) that Google truncates. Role titles now pick the longest wording ≤ 60 chars incl. " | CVXray"; descriptions rewritten keyword-first ("Top AI engineer resume keywords: …", ≤ 150); posts got a short `seoTitle`
+- IndexNow: key file + `.github/workflows/indexnow.yml` submits sitemap URLs after production deploys that change public content (release commit and test-only pushes skipped; runs queue rather than cancel)
+
+**Running improvement backlog (next pushes):**
+1. Confirm the first IndexNow run returns 200/202 after this push
+2. More articles: "ATS-friendly CV format", "CV keywords vs. skills section", "How to read a job description"
+3. Nurse and logistics role guides now that the engine detects those skills
+4. Off-page: Product Hunt + AlternativeTo listings, Reddit mentions (copy drafted, owner to post)
+5. GA4: mark `analysis_complete`, `score_card` and `entry` as key events

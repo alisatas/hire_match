@@ -383,3 +383,12 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - 'Paste text instead' removed from the step header; replaced by a small muted 'No PDF? Paste the text' link under the drop zone (44 px tap height, keyboard-focusable button)
 - Failure path is self-healing: unreadable / too-large PDF opens the paste box with the error above it
 - Coffee card under the report rating + footer link (hidden until the live checkout link exists)
+
+---
+
+## 2026-11-12 — Push 34 (Automated attack + SEO crawl suites, IndexNow, healthcare/logistics courses)
+
+**Status:** ✅ PASS (0 critical)
+
+- Training list now covers healthcare (CDC Project Firstline, free) and logistics (Coursera / Rutgers, ~2 months) gaps — previously empty for those roles
+- A malformed share link now falls back to the normal empty analyzer instead of an error page

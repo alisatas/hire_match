@@ -341,3 +341,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 - e2e selectors updated to the new link text; 111 unit / 19 browser tests green on the production build; tsc 0, ESLint 0
 - Fresh load: 0 console errors; broken-PDF path: no Next.js dev-overlay issue after removing the console.error
+
+---
+
+## 2026-11-12 — Push 34 (Automated attack + SEO crawl suites, IndexNow, healthcare/logistics courses)
+
+**Status:** ✅ PASS (0 critical)
+
+- Suite grew 19 → 64: `security.spec.ts` (38) and `seo.spec.ts` (7) added; all run in CI via `npm run test:e2e`
+- Localhost: courses render for healthcare/logistics gaps; the former crash link opens the analyzer
+- 119 unit / 64 browser tests green on the production build (was 111 / 19); tsc 0, ESLint 0; prod audit 0 high/critical

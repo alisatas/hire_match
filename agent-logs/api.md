@@ -313,3 +313,14 @@ Agents MUST read this log before running checks and MUST append an entry after e
 ## 2026-11-12 — Push 33 (Paste as a quiet fallback, coffee link, healthcare & logistics skills)
 
 **Status:** ✅ PASS (0 critical) — no API changes. 111 unit / 19 browser tests green on the production build; tsc 0, ESLint 0
+
+---
+
+## 2026-11-12 — Push 34 (Automated attack + SEO crawl suites, IndexNow, healthcare/logistics courses)
+
+**Status:** ✅ PASS (0 critical)
+
+- `/api/extract-pdf`: malformed multipart → 400 "Invalid upload"; unparseable PDF → 422 "Could not read this PDF" (was 500); logs `console.warn` with a 200-char message, no stack
+- Every POST route fuzzed with 9 malformed bodies: no 5xx, no stack traces or paths in responses; all refuse cross-site (403) and >6 MB (413)
+- Owner routes return 401 for missing, wrong, empty-Bearer, 600-char and "null"/"undefined" keys
+- 119 unit / 64 browser tests green on the production build (was 111 / 19); tsc 0, ESLint 0; prod audit 0 high/critical

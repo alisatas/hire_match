@@ -456,3 +456,20 @@ Full read of `src/app/api/**`, `src/proxy.ts`, `next.config.ts`, client link ren
 - Handled PDF read failures no longer `console.error` the error object
 - `git ls-files .env*` empty ✅; prod audit: 0 high/critical ✅
 - 🟡 New: 4 moderate + 2 low advisories via the `shadcn` CLI chain (deepmerge prototype poisoning, minimatch ReDoS in @ts-morph/common). CLI-only, not shipped to the browser; fix needs shadcn major bump — track
+
+---
+
+## 2026-11-12 — Push 34 (Automated attack + SEO crawl suites, IndexNow, healthcare/logistics courses)
+
+**Status:** ✅ PASS (0 critical) — 3 findings fixed this cycle, found by the new attack suite
+
+- New `tests/e2e/security.spec.ts` (38 cases): XSS via paste and share links, crafted share links, headers on 5 page types, malformed / oversized / cross-site requests to all 6 POST routes, owner-key checks, PDF upload abuse, 17 SSRF vectors end to end, rate limiting, open redirects. 8 more SSRF vectors in unit tests
+- 🔧 **Fixed — share-link DoS:** `#s=` with an object in a numeric field (e.g. `"rt":{"a":1}`) crashed the page ("This page couldn't load"). Every rendered field is now type-checked; skill keys must exist in `SKILL_GROUPS`
+- 🔧 **Fixed — prototype keys:** `__proto__` / `constructor` resolved to built-ins in course lookups (2 broken links). `resourceFor()` uses `Object.hasOwn`
+- 🔧 **Fixed — 500 on bad input:** `/api/extract-pdf` answered 500 to non-multipart bodies and corrupt PDFs; now 400 / 422 (false 5xx alarms would hide a real incident)
+- Verified on production: spoofed `x-real-ip` / `x-forwarded-for` do not bypass the rate limiter (429 from request 11 with rotating fake IPs) — Vercel overwrites them
+- XSS: no payload executed (paste, share link, attribute injection via persona colour); no `javascript:` links rendered
+- IndexNow key in `public/` is public by design (only lets anyone request a recrawl of our own URLs)
+- `.github/workflows/indexnow.yml`: `contents: read`, `deployments: read` only; no secrets used
+- Still open 🟡: `shadcn` CLI chain moderate advisories (dev only); CSP `'unsafe-inline'` (nonce CSP skipped by owner)
+- 119 unit / 64 browser tests green on the production build (was 111 / 19); tsc 0, ESLint 0; prod audit 0 high/critical
