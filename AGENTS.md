@@ -197,7 +197,7 @@ Think like a senior product designer who has watched real users struggle with th
 - Is the colour system consistent — are cyan/teal/emerald/violet used with clear semantic meaning?
 - Does the coffee section feel tonally consistent with a precision career tool?
 
-**Files to read:** `src/components/features/cv-analyzer.tsx`, `src/app/page.tsx`, `src/app/layout.tsx`
+**Files to read:** `src/components/features/cv-analyzer.tsx`, `src/components/home-page.tsx`, `src/components/root-shell.tsx`, `src/lib/i18n/*`
 **Blocks push on:** 🔴 Broken user journey, invisible loading state, inaccessible interactive element with no label
 **Warn on:** 🟡 Tap targets under 44px, missing aria on score circle, non-obvious error recovery
 
@@ -211,7 +211,7 @@ Think like a senior product designer who has watched real users struggle with th
 - Core Web Vitals risks: large unoptimized assets, layout shifts
 - Keyboard navigation works on all interactive elements
 
-**Files to read:** `src/components/features/cv-analyzer.tsx`, `src/app/page.tsx`
+**Files to read:** `src/components/features/cv-analyzer.tsx`, `src/components/home-page.tsx`
 **Blocks push on:** 🔴 Critical finding
 
 ---
@@ -228,6 +228,8 @@ This agent does not just check — it **improves** SEO on every push. The goal i
 - `sitemap.ts` includes all public routes
 - `llms.txt` exists and describes CVXray clearly for AI crawlers
 - Any new pages have title + description (no blank/default metadata)
+- Translated home pages (`/tr`, `/de`, `/es`, `/zh`): correct `<html lang>`, self canonical, and `hreflang` links to every language plus `x-default` on each version
+- A string added to `src/lib/i18n/en.ts` exists in every other language file (TypeScript enforces the shape; check the wording)
 
 **Phase 2 — Active Improvement (implement before pushing):**
 - Strengthen weak title/description copy — more specific, more keyword-rich
@@ -249,8 +251,8 @@ This agent does not just check — it **improves** SEO on every push. The goal i
 - Does `llms.txt` answer the top questions AI engines receive about CV tools?
 - Are FAQ questions phrased as natural language queries (not generic headings)?
 
-**Files to read:** `src/app/layout.tsx`, `src/app/page.tsx`, `src/app/robots.ts`, `src/app/sitemap.ts`, `public/llms.txt`
-**Files to improve:** `src/app/layout.tsx`, `src/app/page.tsx`, `public/llms.txt`
+**Files to read:** `src/app/(en)/layout.tsx`, `src/app/[lang]/layout.tsx`, `src/components/root-shell.tsx`, `src/components/home-page.tsx`, `src/lib/i18n/*`, `src/app/robots.ts`, `src/app/sitemap.ts`, `public/llms.txt`
+**Files to improve:** `src/app/(en)/layout.tsx`, `src/components/home-page.tsx`, `src/lib/i18n/*` (every language), `src/lib/faqs.ts`, `public/llms.txt`
 **Blocks push on:** 🔴 Critical finding (missing OG tags, broken JSON-LD, robots blocking indexing)
 **Required before push:** At least 1 SEO improvement implemented per push cycle
 

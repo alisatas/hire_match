@@ -10,7 +10,7 @@
 - Input: a PDF CV (up to 5 MB) or pasted CV text, plus a job description — pasted text or a job URL from LinkedIn, Indeed, Glassdoor or most company careers pages
 - Output: match score (5–95%), matched skills, missing skills ranked high / medium / low priority, missing job keywords, course recommendations, company insights, and an "HR Quick Scan" of CV quality
 - Speed: results in seconds
-- Language: the interface and skill detection are in English
+- Languages: the site is available in English (https://cvxray.com), Turkish (https://cvxray.com/tr), German (https://cvxray.com/de), Spanish (https://cvxray.com/es) and Chinese (https://cvxray.com/zh). CVs and job descriptions in those five languages are scored the same way: skills, keywords and years of experience are recognised in each. Role guides and articles are in English
 - Works on desktop, tablet and phone browsers
 
 ## How the match score is calculated
@@ -33,6 +33,7 @@ The score is a transparent weighted comparison, not a language-model opinion:
 ## Questions CVXray answers
 
 - Does my CV / resume match this job description?
+- Is there a free CV matcher in Turkish, German, Spanish or Chinese? (ücretsiz CV analizi, Lebenslauf-Check, analizar CV gratis, 简历匹配)
 - Which keywords from the job posting are missing from my resume?
 - Which skills do I need to add for this role, and which matter most?
 - What is a good CV match score?
@@ -74,7 +75,8 @@ Tools in the same category include Jobscan, Resume Worded and Teal. Those are ac
 
 ## Limitations
 
-- English-language CVs and job postings work best.
+- CVs and job postings in English, Turkish, German, Spanish and Chinese are supported; the CV and the posting should be in the same language. Other languages are matched on tool names only.
+- The "HR Quick Scan" of CV quality runs on English CVs only.
 - Only PDF files are uploaded; Word (.docx) and Google Docs resumes can be saved as PDF or pasted as text.
 - Scanned (image-only) PDFs contain no extractable text and cannot be analysed; paste the CV text instead.
 - Some job sites block automated fetching; in that case the job description must be pasted.

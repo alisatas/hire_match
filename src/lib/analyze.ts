@@ -331,7 +331,11 @@ export function splitOptional(jobText: string): { required: string; optional: st
     let inNice = false
     for (const raw of jobText.split("\n")) {
         const l = readPostingLine(raw)
-        if (l.isHeading && l.nice) { inNice = true; continue }
+        // Math Prof improvement (Push 36): a one-line extra — "Nice to have: Kubernetes",
+        // "Tercih sebebi: SQL bilgisi" — is a heading and its content at once. The line used
+        // to be dropped as a heading, so the skill on it was neither required nor optional
+        // and ended up weighted like a hard requirement. It now counts as optional.
+        if (l.isHeading && l.nice) { inNice = true; optional.push(raw); continue }
         if (l.isHeading && (l.job || l.boilerplate)) inNice = false
         ;(inNice || l.niceInline ? optional : required).push(raw)
     }

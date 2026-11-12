@@ -123,14 +123,14 @@ export function Badge({ tone = "neutral", children }: { tone?: Tone; children: R
 
 // ── Score ───────────────────────────────────────────────────────────────────
 
-export function ScoreRing({ score, size = 124 }: { score: number; size?: number }) {
+export function ScoreRing({ score, size = 124, label, caption = "match" }: { score: number; size?: number; label?: string; caption?: string }) {
     const tone = toneForScore(score)
     const r = 52
     const c = 2 * Math.PI * r
     const offset = c - (c * Math.max(0, Math.min(100, score))) / 100
     return (
         <div className="relative shrink-0" style={{ width: size, height: size }}>
-            <svg viewBox="0 0 120 120" className="size-full -rotate-90" role="img" aria-label={`Match score: ${score}%`}>
+            <svg viewBox="0 0 120 120" className="size-full -rotate-90" role="img" aria-label={label ?? `Match score: ${score}%`}>
                 <circle cx="60" cy="60" r={r} fill="none" strokeWidth="8" className="stroke-foreground/[0.08]" />
                 <circle
                     cx="60" cy="60" r={r} fill="none" strokeWidth="8" strokeLinecap="round"
@@ -147,7 +147,7 @@ export function ScoreRing({ score, size = 124 }: { score: number; size?: number 
                 <span className="text-[34px] font-semibold leading-none tracking-tight tabular-nums text-foreground">
                     {score}<span className="text-lg text-muted-foreground">%</span>
                 </span>
-                <span className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">match</span>
+                <span className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{caption}</span>
             </div>
         </div>
     )
@@ -214,31 +214,28 @@ export function StepLabel({ n, children, action }: { n: number; children: React.
 
 // ── Feedback ────────────────────────────────────────────────────────────────
 
-const RATINGS = [
-    { emoji: "😔", label: "Way off" },
-    { emoji: "😕", label: "Somewhat off" },
-    { emoji: "😐", label: "About right" },
-    { emoji: "🙂", label: "Accurate" },
-    { emoji: "😍", label: "Spot on" },
-]
+const RATING_EMOJI = ["😔", "😕", "😐", "🙂", "😍"]
 
-export function FeedbackRating() {
+type RatingStrings = { ratingQuestion: string; ratingThanks: string; ratingHint: string; ratingAria: string; ratingLabels: string[] }
+
+export function FeedbackRating({ t }: { t: RatingStrings }) {
+    const RATINGS = RATING_EMOJI.map((emoji, i) => ({ emoji, label: t.ratingLabels[i] ?? "" }))
     const [rating, setRating] = useState(0)
     const [hover, setHover] = useState(0)
     const shown = hover || rating
     return (
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <p className="text-sm font-medium text-foreground">Was this score accurate?</p>
+                <p className="text-sm font-medium text-foreground">{t.ratingQuestion}</p>
                 <p className="text-xs text-muted-foreground" aria-live="polite">
                     {rating
-                        ? `Thanks — you rated it “${RATINGS[rating - 1].label}”.`
+                        ? t.ratingThanks.replace("{label}", RATINGS[rating - 1].label)
                         : shown
                         ? RATINGS[shown - 1].label
-                        : "Your rating helps tune the scoring engine."}
+                        : t.ratingHint}
                 </p>
             </div>
-            <div className="flex gap-1.5" role="radiogroup" aria-label="Rate the accuracy of this score" onMouseLeave={() => setHover(0)}>
+            <div className="flex gap-1.5" role="radiogroup" aria-label={t.ratingAria} onMouseLeave={() => setHover(0)}>
                 {RATINGS.map((r, i) => {
                     const value = i + 1
                     const active = shown === value

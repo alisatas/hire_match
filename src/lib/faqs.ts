@@ -47,6 +47,10 @@ export const FAQS: { q: string; a: string }[] = [
         a: "Yes. CVXray works on phones, tablets and desktops. You can upload a PDF or paste your CV and the job description directly on mobile and get your match score instantly.",
     },
     {
+        q: "Does CVXray work with CVs and job posts that are not in English?",
+        a: "Yes. CVXray reads CVs and job descriptions in English, Turkish, German, Spanish and Chinese, and recognises skills, keywords and years of experience in each. Results are most accurate when the CV and the job post are in the same language. The site itself is available in English, Türkçe, Deutsch, Español and 中文.",
+    },
+    {
         q: "Can I check a Word (.docx) resume or a scanned PDF?",
         a: "CVXray reads PDF CVs up to 5 MB. For a Word or Google Docs resume, save it as PDF (File → Save As or Download → PDF) and upload that, or copy the text and use \"No PDF? Paste the text\". A scanned PDF is just an image with no readable text, so paste the CV text instead; CVXray opens the paste box for you whenever a PDF can't be read.",
     },

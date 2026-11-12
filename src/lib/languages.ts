@@ -294,3 +294,15 @@ export const NONLATIN_SENIORITY: [RegExp, number][] = [
     [/资深|高级|主管|वरिष्ठ/, 5],
     [/初级|实习|应届|कनिष्ठ|प्रशिक्षु/, 1],
 ]
+
+/**
+ * True when a text reads as English: at least 3% of its words are English function
+ * words. None of the six is a word in Turkish, German, Spanish or Dutch, so prose in
+ * those languages scores near zero; even terse English CV bullets clear the bar.
+ */
+export function looksEnglish(text: string): boolean {
+    const words = text.toLowerCase().match(/[a-z]+/g) ?? []
+    if (words.length === 0) return false
+    const hits = words.filter(w => w === "the" || w === "and" || w === "of" || w === "to" || w === "for" || w === "with").length
+    return hits / words.length >= 0.03
+}

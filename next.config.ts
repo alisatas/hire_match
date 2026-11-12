@@ -19,12 +19,20 @@ const GOOGLE_TAG_HOSTS = [
 ].join(" ");
 
 const nextConfig: NextConfig = {
+  // 404 for URLs that match no route — needed because there are two root layouts
+  // (app/(en) and app/[lang]); see app/global-not-found.tsx.
+  experimental: { globalNotFound: true },
   devIndicators: false,
   productionBrowserSourceMaps: false,
   poweredByHeader: false,
   // One canonical host: www.cvxray.com answered 200 with a duplicate copy of every page.
   async redirects() {
     return [
+      // Share images of the role guides and articles. Those pages moved into the app/(en)
+      // route group, which gives a colocated opengraph-image a generated suffix. The old
+      // URLs are in links that were already shared, so they keep answering.
+      { source: "/resume-keywords/:role/opengraph-image", destination: "/resume-keywords/:role/opengraph-image-7y03bq", permanent: false },
+      { source: "/blog/:slug/opengraph-image", destination: "/blog/:slug/opengraph-image-g58prh", permanent: false },
       {
         source: "/:path*",
         has: [{ type: "host", value: "www.cvxray.com" }],

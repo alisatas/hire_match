@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "@/app/globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import Script from "next/script";
 import { ConsentBanner } from "@/components/consent/consent-banner";
 import { ErrorReporter } from "@/components/error-reporter";
 import { GTM_ID, consentBootstrapScript, gtmLoaderScript } from "@/lib/analytics";
+import { LOCALES, LOCALE_INFO, getDictionary, type Locale } from "@/lib/i18n";
 import { SITE_URL, jsonLdScript } from "@/lib/site";
 
 const geistSans = Geist({
@@ -22,63 +22,13 @@ const geistMono = Geist_Mono({
 
 const siteUrl = SITE_URL;
 
-// Search Console / Bing Webmaster ownership tokens — set in the Vercel project env.
-const googleVerification = process.env.GOOGLE_SITE_VERIFICATION;
-const bingVerification = process.env.BING_SITE_VERIFICATION;
-
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: {
-    default: "Free CV & Resume Matcher — Job Match Score | CVXray",
-    template: "%s | CVXray",
-  },
-  description:
-    "Check your CV or resume against any job description. Free match score, missing keywords, skill gaps and courses to close them — instant, private, no sign-up.",
-  keywords: [
-    "cv matcher", "resume matcher", "job fit analyzer", "cv analyzer",
-    "resume scanner", "job match score", "skill gap analysis",
-    "resume keywords", "job description match", "cv match percentage",
-    "free resume checker", "ai resume analyzer", "cv scoring tool",
-    "resume to job match", "check resume against job description",
-    "resume keyword checker", "ats resume checker", "resume keywords by role",
-    "cvxray", "cv xray", "resume xray",
-  ],
-  authors: [{ name: "CVXray" }],
-  creator: "CVXray",
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: siteUrl,
-    siteName: "CVXray",
-    title: "CVXray — Free AI Resume Matcher & Job Fit Analyzer",
-    description:
-      "Upload your CV, paste a job link — get an instant ATS match score, find missing keywords & get course recommendations. Free, no sign-up, private.",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "CVXray - Free AI Resume Matcher" }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "CVXray — Free AI Resume Matcher",
-    description: "Upload your CV, paste a job link — get an instant ATS match score, missing keywords & course recommendations. Free, no sign-up, private.",
-    images: ["/opengraph-image"],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: { index: true, follow: true, "max-image-preview": "large" },
-  },
-  ...((googleVerification || bingVerification) && {
-    verification: {
-      ...(googleVerification && { google: googleVerification }),
-      ...(bingVerification && { other: { "msvalidate.01": bingVerification } }),
-    },
-  }),
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+/**
+ * The <html> document shared by both root layouts: `app/(en)` for English and
+ * `app/[lang]` for the translated home pages. Two root layouts exist only so that
+ * <html lang> is correct in the static HTML of every language.
+ */
+export function RootShell({ locale, children }: { locale: Locale; children: React.ReactNode }) {
+  const dict = getDictionary(locale);
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -89,7 +39,7 @@ export default function RootLayout({
         name: "CVXray",
         alternateName: ["CV Xray", "CVXray.com"],
         description: "Free CV and resume matcher: compare your CV with any job description and see your match score and missing keywords.",
-        inLanguage: "en",
+        inLanguage: [...LOCALES],
         publisher: { "@id": `${siteUrl}/#org` },
       },
       {
@@ -126,7 +76,7 @@ export default function RootLayout({
         ],
         screenshot: `${siteUrl}/opengraph-image`,
         isAccessibleForFree: true,
-        inLanguage: "en",
+        inLanguage: [...LOCALES],
         publisher: { "@id": `${siteUrl}/#org` },
       },
       {
@@ -144,7 +94,9 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en">
+    <html lang={LOCALE_INFO[locale].htmlLang}>
+      {/* This component is the root layout's document, where a plain <head> is correct */}
+      {/* eslint-disable-next-line @next/next/no-head-element */}
       <head>
         <meta name="color-scheme" content="light" />
         <meta name="theme-color" content="#fafafa" />
@@ -168,7 +120,7 @@ export default function RootLayout({
         {GTM_ID && (
           <>
             <Script id="gtm-loader" strategy="afterInteractive">{gtmLoaderScript(GTM_ID)}</Script>
-            <ConsentBanner />
+            <ConsentBanner t={dict.consent} />
           </>
         )}
       </body>

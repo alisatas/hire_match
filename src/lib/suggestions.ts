@@ -5,7 +5,8 @@
 // experience — the copy tells the user to add only what they have actually done.
 // ─────────────────────────────────────────────
 
-import { findSkillMention, type MissingSkillWithPriority } from "./analyze"
+import { findSkillMention, yearsFromDateRanges, type MissingSkillWithPriority } from "./analyze"
+import { foldText } from "./languages"
 
 export interface KeywordSuggestion {
     key: string
@@ -50,16 +51,36 @@ const EXAMPLE: Record<Category, (skill: string) => string> = {
 }
 
 function sectionSignals(cvText: string) {
-    const lines = cvText.split(/\n/).map(l => l.trim().toLowerCase())
+    // Folded, so "Fähigkeiten", "Yetenekler" and "Habilidades" match without diacritics
+    const lines = foldText(cvText).split(/\n/).map(l => l.trim())
     const isHeading = (re: RegExp) => lines.some(l => l.length < 40 && re.test(l))
     return {
-        hasSkills: isHeading(/^(technical\s+)?(skills|competencies|tools|tech stack|technologies|vaardigheden|core skills)\b/),
-        hasProjects: isHeading(/^(projects|side projects|portfolio|projecten)\b/),
-        hasDatedRoles: /\b(19|20)\d{2}\s*(?:-|–|—|to)\s*((19|20)\d{2}|present|current|now|heden)\b/i.test(cvText),
+        hasSkills: isHeading(/^(technical\s+)?(skills|competencies|tools|tech stack|technologies|vaardigheden|core skills|yetenekler|beceriler|teknik beceriler|kenntnisse|fahigkeiten|kompetenzen|habilidades|competencias|aptitudes)\b/)
+            || isHeading(/^(专业技能|技能|技术栈)/),
+        hasProjects: isHeading(/^(projects|side projects|portfolio|projecten|projeler|projekte|proyectos)\b/) || isHeading(/^(项目经历|项目经验|项目)/),
+        // Any language: the same date reader the experience score uses ("Mart 2019 - halen")
+        hasDatedRoles: /\b(19|20)\d{2}\s*(?:-|–|—|to)\s*((19|20)\d{2}|present|current|now|heden)\b/i.test(cvText)
+            || yearsFromDateRanges(cvText) > 0,
     }
 }
 
-function whereToAdd(priority: KeywordSuggestion["priority"], cv: ReturnType<typeof sectionSignals>): string {
+/** The sentence fragments of whereToAdd() in another language (dictionary: analyzer.where). */
+export interface WhereStrings {
+    skillsHas: string; skillsNone: string; roleDated: string; roleAny: string
+    high: string; medium: string; mediumProject: string; low: string
+}
+
+const fill = (template: string, values: Record<string, string>) =>
+    template.replace(/\{(\w+)\}/g, (whole, key: string) => Object.hasOwn(values, key) ? values[key] : whole)
+
+function whereToAdd(priority: KeywordSuggestion["priority"], cv: ReturnType<typeof sectionSignals>, w?: WhereStrings): string {
+    if (w) {
+        const skills = cv.hasSkills ? w.skillsHas : w.skillsNone
+        const role = cv.hasDatedRoles ? w.roleDated : w.roleAny
+        if (priority === "high") return fill(w.high, { skills, role })
+        if (priority === "medium") return fill(w.medium, { skills, project: cv.hasProjects ? w.mediumProject : "" })
+        return fill(w.low, { skills })
+    }
     const skillsPart = cv.hasSkills ? "your Skills section" : "a short Skills section (your CV doesn't have one yet)"
     const rolePart = cv.hasDatedRoles ? "a bullet under your most recent role" : "a bullet in your experience"
     if (priority === "high") {
@@ -95,7 +116,7 @@ const EXAMPLE_BY_KEY: Record<string, string> = {
     data: "Analysed product usage data to find the drop-off step in onboarding, leading to a fix that lifted conversion 12%.",
 }
 
-export function buildSuggestions(cvText: string, jobText: string, missing: MissingSkillWithPriority[], max = 5): KeywordSuggestion[] {
+export function buildSuggestions(cvText: string, jobText: string, missing: MissingSkillWithPriority[], max = 5, where?: WhereStrings): KeywordSuggestion[] {
     if (!cvText.trim() || !jobText.trim()) return []
     const cv = sectionSignals(cvText)
     return missing
@@ -108,7 +129,7 @@ export function buildSuggestions(cvText: string, jobText: string, missing: Missi
                 skill: m.label,
                 priority: m.priority,
                 jobQuote: findSkillMention(jobText, m.key),
-                where: whereToAdd(m.priority, cv),
+                where: whereToAdd(m.priority, cv, where),
                 example: EXAMPLE_BY_KEY[m.key] ?? EXAMPLE[CATEGORY[m.key] ?? "practice"](shortName),
             }
         })

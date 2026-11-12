@@ -1,16 +1,10 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { ROLES } from "@/lib/roles";
 
-export const metadata: Metadata = {
-  title: "Page not found",
-  robots: { index: false, follow: true },
-};
-
 // A real 404 (status code included) with useful next steps, instead of a dead end.
-export default function NotFound() {
+export function NotFoundContent() {
   return (
     <div className="relative z-10">
       <SiteHeader />

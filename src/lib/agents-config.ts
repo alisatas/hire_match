@@ -21,7 +21,7 @@ export const AGENTS: Record<AgentKey, {
         emoji: "👔",
         desc: "Brand voice, copy & market positioning",
         system: `You are the CEO of CVXray, a CV matching SaaS product. Review the product's brand voice, copy, and market positioning. Identify naming inconsistencies (e.g. "CV Scorer" vs "CVXray"), weak copy, and brand opportunities. Use bullet points. End with a prioritized action list.`,
-        getContext: () => `## layout.tsx\n${readFile("src/app/layout.tsx")}\n\n## page.tsx\n${readFile("src/app/page.tsx")}`,
+        getContext: () => `## layout.tsx\n${readFile("src/app/(en)/layout.tsx") + "\n" + readFile("src/components/root-shell.tsx")}\n\n## page.tsx\n${readFile("src/components/home-page.tsx")}`,
     },
     pm: {
         label: "Product Manager",
@@ -124,7 +124,7 @@ Check specifically:
 - Colour semantics: are cyan/emerald/rose/amber/violet used consistently and meaningfully?
 
 Rate each: 🔴 Critical / 🟡 Medium / 🟢 Low. Be specific with component and line references.`,
-        getContext: () => `## cv-analyzer.tsx (main UI)\n${readFile("src/components/features/cv-analyzer.tsx")}\n\n## page.tsx (home page)\n${readFile("src/app/page.tsx")}\n\n## layout.tsx\n${readFile("src/app/layout.tsx")}`,
+        getContext: () => `## cv-analyzer.tsx (main UI)\n${readFile("src/components/features/cv-analyzer.tsx")}\n\n## page.tsx (home page)\n${readFile("src/components/home-page.tsx")}\n\n## layout.tsx\n${readFile("src/app/(en)/layout.tsx") + "\n" + readFile("src/components/root-shell.tsx")}`,
     },
     seo: {
         label: "SEO Specialist",
@@ -195,7 +195,7 @@ Structure as:
 Top 10 actions ranked by impact on both Google and AI engine visibility.
 
 Rate every finding: 🔴 Critical / 🟡 Medium / 🟢 Low.`,
-        getContext: () => `## layout.tsx (metadata, JSON-LD)\n${readFile("src/app/layout.tsx")}\n\n## page.tsx (homepage content, FAQ)\n${readFile("src/app/page.tsx")}\n\n## robots.ts\n${readFile("src/app/robots.ts")}\n\n## sitemap.ts\n${readFile("src/app/sitemap.ts")}\n\n## README.md\n${readFile("README.md")}`,
+        getContext: () => `## layout.tsx (metadata, JSON-LD)\n${readFile("src/app/(en)/layout.tsx") + "\n" + readFile("src/components/root-shell.tsx")}\n\n## page.tsx (homepage content, FAQ)\n${readFile("src/components/home-page.tsx")}\n\n## robots.ts\n${readFile("src/app/robots.ts")}\n\n## sitemap.ts\n${readFile("src/app/sitemap.ts")}\n\n## README.md\n${readFile("README.md")}`,
     },
     "browser-qa": {
         label: "Browser QA",
@@ -248,6 +248,6 @@ Structure your report as:
 **SHIP ✅** or **FIX REQUIRED 🔴** with a summary of blocking issues.
 
 Rate every finding: 🔴 Critical / 🟡 Medium / 🟢 Low.`,
-        getContext: () => `## cv-analyzer.tsx (main UI)\n${readFile("src/components/features/cv-analyzer.tsx")}\n\n## page.tsx\n${readFile("src/app/page.tsx")}\n\n## layout.tsx\n${readFile("src/app/layout.tsx")}\n\n## premium success page\n${readFile("src/app/premium/success/page.tsx")}\n\n## next.config.ts\n${readFile("next.config.ts")}`,
+        getContext: () => `## cv-analyzer.tsx (main UI)\n${readFile("src/components/features/cv-analyzer.tsx")}\n\n## page.tsx\n${readFile("src/components/home-page.tsx")}\n\n## layout.tsx\n${readFile("src/app/(en)/layout.tsx") + "\n" + readFile("src/components/root-shell.tsx")}\n\n## premium success page\n${readFile("src/app/premium/success/page.tsx")}\n\n## next.config.ts\n${readFile("next.config.ts")}`,
     },
 }

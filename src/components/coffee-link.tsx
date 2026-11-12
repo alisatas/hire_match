@@ -2,13 +2,16 @@
 
 import { Coffee } from "lucide-react"
 import { track } from "@/lib/analytics"
+import type { Dictionary } from "@/lib/i18n/en"
+import { fmt } from "@/lib/i18n/format"
 import { SUPPORT } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
 // Small, optional "Buy me a coffee" link to the Lemon Squeezy checkout (new tab).
 // Renders nothing until a checkout link is configured.
-export function CoffeeLink({ where, variant = "inline", className }: {
+export function CoffeeLink({ where, t, variant = "inline", className }: {
     where: "report" | "footer"
+    t: Dictionary["coffee"]
     variant?: "inline" | "card"
     className?: string
 }) {
@@ -33,11 +36,11 @@ export function CoffeeLink({ where, variant = "inline", className }: {
                         <Coffee className="size-4" />
                     </span>
                     <span className="text-left">
-                        <span className="block text-sm font-medium text-foreground">Was this useful? Buy me a coffee</span>
-                        <span className="block text-xs text-muted-foreground">Any amount from €{SUPPORT.minimumEur} · CVXray stays free</span>
+                        <span className="block text-sm font-medium text-foreground">{t.title}</span>
+                        <span className="block text-xs text-muted-foreground">{fmt(t.note, { n: SUPPORT.minimumEur })}</span>
                     </span>
                 </span>
-                <span className="text-xs font-medium text-primary group-hover:underline">Support</span>
+                <span className="text-xs font-medium text-primary group-hover:underline">{t.support}</span>
             </a>
         )
     }
@@ -51,7 +54,7 @@ export function CoffeeLink({ where, variant = "inline", className }: {
             className={cn("inline-flex items-center gap-1.5 transition-colors hover:text-foreground", className)}
         >
             <Coffee className="size-3.5" />
-            Buy me a coffee
+            {t.inline}
         </a>
     )
 }

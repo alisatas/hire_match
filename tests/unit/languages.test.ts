@@ -90,6 +90,13 @@ describe("localised skill aliases", () => {
     expect(r.missing.find(m => m.key === "kubernetes")?.priority).toBe("low");
   });
 
+  it("treats a one-line extra as optional in any language", () => {
+    for (const line of ["Nice to have: Kubernetes", "Tercih sebebi: Kubernetes bilgisi", "Von Vorteil: Kubernetes", "Deseable: Kubernetes", "加分项：Kubernetes"]) {
+      const r = analyze(FRONTEND_CV, `Frontend Developer\nReact and TypeScript, 3 years of experience building web applications for customers.\n${line}`);
+      expect(r.missing.find(m => m.key === "kubernetes")?.priority, line).toBe("low");
+    }
+  });
+
   it("does not read everyday words as skills", () => {
     // Turkish "ki" (that) is not German "KI"; "satış" alone is not B2B sales
     const found = keys("Mağaza Görevlisi\nBiliyoruz ki satış ekibimiz çok güçlü. Müşterilere yardımcı olacak ekip arkadaşı arıyoruz.");

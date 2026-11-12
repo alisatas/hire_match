@@ -72,7 +72,11 @@ try {
 // ═══════════════════════════════════════════════════════════════════════════════
 section("🔍 SEO Agent — Metadata & Discoverability");
 
-const layout = existsSync("src/app/layout.tsx") ? readFileSync("src/app/layout.tsx", "utf-8") : "";
+// Metadata is spread over the English root layout, the shared metadata, the <html> shell
+// (JSON-LD) and the home page (canonical, hreflang) since the site became multilingual.
+const layout = ["src/app/(en)/layout.tsx", "src/lib/metadata.ts", "src/components/root-shell.tsx", "src/app/(en)/page.tsx"]
+  .map((file) => (existsSync(file) ? readFileSync(file, "utf-8") : ""))
+  .join("\n");
 
 if (/title:/.test(layout)) pass("Page title defined");
 else fail("Page title missing in layout.tsx");

@@ -41,6 +41,10 @@ import { buildSuggestions, type KeywordSuggestion } from "@/lib/suggestions"
 import { renderScoreCard, shareOrDownloadCard } from "@/lib/score-card"
 import { decodeEntities } from "@/lib/html-text"
 import { CoffeeLink } from "@/components/coffee-link"
+import type { Locale } from "@/lib/i18n"
+import type { AnalyzerStrings, Dictionary } from "@/lib/i18n/en"
+import { fmt } from "@/lib/i18n/format"
+import { countWords, looksEnglish } from "@/lib/languages"
 import { extractCompanyName, extractCultureSignals, getInterviewLinks } from "@/lib/insights"
 
 // ─── Share URL helpers ───────────────────────────────────────────────────────
@@ -478,10 +482,46 @@ We run fully on AWS with a large Kubernetes cluster and need someone who can own
 ]
 
 // ─────────────────────────────────────────────
+// LANGUAGE HELPERS
+// ─────────────────────────────────────────────
+
+/** Renders a dictionary string with one highlighted value in place of {x}. */
+function Rich({ text, children }: { text: string; children: React.ReactNode }) {
+    const [before, after = ""] = text.split("{x}")
+    return <>{before}{children}{after}</>
+}
+
+// Own keys only — labels can come from a shared link
+const lookup = (map: Record<string, string>, key: string): string =>
+    Object.hasOwn(map, key) ? map[key] : key
+
+/**
+ * The headline and one-line verdict in the page language. analyze() writes them in
+ * English; the translated pages rebuild the same sentences from the numbers instead.
+ */
+function localizePersona(r: AnalysisResult, t: AnalyzerStrings): { label: string; desc: string } {
+    const p = t.persona
+    const tier = r.score >= 80 ? "top" : r.score >= 70 ? "strong" : r.score >= 45 ? "emerging" : "upskilling"
+    const label = (name: string) => lookup(t.skillLabels, name)
+    const matched = r.matched.slice(0, 2).map(label).join(p.joiner)
+    const missing = r.missing.filter(m => m.priority === "high").slice(0, 2).map(m => label(m.label)).join(p.joiner)
+    const exp = r.yearsRequired > 0
+        ? fmt(r.yearsOnCV === 0 ? p.expNotStated : r.yearsOnCV >= r.yearsRequired ? p.expMeets : p.expBelow, { r: r.yearsRequired, c: r.yearsOnCV })
+        : ""
+    const desc = p.intro[tier]
+        + (matched ? fmt(p.matched[tier], { x: matched }) : "")
+        + (missing ? fmt(p.missing[tier], { x: missing }) : "")
+        + (tier === "upskilling" ? (exp || p.fallback) : exp)
+    return { label: p.labels[tier], desc: desc.trim() }
+}
+
+// ─────────────────────────────────────────────
 // COMPONENT
 // ─────────────────────────────────────────────
 
-export default function CVAnalyzer() {
+// `t` holds every visible string in the page language (src/lib/i18n). The status
+// fields below keep short English tokens internally and are translated when shown.
+export default function CVAnalyzer({ locale, t, coffee }: { locale: Locale; t: AnalyzerStrings; coffee: Dictionary["coffee"] }) {
     const [cvText, setCvText] = useState("")
     const [jobText, setJobText] = useState("")
     // "Where and how to add it" — only for a live analysis, never for a shared link (no CV text)
@@ -521,6 +561,28 @@ export default function CVAnalyzer() {
         return decoded
     }, [hash])
     const results = analysisResults ?? sharedResults
+    const persona = useMemo(
+        () => !results ? null : locale === "en" ? { label: results.persona.label, desc: results.persona.desc } : localizePersona(results, t),
+        [results, locale, t],
+    )
+    const skillLabel = (label: string) => lookup(t.skillLabels, label)
+    // The CV quality check looks for English verbs and phrases, so it only runs on a CV
+    // written in English; on any other CV it reported "Weak" whatever the content.
+    const audit = (text: string) => looksEnglish(text) ? auditCV(text) : null
+
+    // Status tokens → text in the page language
+    const statusText = (status: string): string => {
+        if (status === "✓ CV text loaded") return t.cvTextLoaded
+        if (status === "✓ Job post fetched") return t.fetched
+        if (status === "✓ Job description ready") return t.jobReady
+        if (status.startsWith("File too large")) return t.pdfTooLarge
+        if (status.startsWith("Error")) return t.pdfError
+        const sample = /^✓ (.+) sample loaded$/.exec(status)
+        if (sample) return fmt(t.sampleLoaded, { role: sample[1] })
+        const file = /^✓ (.+) loaded$/.exec(status)
+        if (file) return fmt(t.fileLoaded, { name: file[1] })
+        return status.replace("✓ ", "")
+    }
 
     // Interview resources for the detected company. Results are keyed by company, so
     // "loading" is derived (no synchronous setState) and a stale response is ignored.
@@ -570,7 +632,7 @@ export default function CVAnalyzer() {
             const data = await res.json()
             if (!res.ok || !data.text) throw new Error(data.error || "No text extracted")
             setCvText(data.text)
-            setCvAudit(auditCV(data.text))
+            setCvAudit(audit(data.text))
             setPdfStatus(`✓ ${file.name} loaded`)
             track("cv_upload", { method: "pdf" })
         } catch {
@@ -618,7 +680,7 @@ export default function CVAnalyzer() {
 
     const doAnalyze = async () => {
         if (!cvText || !cvText.trim()) {
-            setError("Upload a PDF or paste your CV text first.")
+            setError(t.errNoCv)
             return
         }
 
@@ -662,7 +724,7 @@ export default function CVAnalyzer() {
         }
 
         if (!effectiveJobText) {
-            setError("Add a job description or URL.")
+            setError(t.errNoJob)
             setIsLoading(false)
             return
         }
@@ -671,7 +733,7 @@ export default function CVAnalyzer() {
         try {
             result = analyze(cvText, effectiveJobText)
             setResults(result)
-            const nextSuggestions = buildSuggestions(cvText, effectiveJobText, result.missing)
+            const nextSuggestions = buildSuggestions(cvText, effectiveJobText, result.missing, 5, locale === "en" ? undefined : t.where)
             setSuggestions(nextSuggestions)
             // Score and coarse counts only — never CV or job text
             track("analysis_complete", {
@@ -688,7 +750,7 @@ export default function CVAnalyzer() {
                 window.dispatchEvent(new HashChangeEvent("hashchange"))
             }
         } catch {
-            setError("Analysis failed — please try again.")
+            setError(t.errFailed)
             setIsLoading(false)
             return
         }
@@ -698,10 +760,10 @@ export default function CVAnalyzer() {
         try {
             const entry = {
                 score: result.score,
-                label: result.persona.label,
+                label: locale === "en" ? result.persona.label : localizePersona(result, t).label,
                 matched: result.matched.length,
                 missing: result.missing.length,
-                date: new Date().toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }),
+                date: new Date().toLocaleString(locale === "en" ? "en-GB" : locale, { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }),
             }
             saveHistory([entry, ...history].slice(0, 3))
         } catch { /* ignore */ }
@@ -768,8 +830,8 @@ export default function CVAnalyzer() {
                 aria-expanded={showSamples}
                 className="-my-2 inline-flex min-h-11 items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
             >
-                No job post handy?
-                <span className="font-medium text-primary">Try a sample job</span>
+                {t.noJob}
+                <span className="font-medium text-primary">{t.trySample}</span>
                 <ChevronDown className={cn("size-3.5 text-primary transition-transform", showSamples && "rotate-180")} />
             </button>
             {showSamples && (
@@ -785,6 +847,7 @@ export default function CVAnalyzer() {
                             {job.label}
                         </button>
                     ))}
+                    {t.samplesNote && <p className="w-full text-xs text-muted-foreground">{t.samplesNote}</p>}
                 </div>
             )}
         </div>
@@ -799,23 +862,23 @@ export default function CVAnalyzer() {
                 {/* ── Input panel ─────────────────────────────────────────── */}
                 <Panel className="p-5 sm:p-6 lg:sticky lg:top-20">
                     <div className="mb-6">
-                        <h2 className="text-base font-semibold tracking-tight text-foreground">Analyze a match</h2>
-                        <p className="mt-1 text-[13px] text-muted-foreground">Add your CV and a job post. Results appear instantly.</p>
+                        <h2 className="text-base font-semibold tracking-tight text-foreground">{t.title}</h2>
+                        <p className="mt-1 text-[13px] text-muted-foreground">{t.subtitle}</p>
                     </div>
 
                     <div className="space-y-6">
                         {/* Step 1 — CV */}
                         <div className="space-y-3">
-                            <StepLabel n={1}>Your CV</StepLabel>
+                            <StepLabel n={1}>{t.step1}</StepLabel>
 
                             {!cvText || showCvPaste ? (
                                 showCvPaste ? (
                                     <textarea
-                                        placeholder="Paste the full text of your CV…"
-                                        aria-label="CV text"
+                                        placeholder={t.cvPlaceholder}
+                                        aria-label={t.cvAria}
                                         className={cn(inputClass, "h-44 resize-none py-2.5 leading-relaxed [field-sizing:fixed]")}
                                         value={cvText}
-                                        onChange={(e) => { setCvText(e.target.value); setPdfStatus("✓ CV text loaded"); if (e.target.value.length > 100) setCvAudit(auditCV(e.target.value)) }}
+                                        onChange={(e) => { setCvText(e.target.value); setPdfStatus("✓ CV text loaded"); if (e.target.value.length > 100) setCvAudit(audit(e.target.value)) }}
                                         autoFocus
                                     />
                                 ) : (
@@ -824,14 +887,14 @@ export default function CVAnalyzer() {
                                             <CloudUpload className="size-4.5" />
                                         </span>
                                         <div>
-                                            <p className="text-sm font-medium text-foreground">Drop your PDF or <span className="text-primary">browse</span></p>
-                                            <p className="mt-0.5 text-xs text-muted-foreground">PDF up to 5 MB · never stored</p>
+                                            <p className="text-sm font-medium text-foreground">{t.dropA} <span className="text-primary">{t.dropB}</span></p>
+                                            <p className="mt-0.5 text-xs text-muted-foreground">{t.dropHint}</p>
                                         </div>
                                         <input
                                             ref={fileInputRef}
                                             type="file"
                                             accept=".pdf"
-                                            aria-label="Upload PDF CV"
+                                            aria-label={t.uploadAria}
                                             className="absolute inset-0 cursor-pointer opacity-0"
                                             onChange={processPdf}
                                         />
@@ -844,21 +907,21 @@ export default function CVAnalyzer() {
                                             <FileText className="size-4" />
                                         </span>
                                         <div className="min-w-0">
-                                            <p className="truncate text-sm font-medium text-foreground">{pdfStatus.replace("✓ ", "") || "CV loaded"}</p>
-                                            <p className="text-xs text-muted-foreground">{cvText.trim().split(/\s+/).length.toLocaleString()} words extracted</p>
+                                            <p className="truncate text-sm font-medium text-foreground">{statusText(pdfStatus) || t.cvLoaded}</p>
+                                            <p className="text-xs text-muted-foreground">{fmt(t.wordsExtracted, { n: countWords(cvText).toLocaleString() })}</p>
                                         </div>
                                     </div>
                                     <button
                                         onClick={resetCV}
                                         className="-my-3 -mr-3 inline-flex min-h-11 shrink-0 items-center px-3 py-3 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
                                     >
-                                        Replace
+                                        {t.replace}
                                     </button>
                                 </div>
                             )}
                             {pdfStatus && !cvText && (!showCvPaste || pdfStatus.startsWith("Error") || pdfStatus.startsWith("File too large")) && (
                                 <p className={cn("text-xs", pdfStatus.startsWith("Error") || pdfStatus.startsWith("File too large") ? "text-danger" : "text-muted-foreground")} aria-live="polite">
-                                    {pdfStatus === "Reading PDF..." ? <span className="inline-flex items-center gap-1.5"><LoaderCircle className="size-3 animate-spin" />Reading PDF…</span> : pdfStatus}
+                                    {pdfStatus === "Reading PDF..." ? <span className="inline-flex items-center gap-1.5"><LoaderCircle className="size-3 animate-spin" />{t.readingPdf}</span> : statusText(pdfStatus)}
                                 </p>
                             )}
                             {/* Secondary path: most people upload a PDF, so pasting stays a quiet link */}
@@ -868,14 +931,14 @@ export default function CVAnalyzer() {
                                     onClick={() => setShowCvPaste(v => !v)}
                                     className="-my-2 inline-flex min-h-11 items-center text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
                                 >
-                                    {showCvPaste ? "Upload a PDF instead" : "No PDF? Paste the text"}
+                                    {showCvPaste ? t.usePdf : t.usePaste}
                                 </button>
                             )}
                         </div>
 
                         {/* Step 2 — Job description */}
                         <div className="space-y-3">
-                            <StepLabel n={2}>Job description</StepLabel>
+                            <StepLabel n={2}>{t.step2}</StepLabel>
                             {sampleRole ? (
                                 <div className="flex items-center justify-between gap-3 rounded-xl border border-primary/25 bg-primary/[0.06] px-3.5 py-3">
                                     <div className="flex min-w-0 items-center gap-3">
@@ -883,8 +946,8 @@ export default function CVAnalyzer() {
                                             <Briefcase className="size-4" />
                                         </span>
                                         <div className="min-w-0">
-                                            <p className="truncate text-sm font-medium text-foreground">Sample job: {sampleRole}</p>
-                                            <p className="text-xs text-muted-foreground">A demo posting — replace it with a real job any time</p>
+                                            <p className="truncate text-sm font-medium text-foreground">{fmt(t.sampleJob, { role: sampleRole })}</p>
+                                            <p className="text-xs text-muted-foreground">{t.sampleNote}</p>
                                         </div>
                                     </div>
                                     <button
@@ -892,13 +955,13 @@ export default function CVAnalyzer() {
                                         onClick={resetForNewJob}
                                         className="-my-3 -mr-3 inline-flex min-h-11 shrink-0 items-center px-3 py-3 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
                                     >
-                                        Remove
+                                        {t.remove}
                                     </button>
                                 </div>
                             ) : (
                             <>
                             <SegmentedControl
-                                label="Job description input"
+                                label={t.jobInputAria}
                                 value={jobInputMode}
                                 onChange={(mode) => {
                                     setJobInputMode(mode)
@@ -908,8 +971,8 @@ export default function CVAnalyzer() {
                                     else { setJobInput(""); setJobUrl("") }
                                 }}
                                 options={[
-                                    { value: "url", label: "Job link", icon: <Link2 /> },
-                                    { value: "paste", label: "Paste text", icon: <ClipboardPaste /> },
+                                    { value: "url", label: t.jobLink, icon: <Link2 /> },
+                                    { value: "paste", label: t.pasteText, icon: <ClipboardPaste /> },
                                 ]}
                             />
 
@@ -919,7 +982,7 @@ export default function CVAnalyzer() {
                                         <Link2 className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                                         <input
                                             type="url"
-                                            aria-label="Job description URL"
+                                            aria-label={t.urlAria}
                                             aria-invalid={!!jobInput && !jobInput.trim().startsWith("http")}
                                             className={cn(
                                                 inputClass,
@@ -930,7 +993,7 @@ export default function CVAnalyzer() {
                                             value={jobInput}
                                             onChange={(e) => { setJobInput(e.target.value); setJobText(""); setFetchStatus(""); setScrapedCompanyName(""); if (e.target.value.startsWith("http")) setJobUrl(e.target.value); }}
                                             onKeyDown={(e) => e.key === "Enter" && e.currentTarget.value.trim().startsWith("http") && fetchJobPost()}
-                                            onBlur={() => jobInput && !jobInput.trim().startsWith("http") && setError("Please paste a valid job URL (must start with https://)")}
+                                            onBlur={() => jobInput && !jobInput.trim().startsWith("http") && setError(t.urlBlurError)}
                                             onFocus={() => setError("")}
                                         />
                                         {fetchStatus.startsWith("✓") && (
@@ -938,17 +1001,17 @@ export default function CVAnalyzer() {
                                         )}
                                     </div>
                                     {jobInput && !jobInput.trim().startsWith("http") ? (
-                                        <p role="alert" className="text-xs text-danger">Enter a full link starting with https://</p>
+                                        <p role="alert" className="text-xs text-danger">{t.urlInvalid}</p>
                                     ) : !fetchStatus && (
-                                        <p className="text-xs text-muted-foreground">Works with LinkedIn, Indeed, Glassdoor and most careers pages.</p>
+                                        <p className="text-xs text-muted-foreground">{t.urlHint}</p>
                                     )}
                                     {fetchStatus && (
                                         <p className={cn("text-xs", fetchStatus.startsWith("✓") ? "text-success" : fetchStatus.includes("paste") ? "text-warning" : "text-muted-foreground")} aria-live="polite">
                                             {fetchStatus.includes("paste")
-                                                ? "This page couldn't be read automatically — switch to Paste text."
+                                                ? t.cantRead
                                                 : fetchStatus.startsWith("Fetching")
-                                                ? <span className="inline-flex items-center gap-1.5"><LoaderCircle className="size-3 animate-spin" />Fetching job post…</span>
-                                                : fetchStatus.replace("✓ ", "")}
+                                                ? <span className="inline-flex items-center gap-1.5"><LoaderCircle className="size-3 animate-spin" />{t.fetching}</span>
+                                                : statusText(fetchStatus)}
                                         </p>
                                     )}
                                     {!jobText && !jobInput && sampleChooser}
@@ -956,15 +1019,15 @@ export default function CVAnalyzer() {
                             ) : (
                                 <div className="space-y-3">
                                     <textarea
-                                        placeholder="Paste the full job description…"
-                                        aria-label="Job description text"
+                                        placeholder={t.jobPlaceholder}
+                                        aria-label={t.jobAria}
                                         className={cn(inputClass, "h-44 resize-none py-2.5 leading-relaxed [field-sizing:fixed]")}
                                         value={jobText}
                                         onChange={(e) => { setJobText(e.target.value); setFetchStatus(e.target.value.length > 50 ? "✓ Job description ready" : ""); }}
                                         autoFocus
                                     />
                                     {jobText.length > 50 && (
-                                        <p className="inline-flex items-center gap-1.5 text-xs text-success"><Check className="size-3.5" />{fetchStatus.replace("✓ ", "") || "Job description ready"}</p>
+                                        <p className="inline-flex items-center gap-1.5 text-xs text-success"><Check className="size-3.5" />{statusText(fetchStatus) || t.jobReady}</p>
                                     )}
                                     {!jobText && sampleChooser}
                                 </div>
@@ -988,7 +1051,7 @@ export default function CVAnalyzer() {
                                     className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-border bg-foreground/[0.03] text-sm font-semibold text-foreground transition-colors hover:bg-foreground/[0.06]"
                                 >
                                     <RotateCcw className="size-4" />
-                                    Try another job
+                                    {t.tryAnother}
                                 </button>
                             ) : (
                                 <button
@@ -998,14 +1061,14 @@ export default function CVAnalyzer() {
                                     className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-[0_8px_24px_-8px_color-mix(in_oklch,var(--primary)_55%,transparent)] transition-all hover:brightness-110 active:translate-y-px disabled:cursor-not-allowed disabled:bg-foreground/[0.06] disabled:text-muted-foreground disabled:shadow-none"
                                 >
                                     {isLoading ? (
-                                        <><LoaderCircle className="size-4 animate-spin" />Analyzing…</>
+                                        <><LoaderCircle className="size-4 animate-spin" />{t.analyzing}</>
                                     ) : (
-                                        <>{results ? "Re-analyze" : "Analyze match"}<ArrowRight className="size-4 transition-transform group-enabled:group-hover:translate-x-0.5" /></>
+                                        <>{results ? t.reanalyze : t.analyze}<ArrowRight className="size-4 transition-transform group-enabled:group-hover:translate-x-0.5" /></>
                                     )}
                                 </button>
                             )}
                             <p className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
-                                <Lock className="size-3" />Private by design — your CV is never stored.
+                                <Lock className="size-3" />{t.privateNote}
                             </p>
                         </div>
 
@@ -1013,7 +1076,7 @@ export default function CVAnalyzer() {
                         {history.length > 0 && (
                             <div className="space-y-2 border-t border-border pt-5">
                                 <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                                    <History className="size-3" />Recent scans
+                                    <History className="size-3" />{t.recent}
                                 </p>
                                 <ul className="space-y-1">
                                     {history.map((h, i) => (
@@ -1036,14 +1099,10 @@ export default function CVAnalyzer() {
                             <span className="flex size-12 items-center justify-center rounded-2xl border border-border bg-foreground/[0.03] text-primary">
                                 <ScanSearch className="size-5" />
                             </span>
-                            <h2 className="mt-5 text-lg font-semibold tracking-tight text-foreground">Your match report will appear here</h2>
-                            <p className="mt-1.5 max-w-sm text-sm text-muted-foreground text-pretty">Add your CV and a job description, then select Analyze match.</p>
+                            <h2 className="mt-5 text-lg font-semibold tracking-tight text-foreground">{t.emptyTitle}</h2>
+                            <p className="mt-1.5 max-w-sm text-sm text-muted-foreground text-pretty">{t.emptyText}</p>
                             <ul className="mt-8 grid w-full max-w-md gap-2 text-left">
-                                {[
-                                    { icon: <Gauge />, title: "Match score", text: "How closely your CV fits this specific role" },
-                                    { icon: <Target />, title: "Skill gaps", text: "Required skills missing from your CV, by priority" },
-                                    { icon: <GraduationCap />, title: "Next steps", text: "Keywords to add and free courses to close gaps" },
-                                ].map(item => (
+                                {[<Gauge key="score" />, <Target key="gaps" />, <GraduationCap key="next" />].map((icon, i) => ({ icon, ...t.emptyItems[i] })).map(item => (
                                     <li key={item.title} className="flex items-start gap-3 rounded-xl border border-border bg-foreground/[0.02] px-4 py-3">
                                         <span className="mt-0.5 text-muted-foreground [&_svg]:size-4">{item.icon}</span>
                                         <div>
@@ -1057,7 +1116,7 @@ export default function CVAnalyzer() {
                     )}
 
                     {isLoading && !results && (
-                        <div className="space-y-6 p-6 sm:p-8" aria-label="Analyzing">
+                        <div className="space-y-6 p-6 sm:p-8" aria-label={t.analyzingAria}>
                             <div className="flex items-center gap-6">
                                 <div className="size-[124px] animate-pulse rounded-full bg-foreground/[0.05]" />
                                 <div className="flex-1 space-y-3">
@@ -1075,18 +1134,18 @@ export default function CVAnalyzer() {
 
                     {results && (
                         <div className={cn("transition-opacity duration-300", isLoading && "pointer-events-none opacity-40")}>
-                            <h2 className="sr-only">Your match results</h2>
+                            <h2 className="sr-only">{t.resultsHeading}</h2>
 
                             {/* Summary */}
                             <div className="border-b border-border p-6 sm:p-8">
                                 <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-center">
-                                    <ScoreRing score={results.score} />
+                                    <ScoreRing score={results.score} label={fmt(t.scoreAria, { n: results.score })} caption={t.scoreCaption} />
                                     <div className="min-w-0 flex-1 text-center sm:text-left">
                                         <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-                                            <p className={cn("text-xl font-semibold tracking-tight", toneText(tone))}>{results.persona.label}</p>
-                                            {results.lowQuality && <Badge tone="warning">Low confidence</Badge>}
+                                            <p className={cn("text-xl font-semibold tracking-tight", toneText(tone))}>{persona?.label}</p>
+                                            {results.lowQuality && <Badge tone="warning">{t.lowConfidence}</Badge>}
                                         </div>
-                                        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground text-pretty">{results.persona.desc}</p>
+                                        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground text-pretty">{persona?.desc}</p>
                                         <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 sm:justify-start">
                                         <button
                                             type="button"
@@ -1101,7 +1160,7 @@ export default function CVAnalyzer() {
                                             }}
                                             className="-ml-1 inline-flex min-h-11 items-center gap-1.5 rounded-md px-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
                                         >
-                                            {shareCopied ? <><Check className="size-3.5 text-success" />Link copied</> : <><Share2 className="size-3.5" />Share result</>}
+                                            {shareCopied ? <><Check className="size-3.5 text-success" />{t.linkCopied}</> : <><Share2 className="size-3.5" />{t.share}</>}
                                         </button>
                                         <button
                                             type="button"
@@ -1111,9 +1170,9 @@ export default function CVAnalyzer() {
                                                 try {
                                                     const blob = await renderScoreCard({
                                                         score: results.score,
-                                                        label: results.persona.label,
-                                                        role: sampleRole ? `${sampleRole} role` : (scrapedCompanyName ? `Role at ${scrapedCompanyName}` : "Job match"),
-                                                        matched: results.matched,
+                                                        label: persona?.label ?? results.persona.label,
+                                                        role: sampleRole ? fmt(t.cardRoleSample, { role: sampleRole }) : (scrapedCompanyName ? fmt(t.cardRoleCompany, { company: scrapedCompanyName }) : t.cardRoleDefault),
+                                                        matched: results.matched.map(skillLabel),
                                                     }, getComputedStyle(document.body).fontFamily || "sans-serif")
                                                     const outcome = await shareOrDownloadCard(blob)
                                                     track("score_card", { method: outcome, score: results.score })
@@ -1126,10 +1185,10 @@ export default function CVAnalyzer() {
                                             className="inline-flex min-h-11 items-center gap-1.5 rounded-md px-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground disabled:opacity-60"
                                         >
                                             {cardState === "done"
-                                                ? <><Check className="size-3.5 text-success" />Card ready</>
+                                                ? <><Check className="size-3.5 text-success" />{t.cardReady}</>
                                                 : cardState === "working"
-                                                    ? <><LoaderCircle className="size-3.5 animate-spin" />Creating card…</>
-                                                    : <><ImageDown className="size-3.5" />Score card</>}
+                                                    ? <><LoaderCircle className="size-3.5 animate-spin" />{t.cardCreating}</>
+                                                    : <><ImageDown className="size-3.5" />{t.card}</>}
                                         </button>
                                         </div>
                                     </div>
@@ -1137,21 +1196,21 @@ export default function CVAnalyzer() {
 
                                 <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-3">
                                     <StatTile
-                                        label="Skills"
+                                        label={t.statSkills}
                                         value={<>{results.matched.length}<span className="text-muted-foreground">/{totalSkills}</span></>}
-                                        hint="skill categories matched"
+                                        hint={t.statSkillsHint}
                                     />
                                     <StatTile
-                                        label="Keywords"
+                                        label={t.statKeywords}
                                         value={<>{results.rawMatched}<span className="text-muted-foreground">/{results.rawTotal}</span></>}
-                                        hint="job keywords on your CV"
+                                        hint={t.statKeywordsHint}
                                     />
                                     <StatTile
-                                        label="Experience"
+                                        label={t.statExperience}
                                         value={results.yearsRequired > 0
-                                            ? <>{results.yearsOnCV || "—"}<span className="text-muted-foreground">/{results.yearsRequired}y</span></>
-                                            : results.yearsOnCV > 0 ? `${results.yearsOnCV}y` : "—"}
-                                        hint={results.yearsRequired > 0 ? (results.yearsOnCV >= results.yearsRequired ? "meets requirement" : results.yearsOnCV === 0 ? "not stated on CV" : "below requirement") : "no requirement stated"}
+                                            ? <>{results.yearsOnCV || "—"}<span className="text-muted-foreground">/{results.yearsRequired}{t.years}</span></>
+                                            : results.yearsOnCV > 0 ? `${results.yearsOnCV}${t.years}` : "—"}
+                                        hint={results.yearsRequired > 0 ? (results.yearsOnCV >= results.yearsRequired ? t.expMeets : results.yearsOnCV === 0 ? t.expNotStated : t.expBelow) : t.expNone}
                                         tone={results.yearsRequired > 0 ? (results.yearsOnCV >= results.yearsRequired ? "success" : "warning") : "neutral"}
                                     />
                                 </div>
@@ -1166,33 +1225,33 @@ export default function CVAnalyzer() {
                                     <p className={cn("flex items-center gap-2 text-sm font-semibold", toneText(tone))}>
                                         {tone === "success" ? <CircleCheck className="size-4" /> : tone === "warning" ? <Zap className="size-4" /> : <Target className="size-4" />}
                                         {tone === "success"
-                                            ? "Strong match — apply now"
+                                            ? t.recStrong
                                             : tone === "warning"
-                                            ? (highGaps.length > 0 ? `Competitive — close ${Math.min(highGaps.length, 2)} gap${Math.min(highGaps.length, 2) !== 1 ? "s" : ""} to stand out` : "Competitive — apply and lead with your strengths")
-                                            : "Significant gaps — build skills before applying"}
+                                            ? (highGaps.length > 0 ? fmt(Math.min(highGaps.length, 2) !== 1 ? t.recCompetitiveGaps : t.recCompetitiveGap, { n: Math.min(highGaps.length, 2) }) : t.recCompetitive)
+                                            : t.recGaps}
                                     </p>
                                     <ul className="mt-3 space-y-2 text-[13px] leading-relaxed text-foreground/80">
                                         {tone === "success" && (
                                             <>
-                                                {results.matched.length > 0 && <li className="flex gap-2"><ArrowRight className="mt-1 size-3 shrink-0 text-muted-foreground" /><span>Mention <span className="font-medium text-foreground">{results.matched.slice(0, 3).join(", ")}</span> in your cover letter.</span></li>}
-                                                {highGaps.length > 0 && <li className="flex gap-2"><ArrowRight className="mt-1 size-3 shrink-0 text-muted-foreground" /><span>Address <span className="font-medium text-foreground">{highGaps[0].label}</span> briefly — show it&apos;s in progress.</span></li>}
-                                                <li className="flex gap-2"><ArrowRight className="mt-1 size-3 shrink-0 text-muted-foreground" /><span>Apply while the role is still open.</span></li>
+                                                {results.matched.length > 0 && <li className="flex gap-2"><ArrowRight className="mt-1 size-3 shrink-0 text-muted-foreground" /><span><Rich text={t.tipMention}><span className="font-medium text-foreground">{results.matched.slice(0, 3).map(skillLabel).join(", ")}</span></Rich></span></li>}
+                                                {highGaps.length > 0 && <li className="flex gap-2"><ArrowRight className="mt-1 size-3 shrink-0 text-muted-foreground" /><span><Rich text={t.tipAddress}><span className="font-medium text-foreground">{skillLabel(highGaps[0].label)}</span></Rich></span></li>}
+                                                <li className="flex gap-2"><ArrowRight className="mt-1 size-3 shrink-0 text-muted-foreground" /><span>{t.tipApply}</span></li>
                                             </>
                                         )}
                                         {tone === "warning" && (
                                             <>
                                                 {highGaps.slice(0, 2).map(g => (
-                                                    <li key={g.key} className="flex gap-2"><ArrowRight className="mt-1 size-3 shrink-0 text-muted-foreground" /><span>Add <span className="font-medium text-foreground">{g.label}</span> to your CV — a side project counts.</span></li>
+                                                    <li key={g.key} className="flex gap-2"><ArrowRight className="mt-1 size-3 shrink-0 text-muted-foreground" /><span><Rich text={t.tipAdd}><span className="font-medium text-foreground">{skillLabel(g.label)}</span></Rich></span></li>
                                                 ))}
-                                                {results.matched.length > 0 && <li className="flex gap-2"><ArrowRight className="mt-1 size-3 shrink-0 text-muted-foreground" /><span>Lead with your strengths in <span className="font-medium text-foreground">{results.matched.slice(0, 2).join(" and ")}</span>.</span></li>}
+                                                {results.matched.length > 0 && <li className="flex gap-2"><ArrowRight className="mt-1 size-3 shrink-0 text-muted-foreground" /><span><Rich text={t.tipLead}><span className="font-medium text-foreground">{results.matched.slice(0, 2).map(skillLabel).join(t.and)}</span></Rich></span></li>}
                                             </>
                                         )}
                                         {tone === "danger" && (
                                             <>
                                                 {highGaps.slice(0, 3).map(g => (
-                                                    <li key={g.key} className="flex gap-2"><ArrowRight className="mt-1 size-3 shrink-0 text-muted-foreground" /><span>Priority: learn <span className="font-medium text-foreground">{g.label}</span> — see the courses below.</span></li>
+                                                    <li key={g.key} className="flex gap-2"><ArrowRight className="mt-1 size-3 shrink-0 text-muted-foreground" /><span><Rich text={t.tipLearn}><span className="font-medium text-foreground">{skillLabel(g.label)}</span></Rich></span></li>
                                                 ))}
-                                                <li className="flex gap-2"><ArrowRight className="mt-1 size-3 shrink-0 text-muted-foreground" /><span>Compare against a closer-fitting role with Try another job.</span></li>
+                                                <li className="flex gap-2"><ArrowRight className="mt-1 size-3 shrink-0 text-muted-foreground" /><span>{t.tipCompare}</span></li>
                                             </>
                                         )}
                                     </ul>
@@ -1206,7 +1265,7 @@ export default function CVAnalyzer() {
                                                 rel="noopener noreferrer"
                                                 className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-foreground px-3.5 text-[13px] font-semibold text-background transition-opacity hover:opacity-90"
                                             >
-                                                Open job post<ArrowUpRight className="size-3.5" />
+                                                {t.openJob}<ArrowUpRight className="size-3.5" />
                                             </a>
                                         </div>
                                     )}
@@ -1215,35 +1274,35 @@ export default function CVAnalyzer() {
                                 {results.lowQuality && (
                                     <p className="flex items-start gap-2 rounded-xl border border-warning/25 bg-warning/[0.06] px-4 py-3 text-[13px] text-warning">
                                         <TriangleAlert className="mt-0.5 size-3.5 shrink-0" />
-                                        <span>Only <strong className="font-semibold">{results.jobWordCount} words</strong> were found in the job post. Paste the full description for an accurate score.</span>
+                                        <span><Rich text={t.lowQuality}><strong className="font-semibold">{fmt(t.lowQualityWords, { n: results.jobWordCount })}</strong></Rich></span>
                                     </p>
                                 )}
 
                                 {/* Skills */}
-                                <Section icon={<ListChecks />} title="Skills" description={`${results.matched.length} of ${totalSkills} skill categories in this job appear on your CV.`}>
+                                <Section icon={<ListChecks />} title={t.skillsTitle} description={fmt(t.skillsDesc, { a: results.matched.length, b: totalSkills })}>
                                     <div className="grid gap-5 sm:grid-cols-2">
                                         <div className="space-y-2.5">
-                                            <p className="text-xs font-medium text-muted-foreground">On your CV</p>
+                                            <p className="text-xs font-medium text-muted-foreground">{t.onCv}</p>
                                             <div className="flex flex-wrap gap-1.5">
                                                 {results.matched.length > 0
-                                                    ? results.matched.map(s => <Chip key={s} tone="success"><Check className="size-3" />{s}</Chip>)
-                                                    : <p className="text-xs text-muted-foreground">No matching skill categories found.</p>}
+                                                    ? results.matched.map(s => <Chip key={s} tone="success"><Check className="size-3" />{skillLabel(s)}</Chip>)
+                                                    : <p className="text-xs text-muted-foreground">{t.noMatch}</p>}
                                             </div>
                                         </div>
                                         <div className="space-y-2.5">
-                                            <p className="text-xs font-medium text-muted-foreground">Missing</p>
+                                            <p className="text-xs font-medium text-muted-foreground">{t.missing}</p>
                                             <div className="flex flex-wrap gap-1.5">
                                                 {results.missing.length > 0
-                                                    ? results.missing.map(s => <Chip key={s.key} tone={priorityTone(s.priority)} dot>{s.label}</Chip>)
-                                                    : <p className="text-xs text-muted-foreground">No gaps — great coverage.</p>}
+                                                    ? results.missing.map(s => <Chip key={s.key} tone={priorityTone(s.priority)} dot>{skillLabel(s.label)}</Chip>)
+                                                    : <p className="text-xs text-muted-foreground">{t.noGaps}</p>}
                                             </div>
                                         </div>
                                     </div>
                                     {results.missing.length > 0 && (
                                         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                                            <span className="inline-flex items-center gap-1.5"><span className={cn("size-1.5 rounded-full", toneDot("danger"))} />High priority</span>
-                                            <span className="inline-flex items-center gap-1.5"><span className={cn("size-1.5 rounded-full", toneDot("warning"))} />Mentioned</span>
-                                            <span className="inline-flex items-center gap-1.5"><span className={cn("size-1.5 rounded-full", toneDot("neutral"))} />Nice to have</span>
+                                            <span className="inline-flex items-center gap-1.5"><span className={cn("size-1.5 rounded-full", toneDot("danger"))} />{t.legendHigh}</span>
+                                            <span className="inline-flex items-center gap-1.5"><span className={cn("size-1.5 rounded-full", toneDot("warning"))} />{t.legendMentioned}</span>
+                                            <span className="inline-flex items-center gap-1.5"><span className={cn("size-1.5 rounded-full", toneDot("neutral"))} />{t.legendNice}</span>
                                         </div>
                                     )}
                                 </Section>
@@ -1254,16 +1313,16 @@ export default function CVAnalyzer() {
                                         <Divider />
                                         <Section
                                             icon={<PencilLine />}
-                                            title="How to add the missing skills"
-                                            description="Where each gap belongs on your CV. Only add what you've really done."
+                                            title={t.sugTitle}
+                                            description={t.sugDesc}
                                         >
                                             <ol className="space-y-3">
                                                 {suggestions.map((sug) => (
                                                     <li key={sug.key} className="rounded-xl border border-border bg-foreground/[0.015] p-4">
                                                         <div className="flex items-center gap-2">
-                                                            <Chip tone={priorityTone(sug.priority)} dot>{sug.skill}</Chip>
+                                                            <Chip tone={priorityTone(sug.priority)} dot>{skillLabel(sug.skill)}</Chip>
                                                             <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                                                                {sug.priority === "high" ? "High priority" : "Mentioned in the post"}
+                                                                {sug.priority === "high" ? t.legendHigh : t.sugMentioned}
                                                             </span>
                                                         </div>
                                                         {sug.jobQuote && (
@@ -1272,14 +1331,15 @@ export default function CVAnalyzer() {
                                                             </p>
                                                         )}
                                                         <p className="mt-3 text-sm leading-relaxed text-foreground/90">{sug.where}</p>
-                                                        {/* Example on demand — keeps each card short */}
-                                                        <details className="group/ex mt-2">
+                                                        {/* Example on demand — keeps each card short. The example bullets are
+                                                            written in English only, so translated pages leave them out. */}
+                                                        {t.showExample && <details className="group/ex mt-2">
                                                             <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-1 text-[13px] font-medium text-primary [&::-webkit-details-marker]:hidden sm:min-h-0">
-                                                                Show an example bullet
+                                                                {t.showExample}
                                                                 <ChevronDown className="size-3.5 transition-transform group-open/ex:rotate-180" />
                                                             </summary>
                                                             <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">{sug.example}</p>
-                                                        </details>
+                                                        </details>}
                                                     </li>
                                                 ))}
                                             </ol>
@@ -1293,8 +1353,8 @@ export default function CVAnalyzer() {
                                         <Divider />
                                         <Section
                                             icon={<FileSearch />}
-                                            title="Keywords recruiters search for"
-                                            description="These terms appear in the job post but not on your CV. Add the ones that reflect your real experience."
+                                            title={t.kwTitle}
+                                            description={t.kwDesc}
                                             action={
                                                 <button
                                                     type="button"
@@ -1306,7 +1366,7 @@ export default function CVAnalyzer() {
                                                     }}
                                                     className="-m-2 inline-flex min-h-11 shrink-0 items-center gap-1.5 p-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
                                                 >
-                                                    {keywordsCopied ? <><Check className="size-3.5 text-success" />Copied</> : <><Copy className="size-3.5" />Copy all</>}
+                                                    {keywordsCopied ? <><Check className="size-3.5 text-success" />{t.copied}</> : <><Copy className="size-3.5" />{t.copyAll}</>}
                                                 </button>
                                             }
                                         >
@@ -1326,7 +1386,7 @@ export default function CVAnalyzer() {
                                 {results.missing.some(m => resourceFor(m.key)) && (
                                     <>
                                         <Divider />
-                                        <Section icon={<GraduationCap />} title="Recommended training" description="Courses and guides for your gaps, highest priority first.">
+                                        <Section icon={<GraduationCap />} title={t.trainTitle} description={t.trainDesc}>
                                             <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border">
                                                 {(() => {
                                                     const highPriorityGaps = results.missing.filter(m => m.priority === "high" && resourceFor(m.key)).length
@@ -1349,9 +1409,9 @@ export default function CVAnalyzer() {
                                                                         <span className={cn("size-1.5 shrink-0 rounded-full", toneDot(priorityTone(m.priority)))} />
                                                                         <div className="min-w-0 flex-1">
                                                                             <p className="truncate text-sm font-medium text-foreground">{resource.label}</p>
-                                                                            <p className="truncate text-xs text-muted-foreground">{m.label} · {resource.platform} · {resource.duration}</p>
+                                                                            <p className="truncate text-xs text-muted-foreground">{skillLabel(m.label)} · {resource.platform} · {resource.duration}</p>
                                                                         </div>
-                                                                        {resource.free && <Badge tone="accent">Free</Badge>}
+                                                                        {resource.free && <Badge tone="accent">{t.free}</Badge>}
                                                                         <ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" />
                                                                     </a>
                                                                 </li>
@@ -1369,11 +1429,11 @@ export default function CVAnalyzer() {
                                         <Divider />
                                         <Section
                                             icon={<ShieldCheck />}
-                                            title="CV quality check"
-                                            description="What a hiring manager notices in the first few seconds — independent of this job."
+                                            title={t.auditTitle}
+                                            description={t.auditDesc}
                                             action={
                                                 <Badge tone={cvAudit.grade === "strong" ? "success" : cvAudit.grade === "average" ? "warning" : "danger"}>
-                                                    {cvAudit.grade === "strong" ? "Strong" : cvAudit.grade === "average" ? "Needs work" : "Weak"}
+                                                    {cvAudit.grade === "strong" ? t.gradeStrong : cvAudit.grade === "average" ? t.gradeAverage : t.gradeWeak}
                                                 </Badge>
                                             }
                                         >
@@ -1386,9 +1446,9 @@ export default function CVAnalyzer() {
                                                                 : cat.status === "warn"
                                                                 ? <CircleAlert className="size-4 shrink-0 text-warning" />
                                                                 : <CircleX className="size-4 shrink-0 text-danger" />}
-                                                            <span className="text-sm font-medium text-foreground">{cat.label}</span>
+                                                            <span className="text-sm font-medium text-foreground">{Object.hasOwn(t.auditLabels, cat.key) ? t.auditLabels[cat.key] : cat.label}</span>
                                                             <span className="ml-auto text-xs text-muted-foreground">
-                                                                {cat.status === "good" ? "Looks good" : cat.status === "warn" ? "Could be stronger" : "Missing"}
+                                                                {cat.status === "good" ? t.statusGood : cat.status === "warn" ? t.statusWarn : t.statusMissing}
                                                             </span>
                                                         </div>
                                                         {cat.status !== "good" && cat.missing.length > 0 && (
@@ -1407,17 +1467,17 @@ export default function CVAnalyzer() {
                                 {(company || culture.length > 0) && (
                                     <>
                                         <Divider />
-                                        <Section icon={<Building2 />} title={company ? `About ${company}` : "Company signals"} description="Culture signals from the job post and where to research the interview.">
+                                        <Section icon={<Building2 />} title={company ? fmt(t.aboutCompany, { company }) : t.companySignals} description={t.companyDesc}>
                                             {culture.length > 0 && (
                                                 <div className="flex flex-wrap gap-1.5">
-                                                    {culture.map(({ label }) => <Chip key={label} tone="accent">{label}</Chip>)}
+                                                    {culture.map(({ label }) => <Chip key={label} tone="accent">{lookup(t.cultureLabels, label)}</Chip>)}
                                                 </div>
                                             )}
                                             {company && (
                                                 <div className="space-y-2">
-                                                    <p className="text-xs font-medium text-muted-foreground">Interview research</p>
+                                                    <p className="text-xs font-medium text-muted-foreground">{t.interviewResearch}</p>
                                                     {interviewLoading && (
-                                                        <p className="inline-flex items-center gap-1.5 text-xs text-muted-foreground"><LoaderCircle className="size-3 animate-spin" />Searching the web…</p>
+                                                        <p className="inline-flex items-center gap-1.5 text-xs text-muted-foreground"><LoaderCircle className="size-3 animate-spin" />{t.searching}</p>
                                                     )}
                                                     {!interviewLoading && interviewResults.length === 0 && (
                                                         <div className="flex flex-wrap gap-2">
@@ -1451,8 +1511,8 @@ export default function CVAnalyzer() {
 
                             {/* Feedback + optional coffee */}
                             <div className="space-y-5 border-t border-border bg-inset p-6 sm:px-8">
-                                <FeedbackRating />
-                                <CoffeeLink where="report" variant="card" />
+                                <FeedbackRating t={t} />
+                                <CoffeeLink where="report" variant="card" t={coffee} />
                             </div>
                         </div>
                     )}

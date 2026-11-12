@@ -162,8 +162,8 @@ For each finding:
 - End with **Estimated Lighthouse Performance score: X/100**`,
         context: () => [
             `## cv-analyzer.tsx\n${readFile("src/components/features/cv-analyzer.tsx")}`,
-            `## page.tsx\n${readFile("src/app/page.tsx")}`,
-            `## layout.tsx\n${readFile("src/app/layout.tsx")}`,
+            `## page.tsx\n${readFile("src/components/home-page.tsx")}`,
+            `## layout.tsx\n${readFile("src/app/(en)/layout.tsx") + "\n" + readFile("src/components/root-shell.tsx")}`,
             `## next.config.ts\n${readFile("next.config.ts")}`,
             `## package.json\n${readFile("package.json")}`,
         ].join("\n\n"),
@@ -209,8 +209,8 @@ For each finding:
 - Reference the exact component and interaction scenario`,
         context: () => [
             `## cv-analyzer.tsx\n${readFile("src/components/features/cv-analyzer.tsx")}`,
-            `## page.tsx\n${readFile("src/app/page.tsx")}`,
-            `## layout.tsx\n${readFile("src/app/layout.tsx")}`,
+            `## page.tsx\n${readFile("src/components/home-page.tsx")}`,
+            `## layout.tsx\n${readFile("src/app/(en)/layout.tsx") + "\n" + readFile("src/components/root-shell.tsx")}`,
             `## globals.css\n${readFile("src/app/globals.css")}`,
         ].join("\n\n"),
     },
@@ -335,8 +335,8 @@ Rate each finding and suggestion:
 End with a **Top 3 highest-ROI improvements** to ship next.`,
         context: () => [
             `## cv-analyzer.tsx\n${readFile("src/components/features/cv-analyzer.tsx")}`,
-            `## page.tsx\n${readFile("src/app/page.tsx")}`,
-            `## layout.tsx\n${readFile("src/app/layout.tsx")}`,
+            `## page.tsx\n${readFile("src/components/home-page.tsx")}`,
+            `## layout.tsx\n${readFile("src/app/(en)/layout.tsx") + "\n" + readFile("src/components/root-shell.tsx")}`,
         ].join("\n\n"),
     },
 
@@ -375,8 +375,8 @@ Rate each finding:
 
 End with **3 concrete copy changes** you'd make today.`,
         context: () => [
-            `## layout.tsx\n${readFile("src/app/layout.tsx")}`,
-            `## page.tsx\n${readFile("src/app/page.tsx")}`,
+            `## layout.tsx\n${readFile("src/app/(en)/layout.tsx") + "\n" + readFile("src/components/root-shell.tsx")}`,
+            `## page.tsx\n${readFile("src/components/home-page.tsx")}`,
         ].join("\n\n"),
     },
 
@@ -416,8 +416,8 @@ Rate each finding:
 
 End with **Top 3 SEO quick wins** with estimated impact.`,
         context: () => [
-            `## layout.tsx\n${readFile("src/app/layout.tsx")}`,
-            `## page.tsx\n${readFile("src/app/page.tsx")}`,
+            `## layout.tsx\n${readFile("src/app/(en)/layout.tsx") + "\n" + readFile("src/components/root-shell.tsx")}`,
+            `## page.tsx\n${readFile("src/components/home-page.tsx")}`,
             `## robots.ts\n${readFile("src/app/robots.ts")}`,
             `## sitemap.ts\n${readFile("src/app/sitemap.ts")}`,
         ].join("\n\n"),

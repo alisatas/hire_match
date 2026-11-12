@@ -3,7 +3,7 @@ export const SITE_URL = "https://cvxray.com";
 // Bump when public page content changes — used as <lastmod> in the sitemap.
 // A fixed date is deliberate: `new Date()` makes every crawl look "just modified",
 // which teaches search engines to ignore the field.
-export const CONTENT_UPDATED = "2026-11-11";
+export const CONTENT_UPDATED = "2026-11-12";
 
 /** Serialise JSON-LD for an inline <script>, escaping "<" so content can never close the tag. */
 export function jsonLdScript(data: unknown): string {
