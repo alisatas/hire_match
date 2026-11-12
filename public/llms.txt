@@ -59,6 +59,8 @@ The score is a transparent weighted comparison, not a language-model opinion:
 - [Product manager resume keywords](https://cvxray.com/resume-keywords/product-manager): roadmap, discovery, metrics, stakeholder management
 - [DevOps engineer resume keywords](https://cvxray.com/resume-keywords/devops-engineer): Kubernetes, Terraform, AWS, CI/CD, monitoring
 - [UX designer resume keywords](https://cvxray.com/resume-keywords/ux-designer): Figma, user research, prototyping, usability testing
+- [Registered nurse resume keywords](https://cvxray.com/resume-keywords/registered-nurse): patient care, EHR, medication administration, infection control, BLS
+- [Logistics coordinator resume keywords](https://cvxray.com/resume-keywords/logistics-coordinator): supply chain management, inventory, WMS, freight, procurement
 
 ## Guides
 

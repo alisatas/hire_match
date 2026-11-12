@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { analyze, yearsFromDateRanges } from "@/lib/analyze";
+import { getRole } from "@/lib/roles";
 import { CHEF_CV, FRONTEND_CV, FRONTEND_JOB, RECRUITER_CV, RECRUITER_JOB, SALES_CV, SALES_JOB } from "./fixtures";
 
 describe("match score calibration", () => {
@@ -247,5 +248,17 @@ Own incident triage and bug triage, manage access control lists (ACLs), split wo
     expect(keys).not.toContain("Clinical / Patient Care");
     expect(keys).not.toContain("logistics");
     expect(keys).not.toContain("Supply Chain & Logistics");
+  });
+
+  // The nurse and logistics role guides promise keywords the analyzer recognises.
+  it.each([
+    ["registered-nurse", "healthcare"],
+    ["logistics-coordinator", "logistics"],
+  ])("detects the %s guide's keywords as the %s skill group", (slug, key) => {
+    const role = getRole(slug);
+    expect(role).toBeDefined();
+    const job = `${role!.name}\nRequirements: ${role!.groups.flatMap(g => g.keywords).join(", ")}.`;
+    const r = analyze(FRONTEND_CV, job);
+    expect(r.missing.map(m => m.key)).toContain(key);
   });
 });

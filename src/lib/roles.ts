@@ -400,6 +400,57 @@ export const ROLES: RoleGuide[] = [
       { q: "Should a UX designer's resume be visually designed?", a: "Keep it clean and readable rather than elaborate. Text inside images or complex multi-column layouts is often lost when a PDF is parsed, so the keywords never reach the recruiter's search." },
     ],
   },
+  // Healthcare and logistics: the keyword lists use the same wording the scoring engine
+  // detects (SKILL_GROUPS.healthcare / .logistics in analyze.ts), so a CV written from
+  // these guides is recognised by the analyzer.
+  {
+    slug: "registered-nurse",
+    name: "Registered Nurse",
+    alsoCalled: ["Staff Nurse", "RN", "Ward Nurse", "Clinical Nurse"],
+    metaDescription:
+      "Top registered nurse resume keywords: patient care, EHR, medication administration, infection control, BLS. Check your CV against any job post, free.",
+    intro:
+      "Nursing postings are written around a setting and a set of clinical duties: the unit, the patient group, the records system, the certifications. Hospital recruiters search applicant systems for those exact terms, and a CV that says \"looked after patients\" where the posting says \"patient care\" and \"medication administration\" can be passed over despite years on the ward.",
+    groups: [
+      { title: "Clinical care", keywords: ["Patient care", "Medication administration", "Vital signs", "Wound care", "Care plans", "Patient assessment", "IV therapy", "Patient education"] },
+      { title: "Records & compliance", keywords: ["Electronic health records (EHR)", "Epic EMR", "Clinical documentation", "HIPAA", "Infection control", "Patient safety", "Care coordination"] },
+      { title: "Licences & certifications", keywords: ["RN licence", "BSN", "Basic Life Support (BLS)", "Advanced Cardiac Life Support", "PALS", "NCLEX-RN"] },
+      { title: "Settings & teamwork", keywords: ["Acute care", "Med-surg", "ICU", "Emergency department", "Discharge planning", "Interdisciplinary team", "Precepting", "Charge nurse"] },
+    ],
+    tips: [
+      { title: "State the unit, the ratio and the patient group", text: "\"Med-surg staff nurse on a 32-bed unit, 1:5 ratio\" tells a nurse manager in one line what \"experienced RN\" never does. Setting and caseload are what they screen for first." },
+      { title: "Write certifications out in full, with the abbreviation", text: "\"Basic Life Support (BLS)\" matches a search for either form. Add the issuing body and the expiry date — an expired certificate is a common reason for rejection." },
+      { title: "Name the records system", text: "Postings often ask for a specific EHR such as Epic or Cerner. If you have charted in it, name it next to \"clinical documentation\" rather than writing \"computer skills\"." },
+    ],
+    faqs: [
+      { q: "What keywords should a registered nurse put on a resume?", a: "Patient care, medication administration, vital signs, wound care, care plans and clinical documentation cover the duties most postings list. Add the records system you have used (electronic health records, Epic), compliance terms (HIPAA, infection control) and your licence and certifications — RN, BLS and any speciality ones such as ACLS or PALS." },
+      { q: "Should a nurse resume list every certification?", a: "List the ones that are current and the ones the posting asks for, each with its expiry date. Put licence and certifications near the top: for nursing roles they are a pass-or-fail requirement, not a detail." },
+    ],
+  },
+  {
+    slug: "logistics-coordinator",
+    name: "Logistics Coordinator",
+    alsoCalled: ["Supply Chain Coordinator", "Logistics Specialist", "Supply Chain Analyst", "Transport Planner"],
+    metaDescription:
+      "Top logistics coordinator resume keywords: supply chain management, inventory, WMS, freight, procurement. Check your CV against any job post, free.",
+    intro:
+      "Logistics and supply chain postings read like a map of the operation: which flows you will run (inbound, warehouse, transport), which systems (an ERP, a WMS, a TMS) and which numbers you will be judged on. Recruiters look for the same systems and the same metrics on your CV, so naming them — with a volume or a cost figure — does most of the work.",
+    groups: [
+      { title: "Planning & inventory", keywords: ["Supply chain management", "Inventory management", "Demand planning", "S&OP", "Procurement", "Forecasting", "Order fulfilment"] },
+      { title: "Transport & warehousing", keywords: ["Freight", "Warehouse management", "3PL", "Fleet management", "Last-mile delivery", "Route planning", "Customs clearance", "Incoterms"] },
+      { title: "Systems", keywords: ["WMS", "SAP MM", "ERP", "TMS", "Excel", "Power BI", "EDI"] },
+      { title: "Performance & practice", keywords: ["On-time delivery (OTIF)", "Cost reduction", "KPI reporting", "Vendor management", "Carrier negotiation", "Lean", "Continuous improvement"] },
+    ],
+    tips: [
+      { title: "Put a volume on every line", text: "Shipments per week, SKUs, warehouse size, freight spend. \"Coordinated 120 outbound shipments a week across 4 carriers\" shows the scale of operation you can run." },
+      { title: "Name the system, not the category", text: "\"SAP MM\" or the WMS you used matches a posting; \"ERP software\" matches much less. Add the generic term next to it so both are found." },
+      { title: "Show the metric you moved", text: "On-time delivery, cost per shipment, stock accuracy, lead time. \"Raised OTIF from 91% to 97%\" is the sentence a logistics manager is looking for." },
+    ],
+    faqs: [
+      { q: "What keywords should a logistics coordinator put on a resume?", a: "Supply chain management, inventory management, freight, warehouse management and procurement cover most postings. Add the systems you have used (a WMS, SAP MM or another ERP, a TMS), planning terms such as demand planning and S&OP, and the metrics you were measured on — on-time delivery, cost and stock accuracy." },
+      { q: "What is the difference between a logistics and a supply chain resume?", a: "Logistics postings centre on moving and storing goods — freight, carriers, warehousing, last-mile delivery. Supply chain postings are broader and add planning and sourcing: demand planning, S&OP, procurement, supplier management. Lead with the vocabulary of the title you are applying for." },
+    ],
+  },
 ];
 
 export function getRole(slug: string): RoleGuide | undefined {
