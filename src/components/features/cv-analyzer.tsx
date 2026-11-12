@@ -555,8 +555,9 @@ export default function CVAnalyzer() {
             setCvAudit(auditCV(data.text))
             setPdfStatus(`✓ ${file.name} loaded`)
             track("cv_upload", { method: "pdf" })
-        } catch (err: unknown) {
-            console.error("PDF Read Error:", err)
+        } catch {
+            // An unreadable PDF is a user-input case, not a bug: it is shown in the UI and tracked,
+            // so it is not logged as a console error (which would raise the dev error overlay)
             setPdfStatus("Error reading PDF. Paste your CV text below.")
             setShowCvPaste(true)
             track("cv_upload_failed", { reason: "unreadable" })
