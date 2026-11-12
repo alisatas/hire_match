@@ -21,15 +21,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!post) return {};
   const path = `/blog/${post.slug}`;
   return {
-    title: post.title,
+    title: post.seoTitle ?? post.title,
     description: post.description,
     alternates: { canonical: path },
     openGraph: {
-      type: "article", siteName: "CVXray", url: path, title: post.title, description: post.description,
+      type: "article", siteName: "CVXray", url: path, title: post.seoTitle ?? post.title, description: post.description,
       publishedTime: post.published, modifiedTime: post.updated,
     },
     // Share image comes from the colocated opengraph-image.tsx (per-article card)
-    twitter: { card: "summary_large_image", title: post.title, description: post.description },
+    twitter: { card: "summary_large_image", title: post.seoTitle ?? post.title, description: post.description },
   };
 }
 

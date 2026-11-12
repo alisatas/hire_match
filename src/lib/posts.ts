@@ -10,6 +10,8 @@ export type Block =
 export interface Post {
   slug: string;
   title: string;
+  /** Shorter title for search results (Google shows ~60 chars incl. " | CVXray"); defaults to title */
+  seoTitle?: string;
   description: string;
   published: string; // ISO date
   updated: string;
@@ -22,8 +24,9 @@ export const POSTS: Post[] = [
   {
     slug: "how-ats-reads-your-cv",
     title: "How applicant tracking systems (ATS) actually read your CV",
+    seoTitle: "How ATS Software Actually Reads Your CV",
     description:
-      "What an ATS really does with your CV, why the \"75% of CVs are auto-rejected\" claim is a myth, and the formatting and keyword habits that make sure a recruiter finds you.",
+      "What an ATS really does with your CV, why \"75% of CVs are auto-rejected\" is a myth, and the formatting and keyword habits that get a recruiter to find you.",
     published: "2026-11-11",
     updated: "2026-11-11",
     minutes: 6,
@@ -154,6 +157,7 @@ export const POSTS: Post[] = [
   {
     slug: "what-is-a-good-cv-match-score",
     title: "What is a good CV match score — and what to do with yours",
+    seoTitle: "What Is a Good CV Match Score?",
     description:
       "How CV match scores are calculated, what 45%, 70% or 90% actually mean, and the next step to take at each level before you apply.",
     published: "2026-11-11",

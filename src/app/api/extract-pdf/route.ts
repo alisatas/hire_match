@@ -19,9 +19,16 @@ export async function POST(req: Request) {
     if (!Number.isFinite(declared) || declared <= 0) return fail('Length required', 411)
     if (declared > MAX_BODY_BYTES) return fail('File too large (max 5MB)', 413)
 
+    // A body that is not multipart form data is a bad request, not a server fault
+    let formData: FormData
+    try {
+        formData = await req.formData()
+    } catch {
+        return fail('Invalid upload', 400)
+    }
+
     let pdf: Awaited<ReturnType<typeof getDocumentProxy>> | null = null
     try {
-        const formData = await req.formData()
         const file = formData.get('file')
 
         if (!(file instanceof File) || file.type !== 'application/pdf') return fail('Invalid file', 400)
@@ -45,9 +52,12 @@ export async function POST(req: Request) {
         // Cap extracted text to prevent memory exhaustion from pathological PDFs
         return NextResponse.json({ text: text.trim().slice(0, 150_000) }, { headers: noStore })
     } catch (err: unknown) {
-        // Log the message only (no stack, no file content); the client gets a generic error
-        console.error('PDF extract error:', err instanceof Error ? err.message : 'unknown')
-        return fail('Failed to read PDF', 500)
+        // Past the checks above, a throw means PDF.js could not parse the document: a corrupt
+        // or hostile file, i.e. bad input (422), not a server fault. Answering 500 here filled
+        // the logs with false alarms that would hide a real incident. Message only, no stack,
+        // no file content; the client gets a generic error.
+        console.warn('PDF extract failed:', err instanceof Error ? err.message.slice(0, 200) : 'unknown')
+        return fail('Could not read this PDF', 422)
     } finally {
         await pdf?.loadingTask.destroy().catch(() => {})
     }

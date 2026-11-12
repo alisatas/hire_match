@@ -18,7 +18,14 @@ type Props = { params: Promise<{ role: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const role = getRole((await params).role);
   if (!role) return {};
-  const title = `${role.name} Resume Keywords — Skills Employers Look For`;
+  // Google shows about 60 characters of a title. The layout adds " | CVXray" (9), so the
+  // longest wording that still fits is used; long role names fell to 71–81 chars and lost
+  // the brand in search results.
+  const title = [
+    `${role.name} Resume Keywords — Skills Employers Look For`,
+    `${role.name} Resume Keywords & Skills`,
+    `${role.name} Resume Keywords`,
+  ].find((t) => t.length + 9 <= 60) ?? `${role.name} Resume Keywords`;
   const path = `/resume-keywords/${role.slug}`;
   return {
     title,

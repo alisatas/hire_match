@@ -21,7 +21,7 @@ export const ROLES: RoleGuide[] = [
     name: "AI Engineer",
     alsoCalled: ["LLM Engineer", "Generative AI Engineer", "Applied AI Engineer"],
     metaDescription:
-      "The resume keywords AI engineer job posts ask for most — LLMs, RAG, embeddings, vector databases, evals, deployment — and a free check of your own CV against any posting.",
+      "Top AI engineer resume keywords: LLMs, RAG, embeddings, vector databases, evals, deployment. Check your CV against any job post, free.",
     intro:
       "AI engineer is the fastest-growing title in tech, and its postings are unusually specific: which model APIs, which retrieval stack, how you evaluate quality, how you ship. Hiring managers screen for evidence that you have taken an LLM feature from prototype to production — not just called an API in a notebook.",
     groups: [
@@ -45,7 +45,7 @@ export const ROLES: RoleGuide[] = [
     name: "Frontend Developer",
     alsoCalled: ["Front-End Engineer", "React Developer", "UI Developer"],
     metaDescription:
-      "The resume keywords frontend developer job posts ask for most — React, TypeScript, Next.js, testing, accessibility — and a free check of your own CV against any posting.",
+      "Top frontend developer resume keywords: React, TypeScript, Next.js, testing, accessibility. Check your CV against any job post, free.",
     intro:
       "Frontend job descriptions are unusually keyword-dense: a framework, a language, a styling approach, a testing stack and a delivery process are usually all named explicitly. Recruiters and screening software look for those same terms on your CV, so naming the tools you have really used — in the words the posting uses — matters more here than in most roles.",
     groups: [
@@ -69,7 +69,7 @@ export const ROLES: RoleGuide[] = [
     name: "Backend Engineer",
     alsoCalled: ["Backend Developer", "Server-Side Engineer", "API Developer"],
     metaDescription:
-      "The resume keywords backend engineer job posts ask for most — languages, databases, cloud, containers, API design — and a free check of your own CV against any posting.",
+      "Top backend engineer resume keywords: languages, databases, cloud, containers, API design. Check your CV against any job post, free.",
     intro:
       "Backend postings describe a system as much as a person: a language, a database, a cloud provider, a deployment model. Your CV is read against that picture. The strongest backend CVs name each layer of the stack they have worked on and attach a scale or reliability number to it.",
     groups: [
@@ -93,7 +93,7 @@ export const ROLES: RoleGuide[] = [
     name: "Machine Learning Engineer",
     alsoCalled: ["ML Engineer", "MLOps Engineer", "Applied ML Engineer"],
     metaDescription:
-      "The resume keywords machine learning engineer job posts ask for most — Python, PyTorch, model training, MLOps, deployment — and a free check of your own CV against any posting.",
+      "Top machine learning engineer resume keywords: Python, PyTorch, model training, MLOps, deployment. Check your CV against any job post, free.",
     intro:
       "Machine learning engineer postings sit between data science and software engineering: they want models that are trained well and run reliably in production. CVs that show only notebooks, or only infrastructure, miss half of what is being screened for. The strongest show the full loop — data, training, evaluation, deployment, monitoring.",
     groups: [
@@ -117,7 +117,7 @@ export const ROLES: RoleGuide[] = [
     name: "Software Engineer",
     alsoCalled: ["Software Developer", "Full-Stack Engineer", "Application Developer"],
     metaDescription:
-      "The resume keywords software engineer job posts ask for most — languages, frameworks, cloud, testing, system design — and a free check of your own CV against any posting.",
+      "Top software engineer resume keywords: languages, frameworks, cloud, testing, system design. Check your CV against any job post, free.",
     intro:
       "\"Software engineer\" is the broadest title in tech, so the posting itself defines the role: one company means a Java backend, another a TypeScript full stack, another embedded C++. Generic CVs struggle here. The keywords that matter are the specific language, framework and platform in the posting — plus the engineering practices that every software team screens for.",
     groups: [
@@ -141,7 +141,7 @@ export const ROLES: RoleGuide[] = [
     name: "Data Scientist",
     alsoCalled: ["Machine Learning Engineer", "Applied Scientist", "ML Scientist"],
     metaDescription:
-      "The resume keywords data scientist job posts ask for most — Python, machine learning, statistics, SQL, deployment — and a free check of your own CV against any posting.",
+      "Top data scientist resume keywords: Python, machine learning, statistics, SQL, deployment. Check your CV against any job post, free.",
     intro:
       "Data scientist postings test two things at once: modelling depth (statistics, machine learning, experimentation) and the engineering needed to get a model used (SQL, pipelines, deployment). CVs heavy on algorithms but silent on business impact or production use are the ones that stall at screening.",
     groups: [
@@ -165,7 +165,7 @@ export const ROLES: RoleGuide[] = [
     name: "Account Executive",
     alsoCalled: ["Sales Executive", "B2B Sales Representative", "SaaS Account Executive"],
     metaDescription:
-      "The resume keywords account executive job posts ask for most — quota, pipeline, Salesforce, prospecting, B2B SaaS sales — and a free check of your own CV against any posting.",
+      "Top account executive resume keywords: quota, pipeline, Salesforce, prospecting, B2B SaaS sales. Check your CV against any job post, free.",
     intro:
       "Sales postings read like a scorecard: quota, deal size, sales cycle, CRM. Recruiters screen account executive CVs for the same things, and fast — a CV that describes duties instead of numbers, or never names the CRM, rarely makes the shortlist even when the experience is strong.",
     groups: [
@@ -189,7 +189,7 @@ export const ROLES: RoleGuide[] = [
     name: "Digital Marketing Specialist",
     alsoCalled: ["Digital Marketing Manager", "Performance Marketer", "Growth Marketer"],
     metaDescription:
-      "The resume keywords digital marketing job posts ask for most — SEO, Google Ads, content, email, analytics, marketing automation — and a free check of your own CV against any posting.",
+      "Top digital marketing resume keywords: SEO, Google Ads, content, email, analytics, marketing automation. Check your CV against any job post, free.",
     intro:
       "Digital marketing postings name channels and tools explicitly: SEO, paid search, social, email, plus the analytics and automation stack behind them. Generalist CVs that say \"managed campaigns\" without naming the channel, the budget or the result are the ones that get skipped.",
     groups: [
@@ -213,7 +213,7 @@ export const ROLES: RoleGuide[] = [
     name: "Financial Analyst",
     alsoCalled: ["FP&A Analyst", "Finance Business Partner", "Corporate Finance Analyst"],
     metaDescription:
-      "The resume keywords financial analyst job posts ask for most — financial modelling, FP&A, budgeting, forecasting, Excel, Power BI — and a free check of your own CV against any posting.",
+      "Top financial analyst resume keywords: financial modelling, FP&A, budgeting, forecasting, Excel, Power BI. Check your CV against any job post, free.",
     intro:
       "Financial analyst postings are built around a cycle — budget, forecast, close, report — and the tools used to run it. Recruiters look for the same words on your CV, along with proof that your numbers changed a decision. A CV that lists \"Excel\" without saying what was modelled, or for whom, rarely stands out.",
     groups: [
@@ -237,7 +237,7 @@ export const ROLES: RoleGuide[] = [
     name: "Project Manager",
     alsoCalled: ["IT Project Manager", "Program Manager", "Project Lead"],
     metaDescription:
-      "The resume keywords project manager job posts ask for most — planning, risk management, stakeholder management, Agile, PMP, budgets — and a free check of your own CV against any posting.",
+      "Top project manager resume keywords: planning, risk management, stakeholder management, Agile, PMP, budgets. Check your CV against any job post, free.",
     intro:
       "Project manager postings screen for three things: the methods you use, the size of what you have delivered, and how you handle people and risk. Recruiters look for the method names (Agile, Scrum, PRINCE2, PMP) and for numbers — budget, team size, timeline — that show the scale you can handle.",
     groups: [
@@ -261,7 +261,7 @@ export const ROLES: RoleGuide[] = [
     name: "Recruiter",
     alsoCalled: ["Talent Acquisition Specialist", "Technical Recruiter", "HR Recruiter"],
     metaDescription:
-      "The resume keywords recruiter job posts ask for most — sourcing, full-cycle recruiting, ATS, stakeholder management, time to hire — and a free check of your own CV against any posting.",
+      "Top recruiter resume keywords: sourcing, full-cycle recruiting, ATS, stakeholder management, time to hire. Check your CV against any job post, free.",
     intro:
       "Recruiters write job posts all day, yet their own CVs are often the vaguest in the pile. Talent acquisition roles are screened on the hiring volume you have handled, the roles you recruit for, the tools you source with and the metrics you were measured on.",
     groups: [
@@ -285,7 +285,7 @@ export const ROLES: RoleGuide[] = [
     name: "Customer Success Manager",
     alsoCalled: ["Account Manager", "Client Success Manager", "Customer Success Lead"],
     metaDescription:
-      "The resume keywords customer success manager job posts ask for most — retention, churn, onboarding, renewals, upselling, CRM — and a free check of your own CV against any posting.",
+      "Top customer success manager resume keywords: retention, churn, onboarding, renewals, upselling, CRM. Check your CV against any job post, free.",
     intro:
       "Customer success postings are measured in retention: churn, renewals, expansion and customer health. Recruiters look for the size of the book you managed, the motions you ran — onboarding, QBRs, renewals — and the tools behind them. A CSM CV without a retention number is easy to pass over.",
     groups: [
@@ -309,7 +309,7 @@ export const ROLES: RoleGuide[] = [
     name: "Data Analyst",
     alsoCalled: ["Business Analyst", "BI Analyst", "Analytics Specialist"],
     metaDescription:
-      "The resume keywords data analyst job posts ask for most — SQL, Python, Tableau, Power BI, A/B testing — and a free check of your own CV against any posting.",
+      "Top data analyst resume keywords: SQL, Python, Tableau, Power BI, A/B testing. Check your CV against any job post, free.",
     intro:
       "Data analyst postings split into three parts: how you get the data (SQL, warehouses), how you analyse it (Python, statistics) and how you communicate it (dashboards, stakeholders). CVs that only cover the tools and skip the business outcome are the most common reason qualified analysts get filtered out.",
     groups: [
@@ -333,7 +333,7 @@ export const ROLES: RoleGuide[] = [
     name: "Product Manager",
     alsoCalled: ["Product Owner", "Technical Product Manager", "Senior PM"],
     metaDescription:
-      "The resume keywords product manager job posts ask for most — roadmap, discovery, metrics, stakeholder management, Agile — and a free check of your own CV against any posting.",
+      "Top product manager resume keywords: roadmap, discovery, metrics, stakeholder management, Agile. Check your CV against any job post, free.",
     intro:
       "Product manager postings contain fewer tool names and more process and outcome language, which makes them harder to match by instinct. The terms that count are the ones describing how the team decides what to build, how it ships, and how success is measured — and your CV needs the same vocabulary, with numbers attached.",
     groups: [
@@ -357,7 +357,7 @@ export const ROLES: RoleGuide[] = [
     name: "DevOps Engineer",
     alsoCalled: ["Site Reliability Engineer (SRE)", "Platform Engineer", "Cloud Engineer"],
     metaDescription:
-      "The resume keywords DevOps engineer job posts ask for most — Kubernetes, Terraform, AWS, CI/CD, monitoring — and a free check of your own CV against any posting.",
+      "Top DevOps engineer resume keywords: Kubernetes, Terraform, AWS, CI/CD, monitoring. Check your CV against any job post, free.",
     intro:
       "DevOps postings are the most tool-heavy of any engineering role, and the tools change from company to company: one team's Terraform and GitHub Actions is another's Pulumi and GitLab CI. Matching your CV to the specific toolchain in the posting — while showing the transferable practice underneath — is what gets it read.",
     groups: [
@@ -381,7 +381,7 @@ export const ROLES: RoleGuide[] = [
     name: "UX Designer",
     alsoCalled: ["Product Designer", "UX/UI Designer", "Interaction Designer"],
     metaDescription:
-      "The resume keywords UX designer job posts ask for most — Figma, user research, prototyping, usability testing, design systems — and a free check of your own CV against any posting.",
+      "Top UX designer resume keywords: Figma, user research, prototyping, usability testing, design systems. Check your CV against any job post, free.",
     intro:
       "A UX designer's portfolio shows the work, but the CV is what gets the portfolio opened. Postings name specific methods (research, testing, prototyping) and tools (almost always Figma), and a CV that describes the same process in different words can score poorly against them despite strong experience.",
     groups: [

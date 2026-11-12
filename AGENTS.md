@@ -80,8 +80,23 @@ Think like a senior engineer who has dealt with real production breaches. Don't 
 **Rate limiting:**
 - Are the `/api/scrape` and `/api/extract-pdf` routes rate-limited? If not, flag as medium — they're open to abuse.
 
-**Files to read:** `src/app/api/**`, `next.config.ts`, `src/components/features/cv-analyzer.tsx`
-**Blocks push on:** 🔴 Any exploitable injection, SSRF bypass, secret leak, or missing webhook auth
+**Untrusted input beyond forms:**
+- Share links (`#s=` hash) are attacker-controlled: is every decoded field type-checked before it is rendered? (An object where a number belongs crashed the whole page until Push 34.)
+- Are lookups keyed by untrusted strings own-key only (`Object.hasOwn`)? `__proto__` / `constructor` must never resolve to a built-in.
+- Does any route answer 500 to bad input? 5xx on user error hides real incidents in the logs — bad input is 4xx.
+
+**Abuse & platform:**
+- Rate limiter: verify against production that spoofed `x-real-ip` / `x-forwarded-for` do not reset the limit (send ~12 requests with rotating fake IPs to `/api/csp-report`; expect 429 after 10).
+- Open redirects: `//evil.example`, `/\evil.example`, encoded variants must never produce an off-site `Location`.
+- Owner routes (`/api/orchestrate`, `/api/reddit-comment`): 401 for missing, wrong, empty-Bearer and oversized keys.
+
+**Automated attack suite — must be green (runs in CI on every push):**
+- `tests/e2e/security.spec.ts`: XSS payloads via paste and share links, crafted share links, security headers on every page type, malformed/oversized/cross-site requests to every API route, owner-key checks, PDF upload abuse, SSRF tricks end to end, rate limiting, open redirects
+- `tests/unit/security.test.ts`: SSRF address and URL screening (encoded IPs, IPv6-mapped, cloud metadata hosts), link sanitising, log scrubbing
+- When a new route, input or sink is added, add its attack cases to these files in the same commit.
+
+**Files to read:** `src/app/api/**`, `next.config.ts`, `src/proxy.ts`, `src/components/features/cv-analyzer.tsx`
+**Blocks push on:** 🔴 Any exploitable injection, SSRF bypass, secret leak, or missing webhook auth; any failure in the automated attack suite
 **Warn on:** 🟡 Missing rate limiting, overly permissive CSP, console.log with sensitive data
 
 ---
@@ -224,7 +239,12 @@ This agent does not just check — it **improves** SEO on every push. The goal i
 - Add or improve `og:description` copy — should be a compelling call to action
 - Check primary keywords present in copy: "CV matcher", "resume matcher", "job fit", "ATS checker", "free", "instant"
 
+**Automated crawl — must be green (runs in CI on every push):** `tests/e2e/seo.spec.ts` fetches every sitemap URL as raw HTML and fails on: title outside 15–65 chars, description outside 70–160, wrong canonical, not exactly one `<h1>`, `noindex`, missing `lang` / OG / Twitter tags, JSON-LD that does not parse or lacks `@type`, duplicate titles or descriptions, broken internal links, linked pages missing from the sitemap, AI crawlers missing from robots.txt, broken links in llms.txt, main content that needs JavaScript to appear. New pages get covered automatically through the sitemap.
+
 **Phase 3 — GEO (AI Engine Visibility):**
+- ChatGPT search and Copilot draw on Bing's index: is the site verified in Bing Webmaster Tools and the sitemap submitted there?
+- Is the brand described the same way everywhere (site, llms.txt, JSON-LD, listings)? Consistent entity facts make AI answers cite it.
+- Is there a direct, quotable one-sentence answer near the top of each guide (what AI answers lift)?
 - Is CVXray described clearly enough that an AI would cite it when asked "what's the best free CV matcher"?
 - Does `llms.txt` answer the top questions AI engines receive about CV tools?
 - Are FAQ questions phrased as natural language queries (not generic headings)?

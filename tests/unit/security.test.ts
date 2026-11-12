@@ -14,7 +14,9 @@ describe("SSRF guard: private addresses", () => {
 describe("SSRF guard: URL screening", () => {
   const bad = ["http://127.0.0.1/", "http://localhost:3000/", "http://[::1]/", "http://2130706433/", "http://0x7f.1/",
     "http://metadata.google.internal/", "http://example.com:22/", "http://user:pass@example.com/",
-    "file:///etc/passwd", "gopher://example.com/", "http://printer.local/", "http://" + "a".repeat(2100) + ".com/"];
+    "file:///etc/passwd", "gopher://example.com/", "http://printer.local/",
+    "http://0177.0.0.1/", "http://127.1/", "http://[::ffff:169.254.169.254]/", "http://[fd00:ec2::254]/",
+    "http://localhost./", "http://LOCALHOST/", "http://0/", "http://[0:0:0:0:0:ffff:7f00:1]/", "http://" + "a".repeat(2100) + ".com/"];
   for (const url of bad) {
     it(`rejects ${url.slice(0, 50)}`, () => expect(() => parsePublicUrl(url)).toThrow(BlockedUrlError));
   }

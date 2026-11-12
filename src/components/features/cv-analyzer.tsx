@@ -36,7 +36,7 @@ import {
 import { cn, safeHttpUrl } from "@/lib/utils"
 import { track } from "@/lib/analytics"
 import { Badge, Chip, Divider, FeedbackRating, Panel, ScoreRing, Section, SegmentedControl, StatTile, StepLabel, toneDot, toneForScore, toneText, type Tone } from "./analyzer-ui"
-import { analyze, auditCV, type AnalysisResult, type CVAuditResult, type MissingSkillWithPriority } from "@/lib/analyze"
+import { SKILL_GROUPS, analyze, auditCV, type AnalysisResult, type CVAuditResult, type MissingSkillWithPriority } from "@/lib/analyze"
 import { buildSuggestions, type KeywordSuggestion } from "@/lib/suggestions"
 import { renderScoreCard, shareOrDownloadCard } from "@/lib/score-card"
 import { decodeEntities } from "@/lib/html-text"
@@ -92,6 +92,15 @@ function decodeResults(hash: string): AnalysisResult | null {
         if (!Array.isArray(c.ms) || !c.ms.every((x: unknown) => Array.isArray(x) && x.length === 4)) return null
         if (!Array.isArray(c.ts) || !c.ts.every((x: unknown) => Array.isArray(x) && x.length === 2)) return null
         if (typeof c.sm !== "string") return null
+        // Every field that is rendered must have the type the UI expects. A crafted link with an
+        // object where a number belongs ("rt": {"a": 1}) used to crash the whole page, so a
+        // shared link could make the site look broken for whoever opened it.
+        const num = (v: unknown) => typeof v === "number" && Number.isFinite(v)
+        if (![c.rm, c.rt, c.yr, c.yc, c.jw].every(num) || typeof c.lq !== "boolean") return null
+        const priorities = ["high", "medium", "low"]
+        if (!c.ms.every(([label, key, freq, priority]: unknown[]) =>
+            typeof label === "string" && typeof key === "string" && Object.hasOwn(SKILL_GROUPS, key) && num(freq) && priorities.includes(priority as string))) return null
+        if (!c.ts.every(([word, freq]: unknown[]) => typeof word === "string" && num(freq))) return null
         return {
             score: c.s,
             persona: { label: c.pl, desc: c.pd, color: c.pc },
@@ -225,6 +234,10 @@ const SKILL_RESOURCES: Record<string, SkillResource> = {
     mlops: { label: "Made With ML — MLOps course", url: "https://madewithml.com/", platform: "Made With ML", type: "course", duration: "Self-paced", free: true },
     ai: { label: "Prompt Engineering — Anthropic", url: "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview", platform: "Anthropic", type: "guide", duration: "~3 hrs", free: true },
 }
+
+// Own keys only: a key like "__proto__" or "constructor" must never resolve to a built-in
+const resourceFor = (key: string): SkillResource | undefined =>
+    Object.hasOwn(SKILL_RESOURCES, key) ? SKILL_RESOURCES[key] : undefined
 
 // ─────────────────────────────────────────────
 // SAMPLE JOBS
@@ -1305,20 +1318,20 @@ export default function CVAnalyzer() {
                                 )}
 
                                 {/* Training */}
-                                {results.missing.some(m => SKILL_RESOURCES[m.key]) && (
+                                {results.missing.some(m => resourceFor(m.key)) && (
                                     <>
                                         <Divider />
                                         <Section icon={<GraduationCap />} title="Recommended training" description="Courses and guides for your gaps, highest priority first.">
                                             <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border">
                                                 {(() => {
-                                                    const highPriorityGaps = results.missing.filter(m => m.priority === "high" && SKILL_RESOURCES[m.key]).length
+                                                    const highPriorityGaps = results.missing.filter(m => m.priority === "high" && resourceFor(m.key)).length
                                                     // Show more courses when there are more high-priority gaps (6–10)
                                                     const courseLimit = Math.min(Math.max(6, highPriorityGaps + 2), 10)
                                                     return results.missing
-                                                        .filter(m => SKILL_RESOURCES[m.key])
+                                                        .filter(m => resourceFor(m.key))
                                                         .slice(0, courseLimit)
                                                         .map(m => {
-                                                            const resource = SKILL_RESOURCES[m.key]
+                                                            const resource = resourceFor(m.key)!
                                                             return (
                                                                 <li key={m.key}>
                                                                     <a
