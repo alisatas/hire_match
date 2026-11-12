@@ -538,5 +538,7 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 - **Bing AI Performance** (Webmaster Tools → AI Performance): citations of cvxray.com in Microsoft Copilot and partners. Baseline **0 citations** (3 months to 2026-11-11). Bing Search Performance data available ~2026-11-14
 - **GA4 channel group "Channels with AI assistants"** (property 563610211): copy of the default group with an `AI assistants` channel at the top — Source matches `.*(chatgpt|openai|perplexity|gemini\.google|bard\.google|copilot\.microsoft|copilot\.com|claude\.ai|deepseek|meta\.ai|grok|mistral|poe\.com|you\.com|phind).*`. Google's built-in `AI Assistant` row stays below it and catches AI sources the regex misses. Not set as primary; pick it as the channel dimension in Acquisition reports
-- Google Search Console performance not reviewed this time (browser pane access was refused); owner checks Performance → Queries
+- **Google Search Console** (URL-prefix property `https://cvxray.com/`; the domain property is not ours): first data day 2026-11-10 — **4 clicks, 8 impressions, CTR 50 %, average position 3**; query list empty (Google hides low-volume queries)
+- **Search Console → Generative AI features (beta)**: **5 impressions** for `https://cvxray.com/` in Google's AI features on 2026-11-10 — the first measured AI visibility
+- Index coverage, Core Web Vitals and enhancements: "data processing" (property is new)
 - Manual monthly check: ask ChatGPT, Claude, Perplexity and Copilot "best free CV matcher" and "free tool to check resume against job description"; record whether CVXray is named
