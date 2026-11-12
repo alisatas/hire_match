@@ -1,3 +1,11 @@
+# [1.37.0](https://github.com/alisatas/hire_match/compare/v1.36.0...v1.37.0) (2026-11-12)
+
+
+### Features
+
+* courses for healthcare and logistics gaps; agent logs for push 34 ([60dde3e](https://github.com/alisatas/hire_match/commit/60dde3e582f188b2dc0ecee123a25f4fbafcf9ea))
+* **seo:** notify IndexNow search engines after content deploys ([8895442](https://github.com/alisatas/hire_match/commit/8895442246faf9fad51f6041cd17f1cd9c856eb1))
+
 # [1.36.0](https://github.com/alisatas/hire_match/compare/v1.35.0...v1.36.0) (2026-11-12)
 
 
