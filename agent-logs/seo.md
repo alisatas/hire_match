@@ -503,3 +503,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 3. Nurse and logistics role guides now that the engine detects those skills
 4. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)
 5. GA4: mark `analysis_complete`, `score_card` and `entry` as key events
+
+---
+
+## 2026-11-12 — Bing Webmaster Tools (off-page, no deploy)
+
+- Site was already in Bing Webmaster Tools (imported from Google Search Console on 2026-11-11) but Bing knew only **8** URLs from the old sitemap
+- Sitemap resubmitted (25 URLs); all 25 URLs sent through URL Submission (quota 100/day)
+- URL Inspection, home page: **indexed**; stored copy (crawled 2026-11-03) flagged "meta description too long or too short", live test shows **no SEO/GEO issues** — clears on recrawl
+- Why it matters: ChatGPT search and Microsoft Copilot answer from Bing's index
+- Next: IndexNow (key file + ping on deploy) so new and updated pages reach Bing, Yandex, Seznam and Naver within minutes instead of waiting for a crawl
