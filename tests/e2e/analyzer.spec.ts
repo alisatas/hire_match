@@ -18,7 +18,7 @@ test.describe("analyzer flow", () => {
     await page.goto("/");
     await expect(page.getByRole("heading", { level: 1 })).toContainText("match the job");
 
-    await page.getByRole("button", { name: "Paste text instead" }).click();
+    await page.getByRole("button", { name: "No PDF? Paste the text" }).click();
     await page.getByLabel("CV text").fill(CV);
     await page.getByRole("button", { name: /Try a sample job/ }).click();
     const samples = page.locator("#analyzer button[title]");
@@ -36,7 +36,7 @@ test.describe("analyzer flow", () => {
 
   test("score card downloads as a PNG", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: "Paste text instead" }).click();
+    await page.getByRole("button", { name: "No PDF? Paste the text" }).click();
     await page.getByLabel("CV text").fill(CV);
     await page.getByRole("button", { name: /Try a sample job/ }).click();
     await page.getByRole("button", { name: "Frontend Dev", exact: true }).click();

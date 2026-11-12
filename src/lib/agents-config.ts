@@ -103,7 +103,7 @@ Rate each: 🔴 Critical / 🟡 Medium / 🟢 Low. Suggest concrete fixes.`,
 
 Trace the full flow:
 1. Land on page → read hero → understand what the product does
-2. Upload PDF OR use "Paste text instead" toggle → see feedback
+2. Upload PDF OR use the "No PDF? Paste the text" link → see feedback
 3. Enter job URL or use a sample job → see fetch status
 4. Click Analyze → see loading → see results
 5. Read score, matched skills, gaps, keywords, courses

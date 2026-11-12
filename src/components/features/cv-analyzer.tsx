@@ -538,6 +538,7 @@ export default function CVAnalyzer() {
 
         if (file.size > 5 * 1024 * 1024) {
             setPdfStatus("File too large (max 5MB). Paste your CV text below.")
+            setShowCvPaste(true)
             track("cv_upload_failed", { reason: "too_large" })
             return
         }
@@ -557,6 +558,7 @@ export default function CVAnalyzer() {
         } catch (err: unknown) {
             console.error("PDF Read Error:", err)
             setPdfStatus("Error reading PDF. Paste your CV text below.")
+            setShowCvPaste(true)
             track("cv_upload_failed", { reason: "unreadable" })
         } finally {
             isPdfLoadingRef.current = false
@@ -785,20 +787,7 @@ export default function CVAnalyzer() {
                     <div className="space-y-6">
                         {/* Step 1 — CV */}
                         <div className="space-y-3">
-                            <StepLabel
-                                n={1}
-                                action={!cvText || showCvPaste ? (
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowCvPaste(v => !v)}
-                                        className="-m-3 inline-flex min-h-11 items-center p-3 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-                                    >
-                                        {showCvPaste ? "Upload PDF instead" : "Paste text instead"}
-                                    </button>
-                                ) : undefined}
-                            >
-                                Your CV
-                            </StepLabel>
+                            <StepLabel n={1}>Your CV</StepLabel>
 
                             {!cvText || showCvPaste ? (
                                 showCvPaste ? (
@@ -848,10 +837,20 @@ export default function CVAnalyzer() {
                                     </button>
                                 </div>
                             )}
-                            {pdfStatus && !showCvPaste && !cvText && (
+                            {pdfStatus && !cvText && (!showCvPaste || pdfStatus.startsWith("Error") || pdfStatus.startsWith("File too large")) && (
                                 <p className={cn("text-xs", pdfStatus.startsWith("Error") || pdfStatus.startsWith("File too large") ? "text-danger" : "text-muted-foreground")} aria-live="polite">
                                     {pdfStatus === "Reading PDF..." ? <span className="inline-flex items-center gap-1.5"><LoaderCircle className="size-3 animate-spin" />Reading PDF…</span> : pdfStatus}
                                 </p>
+                            )}
+                            {/* Secondary path: most people upload a PDF, so pasting stays a quiet link */}
+                            {(!cvText || showCvPaste) && (
+                                <button
+                                    type="button"
+                                    onClick={() => setShowCvPaste(v => !v)}
+                                    className="-my-2 inline-flex min-h-11 items-center text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+                                >
+                                    {showCvPaste ? "Upload a PDF instead" : "No PDF? Paste the text"}
+                                </button>
                             )}
                         </div>
 
