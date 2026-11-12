@@ -5,7 +5,7 @@ import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { FAQS } from "@/lib/faqs";
 import { ROLES } from "@/lib/roles";
 import { jsonLdScript } from "@/lib/site";
-import { ArrowRight, ChevronDown, FileText, Gauge, Link2, Lock, ShieldCheck, Sparkles, Zap } from "lucide-react";
+import { ArrowRight, ChevronDown, FileText, Gauge, Link2, Lock, ShieldCheck, Zap } from "lucide-react";
 
 // The canonical lives on each page (not the root layout) so sub-pages never
 // inherit a canonical that points back at the home page.
@@ -87,11 +87,7 @@ export default function Home() {
       <main>
         {/* Hero */}
         <section className="mx-auto max-w-5xl px-4 pb-8 pt-10 text-center sm:px-6 sm:pt-14 lg:pb-10">
-          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-foreground/[0.03] px-3 py-1 text-xs font-medium text-muted-foreground">
-            <Sparkles className="size-3.5 text-primary" />
-            Free CV &amp; resume matcher — no sign-up
-          </span>
-          <h1 className="mt-5 text-4xl font-semibold tracking-[-0.035em] text-foreground text-balance sm:text-5xl lg:text-6xl">
+          <h1 className="text-4xl font-semibold tracking-[-0.035em] text-foreground text-balance sm:text-5xl lg:text-6xl">
             Does your CV{" "}
             <span className="bg-gradient-to-b from-primary to-primary/60 bg-clip-text text-transparent">match the job?</span>
           </h1>
@@ -101,7 +97,7 @@ export default function Home() {
           <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[13px] text-muted-foreground">
             <li className="inline-flex items-center gap-1.5"><Lock className="size-3.5 text-primary" />Private — your CV is never stored</li>
             <li className="inline-flex items-center gap-1.5"><Zap className="size-3.5 text-primary" />Results in seconds</li>
-            <li className="inline-flex items-center gap-1.5"><ShieldCheck className="size-3.5 text-primary" />No sign-up, no limits</li>
+            <li className="inline-flex items-center gap-1.5"><ShieldCheck className="size-3.5 text-primary" />Free CV &amp; resume matcher — no sign-up</li>
           </ul>
         </section>
 
