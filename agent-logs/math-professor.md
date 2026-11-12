@@ -546,3 +546,9 @@ Calibration: fitting CVs unchanged (Frontend 81, sales 71, marketer 70, finance 
 ## 2026-11-11 — Push 31 (Home page simplified for scanning readers)
 
 **Status:** ✅ PASS — ⚠️ no scoring change this cycle (UX-only push)
+
+---
+
+## 2026-11-12 — Push 32 (Buy me a coffee, hidden until the live checkout exists)
+
+**Status:** ✅ PASS (0 critical) — small UI addition, no change in this area. 108 unit / 19 browser tests green

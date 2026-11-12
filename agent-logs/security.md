@@ -436,3 +436,12 @@ Full read of `src/app/api/**`, `src/proxy.ts`, `next.config.ts`, client link ren
 **Status:** ✅ PASS (0 critical)
 
 - Markup-only change to the home page, footer and report cards; no new inputs, routes or sinks. 108 unit / 19 browser tests green (production build). GitHub Actions was in a **major outage** at commit time (githubstatus.com): the previous push's CI/Release were queued and the CodeQL dynamic run hit `startup_failure` — platform side, not code
+
+---
+
+## 2026-11-12 — Push 32 (Buy me a coffee, hidden until the live checkout exists)
+
+**Status:** ✅ PASS (0 critical)
+
+- Checkout link allow-listed (https, *.lemonsqueezy.com) via `SUPPORT.checkoutUrl`; `rel="noopener noreferrer"`, new tab — no Lemon Squeezy script or iframe, so no CSP change
+- `coffee_click` event carries only the placement ("report" / "footer")

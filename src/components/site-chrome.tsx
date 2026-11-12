@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { CookieSettingsButton } from "@/components/consent/consent-banner";
+import { CoffeeLink } from "@/components/coffee-link";
 
 /**
  * Brand mark: a CV page with a scan beam passing through it.
@@ -87,6 +88,7 @@ export function SiteFooter() {
             <Link href="/terms" className="transition-colors hover:text-foreground">Terms</Link>
             <Link href="/privacy" className="transition-colors hover:text-foreground">Privacy</Link>
             <Link href="/refund-policy" className="transition-colors hover:text-foreground">Refunds</Link>
+            <CoffeeLink where="footer" />
             <CookieSettingsButton />
           </nav>
         </div>

@@ -40,6 +40,7 @@ import { analyze, auditCV, type AnalysisResult, type CVAuditResult, type Missing
 import { buildSuggestions, type KeywordSuggestion } from "@/lib/suggestions"
 import { renderScoreCard, shareOrDownloadCard } from "@/lib/score-card"
 import { decodeEntities } from "@/lib/html-text"
+import { CoffeeLink } from "@/components/coffee-link"
 import { extractCompanyName, extractCultureSignals, getInterviewLinks } from "@/lib/insights"
 
 // ─── Share URL helpers ───────────────────────────────────────────────────────
@@ -1430,9 +1431,10 @@ export default function CVAnalyzer() {
                                 )}
                             </div>
 
-                            {/* Feedback */}
-                            <div className="border-t border-border bg-inset p-6 sm:px-8">
+                            {/* Feedback + optional coffee */}
+                            <div className="space-y-5 border-t border-border bg-inset p-6 sm:px-8">
                                 <FeedbackRating />
+                                <CoffeeLink where="report" variant="card" />
                             </div>
                         </div>
                     )}

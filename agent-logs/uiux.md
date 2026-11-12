@@ -363,3 +363,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Footer: the 16-link role row removed; Keywords by role · Guides · FAQ · legal links remain
 - Report: "How to add" cards show the placement advice; the example bullet is behind "Show an example bullet"
 - Verified at 375 px: no horizontal overflow, no console errors; axe WCAG 2 AA passes on the new layout
+
+---
+
+## 2026-11-12 — Push 32 (Buy me a coffee, hidden until the live checkout exists)
+
+**Status:** ✅ PASS (0 critical)
+
+- Small, optional coffee entry points: a card under the report's rating ("Was this useful? Buy me a coffee · Any amount from €3 · CVXray stays free") and a footer link; open the Lemon Squeezy checkout in a new tab
+- Rendered only when a valid https lemonsqueezy.com checkout link is configured — production shows nothing until the live link is set
+- Lemon Squeezy store is still in **test mode** (application in review); the "Buy me a coffee" product (pay what you want, min €3, suggested €5) exists in test mode and its checkout was verified to load. Test link lives only in the git-ignored `.env.local`

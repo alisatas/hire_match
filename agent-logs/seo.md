@@ -480,3 +480,9 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 - Content preserved for crawlers: all 15 FAQ answers remain in the HTML (collapsed `<details>`) and in FAQPage JSON-LD; role guides stay linked from the header, footer ("Keywords by role"), home (6 featured + all-guides link) and each guide's "other roles" nav; `#match-score` anchor kept (llms.txt links it)
 - Trade-off noted: fewer direct home → guide links (16 → 6); /resume-keywords carries the rest. Watch Search Console coverage for the non-featured guides
+
+---
+
+## 2026-11-12 — Push 32 (Buy me a coffee, hidden until the live checkout exists)
+
+**Status:** ✅ PASS (0 critical) — small UI addition, no change in this area. 108 unit / 19 browser tests green

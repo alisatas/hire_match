@@ -15,15 +15,17 @@ export function jsonLdScript(data: unknown): string {
 export const OG_IMAGE = { url: "/opengraph-image", width: 1200, height: 630, alt: "CVXray — free CV and resume matcher" };
 
 // ── Optional support payments (Lemon Squeezy) ───────────────────────────────
+const DEFAULT_CHECKOUT_URL = ""
 // The tool is free. Visitors can make a one-time, pay-what-you-want support payment.
 // Kept here so the home page, Terms and Refund Policy always state the same terms.
 export const SUPPORT = {
   minimumEur: 3,
   refundDays: 14,
-  // Set NEXT_PUBLIC_SUPPORT_CHECKOUT_URL to the Lemon Squeezy checkout link once the
-  // product exists. Until then the support button shows "opening soon". Only an https
+  // "Buy me a coffee" checkout (Lemon Squeezy). The link is public, so it lives here;
+  // NEXT_PUBLIC_SUPPORT_CHECKOUT_URL can override it per deployment. Only an https
   // lemonsqueezy.com URL is accepted, so a typo can never point visitors elsewhere.
-  checkoutUrl: lemonCheckoutUrl(process.env.NEXT_PUBLIC_SUPPORT_CHECKOUT_URL),
+  // When no valid link is set, the coffee links are simply not shown.
+  checkoutUrl: lemonCheckoutUrl(process.env.NEXT_PUBLIC_SUPPORT_CHECKOUT_URL || DEFAULT_CHECKOUT_URL),
 } as const;
 
 function lemonCheckoutUrl(raw: string | undefined): string | null {
