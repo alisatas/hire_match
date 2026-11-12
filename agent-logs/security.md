@@ -473,3 +473,9 @@ Full read of `src/app/api/**`, `src/proxy.ts`, `next.config.ts`, client link ren
 - `.github/workflows/indexnow.yml`: `contents: read`, `deployments: read` only; no secrets used
 - Still open 🟡: `shadcn` CLI chain moderate advisories (dev only); CSP `'unsafe-inline'` (nonce CSP skipped by owner)
 - 119 unit / 64 browser tests green on the production build (was 111 / 19); tsc 0, ESLint 0; prod audit 0 high/critical
+
+---
+
+## 2026-11-12 — Push 35 (SEO log only: AI visibility baseline, GA4 AI channel, Search Console data)
+
+**Status:** ✅ PASS (0 critical) — documentation-only push (`agent-logs/seo.md`), no code change. 119 unit / 64 browser tests green on the production build; tsc 0, ESLint 0; prod audit 0 high/critical; no tracked `.env`

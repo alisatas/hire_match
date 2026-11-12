@@ -357,3 +357,9 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Share-link decoding now rejects any field with the wrong type instead of crashing; 7 crafted-link cases in e2e
 - PDF route error statuses corrected (400 / 422)
 - 119 unit / 64 browser tests green on the production build (was 111 / 19); tsc 0, ESLint 0; prod audit 0 high/critical
+
+---
+
+## 2026-11-12 — Push 35 (SEO log only: AI visibility baseline, GA4 AI channel, Search Console data)
+
+**Status:** ✅ PASS (0 critical) — documentation-only push (`agent-logs/seo.md`), no code change. 119 unit / 64 browser tests green on the production build; tsc 0, ESLint 0; prod audit 0 high/critical; no tracked `.env`

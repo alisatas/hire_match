@@ -542,3 +542,10 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - **Search Console → Generative AI features (beta)**: **5 impressions** for `https://cvxray.com/` in Google's AI features on 2026-11-10 — the first measured AI visibility
 - Index coverage, Core Web Vitals and enhancements: "data processing" (property is new)
 - Manual monthly check: ask ChatGPT, Claude, Perplexity and Copilot "best free CV matcher" and "free tool to check resume against job description"; record whether CVXray is named
+
+---
+
+## 2026-11-12 — Push 35 (SEO log only: AI visibility baseline, GA4 AI channel, Search Console data)
+
+**Status:** ✅ PASS (0 critical) — documentation-only push (`agent-logs/seo.md`), no code change. 119 unit / 64 browser tests green on the production build; tsc 0, ESLint 0; prod audit 0 high/critical; no tracked `.env`
+- ⚠️ No new on-site SEO improvement this cycle: the push carries the measurement setup (Bing AI Performance baseline, GA4 "AI assistants" channel, first Search Console and Google AI features numbers), all logged above

@@ -585,3 +585,10 @@ Regression check: share links can no longer inject an unknown skill key or prior
 
 **Running improvement backlog (next pushes):**
 1. Seniority mismatch signal ("Lead / Head of" title vs a junior CV)
+
+---
+
+## 2026-11-12 — Push 35 (SEO log only: AI visibility baseline, GA4 AI channel, Search Console data)
+
+**Status:** ✅ PASS (0 critical) — documentation-only push (`agent-logs/seo.md`), no code change. 119 unit / 64 browser tests green on the production build; tsc 0, ESLint 0; prod audit 0 high/critical; no tracked `.env`
+- ⚠️ No scoring change this cycle (documentation-only push); backlog unchanged: seniority mismatch signal
