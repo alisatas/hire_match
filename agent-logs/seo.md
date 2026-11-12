@@ -531,3 +531,12 @@ Agents MUST read this log before running checks and MUST append an entry after e
 3. Nurse and logistics role guides now that the engine detects those skills
 4. Off-page: Product Hunt + AlternativeTo listings, Reddit mentions (copy drafted, owner to post)
 5. GA4: mark `analysis_complete`, `score_card` and `entry` as key events
+
+---
+
+## 2026-11-12 — Measuring search and AI visibility (no deploy)
+
+- **Bing AI Performance** (Webmaster Tools → AI Performance): citations of cvxray.com in Microsoft Copilot and partners. Baseline **0 citations** (3 months to 2026-11-11). Bing Search Performance data available ~2026-11-14
+- **GA4 channel group "Channels with AI assistants"** (property 563610211): copy of the default group with an `AI assistants` channel at the top — Source matches `.*(chatgpt|openai|perplexity|gemini\.google|bard\.google|copilot\.microsoft|copilot\.com|claude\.ai|deepseek|meta\.ai|grok|mistral|poe\.com|you\.com|phind).*`. Google's built-in `AI Assistant` row stays below it and catches AI sources the regex misses. Not set as primary; pick it as the channel dimension in Acquisition reports
+- Google Search Console performance not reviewed this time (browser pane access was refused); owner checks Performance → Queries
+- Manual monthly check: ask ChatGPT, Claude, Perplexity and Copilot "best free CV matcher" and "free tool to check resume against job description"; record whether CVXray is named
