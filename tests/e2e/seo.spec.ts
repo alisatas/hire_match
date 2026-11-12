@@ -137,6 +137,16 @@ test.describe("crawler access", () => {
     expect(broken, broken.join("\n")).toEqual([]);
   });
 
+  test("IndexNow key file is served so search engines accept our submissions", async ({ request }) => {
+    const fs = await import("node:fs");
+    const keyFile = fs.readdirSync("public").find((f) => /^[a-f0-9]{32}\.txt$/.test(f));
+    expect(keyFile, "public/<32 hex>.txt missing").toBeTruthy();
+    const res = await request.get(`/${keyFile}`);
+    expect(res.status()).toBe(200);
+    expect(res.headers()["content-type"]).toContain("text/plain");
+    expect((await res.text()).trim()).toBe(keyFile!.replace(".txt", ""));
+  });
+
   test("pages render their main content without JavaScript", async ({ browser }) => {
     // Most AI crawlers do not run JavaScript: the answer must be in the server HTML
     const context = await browser.newContext({ javaScriptEnabled: false });

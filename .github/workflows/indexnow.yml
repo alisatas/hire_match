@@ -1,0 +1,62 @@
+name: IndexNow
+
+# After Vercel finishes a production deploy, tell IndexNow search engines (Bing, Yandex, …)
+# that pages changed. Only runs when the deploy changed something a visitor or crawler sees,
+# so test-only pushes and the automatic release commit do not trigger a resubmission.
+
+on:
+  deployment_status:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: read
+
+# Queue, never cancel: a push produces two deploys (the change, then the release commit a few
+# seconds later), and cancelling would let the release run, which changes no content, win.
+concurrency:
+  group: indexnow
+  cancel-in-progress: false
+
+jobs:
+  notify:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Did this deploy change public content?
+        id: changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.deployment.sha || github.sha }}
+          CREATED: ${{ github.event.deployment.created_at }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then echo "content=true" >> "$GITHUB_OUTPUT"; exit 0; fi
+          # The production deploy made before this one (not a newer one, e.g. the release commit
+          # that lands seconds later): diff against it so every commit in the push counts
+          prev=$(gh api "repos/${{ github.repository }}/deployments?environment=Production&per_page=20" \
+            --jq "[.[] | select(.sha != \"$SHA\" and .created_at < \"$CREATED\")][0].sha")
+          if [ -z "$prev" ] || ! git cat-file -e "$prev^{commit}" 2>/dev/null; then
+            echo "content=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          files=$(git diff --name-only "$prev" "$SHA")
+          echo "$files"
+          if echo "$files" | grep -Eq '^(src/app/|src/components/|src/lib/(roles|posts|faqs|site)\.ts$|public/)'; then
+            echo "content=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "content=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Submit sitemap URLs to IndexNow
+        if: steps.changed.outputs.content == 'true'
+        run: node scripts/indexnow.mjs
