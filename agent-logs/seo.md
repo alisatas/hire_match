@@ -486,3 +486,20 @@ Agents MUST read this log before running checks and MUST append an entry after e
 ## 2026-11-12 — Push 32 (Buy me a coffee, hidden until the live checkout exists)
 
 **Status:** ✅ PASS (0 critical) — small UI addition, no change in this area. 108 unit / 19 browser tests green
+
+---
+
+## 2026-11-12 — Push 33 (Paste as a quiet fallback, coffee link, healthcare & logistics skills)
+
+**Status:** ✅ PASS (0 critical, 1 improvement)
+
+**Improvement implemented this cycle:**
+- New FAQ (page + FAQPage JSON-LD, one source): "Can I check a Word (.docx) resume or a scanned PDF?" — targets a common pre-upload query and explains the PDF/paste options
+- llms.txt: new example question about Word/scanned resumes; limitations section now states PDF-only upload with the .docx workaround
+
+**Running improvement backlog (next pushes):**
+1. More articles: "ATS-friendly CV format", "CV keywords vs. skills section", "How to read a job description"
+2. Dedicated landing pages: "ATS resume checker", "Jobscan alternative"
+3. Nurse and logistics role guides now that the engine detects those skills
+4. Off-page: Product Hunt + AlternativeTo listings (copy drafted, owner to post)
+5. GA4: mark `analysis_complete`, `score_card` and `entry` as key events

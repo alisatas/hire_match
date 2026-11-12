@@ -208,3 +208,44 @@ describe("years of experience required by the job", () => {
     it(`"${text}" → ${expected}`, () => expect(extractYearsRequired(text)).toBe(expected));
   }
 });
+
+describe("healthcare and logistics skill groups", () => {
+  const NURSE_JOB = `Registered Nurse — Medical Ward
+Requirements:
+- 3+ years of experience in patient care on a hospital ward
+- Experience with electronic health records (Epic EMR)
+- Medication administration and clinical documentation
+- Infection control procedures and care plans
+- Basic Life Support certification
+Responsibilities: assess patients, coordinate with physicians, maintain care plans and follow infection control and medication administration protocols. Patient care is at the heart of everything we do.`;
+  const NURSE_CV = `Jane Doe — Registered Nurse
+Staff Nurse, City Hospital, Jan 2020 – Present
+- Delivered patient care to 8 patients per shift on a 30-bed medical ward
+- Documented assessments in Epic EMR; clinical documentation audits scored 98%
+- Medication administration for high-risk drugs; wrote and updated care plans
+- Led the infection control champion programme
+Certifications: Basic Life Support`;
+
+  it("scores a fitting nurse CV as a strong match", () => {
+    const r = analyze(NURSE_CV, NURSE_JOB);
+    expect(r.score).toBeGreaterThanOrEqual(70);
+    expect(r.matched).toContain("Clinical / Patient Care");
+  });
+
+  it("keeps an unrelated CV low and flags the clinical gap", () => {
+    const r = analyze(FRONTEND_CV, NURSE_JOB);
+    expect(r.score).toBeLessThanOrEqual(25);
+    expect(r.missing.find(m => m.key === "healthcare")?.priority).toBe("high");
+  });
+
+  it("does not read tech wording as healthcare or logistics", () => {
+    const job = `Senior Backend Engineer
+Own incident triage and bug triage, manage access control lists (ACLs), split work into epics, and secure our software supply chain. Node.js, PostgreSQL, AWS, Docker and CI/CD required.`;
+    const r = analyze(FRONTEND_CV, job);
+    const keys = [...r.matched, ...r.missing.map(m => m.key), ...r.missing.map(m => m.label)];
+    expect(keys).not.toContain("healthcare");
+    expect(keys).not.toContain("Clinical / Patient Care");
+    expect(keys).not.toContain("logistics");
+    expect(keys).not.toContain("Supply Chain & Logistics");
+  });
+});

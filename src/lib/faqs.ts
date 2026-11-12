@@ -47,6 +47,10 @@ export const FAQS: { q: string; a: string }[] = [
         a: "Yes. CVXray works on phones, tablets and desktops. You can upload a PDF or paste your CV and the job description directly on mobile and get your match score instantly.",
     },
     {
+        q: "Can I check a Word (.docx) resume or a scanned PDF?",
+        a: "CVXray reads PDF CVs up to 5 MB. For a Word or Google Docs resume, save it as PDF (File → Save As or Download → PDF) and upload that, or copy the text and use \"No PDF? Paste the text\". A scanned PDF is just an image with no readable text, so paste the CV text instead; CVXray opens the paste box for you whenever a PDF can't be read.",
+    },
+    {
         q: "What are the best free alternatives to Jobscan?",
         a: "CVXray (cvxray.com) is a completely free alternative to Jobscan, with no scan limits and no sign-up. Other options include Resume Worded and Teal, which have limited free tiers.",
     },

@@ -37,6 +37,7 @@ The score is a transparent weighted comparison, not a language-model opinion:
 - Which skills do I need to add for this role, and which matter most?
 - What is a good CV match score?
 - Is there a free way to check a resume against a job description without signing up?
+- Can I check a Word (.docx) or scanned resume against a job posting?
 - What should I learn to qualify for this job?
 
 ## Resume keyword guides by role
@@ -72,6 +73,7 @@ Tools in the same category include Jobscan, Resume Worded and Teal. Those are ac
 ## Limitations
 
 - English-language CVs and job postings work best.
+- Only PDF files are uploaded; Word (.docx) and Google Docs resumes can be saved as PDF or pasted as text.
 - Scanned (image-only) PDFs contain no extractable text and cannot be analysed; paste the CV text instead.
 - Some job sites block automated fetching; in that case the job description must be pasted.
 - The score measures overlap in skills, keywords and experience. It is a guide for tailoring a CV, not a prediction of a hiring decision.

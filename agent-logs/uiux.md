@@ -373,3 +373,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Small, optional coffee entry points: a card under the report's rating ("Was this useful? Buy me a coffee · Any amount from €3 · CVXray stays free") and a footer link; open the Lemon Squeezy checkout in a new tab
 - Rendered only when a valid https lemonsqueezy.com checkout link is configured — production shows nothing until the live link is set
 - Lemon Squeezy store is still in **test mode** (application in review); the "Buy me a coffee" product (pay what you want, min €3, suggested €5) exists in test mode and its checkout was verified to load. Test link lives only in the git-ignored `.env.local`
+
+---
+
+## 2026-11-12 — Push 33 (Paste as a quiet fallback, coffee link, healthcare & logistics skills)
+
+**Status:** ✅ PASS (0 critical) — owner request: the paste option was too prominent
+
+- 'Paste text instead' removed from the step header; replaced by a small muted 'No PDF? Paste the text' link under the drop zone (44 px tap height, keyboard-focusable button)
+- Failure path is self-healing: unreadable / too-large PDF opens the paste box with the error above it
+- Coffee card under the report rating + footer link (hidden until the live checkout link exists)

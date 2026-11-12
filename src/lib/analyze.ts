@@ -102,6 +102,18 @@ export const SKILL_GROUPS: Record<string, string[]> = {
         "talent acquisition", "candidate sourcing", "sourcing candidates", "time to hire", "employer branding",
         "onboarding programme", "onboarding program", "hris"],
     finance: ["financial modelling", "financial modeling", "financial analysis", "fp&a", "ifrs", "gaap", "accounts payable", "accounts receivable", "reconciliation", "budgeting"],
+    // Math Prof improvement (Push 33): healthcare and logistics. Neither sector had a skill
+    // group, so a nurse CV that matched a ward-nurse posting almost line for line scored 33%
+    // (skills, half the score, read as "nothing detected"). Same rule as the other business
+    // groups: tool names and multi-word phrases only. Left out on purpose because they fire on
+    // tech postings: "triage" (bug / incident triage), "acls" (access control lists), bare
+    // "epic" (agile epics), bare "supply chain" (software supply-chain security).
+    healthcare: ["patient care", "electronic health records", "electronic health record", "ehr", "emr", "epic emr",
+        "epic systems", "hipaa", "clinical documentation", "medication administration", "infection control",
+        "care plans", "care planning", "basic life support", "vital signs", "wound care"],
+    logistics: ["supply chain management", "supply chain planning", "supply chain operations", "logistics coordination",
+        "inventory management", "warehouse management", "wms", "demand planning", "procurement",
+        "freight", "3pl", "fleet management", "last-mile delivery", "s&op", "sap mm"],
 }
 
 const STOP_WORDS = new Set([
@@ -156,7 +168,7 @@ export function getSkillLabel(key: string): string {
         bi: "BI / Dashboards (Tableau, Power BI)", excel: "Excel", product: "Product Management",
         projectmgmt: "Project Management", sales: "B2B Sales", crm: "CRM (Salesforce, HubSpot)",
         marketing: "Digital Marketing", seo: "SEO / SEM", finance: "Finance & Accounting",
-        hr: "Recruiting / HR Tools",
+        hr: "Recruiting / HR Tools", healthcare: "Clinical / Patient Care", logistics: "Supply Chain & Logistics",
     }
     return labels[key] || key
 }

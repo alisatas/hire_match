@@ -552,3 +552,20 @@ Calibration: fitting CVs unchanged (Frontend 81, sales 71, marketer 70, finance 
 ## 2026-11-12 — Push 32 (Buy me a coffee, hidden until the live checkout exists)
 
 **Status:** ✅ PASS (0 critical) — small UI addition, no change in this area. 108 unit / 19 browser tests green
+
+---
+
+## 2026-11-12 — Push 33 (Paste as a quiet fallback, coffee link, healthcare & logistics skills)
+
+**Status:** ✅ PASS (1 improvement)
+
+**Improvement:** healthcare and logistics skill groups (backlog #1). Neither sector had a group, so the skills half of the score read as "nothing detected".
+- Healthcare aliases: patient care, EHR/EMR, Epic EMR/Systems, HIPAA, clinical documentation, medication administration, infection control, care plans, basic life support, vital signs, wound care
+- Logistics aliases: supply chain management/planning/operations, logistics coordination, inventory/warehouse management, WMS, demand planning, procurement, freight, 3PL, fleet management, S&OP, SAP MM
+- Deliberately excluded (fire on tech postings): triage, ACLs, bare "epic", bare "supply chain"
+
+Calibration: nurse CV × ward-nurse job **33 → 75**; frontend CV × nurse job 9 → 5; logistics CV × logistics job 69 (unchanged, now matches the group); frontend/nurse × logistics 5. No sample job or role guide contains the new aliases, so existing calibration is unchanged. 3 new unit tests (strong match ≥ 70, unrelated ≤ 25 with high-priority gap, tech wording not misread).
+
+**Running improvement backlog (next pushes):**
+1. Seniority mismatch signal ("Lead / Head of" title vs a junior CV)
+2. Course resources for healthcare and logistics gaps (currently none shown)

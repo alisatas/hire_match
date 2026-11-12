@@ -445,3 +445,14 @@ Full read of `src/app/api/**`, `src/proxy.ts`, `next.config.ts`, client link ren
 
 - Checkout link allow-listed (https, *.lemonsqueezy.com) via `SUPPORT.checkoutUrl`; `rel="noopener noreferrer"`, new tab — no Lemon Squeezy script or iframe, so no CSP change
 - `coffee_click` event carries only the placement ("report" / "footer")
+
+---
+
+## 2026-11-12 — Push 33 (Paste as a quiet fallback, coffee link, healthcare & logistics skills)
+
+**Status:** ✅ PASS (0 critical, 1 warning)
+
+- No new inputs, routes or sinks; paste toggle and PDF fallback are client state only; coffee link unchanged since Push 32 (allow-listed https *.lemonsqueezy.com, rel=noopener noreferrer, hidden until a checkout URL is configured)
+- Handled PDF read failures no longer `console.error` the error object
+- `git ls-files .env*` empty ✅; prod audit: 0 high/critical ✅
+- 🟡 New: 4 moderate + 2 low advisories via the `shadcn` CLI chain (deepmerge prototype poisoning, minimatch ReDoS in @ts-morph/common). CLI-only, not shipped to the browser; fix needs shadcn major bump — track

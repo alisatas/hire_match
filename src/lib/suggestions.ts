@@ -89,6 +89,8 @@ const EXAMPLE_BY_KEY: Record<string, string> = {
     testing: "Introduced automated tests for the core flows, halving production bugs within a quarter.",
     cicd: "Built CI/CD pipelines that cut release time from 45 to 8 minutes.",
     api: "Designed REST APIs used by three client apps and 40k monthly users.",
+    healthcare: "Delivered patient care to 8 patients per shift on a 30-bed ward, keeping clinical documentation audit scores at 98%.",
+    logistics: "Coordinated freight for 120 shipments a month across 6 carriers, cutting late deliveries by 25%.",
     hr: "Ran full-cycle recruiting for 45 roles a year in Greenhouse, cutting time to hire from 52 to 34 days.",
     data: "Analysed product usage data to find the drop-off step in onboarding, leading to a fix that lifted conversion 12%.",
 }
