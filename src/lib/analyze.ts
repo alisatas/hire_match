@@ -3,6 +3,15 @@
 // Used by: cv-analyzer.tsx (client)
 // ─────────────────────────────────────────────
 
+import {
+    INTL_AT_LEAST, INTL_BOILERPLATE_HEADING, INTL_DATE_SEP, INTL_EDUCATION, INTL_EXPERIENCE_WORD,
+    INTL_JOB_HEADING, INTL_MONTHS, INTL_NICE_HEADING, INTL_NICE_INLINE, INTL_PRESENT, INTL_RANGE_SEP,
+    INTL_SINCE, INTL_STOP_WORDS, INTL_YEARS_UNIT, LOCALIZED_SKILL_ALIASES, NONLATIN_BOILERPLATE_HEADING,
+    NONLATIN_EDUCATION, NONLATIN_JOB_HEADING, NONLATIN_NICE_HEADING, NONLATIN_NICE_INLINE,
+    NONLATIN_SENIORITY, canonicalDates, countWords, foldText, hanBigrams, isWordChar, nonLatinYears,
+    withoutHan,
+} from "./languages"
+
 // Math Prof improvement (Push 18): generic aliases removed or made specific.
 // "rest" matched "the rest of the team", "pipeline" matched "sales pipeline",
 // "cache"/"caching" credited Redis to anyone who mentioned browser caching,
@@ -148,6 +157,8 @@ const STOP_WORDS = new Set([
     "implement","improve","review","define","identify","communicate","collaborate","partner",
     "contribute","coordinate","oversee","monitor","track","report","analyse","analyze",
     "establish","execute","achieve","evaluate","assess","plan","plan","present","write",
+    // Turkish, German, Spanish and Hindi — see languages.ts
+    ...INTL_STOP_WORDS,
 ])
 
 export function getSkillLabel(key: string): string {
@@ -173,8 +184,12 @@ export function getSkillLabel(key: string): string {
     return labels[key] || key
 }
 
+// Math Prof improvement (Push 36): every script, not only a–z. The old pattern deleted
+// any character outside a–z, so "hasta bakımı" became "hasta bak m" and Chinese or Hindi
+// text disappeared entirely. Letters, digits and combining marks of any script are kept;
+// Latin diacritics are folded (foldText) so "yönetimi" and "yonetimi" compare equal.
 function normalizeText(text: string): string {
-    return text.toLowerCase().replace(/[^a-z0-9.#+\s]/g, " ")
+    return foldText(text).replace(/[^\p{L}\p{M}\p{N}.#+\s]/gu, " ")
 }
 
 // Math Prof improvement: whole-term alias matching.
@@ -185,9 +200,10 @@ function normalizeText(text: string): string {
 // inflated both the matched list and the missing list and blurred the score.
 // An alias now only counts when it is not glued to other letters/digits.
 // A trailing plural "s" is tolerated for aliases of 3+ chars ("apis", "pipelines").
-function isAlnum(ch: string | undefined): boolean {
-    return ch !== undefined && /[a-z0-9]/.test(ch)
-}
+// Chinese is written without spaces: in "熟悉React和TypeScript" the characters around
+// "React" are letters too, but they do not make it part of a longer word. isWordChar
+// therefore excludes them, which also lets Chinese aliases match anywhere in a sentence.
+const isAlnum = isWordChar
 
 function countAlias(normalized: string, alias: string): number {
     let count = 0
@@ -196,7 +212,7 @@ function countAlias(normalized: string, alias: string): number {
         const end = pos + alias.length
         const after = normalized[end]
         const startOk = !isAlnum(normalized[pos - 1])
-        const endOk = !isAlnum(after) ||
+        const endOk = !isAlnum(after) || PREFIX_ALIASES.has(alias) ||
             (alias.length >= 3 && after === "s" && !isAlnum(normalized[end + 1]))
         if (startOk && endOk) count++
         pos = end
@@ -208,8 +224,19 @@ function countAlias(normalized: string, alias: string): number {
 // "/" ("end-to-end", "scikit-learn", "ci/cd") can actually match; before this
 // they never did, because normalizeText() turns those characters into spaces.
 // De-duplicated so "ci/cd" and "ci cd" are not counted twice.
+// Localised aliases (languages.ts) join the English ones of the same group. One written
+// with a trailing "*" matches as a stem — "hasta bakım*" covers "hasta bakımı" and
+// "hasta bakımında" — because Turkish and German attach endings to the word.
+const PREFIX_ALIASES = new Set<string>()
 const NORMALIZED_SKILL_GROUPS: [string, string[]][] = Object.entries(SKILL_GROUPS).map(
-    ([key, aliases]) => [key, [...new Set(aliases.map(a => normalizeText(a).trim()))]]
+    ([key, aliases]) => {
+        const localized = (LOCALIZED_SKILL_ALIASES[key] ?? []).map(alias => {
+            const normalized = normalizeText(alias.replace(/\*$/, "")).trim()
+            if (alias.endsWith("*")) PREFIX_ALIASES.add(normalized)
+            return normalized
+        })
+        return [key, [...new Set([...aliases.map(a => normalizeText(a).trim()), ...localized])]]
+    }
 )
 
 /**
@@ -274,6 +301,28 @@ const JOB_HEADING = new RegExp(String.raw`^(requirements?|responsibilities|key r
 // hard requirement, so missing an optional extra cost as much as missing the core stack.
 const NICE_HEADING = /^(nice[- ]to[- ]haves?|good[- ]to[- ]haves?|bonus( points)?|pluspunten|preferred( qualifications)?|desirable|a plus)\b/i
 const NICE_INLINE = /\b(is a (big )?plus|are a plus|a bonus|nice to have|preferred|is een pr?e)\b/i
+// Headings in Turkish, German and Spanish (tested on the folded line), Chinese and Hindi.
+const INTL_JOB_HEADING_RE = new RegExp(String.raw`^(${INTL_JOB_HEADING})\b`)
+const INTL_BOILERPLATE_HEADING_RE = new RegExp(String.raw`^(${INTL_BOILERPLATE_HEADING})\b`)
+const INTL_NICE_HEADING_RE = new RegExp(String.raw`^(${INTL_NICE_HEADING})\b`)
+const INTL_NICE_INLINE_RE = new RegExp(String.raw`\b(${INTL_NICE_INLINE})\b`)
+
+interface PostingLine { isHeading: boolean; job: boolean; boilerplate: boolean; nice: boolean; niceInline: boolean }
+
+/** Classifies one line of a posting: is it a heading, and of which kind of section. */
+function readPostingLine(raw: string): PostingLine & { line: string } {
+    const line = raw.trim().replace(/^[#*\-•\s]+/, "")
+    const folded = foldText(line)
+    const isHeading = line.length > 0 && line.length <= 60 && line.split(/\s+/).length <= 8 && !/[.!?。]$/.test(folded.replace(/:$/, ""))
+    return {
+        line,
+        isHeading,
+        job: JOB_HEADING.test(line) || INTL_JOB_HEADING_RE.test(folded) || NONLATIN_JOB_HEADING.test(folded),
+        boilerplate: BOILERPLATE_HEADING.test(line) || INTL_BOILERPLATE_HEADING_RE.test(folded) || NONLATIN_BOILERPLATE_HEADING.test(folded),
+        nice: NICE_HEADING.test(line) || INTL_NICE_HEADING_RE.test(folded) || NONLATIN_NICE_HEADING.test(folded),
+        niceInline: NICE_INLINE.test(line) || INTL_NICE_INLINE_RE.test(folded) || NONLATIN_NICE_INLINE.test(folded),
+    }
+}
 
 /** Splits a posting into its required and explicitly optional lines. */
 export function splitOptional(jobText: string): { required: string; optional: string } {
@@ -281,11 +330,10 @@ export function splitOptional(jobText: string): { required: string; optional: st
     const optional: string[] = []
     let inNice = false
     for (const raw of jobText.split("\n")) {
-        const line = raw.trim().replace(/^[#*\-•\s]+/, "")
-        const isHeading = line.length > 0 && line.length <= 60 && line.split(/\s+/).length <= 8 && !/[.!?]$/.test(line.replace(/:$/, ""))
-        if (isHeading && NICE_HEADING.test(line)) { inNice = true; continue }
-        if (isHeading && (JOB_HEADING.test(line) || BOILERPLATE_HEADING.test(line))) inNice = false
-        ;(inNice || NICE_INLINE.test(line) ? optional : required).push(raw)
+        const l = readPostingLine(raw)
+        if (l.isHeading && l.nice) { inNice = true; continue }
+        if (l.isHeading && (l.job || l.boilerplate)) inNice = false
+        ;(inNice || l.niceInline ? optional : required).push(raw)
     }
     return { required: required.join("\n"), optional: optional.join("\n") }
 }
@@ -294,10 +342,9 @@ export function stripBoilerplate(jobText: string): string {
     const kept: string[] = []
     let skipping = false
     for (const raw of jobText.split("\n")) {
-        const line = raw.trim().replace(/^[#*\-•\s]+/, "")
-        const isHeading = line.length > 0 && line.length <= 60 && line.split(/\s+/).length <= 8 && !/[.!?]$/.test(line.replace(/:$/, ""))
-        if (isHeading && JOB_HEADING.test(line)) skipping = false
-        else if (isHeading && BOILERPLATE_HEADING.test(line)) skipping = true
+        const { line, isHeading, job, boilerplate } = readPostingLine(raw)
+        if (isHeading && job) skipping = false
+        else if (isHeading && boilerplate) skipping = true
         // Stand-alone legal sentences outside any heading
         if (/equal opportunity employer|acquisition in response to this vacancy/i.test(line)) continue
         if (!skipping) kept.push(raw)
@@ -307,18 +354,25 @@ export function stripBoilerplate(jobText: string): string {
     // would lose its requirements. If too little is left, use the full text instead.
     // (A ratio test was tried and rejected: long boilerplate is exactly the case where
     // most of the text should go.)
-    const words = stripped.trim().split(/\s+/).filter(Boolean).length
-    return words < 25 ? jobText : stripped
+    return countWords(stripped) < 25 ? jobText : stripped
 }
 
+// Math Prof improvement (Push 36): keywords in any script. The pattern used to be
+// /\b[a-z][a-z0-9+#.]{2,}\b/, which cut "geliştirici" into "geli" + "tirici" and found
+// nothing at all in Chinese or Hindi. A word is now a run of letters of any
+// space-separated script (same shape as before: starts with a letter, may contain + # .
+// inside, 4+ characters); Chinese is read as two-character windows (see hanBigrams).
+const WORD_RE = /(?<![\p{L}\p{M}\p{N}_])\p{L}[\p{L}\p{M}\p{N}+#.]*[\p{L}\p{M}\p{N}](?![\p{L}\p{M}\p{N}_])/gu
+
 function extractKeywordFrequencies(text: string): Map<string, number> {
-    const words = text.toLowerCase().match(/\b[a-z][a-z0-9+#.]{2,}\b/g) || []
+    const folded = foldText(text)
     const freq = new Map<string, number>()
-    for (const w of words) {
+    for (const w of withoutHan(folded).match(WORD_RE) || []) {
         if (!STOP_WORDS.has(w) && w.length >= 4) {
             freq.set(w, (freq.get(w) || 0) + 1)
         }
     }
+    for (const gram of hanBigrams(folded)) freq.set(gram, (freq.get(gram) || 0) + 1)
     return freq
 }
 
@@ -333,13 +387,22 @@ function extractKeywords(text: string): Set<string> {
 // so the experience part fell back to the neutral default. Ranges now use the lower
 // bound; a year count counts when experience words follow it or "at least / minimum"
 // precede it. Values outside 1–25 are ignored (e.g. "founded 40 years ago").
-const YEARS_UNIT = String.raw`(?:years?|yrs?|jaar)`
-const YEARS_RANGE_RE = new RegExp(String.raw`\b(\d{1,2})\s*(?:-|–|—|to|tot)\s*\d{1,2}\+?\s*${YEARS_UNIT}['’]?\s+(?:of\s+)?(?:[\w-]+\s+){0,4}?(?:experience|exp|ervaring|werkervaring|expertise|working|in\s+(?:a|an|the)\b)`, "gi")
-const YEARS_SINGLE_RE = new RegExp(String.raw`\b(\d{1,2})\+?\s*${YEARS_UNIT}['’]?\s+(?:of\s+)?(?:[\w-]+\s+){0,4}?(?:experience|exp|ervaring|werkervaring|expertise|working|in\s+(?:a|an|the)\b)`, "gi")
-const YEARS_MINIMUM_RE = new RegExp(String.raw`\b(?:at\s+least|minimum(?:\s+of)?|min\.?|minimaal|ten\s+minste)\s+(\d{1,2})\+?\s*${YEARS_UNIT}\b`, "gi")
+// Math Prof improvement (Push 36): Turkish, German, Spanish, Chinese and Hindi wording —
+// "en az 5 yıl deneyim", "mindestens 5 Jahren Berufserfahrung", "al menos 5 años de
+// experiencia", "3年以上工作经验", "5 वर्ष का अनुभव". None of these was read before, so the
+// experience part of the score always fell back to its neutral default. The text is
+// folded first, which is why the patterns below are written without diacritics.
+const YEARS_UNIT = String.raw`(?:years?|yrs?|jaar|${INTL_YEARS_UNIT})`
+const YEARS_SEP = String.raw`(?:-|–|—|to|tot|${INTL_RANGE_SEP})`
+const YEARS_TAIL = String.raw`['’]?\s+(?:of\s+|de\s+)?(?:[\w-]+\s+){0,4}?(?:experience|exp|ervaring|werkervaring|expertise|working|in\s+(?:a|an|the)\b|${INTL_EXPERIENCE_WORD})`
+const YEARS_RANGE_RE = new RegExp(String.raw`\b(\d{1,2})\s*${YEARS_SEP}\s*\d{1,2}\+?\s*${YEARS_UNIT}${YEARS_TAIL}`, "gi")
+const YEARS_SINGLE_RE = new RegExp(String.raw`\b(\d{1,2})\+?\s*${YEARS_UNIT}${YEARS_TAIL}`, "gi")
+const YEARS_MINIMUM_RE = new RegExp(String.raw`\b(?:at\s+least|minimum(?:\s+of)?|min\.?|minimaal|ten\s+minste|${INTL_AT_LEAST})\s+(\d{1,2})\+?\s*${YEARS_UNIT}\b`, "gi")
+const YEARS_UPPER_BOUND_RE = new RegExp(String.raw`\d\s*${YEARS_SEP}\s*$`)
 
-export function extractYearsRequired(text: string): number {
-    const found: number[] = []
+export function extractYearsRequired(rawText: string): number {
+    const text = foldText(rawText)
+    const found: number[] = nonLatinYears(text)
     const ranged = new Set<number>() // start index of numbers already read as a range
     for (const m of text.matchAll(YEARS_RANGE_RE)) {
         found.push(Number(m[1]))
@@ -348,7 +411,7 @@ export function extractYearsRequired(text: string): number {
     for (const m of text.matchAll(YEARS_SINGLE_RE)) {
         // "3-5 years" also matches "5 years …" — skip the upper bound of a range
         const before = text.slice(Math.max(0, (m.index ?? 0) - 6), m.index ?? 0)
-        if (/\d\s*(?:-|–|—|to|tot)\s*$/.test(before)) continue
+        if (YEARS_UPPER_BOUND_RE.test(before)) continue
         found.push(Number(m[1]))
     }
     for (const m of text.matchAll(YEARS_MINIMUM_RE)) found.push(Number(m[1]))
@@ -369,16 +432,19 @@ const YEAR = String.raw`(?:19[6-9]\d|20[0-4]\d)`
 // Captured so the period can be measured in months; unknown words ("Acme 2019") are ignored.
 const MONTH = String.raw`(?:([a-z]{3,9})\.?\s+|(\d{1,2})[./]\s*)?`
 const RANGE_RE = new RegExp(
-    String.raw`${MONTH}(${YEAR})\s*(?:-|–|—|to|until|tot)\s*${MONTH}(${YEAR}|present|current|now|today|heden|nu)\b`,
+    String.raw`${MONTH}(${YEAR})\s*(?:-|–|—|to|until|tot|${INTL_DATE_SEP})\s*${MONTH}(${YEAR}|present|current|now|today|heden|nu|${INTL_PRESENT})\b`,
     "gi",
 )
-const SINCE_RE = new RegExp(String.raw`\b(?:since|sinds)\s+${MONTH}(${YEAR})\b`, "gi")
-const EDUCATION_RE = /\b(university|universiteit|college|school|bachelor|master|bsc|msc|ba|ma|phd|degree|diploma|education|opleiding|hbo|mbo|wo|thesis|graduated|student)\b/i
+const SINCE_RE = new RegExp(String.raw`\b(?:since|sinds|${INTL_SINCE})\s+${MONTH}(${YEAR})\b`, "gi")
+// Turkish puts "since" after the year: "2019'dan beri", "2019'dan itibaren"
+const SINCE_TR_RE = new RegExp(String.raw`${MONTH}(${YEAR})\s*['’]?\s*[dt][ae]n\s+(?:beri|itibaren|bu\s+yana)\b`, "gi")
+const EDUCATION_RE = new RegExp(String.raw`\b(university|universiteit|college|school|bachelor|master|bsc|msc|ba|ma|phd|degree|diploma|education|opleiding|hbo|mbo|wo|thesis|graduated|student|${INTL_EDUCATION})\b`, "i")
 
-// English and Dutch month prefixes
+// Month prefixes: English and Dutch here, Turkish, German and Spanish from languages.ts
 const MONTHS: Record<string, number> = {
     jan: 1, feb: 2, mar: 3, mrt: 3, maa: 3, apr: 4, may: 5, mei: 5, jun: 6, jul: 7,
     aug: 8, sep: 9, oct: 10, okt: 10, nov: 11, dec: 12,
+    ...INTL_MONTHS,
 }
 
 function monthOf(name: string | undefined, num: string | undefined): number | null {
@@ -408,15 +474,16 @@ function yearPoint(year: number, month: number | null, edge: "start" | "end"): n
 export function yearsFromDateRanges(text: string, now: Date = new Date()): number {
     const nowPoint = now.getFullYear() + (now.getMonth() + 1) / 12
     const periods: [number, number][] = []
-    for (const line of text.toLowerCase().split(/\n|•|·|\|/)) {
-        if (EDUCATION_RE.test(line)) continue
+    // Folded and with Chinese / Hindi date wording rewritten ("2018年3月 至今" → "3/2018 - present")
+    for (const line of canonicalDates(foldText(text)).split(/\n|•|·|\|/)) {
+        if (EDUCATION_RE.test(line) || NONLATIN_EDUCATION.test(line)) continue
         for (const m of line.matchAll(RANGE_RE)) {
             const start = yearPoint(Number(m[3]), monthOf(m[1], m[2]), "start")
             const end = /^\d/.test(m[6]) ? yearPoint(Number(m[6]), monthOf(m[4], m[5]), "end") : nowPoint
             if (start > nowPoint || end < start) continue
             periods.push([start, Math.min(end, nowPoint)])
         }
-        for (const m of line.matchAll(SINCE_RE)) {
+        for (const m of [...line.matchAll(SINCE_RE), ...line.matchAll(SINCE_TR_RE)]) {
             const start = yearPoint(Number(m[3]), monthOf(m[1], m[2]), "start")
             if (start <= nowPoint) periods.push([start, nowPoint])
         }
@@ -438,9 +505,16 @@ export function yearsFromDateRanges(text: string, now: Date = new Date()): numbe
     return Math.round(Math.min(Math.max(total, 0), 40) * 10) / 10
 }
 
+// "6 years of experience" and its Turkish, German and Spanish forms ("6 yıl deneyim",
+// "6 Jahre Erfahrung", "6 años de experiencia"); Chinese and Hindi via nonLatinYears.
+const CV_YEARS_RE = new RegExp(String.raw`(\d+)\+?\s*(?:years?|${INTL_YEARS_UNIT})\s*(?:of\s*|de\s*)?(?:experience|exp|${INTL_EXPERIENCE_WORD})`, "gi")
+
 function extractYearsFromCV(text: string): number {
-    const matches = text.match(/(\d+)\+?\s*years?\s*(of\s*)?(experience|exp)/gi) || []
-    const years = matches.map(m => parseInt(m)).filter(n => !isNaN(n))
+    const folded = foldText(text)
+    const years = [
+        ...[...folded.matchAll(CV_YEARS_RE)].map(m => parseInt(m[1])),
+        ...nonLatinYears(folded),
+    ].filter(n => !isNaN(n))
     if (years.length > 0) return Math.max(...years)
 
     const fromRanges = yearsFromDateRanges(text)
@@ -450,11 +524,12 @@ function extractYearsFromCV(text: string): number {
     // explicit year count is written. "Senior React Developer" is far more
     // likely to have 5+ years than a 0-year default suggests, so we avoid
     // the 0.50 neutral-penalty for candidates who simply didn't write their years.
-    const lower = text.toLowerCase()
+    const lower = folded
     if (/\b(principal|architect|vp|vice.?president|director|fellow)\b/.test(lower)) return 10
-    if (/\b(staff|senior|sr\.|lead)\b/.test(lower)) return 5
+    if (/\b(staff|senior|sr\.|lead|kidemli)\b/.test(lower)) return 5
     if (/\b(mid.?level|intermediate)\b/.test(lower)) return 3
     if (/\b(junior|jr\.|entry.?level|graduate|intern)\b/.test(lower)) return 1
+    for (const [pattern, years] of NONLATIN_SENIORITY) if (pattern.test(lower)) return years
     return 0
 }
 
@@ -534,8 +609,9 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
     const yearsRequired = extractYearsRequired(jobText)
     const yearsOnCV = extractYearsFromCV(cvText)
 
-    const jobWordCount = jobContent.trim().split(/\s+/).length
-    const cvWordCount = cvText.trim().split(/\s+/).length
+    // countWords also handles text without spaces (Chinese)
+    const jobWordCount = countWords(jobContent)
+    const cvWordCount = countWords(cvText)
     const lowQuality = jobWordCount < 80 || (jobSkills.size < 3 && rawTotal < 20)
 
     // ── 4. Component A: Frequency-Weighted Skill Score (0-1) ────────────────
@@ -666,7 +742,7 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
     // Only surface words that are recognised skill aliases (from SKILL_GROUPS).
     // This prevents location names, company names, and page furniture ("hague",
     // "linkedin", "grade") from appearing. Each signal maps back to a real skill.
-    const allSkillAliases = new Set(Object.values(SKILL_GROUPS).flat())
+    const allSkillAliases = new Set([...Object.values(SKILL_GROUPS).flat(), ...SKILL_ALIAS_WORDS])
     // Math Prof improvement: adapt signal count to match score — strong matches (≥70)
     // already have enough context; weak matches benefit from more signals to act on.
     const signalCount = score >= 70 ? 5 : score >= 45 ? 7 : 10
