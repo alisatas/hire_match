@@ -1,3 +1,17 @@
+# [1.36.0](https://github.com/alisatas/hire_match/compare/v1.35.0...v1.36.0) (2026-11-12)
+
+
+### Bug Fixes
+
+* stop logging handled PDF read failures as console errors ([38ea8a1](https://github.com/alisatas/hire_match/commit/38ea8a152ef3b3dd6ca62f6c218649d9bf1ef079))
+
+
+### Features
+
+* add an optional "Buy me a coffee" link, shown once a checkout exists ([a760e93](https://github.com/alisatas/hire_match/commit/a760e93ea1a37b5aee476b67b8349fd7dd29e51b))
+* healthcare and logistics skill detection, Word/scanned CV FAQ ([8eb8415](https://github.com/alisatas/hire_match/commit/8eb8415cf1947155d2ec95e9d1743281f1351070))
+* make pasting CV text a quiet fallback under the PDF upload ([76a271d](https://github.com/alisatas/hire_match/commit/76a271d649fe943d989d7f62b463a4f1bedff58e))
+
 # [1.35.0](https://github.com/alisatas/hire_match/compare/v1.34.4...v1.35.0) (2026-11-11)
 
 
