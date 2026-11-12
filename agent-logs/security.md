@@ -479,3 +479,21 @@ Full read of `src/app/api/**`, `src/proxy.ts`, `next.config.ts`, client link ren
 ## 2026-11-12 — Push 35 (SEO log only: AI visibility baseline, GA4 AI channel, Search Console data)
 
 **Status:** ✅ PASS (0 critical) — documentation-only push (`agent-logs/seo.md`), no code change. 119 unit / 64 browser tests green on the production build; tsc 0, ESLint 0; prod audit 0 high/critical; no tracked `.env`
+
+---
+
+## 2026-11-12 — Push 36 (Multilingual: engine reads 5 languages, home pages in TR / DE / ES / ZH, nurse & logistics guides)
+
+**Status:** ✅ PASS (0 critical)
+
+- New untrusted inputs this cycle and how each is closed:
+  - `/<lang>` dynamic segment: `dynamicParams = false` + `isLocale()`; `/en`, `/TR`, `/__proto__`, `/constructor`, `/tr%00`, `/tr/admin` all answer a plain 404 (10 cases added)
+  - Share links on translated pages take a second path to the DOM (verdict rebuilt from the link's fields, labels looked up in a dictionary). Lookups are own-key only (`Object.hasOwn`), `fmt()` too; payloads in every field plus `__proto__` / `constructor` / `toString` as labels render as text on `/tr` and `/zh`
+  - Share-image redirects copy a path segment into `Location`: `%2F%2Fevil.example`, `%5Cevil.example`, `https:%2F%2F…` stay on-site (3 cases added)
+- ReDoS: the engine's patterns are now Unicode-aware and still linear; 8 hostile inputs (99k letters + `_`, 99k `+`, Han runs, Devanagari and combining marks, year lists) each finish far under the 3 s bound — whole unit suite runs in 0.6 s
+- `dangerouslySetInnerHTML`: same sinks as before, moved to `root-shell.tsx` and `home-page.tsx`; values are server-side dictionaries through `jsonLdScript()` (escapes `<`)
+- Security headers verified on `/tr` and `/zh` (separate root layout, same `next.config.ts` headers)
+- Production: spoofed `x-real-ip` / `x-forwarded-for` still do not bypass the limiter (204 ×10, then 429 from request 11)
+- 🟡 New: `experimental.globalNotFound` — an experimental Next.js flag now serves the 404 for unmatched URLs (needed with two root layouts). Re-check on every Next.js upgrade
+- Still open 🟡: CSP `'unsafe-inline'`; moderate advisories in the dependency tree
+- 189 unit / 91 browser tests green on the production build (was 119 / 64); tsc 0, ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`

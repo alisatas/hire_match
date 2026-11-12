@@ -592,3 +592,30 @@ Regression check: share links can no longer inject an unknown skill key or prior
 
 **Status:** ✅ PASS (0 critical) — documentation-only push (`agent-logs/seo.md`), no code change. 119 unit / 64 browser tests green on the production build; tsc 0, ESLint 0; prod audit 0 high/critical; no tracked `.env`
 - ⚠️ No scoring change this cycle (documentation-only push); backlog unchanged: seniority mismatch signal
+
+---
+
+## 2026-11-12 — Push 36 (Multilingual: engine reads 5 languages, home pages in TR / DE / ES / ZH, nurse & logistics guides)
+
+**Status:** ✅ PASS (3 improvements)
+
+**Improvement 1 — language layer (`src/lib/languages.ts`).** The engine kept only a–z, so other languages lost their letters. Same CV × same posting, before → after: nurse en 75 → 75, tr 24 → 71, de 60 → 68, es 28 → 76, zh 5 → 76, hi 8 → 75; frontend 70 / 71 / 72 / 75 / 76 / 73; logistics 67 / 64 / 62 / 67 / 71 / 70; unrelated CV 5–7 everywhere.
+- Unicode-aware matching with folded Latin diacritics; Chinese read as two-character windows; `countWords` for text without spaces
+- Localised aliases for 25 skill groups (stems for Turkish / German endings), stop words, years of experience ("en az 5 yıl", "mindestens 5 Jahren", "3年以上工作经验"), CV date ranges and section headings
+- No language detection: every list applies to every text. Excluded on purpose: German "KI" (Turkish "ki"), Spanish "contenedores"
+
+**Improvement 2 — one-line extras are optional.** "Nice to have: Kubernetes" on a single line was dropped as a heading; the skill was weighted like a requirement.
+
+**Improvement 3 — guides match the engine.** The nurse and logistics guides list keywords in the wording `SKILL_GROUPS` detects (unit-tested).
+
+Regression check: strong match 75–95 and weak ≤ 25 hold; no English fixture score changed (12 pairs).
+
+**Caveats:** the multilingual fixtures were written by the same author as the alias lists, so the table is optimistic — real postings will surface missing aliases. Hindi lists are thin and unreviewed.
+
+**Running improvement backlog (next pushes):**
+1. Seniority mismatch signal ("Lead / Head of" title vs a junior CV)
+2. Collect real postings per language and extend the alias lists from misses
+3. Word count for German compounds (short postings hit the under-50-words damping early)
+4. CV quality check in other languages (now hidden for non-English CVs)
+
+- 189 unit / 91 browser tests green on the production build (was 119 / 64); tsc 0, ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`

@@ -357,3 +357,15 @@ Agents MUST read this log before running checks and MUST append an entry after e
 ## 2026-11-12 — Push 35 (SEO log only: AI visibility baseline, GA4 AI channel, Search Console data)
 
 **Status:** ✅ PASS (0 critical) — documentation-only push (`agent-logs/seo.md`), no code change. 119 unit / 64 browser tests green on the production build; tsc 0, ESLint 0; prod audit 0 high/critical; no tracked `.env`
+
+---
+
+## 2026-11-12 — Push 36 (Multilingual: engine reads 5 languages, home pages in TR / DE / ES / ZH, nurse & logistics guides)
+
+**Status:** ✅ PASS (0 critical)
+
+- Suite grew 64 → 91: translated pages end to end (paste a CV and a posting in that language → score ≥ 60, localized skill label, no English CV check), header language menu (desktop + 375 px), footer language links, 404 for bad language segments, share links and headers on translated pages, hostile redirect paths
+- Two root layouts (`app/(en)`, `app/[lang]`): `<html lang>` verified in raw HTML for all five; unmatched URLs get the branded 404 with status 404 via `global-not-found`
+- Share-image test now follows the URL each page advertises in `og:image` (route groups add a suffix); the old URLs redirect and are tested too
+- Note: running the suite twice within a minute trips the rate-limit test (first 15 requests already counted) — wait 60 s between local runs
+- 189 unit / 91 browser tests green on the production build (was 119 / 64); tsc 0, ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`

@@ -330,3 +330,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 ## 2026-11-12 — Push 35 (SEO log only: AI visibility baseline, GA4 AI channel, Search Console data)
 
 **Status:** ✅ PASS (0 critical) — documentation-only push (`agent-logs/seo.md`), no code change. 119 unit / 64 browser tests green on the production build; tsc 0, ESLint 0; prod audit 0 high/critical; no tracked `.env`
+
+---
+
+## 2026-11-12 — Push 36 (Multilingual: engine reads 5 languages, home pages in TR / DE / ES / ZH, nurse & logistics guides)
+
+**Status:** ✅ PASS (0 critical) — no API route changed
+
+- Routes stay at `app/api/*`, outside both root layouts; proxy matcher untouched. All malformed-body, cross-site, owner-key and rate-limit cases green
+- New redirects (old share-image URLs → suffixed ones) are temporary (307) and same-site only
+- 189 unit / 91 browser tests green on the production build (was 119 / 64); tsc 0, ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`

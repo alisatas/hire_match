@@ -363,3 +363,18 @@ Agents MUST read this log before running checks and MUST append an entry after e
 ## 2026-11-12 — Push 35 (SEO log only: AI visibility baseline, GA4 AI channel, Search Console data)
 
 **Status:** ✅ PASS (0 critical) — documentation-only push (`agent-logs/seo.md`), no code change. 119 unit / 64 browser tests green on the production build; tsc 0, ESLint 0; prod audit 0 high/critical; no tracked `.env`
+
+---
+
+## 2026-11-12 — Push 36 (Multilingual: engine reads 5 languages, home pages in TR / DE / ES / ZH, nurse & logistics guides)
+
+**Status:** ✅ PASS (0 critical)
+
+- Empty and odd inputs after the Unicode rewrite: `countWords("")` is 0 (was 1 from `"".split`) — no division uses it; 1-character CV, stop-word-only job and whitespace-only text still score without NaN
+- Regression guard: all 12 English fixture pairs score exactly as before the language layer
+- 🔧 Fixed: a one-line extra ("Nice to have: Kubernetes", "Tercih sebebi: SQL") was dropped as a heading, so its skill was neither required nor optional
+- 🔧 Fixed: the CV quality check reported "Weak" for any CV not written in English; it now runs on English CVs only (`looksEnglish`)
+- Status texts stay English tokens internally and are translated on display, so the state machine (`startsWith("✓")`, `includes("paste")`) is unchanged
+- 🟡 Recent-scans history keeps the label in the language it was saved in (mixed languages if a visitor switches); cosmetic
+- 🟡 Very short German postings: compounds count as one word, so the under-50-words damping starts earlier than for the same text in English
+- 189 unit / 91 browser tests green on the production build (was 119 / 64); tsc 0, ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`

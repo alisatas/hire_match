@@ -398,3 +398,17 @@ Agents MUST read this log before running checks and MUST append an entry after e
 ## 2026-11-12 — Push 35 (SEO log only: AI visibility baseline, GA4 AI channel, Search Console data)
 
 **Status:** ✅ PASS (0 critical) — documentation-only push (`agent-logs/seo.md`), no code change. 119 unit / 64 browser tests green on the production build; tsc 0, ESLint 0; prod audit 0 high/critical; no tracked `.env`
+
+---
+
+## 2026-11-12 — Push 36 (Multilingual: engine reads 5 languages, home pages in TR / DE / ES / ZH, nurse & logistics guides)
+
+**Status:** ✅ PASS (0 critical) — owner request: the site in more languages, language menu at the top
+
+- Home page, analyzer, report, FAQ, header, footer and consent bar in Türkçe, Deutsch, Español and 中文 (`/tr`, `/de`, `/es`, `/zh`)
+- Language menu in the header (globe + code, native `<details>`, 44 px rows on phones) and a language row in the footer; no horizontal overflow at 375 px
+- axe: the first version of the menu failed `label-content-name-mismatch`; the accessible name now starts with the visible code
+- Links to English-only pages (role guides, articles) carry an "(in English)" note and `hreflang="en"`
+- 🟡 Not translated yet: role guides, articles, legal pages, sample postings, course titles, the score-card image wording from shared links, example bullets (hidden on translated pages)
+- 🟡 Chinese copy was written by a non-native author — needs a native review
+- 189 unit / 91 browser tests green on the production build (was 119 / 64); tsc 0, ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`

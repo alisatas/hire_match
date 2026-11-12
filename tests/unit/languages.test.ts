@@ -109,3 +109,22 @@ describe("localised skill aliases", () => {
     expect(score).toBeGreaterThanOrEqual(75);
   });
 });
+
+// The Unicode patterns must stay linear on hostile input: CV and job text are attacker-
+// controlled and analysed in the visitor's browser (max 200k / 100k characters).
+describe("pathological input", () => {
+  it.each([
+    ["letters then underscore", "a".repeat(99_000) + "_"],
+    ["plus signs", "a" + "+".repeat(99_000)],
+    ["alternating", "a+".repeat(49_000) + "_"],
+    ["Han run", "护理".repeat(49_000)],
+    ["year lists", "3 yil ".repeat(16_000)],
+    ["dashes and years", "2019 - ".repeat(14_000)],
+    ["Devanagari marks", "\u093e".repeat(99_000)],
+    ["combining marks", "e\u0301".repeat(49_000)],
+  ])("%s finishes quickly", (_name, text) => {
+    const started = performance.now();
+    analyze(text, text);
+    expect(performance.now() - started).toBeLessThan(3000);
+  });
+});

@@ -62,6 +62,24 @@ test.describe("XSS", () => {
     await page.mouse.move(400, 400);
     await check();
   });
+
+  // The translated pages rebuild the verdict from the link's fields and look labels up in
+  // a dictionary — a second path from the same untrusted input to the page.
+  for (const path of ["/tr", "/zh"]) {
+    test(`a share link with script payloads is plain text on ${path} too`, async ({ page }) => {
+      const check = await trapExecution(page);
+      const evil = { ...SHARE, s: 85, pl: XSS_PAYLOADS[0], pd: XSS_PAYLOADS[1], pc: `x" onmouseover="window.__xss=1`,
+        m: [...XSS_PAYLOADS, "__proto__", "constructor", "toString"], sm: XSS_PAYLOADS[2], ts: [[XSS_PAYLOADS[3], 3]],
+        ms: [[XSS_PAYLOADS[5], "docker", 2, "high"], ["__proto__", "react", 3, "high"]] };
+      const pageErrors: string[] = [];
+      page.on("pageerror", (e) => pageErrors.push(e.message));
+      await page.goto(`${path}#s=${b64url(evil)}`);
+      await expect(page.locator('#analyzer svg[role="img"]')).toBeVisible();
+      await page.mouse.move(400, 400);
+      await check();
+      expect(pageErrors).toEqual([]);
+    });
+  }
 });
 
 test.describe("crafted share links cannot break the page", () => {
@@ -80,18 +98,32 @@ test.describe("crafted share links cannot break the page", () => {
     test(name, async ({ page }) => {
       const pageErrors: string[] = [];
       page.on("pageerror", (e) => pageErrors.push(e.message));
-      await page.goto(`/#s=${hash}`);
-      // The analyzer must still be usable: either the shared result or the empty form
-      await expect(page.locator("#analyzer")).toBeVisible();
-      await expect(page.getByText("This page couldn’t load")).toHaveCount(0);
-      expect(await page.locator('#analyzer a[href="undefined"], #analyzer a:not([href])').count()).toBe(0);
+      // English and a translated page: the same link is decoded by both
+      for (const path of ["/", "/de"]) {
+        await page.goto(`${path}#s=${hash}`);
+        // The analyzer must still be usable: either the shared result or the empty form
+        await expect(page.locator("#analyzer")).toBeVisible();
+        await expect(page.getByText("This page couldn’t load")).toHaveCount(0);
+        expect(await page.locator('#analyzer a[href="undefined"], #analyzer a:not([href])').count()).toBe(0);
+      }
       expect(pageErrors).toEqual([]);
     });
   }
 });
 
+// /<lang> is a dynamic segment: only the four published languages may answer.
+test.describe("language segment", () => {
+  for (const path of ["/en", "/TR", "/__proto__", "/constructor", "/toString", "/tr%00", "/tr/admin", "/xx", "/zh-Hans", "/%E4%B8%AD%E6%96%87"]) {
+    test(`${path} is a plain 404`, async ({ request }) => {
+      const res = await request.get(path);
+      expect(res.status()).toBe(404);
+      expectNoLeak(await res.text());
+    });
+  }
+});
+
 test.describe("security headers", () => {
-  const PATHS = ["/", "/resume-keywords/ai-engineer", "/blog/how-ats-reads-your-cv", "/privacy", "/this-page-does-not-exist"];
+  const PATHS = ["/", "/tr", "/zh", "/resume-keywords/ai-engineer", "/blog/how-ats-reads-your-cv", "/privacy", "/this-page-does-not-exist"];
   for (const path of PATHS) {
     test(`${path} sends hardened headers`, async ({ request }) => {
       const res = await request.get(path);
@@ -227,7 +259,11 @@ test.describe("API hardening", () => {
 });
 
 test.describe("open redirects", () => {
-  for (const path of ["//evil.example/", "/\\evil.example", "/%2F%2Fevil.example", "/https://evil.example"]) {
+  for (const path of [
+    "//evil.example/", "/\\evil.example", "/%2F%2Fevil.example", "/https://evil.example",
+    // the share-image redirects copy a path segment into Location
+    "/resume-keywords/%2F%2Fevil.example/opengraph-image", "/blog/%5Cevil.example/opengraph-image", "/resume-keywords/https:%2F%2Fevil.example/opengraph-image",
+  ]) {
     test(`${path} does not redirect off-site`, async ({ baseURL }) => {
       // Raw fetch: Playwright's request client would itself read "//evil.example" as a host
       const res = await fetch(`${baseURL}${path}`, { redirect: "manual" });

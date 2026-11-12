@@ -549,3 +549,26 @@ Agents MUST read this log before running checks and MUST append an entry after e
 
 **Status:** ✅ PASS (0 critical) — documentation-only push (`agent-logs/seo.md`), no code change. 119 unit / 64 browser tests green on the production build; tsc 0, ESLint 0; prod audit 0 high/critical; no tracked `.env`
 - ⚠️ No new on-site SEO improvement this cycle: the push carries the measurement setup (Bing AI Performance baseline, GA4 "AI assistants" channel, first Search Console and Google AI features numbers), all logged above
+
+---
+
+## 2026-11-12 — Push 36 (Multilingual: engine reads 5 languages, home pages in TR / DE / ES / ZH, nurse & logistics guides)
+
+**Status:** ✅ PASS (0 critical, 5 improvements)
+
+**Improvements implemented this cycle:**
+- Four translated home pages — `/tr`, `/de`, `/es`, `/zh` — each with its own title, description, H1, 10-question FAQ, FAQPage + HowTo JSON-LD (`inLanguage`), correct `<html lang>`, self canonical and `hreflang` to every version plus `x-default`; all in the sitemap with `alternates`
+- Two role guides: registered nurse, logistics coordinator (18 guides)
+- New English FAQ: "Does CVXray work with CVs and job posts that are not in English?"
+- `llms.txt`: languages and URLs of each version, native-language example queries, updated limitations
+- `seo.spec.ts` now checks the language of each page and the full `hreflang` set on every home-page version
+
+**Running improvement backlog (next pushes):**
+1. Submit `/tr`, `/de`, `/es`, `/zh` in Search Console and Bing; confirm IndexNow picked them up
+2. Translate the role guides (18 × 4) — the long-tail traffic in each language
+3. Native review of the Chinese copy; decide on a Hindi page (engine reads Hindi, postings in India are mostly English)
+4. Landing pages: "ATS resume checker", "Jobscan alternative" — and their equivalents ("ATS uyumlu CV", "Lebenslauf ATS-Check")
+5. Off-page: Product Hunt + AlternativeTo listings, Reddit mentions (copy drafted, owner to post)
+6. GA4: mark `analysis_complete`, `score_card` and `entry` as key events; add language as a dimension
+
+- 189 unit / 91 browser tests green on the production build (was 119 / 64); tsc 0, ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`
