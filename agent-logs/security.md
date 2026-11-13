@@ -518,3 +518,13 @@ Full read of `src/app/api/**`, `src/proxy.ts`, `next.config.ts`, client link ren
 - Mobile app calls `/api/extract-pdf` and `/api/scrape` without a browser `Origin`; the cross-site guard and rate limits apply unchanged (native fetch is not a cross-site browser request)
 - No secrets in `mobile/`; generated `mobile/android` and signing keys are git-ignored
 - 198 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`
+
+---
+
+## 2026-11-13 — Push 38 (Legal pages, samples, course details, score card and 404 in every language)
+
+**Status:** ✅ PASS (0 critical)
+
+- New routes `/[lang]/terms|privacy|refund-policy`: static, `isLocale` guard, 404 otherwise; content is server data rendered as JSX text
+- 404 page reads the language from `location.pathname` with a fixed regex; no user text reaches the DOM
+- 203 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical; no tracked `.env`

@@ -607,3 +607,20 @@ Agents MUST read this log before running checks and MUST append an entry after e
 5. Play Store listing once the app ships (store page as a backlink and brand entity)
 
 - 198 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`
+
+---
+
+## 2026-11-13 — Push 38 (Legal pages, samples, course details, score card and 404 in every language)
+
+**Status:** ✅ PASS (0 critical, 1 improvement)
+
+**Improvement:** 12 more indexable pages — legal pages in TR/DE/ES/ZH with hreflang and sitemap alternates (135 pages in total); legal pages now take part in hreflang like every other page.
+
+**Running improvement backlog (next pushes):**
+1. Submit translated URLs in Search Console / Bing
+2. Keyword volume research per language (SEO manager)
+3. Landing pages: ATS resume checker, Jobscan alternative
+4. Native review of Chinese copy and legal translations
+5. Play Store listing once the app ships
+
+- 203 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical; no tracked `.env`
