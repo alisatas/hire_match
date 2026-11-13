@@ -1,3 +1,10 @@
+# [1.40.0](https://github.com/alisatas/hire_match/compare/v1.39.0...v1.40.0) (2026-11-13)
+
+
+### Features
+
+* **i18n:** legal pages, sample postings, course details, score card and 404 in every language ([d9f2ad9](https://github.com/alisatas/hire_match/commit/d9f2ad9737a37a8855f6d3bec55ba2c02e5ada19))
+
 # [1.39.0](https://github.com/alisatas/hire_match/compare/v1.38.0...v1.39.0) (2026-11-13)
 
 
