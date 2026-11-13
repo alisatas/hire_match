@@ -258,6 +258,19 @@ test.describe("API hardening", () => {
   });
 });
 
+test("assetlinks.json is either absent or a well-formed statement for our app only", async ({ request }) => {
+  const res = await request.get("/.well-known/assetlinks.json");
+  expect([200, 404]).toContain(res.status());
+  if (res.status() === 200) {
+    const body = await res.json();
+    expect(Array.isArray(body)).toBe(true);
+    for (const s of body) {
+      expect(s.target.package_name).toBe("com.cvxray.app");
+      for (const f of s.target.sha256_cert_fingerprints) expect(f).toMatch(/^([0-9A-F]{2}:){31}[0-9A-F]{2}$/);
+    }
+  }
+});
+
 test.describe("open redirects", () => {
   for (const path of [
     "//evil.example/", "/\\evil.example", "/%2F%2Fevil.example", "/https://evil.example",
