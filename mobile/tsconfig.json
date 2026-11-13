@@ -1,0 +1,11 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    // The analysis engine, translations and course list are shared with the website:
+    // "@/lib/..." resolves to ../src/lib/... (Expo supports tsconfig paths in Metro).
+    "paths": { "@/*": ["../src/*"] }
+  },
+  "include": ["**/*.ts", "**/*.tsx", "../src/lib/**/*.ts"],
+  "exclude": ["node_modules", "android", "ios"]
+}
