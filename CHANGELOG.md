@@ -1,3 +1,12 @@
+# [1.39.0](https://github.com/alisatas/hire_match/compare/v1.38.0...v1.39.0) (2026-11-13)
+
+
+### Features
+
+* **android:** trusted web activity app for cvxray.com ([593264b](https://github.com/alisatas/hire_match/commit/593264bde48448819625e5f3d39c96d01b43f2f9))
+* **engine:** senior job titles imply an experience level ([454f82e](https://github.com/alisatas/hire_match/commit/454f82ee1b87657b860e4ba627ed129c8125c511))
+* **mobile:** native android app with expo and react native ([5b494ca](https://github.com/alisatas/hire_match/commit/5b494caa6ea52935393ace71837248677b4a11cc))
+
 # [1.38.0](https://github.com/alisatas/hire_match/compare/v1.37.0...v1.38.0) (2026-11-13)
 
 
