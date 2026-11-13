@@ -1,3 +1,13 @@
+# [1.38.0](https://github.com/alisatas/hire_match/compare/v1.37.0...v1.38.0) (2026-11-13)
+
+
+### Features
+
+* **engine:** score Turkish, German, Spanish, Chinese and Hindi CVs ([10df306](https://github.com/alisatas/hire_match/commit/10df3060f0691326c9b25304e99b6438571d1864))
+* **i18n:** home pages in Turkish, German, Spanish and Chinese ([9e0f125](https://github.com/alisatas/hire_match/commit/9e0f125f1c73e893eb06b15f272669b422640908))
+* **i18n:** keyword guides and articles in Turkish, German, Spanish and Chinese ([f2b7799](https://github.com/alisatas/hire_match/commit/f2b7799b197b98fd4034688a974a9bef5086094d))
+* **seo:** registered nurse and logistics coordinator keyword guides ([fd75dbd](https://github.com/alisatas/hire_match/commit/fd75dbdd38a50f9e43bb4ef72be9f4b68ba14958))
+
 # [1.37.0](https://github.com/alisatas/hire_match/compare/v1.36.0...v1.37.0) (2026-11-12)
 
 
