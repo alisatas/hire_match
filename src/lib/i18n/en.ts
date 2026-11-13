@@ -27,8 +27,6 @@ export const en = {
     footerNote: "Nothing you upload is stored or shared.",
     language: "Language",
     cookieSettings: "Cookie settings",
-    // Shown next to links that lead to English-only pages; empty in English
-    inEnglish: "",
   },
   consent: {
     label: "Cookie consent",
@@ -204,8 +202,6 @@ export const en = {
     ratingHint: "Your rating helps tune the scoring engine.",
     ratingAria: "Rate the accuracy of this score",
     ratingLabels: ["Way off", "Somewhat off", "About right", "Accurate", "Spot on"],
-    // Shown under the sample chooser where the samples are not in the page language
-    samplesNote: "",
     // ── Used only outside English: the English site shows the engine's own wording ──
     persona: {
       labels: { top: "Top Candidate", strong: "Strong Contender", emerging: "Emerging Talent", upskilling: "Upskilling Phase" },

@@ -25,7 +25,6 @@ export const zh: Dictionary = {
     footerNote: "你上传的内容不会被保存或分享。",
     language: "语言",
     cookieSettings: "Cookie 设置",
-    inEnglish: "英文",
   },
   consent: {
     label: "Cookie 同意",
@@ -242,7 +241,6 @@ export const zh: Dictionary = {
     ratingHint: "你的评价有助于改进评分引擎。",
     ratingAria: "评价这个评分的准确度",
     ratingLabels: ["相差很大", "有些偏差", "大致准确", "准确", "非常准确"],
-    samplesNote: "示例职位为英文。",
     persona: {
       labels: { top: "顶尖候选人", strong: "有力竞争者", emerging: "潜力人才", upskilling: "提升阶段" },
       intro: { top: "高度契合。", strong: "具有竞争力。", emerging: "", upskilling: "" },

@@ -24,7 +24,6 @@ export const tr: Dictionary = {
     footerNote: "Yüklediğiniz hiçbir şey saklanmaz veya paylaşılmaz.",
     language: "Dil",
     cookieSettings: "Çerez ayarları",
-    inEnglish: "İngilizce",
   },
   consent: {
     label: "Çerez izni",
@@ -241,7 +240,6 @@ export const tr: Dictionary = {
     ratingHint: "Puanınız skor motorunu iyileştirmemize yardımcı olur.",
     ratingAria: "Bu skorun doğruluğunu puanlayın",
     ratingLabels: ["Çok uzak", "Biraz uzak", "Aşağı yukarı doğru", "Doğru", "Tam isabet"],
-    samplesNote: "Örnek ilanlar İngilizcedir.",
     persona: {
       labels: { top: "En Güçlü Aday", strong: "Güçlü Aday", emerging: "Gelişen Yetenek", upskilling: "Gelişim Aşaması" },
       intro: { top: "Güçlü uyum. ", strong: "Rekabetçi profil. ", emerging: "", upskilling: "" },

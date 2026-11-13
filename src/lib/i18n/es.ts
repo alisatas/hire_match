@@ -24,7 +24,6 @@ export const es: Dictionary = {
     footerNote: "Nada de lo que subes se guarda ni se comparte.",
     language: "Idioma",
     cookieSettings: "Configurar cookies",
-    inEnglish: "en inglés",
   },
   consent: {
     label: "Consentimiento de cookies",
@@ -241,7 +240,6 @@ export const es: Dictionary = {
     ratingHint: "Tu valoración ayuda a ajustar el motor de puntuación.",
     ratingAria: "Valora la precisión de esta puntuación",
     ratingLabels: ["Muy desviada", "Algo desviada", "Más o menos", "Precisa", "Clavada"],
-    samplesNote: "Las ofertas de ejemplo están en inglés.",
     persona: {
       labels: { top: "Candidato destacado", strong: "Candidato sólido", emerging: "Talento en desarrollo", upskilling: "Fase de formación" },
       intro: { top: "Ajuste sólido. ", strong: "Perfil competitivo. ", emerging: "", upskilling: "" },

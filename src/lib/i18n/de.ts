@@ -24,7 +24,6 @@ export const de: Dictionary = {
     footerNote: "Nichts, was Sie hochladen, wird gespeichert oder weitergegeben.",
     language: "Sprache",
     cookieSettings: "Cookie-Einstellungen",
-    inEnglish: "Englisch",
   },
   consent: {
     label: "Cookie-Einwilligung",
@@ -241,7 +240,6 @@ export const de: Dictionary = {
     ratingHint: "Ihre Bewertung hilft, die Berechnung zu verbessern.",
     ratingAria: "Genauigkeit dieses Scores bewerten",
     ratingLabels: ["Weit daneben", "Etwas daneben", "Ungefähr richtig", "Zutreffend", "Volltreffer"],
-    samplesNote: "Die Beispielstellen sind auf Englisch.",
     persona: {
       labels: { top: "Top-Kandidat", strong: "Starker Kandidat", emerging: "Talent mit Potenzial", upskilling: "Aufbauphase" },
       intro: { top: "Starke Übereinstimmung. ", strong: "Konkurrenzfähiges Profil. ", emerging: "", upskilling: "" },
