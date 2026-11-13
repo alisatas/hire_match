@@ -634,3 +634,18 @@ Regression check: strong match 75–95 and weak ≤ 25 hold; no English fixture 
 3. CV quality check in other languages
 
 - 195 unit / 91 browser tests green on the production build; tsc 0, ESLint 0; no tracked `.env`
+
+---
+
+## 2026-11-13 — Push 37 (Native Android app in mobile/, SEO brief, seniority signal)
+
+**Status:** ✅ PASS (1 improvement)
+
+**Improvement:** senior titles imply experience. When a posting states no years, "Lead / Staff / Senior" in the title implies 5 and "Head of / Director / Principal" 8 — for the experience score only, and only when the CV is below that level (the report still says no requirement). A 1-year vs 9-year CV now differ by 2+ more points on a Lead posting; English fixtures unchanged.
+
+**Running improvement backlog (next pushes):**
+1. Extend alias lists from real postings per language
+2. CV quality check in other languages
+3. Seniority words in TR/DE/ES/ZH titles
+
+- 198 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`

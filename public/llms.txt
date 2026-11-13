@@ -69,6 +69,15 @@ The score is a transparent weighted comparison, not a language-model opinion:
 - [How to tailor your CV to a job description in 15 minutes](https://cvxray.com/blog/tailor-cv-to-job-description): a five-step method without keyword stuffing
 - [What is a good CV match score](https://cvxray.com/blog/what-is-a-good-cv-match-score): how the score is calculated and what to do at each level
 
+## In other languages
+
+Every keyword guide and article also exists in Turkish, German, Spanish and Chinese, under the same path with a language prefix:
+
+- Turkish: [CV anahtar kelimeleri](https://cvxray.com/tr/resume-keywords), [rehberler](https://cvxray.com/tr/blog), [ana sayfa](https://cvxray.com/tr)
+- German: [Lebenslauf-Keywords](https://cvxray.com/de/resume-keywords), [Ratgeber](https://cvxray.com/de/blog), [Startseite](https://cvxray.com/de)
+- Spanish: [Palabras clave para el CV](https://cvxray.com/es/resume-keywords), [guías](https://cvxray.com/es/blog), [inicio](https://cvxray.com/es)
+- Chinese: [简历关键词](https://cvxray.com/zh/resume-keywords), [指南](https://cvxray.com/zh/blog), [首页](https://cvxray.com/zh)
+
 ## How CVXray differs from similar tools
 
 Tools in the same category include Jobscan, Resume Worded and Teal. Those are account-based products with paid plans and broader feature sets (resume builders, job trackers, rewriting). CVXray does one thing — CV-versus-job matching — and does it with no account, no payment and no usage cap, and without storing the CV. It does not rewrite or generate CVs.

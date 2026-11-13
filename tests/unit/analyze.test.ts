@@ -272,3 +272,23 @@ Own incident triage and bug triage, manage access control lists (ACLs), split wo
     expect(r.missing.map(m => m.key)).toContain(key);
   });
 });
+
+describe("seniority in the job title", () => {
+  // A full-length posting with no year count, so only the title can carry seniority
+  const body = Array(4).fill("Build React and TypeScript web applications with Next.js, Tailwind CSS, Jest and GraphQL for thousands of customers. Work with designers in Figma, review code in Git, ship weekly with CI/CD in an Agile team.").join("\n")
+  const job = (title: string) => `${title}\n${body}`
+  const cv = (years: number) => `Frontend developer, ${years} years of experience with React, TypeScript, Next.js, Tailwind CSS, Jest, GraphQL, Figma, Git, CI/CD and Agile delivery for web products used by thousands of customers every day. Shipped a checkout redesign that cut load time by forty percent, mentored two developers, wrote unit and end-to-end tests, and worked closely with product managers on weekly releases.`
+  const gap = (title: string) => analyze(cv(9), job(title)).score - analyze(cv(1), job(title)).score
+
+  it("separates a junior from a senior CV when the title says Lead", () => {
+    expect(gap("Lead Frontend Engineer")).toBeGreaterThanOrEqual(gap("Frontend Engineer") + 2)
+  });
+
+  it("does not penalise a CV that meets the implied level", () => {
+    expect(analyze(cv(9), job("Lead Frontend Engineer")).score).toBeGreaterThanOrEqual(analyze(cv(9), job("Frontend Engineer")).score - 1)
+  });
+
+  it("keeps showing that no years were stated", () => {
+    expect(analyze(cv(1), job("Head of Frontend")).yearsRequired).toBe(0)
+  });
+});

@@ -612,6 +612,17 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
     // ── 3. Years of experience ───────────────────────────────────────────────
     const yearsRequired = extractYearsRequired(jobText)
     const yearsOnCV = extractYearsFromCV(cvText)
+    // Math Prof improvement (Push 37): seniority in the job title. Many "Lead" or "Head of"
+    // postings never write a year count, so the experience part fell back to its neutral
+    // default and a 1-year CV scored the same as a 9-year one. When no years are stated, a
+    // senior title now implies a requirement (lead / staff / senior → 5, head / director /
+    // principal → 8) — used for the experience score only; the report still shows "no
+    // requirement stated". The title is the first line, as for the skill boost.
+    const titleLine = foldText((jobText.trim().split("\n", 1)[0] ?? "").slice(0, 120))
+    const impliedYears = yearsRequired > 0 ? yearsRequired
+        : /\b(head of|director|principal|vp|vice president)\b/.test(titleLine) ? 8
+        : /\b(lead|staff|senior|sr\.?|kidemli)\b/.test(titleLine) ? 5
+        : 0
 
     // countWords also handles text without spaces (Chinese)
     const jobWordCount = countWords(jobContent)
@@ -660,7 +671,11 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
     // ── 6. Component C: Experience Match Score (0-1) ─────────────────────────
     // Maps years of experience to a normalized score.
     let expScore = 0.65 // neutral default when no requirement stated
-    if (yearsRequired > 0) {
+    if (impliedYears > 0 && yearsRequired === 0 && yearsOnCV > 0 && yearsOnCV < impliedYears) {
+        // Senior title, no stated years, CV clearly below the implied level: same mapping as
+        // a stated requirement. A CV at or above the level keeps the "no requirement" bonus.
+        expScore = Math.max(Math.min(yearsOnCV / impliedYears, 1.25) / 1.25, 0.5)
+    } else if (yearsRequired > 0) {
         if (yearsOnCV === 0) {
             // Math Prof improvement: raised from 0.40 → 0.50. "0 years on CV" more likely means
             // the person didn't write their years explicitly than that they have no experience.
