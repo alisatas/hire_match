@@ -14,7 +14,6 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Separate projects with their own tooling
     "mobile/**",
-    "android/**",
   ]),
 ]);
 

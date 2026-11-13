@@ -1,6 +1,6 @@
 // Digital Asset Links: proves to Android that cvxray.com owns the CVXray app
-// (android/), so the app can show the site full screen with no browser bar and open
-// cvxray.com links directly. Fingerprints come from ANDROID_CERT_SHA256 — the upload key
+// (mobile/, package com.cvxray.app), so cvxray.com links can open straight in the app
+// once it declares them (Android App Links). Fingerprints come from ANDROID_CERT_SHA256 — the upload key
 // and the Play App Signing key, comma-separated. Malformed values are dropped, so a typo
 // can never publish a statement for some other certificate format.
 export const dynamic = "force-static"
