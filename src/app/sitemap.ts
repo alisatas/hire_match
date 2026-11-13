@@ -1,43 +1,35 @@
 import type { MetadataRoute } from "next";
+import { LOCALES, alternatesFor, localePath } from "@/lib/i18n";
 import { POSTS } from "@/lib/posts";
-import { TRANSLATED_LOCALES, homeAlternates } from "@/lib/i18n";
 import { ROLES } from "@/lib/roles";
 import { CONTENT_UPDATED, SITE_URL } from "@/lib/site";
 
+type Entry = MetadataRoute.Sitemap[number];
+
+const absolute = (path: string) => `${SITE_URL}${path === "/" ? "" : path}`;
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date(CONTENT_UPDATED);
-  // hreflang for the home page in every language, repeated on each version as required
-  const languages = Object.fromEntries(
-    Object.entries(homeAlternates()).map(([code, path]) => [code, `${SITE_URL}${path === "/" ? "" : path}`]),
-  );
-  return [
-    { url: SITE_URL, lastModified, changeFrequency: "weekly", priority: 1, alternates: { languages } },
-    ...TRANSLATED_LOCALES.map((locale) => ({
-      url: `${SITE_URL}/${locale}`,
+
+  // Every page exists in every language under the same path. Each version is listed with
+  // hreflang links to all the others, as search engines require.
+  const page = (path: string, rest: Pick<Entry, "changeFrequency" | "priority"> & { lastModified?: Date }): Entry[] => {
+    const languages = Object.fromEntries(Object.entries(alternatesFor(path)).map(([code, p]) => [code, absolute(p)]));
+    return LOCALES.map((locale) => ({
+      url: absolute(localePath(locale, path)),
       lastModified,
-      changeFrequency: "weekly" as const,
-      priority: 0.9,
+      ...rest,
       alternates: { languages },
-    })),
-    { url: `${SITE_URL}/resume-keywords`, lastModified, changeFrequency: "monthly", priority: 0.8 },
-    { url: `${SITE_URL}/blog`, lastModified, changeFrequency: "weekly", priority: 0.7 },
-    ...POSTS.map((post) => ({
-      url: `${SITE_URL}/blog/${post.slug}`,
-      lastModified: new Date(post.updated),
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    })),
-    ...["/terms", "/privacy", "/refund-policy"].map((path) => ({
-      url: `${SITE_URL}${path}`,
-      lastModified,
-      changeFrequency: "yearly" as const,
-      priority: 0.3,
-    })),
-    ...ROLES.map((role) => ({
-      url: `${SITE_URL}/resume-keywords/${role.slug}`,
-      lastModified,
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
-    })),
+    }));
+  };
+
+  return [
+    ...page("/", { changeFrequency: "weekly", priority: 1 }),
+    ...page("/resume-keywords", { changeFrequency: "monthly", priority: 0.8 }),
+    ...page("/blog", { changeFrequency: "weekly", priority: 0.7 }),
+    ...POSTS.flatMap((post) => page(`/blog/${post.slug}`, { lastModified: new Date(post.updated), changeFrequency: "monthly", priority: 0.6 })),
+    // Legal pages exist in English only
+    ...["/terms", "/privacy", "/refund-policy"].map((path) => ({ url: absolute(path), lastModified, changeFrequency: "yearly" as const, priority: 0.3 })),
+    ...ROLES.flatMap((role) => page(`/resume-keywords/${role.slug}`, { changeFrequency: "monthly", priority: 0.7 })),
   ];
 }

@@ -1,16 +1,10 @@
 import type { Metadata } from "next";
-import { ContactLine, LegalPage } from "@/components/legal-page";
-import { OG_IMAGE } from "@/lib/site";
+import { ContactLine, LegalPage, legalMetadata } from "@/components/legal-page";
 
 const title = "Privacy Policy";
 const description = "How CVXray handles your CV, job descriptions, analytics and payment data. Your CV is never stored.";
 
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: { canonical: "/privacy" },
-  openGraph: { type: "website", siteName: "CVXray", url: "/privacy", title, description, images: [OG_IMAGE] },
-};
+export const metadata: Metadata = legalMetadata("en", "/privacy", title, description);
 
 export default function PrivacyPage() {
   return (

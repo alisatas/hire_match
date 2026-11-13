@@ -42,15 +42,29 @@ export function isWordChar(ch: string | undefined): boolean {
     return ch !== undefined && /[\p{L}\p{M}\p{N}]/u.test(ch) && !CJK_CHAR.test(ch)
 }
 
+const COMPOUND_LETTERS = 15
+
 /**
  * Word count that also works without spaces. Chinese runs about 1.5 characters per
  * English word, so a 300-character posting counts as ~200 words instead of ~10 (which
  * marked every Chinese posting "too short" and cut its score by the confidence factor).
+ *
+ * German (and to a lesser degree Turkish) glue words together: "Patientenversorgung" is
+ * "patient care", "Pflegedokumentation" is "nursing documentation". A posting that would
+ * run 55 words in English came out at 45 and fell under the 50-word "too short" line, so a
+ * fitting CV scored 36 instead of 68. A word of 15 or more letters therefore counts as two.
+ * English text is all but unaffected: none of the English test postings changes its score.
  */
 export function countWords(text: string): number {
     let han = 0
     const rest = text.replace(HAN_RUN, run => { han += run.length; return " " })
-    return rest.trim().split(/\s+/).filter(Boolean).length + Math.ceil(han / 1.5)
+    let words = 0
+    for (const token of rest.trim().split(/\s+/)) {
+        if (!token) continue
+        const letters = token.replace(/[^\p{L}\p{M}]/gu, "").length
+        words += letters >= COMPOUND_LETTERS ? 2 : 1
+    }
+    return words + Math.ceil(han / 1.5)
 }
 
 // Characters that are grammar, not content. A two-character window containing one of

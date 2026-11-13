@@ -378,3 +378,14 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - 🟡 Recent-scans history keeps the label in the language it was saved in (mixed languages if a visitor switches); cosmetic
 - 🟡 Very short German postings: compounds count as one word, so the under-50-words damping starts earlier than for the same text in English
 - 189 unit / 91 browser tests green on the production build (was 119 / 64); tsc 0, ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`
+
+---
+
+## 2026-11-13 — Push 36b (Guides and articles in TR / DE / ES / ZH, 20 → 90+ indexable pages)
+
+**Status:** ✅ PASS (0 critical)
+
+- 🔧 Fixed (Push 36 warning): recent-scans label is derived from the score in the page language
+- 🔧 Fixed (Push 36 warning): German compounds of 15+ letters count as two words; German nurse fixture 36 → 70, no English fixture changed
+- Translated nurse and logistics guides unit-tested against the engine's aliases in all four languages
+- 195 unit / 91 browser tests green on the production build; tsc 0, ESLint 0; no tracked `.env`

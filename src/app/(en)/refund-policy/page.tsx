@@ -1,17 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { LegalPage } from "@/components/legal-page";
-import { CONTACT_EMAIL, OG_IMAGE, SUPPORT } from "@/lib/site";
+import { LegalPage, legalMetadata } from "@/components/legal-page";
+import { CONTACT_EMAIL, SUPPORT } from "@/lib/site";
 
 const title = "Refund Policy";
 const description = `CVXray support payments can be refunded in full within ${SUPPORT.refundDays} days, no questions asked. Here is how to request a refund.`;
 
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: { canonical: "/refund-policy" },
-  openGraph: { type: "website", siteName: "CVXray", url: "/refund-policy", title, description, images: [OG_IMAGE] },
-};
+export const metadata: Metadata = legalMetadata("en", "/refund-policy", title, description);
 
 export default function RefundPolicyPage() {
   return (

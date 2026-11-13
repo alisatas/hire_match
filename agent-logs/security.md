@@ -497,3 +497,13 @@ Full read of `src/app/api/**`, `src/proxy.ts`, `next.config.ts`, client link ren
 - 🟡 New: `experimental.globalNotFound` — an experimental Next.js flag now serves the 404 for unmatched URLs (needed with two root layouts). Re-check on every Next.js upgrade
 - Still open 🟡: CSP `'unsafe-inline'`; moderate advisories in the dependency tree
 - 189 unit / 91 browser tests green on the production build (was 119 / 64); tsc 0, ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`
+
+---
+
+## 2026-11-13 — Push 36b (Guides and articles in TR / DE / ES / ZH, 20 → 90+ indexable pages)
+
+**Status:** ✅ PASS (0 critical)
+
+- New dynamic routes `/[lang]/resume-keywords/[role]` and `/[lang]/blog/[slug]`: `dynamicParams = false`, slug looked up per language, unknown → 404
+- No new sinks: translated content is static server data rendered as text; JSON-LD still through `jsonLdScript()`
+- 195 unit / 91 browser tests green on the production build; tsc 0, ESLint 0; no tracked `.env`

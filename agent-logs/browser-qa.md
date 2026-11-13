@@ -369,3 +369,13 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Share-image test now follows the URL each page advertises in `og:image` (route groups add a suffix); the old URLs redirect and are tested too
 - Note: running the suite twice within a minute trips the rate-limit test (first 15 requests already counted) — wait 60 s between local runs
 - 189 unit / 91 browser tests green on the production build (was 119 / 64); tsc 0, ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`
+
+---
+
+## 2026-11-13 — Push 36b (Guides and articles in TR / DE / ES / ZH, 20 → 90+ indexable pages)
+
+**Status:** ✅ PASS (0 critical)
+
+- SEO crawl covers every translated guide and article through the sitemap; it caught 5 descriptions outside 70–160 characters (fixed)
+- Note: wait 60 s between local full runs (rate-limit test)
+- 195 unit / 91 browser tests green on the production build; tsc 0, ESLint 0; no tracked `.env`

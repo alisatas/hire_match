@@ -1,8 +1,8 @@
 import Link from "next/link";
 import CVAnalyzer from "@/components/features/cv-analyzer";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
-import { LOCALE_INFO, fmt, getDictionary, type Locale } from "@/lib/i18n";
-import { ROLES } from "@/lib/roles";
+import { LOCALE_INFO, fmt, getDictionary, localePath, type Locale } from "@/lib/i18n";
+import { getRoles, getSamples } from "@/lib/i18n/content";
 import { jsonLdScript } from "@/lib/site";
 import { ArrowRight, ChevronDown, FileText, Gauge, Link2, Lock, ShieldCheck, Zap } from "lucide-react";
 
@@ -35,8 +35,7 @@ export function HomePage({ locale }: { locale: Locale }) {
   const t = dict.home;
   const faqs = dict.faqs;
   const inLanguage = LOCALE_INFO[locale].htmlLang;
-  // Role guides and articles exist in English only; say so next to links that lead there
-  const englishNote = dict.nav.inEnglish ? ` (${dict.nav.inEnglish})` : "";
+  const roles = getRoles(locale);
 
   // Home-page-only structured data. HowTo used to sit in the root layout, which emitted
   // it on every route — including the role guides, where no such steps are shown.
@@ -71,7 +70,7 @@ export function HomePage({ locale }: { locale: Locale }) {
         dangerouslySetInnerHTML={{ __html: jsonLdScript(homeJsonLd) }}
       />
 
-      <SiteHeader locale={locale} />
+      <SiteHeader locale={locale} path="/" />
 
       <main>
         {/* Hero */}
@@ -91,7 +90,7 @@ export function HomePage({ locale }: { locale: Locale }) {
           </ul>
         </section>
 
-        <CVAnalyzer locale={locale} t={dict.analyzer} coffee={dict.coffee} />
+        <CVAnalyzer locale={locale} t={dict.analyzer} coffee={dict.coffee} samples={getSamples(locale)} />
 
         {/* How it works + how the score works — one compact section */}
         <section id="how-it-works" className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-20 sm:px-6 lg:px-8">
@@ -126,8 +125,8 @@ export function HomePage({ locale }: { locale: Locale }) {
             <span>{t.experience} <strong className="font-semibold text-foreground">15%</strong></span>
             <span aria-hidden className="hidden sm:inline">·</span>
             <span><strong className="font-semibold text-foreground">70%+</strong> {t.strong}</span>
-            <Link href="/blog/what-is-a-good-cv-match-score" hrefLang="en" className="inline-flex min-h-11 items-center gap-1 font-medium text-primary hover:underline sm:min-h-0">
-              {t.details}{englishNote} <ArrowRight className="size-3.5" />
+            <Link href={localePath(locale, "/blog/what-is-a-good-cv-match-score")} className="inline-flex min-h-11 items-center gap-1 font-medium text-primary hover:underline sm:min-h-0">
+              {t.details} <ArrowRight className="size-3.5" />
             </Link>
           </p>
         </section>
@@ -137,21 +136,20 @@ export function HomePage({ locale }: { locale: Locale }) {
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">{t.rolesTitle}</h2>
-              <p className="mt-1.5 text-sm text-muted-foreground">{t.rolesLead}{englishNote}</p>
+              <p className="mt-1.5 text-sm text-muted-foreground">{t.rolesLead}</p>
             </div>
-            <Link href="/resume-keywords" hrefLang="en" className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-primary hover:underline">
-              {fmt(t.rolesAll, { n: ROLES.length })} <ArrowRight className="size-4" />
+            <Link href={localePath(locale, "/resume-keywords")} className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-primary hover:underline">
+              {fmt(t.rolesAll, { n: roles.length })} <ArrowRight className="size-4" />
             </Link>
           </div>
           <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {ROLES.filter((role) => FEATURED_ROLES.includes(role.slug)).map((role) => (
+            {roles.filter((role) => FEATURED_ROLES.includes(role.slug)).map((role) => (
               <li key={role.slug}>
                 <Link
-                  href={`/resume-keywords/${role.slug}`}
-                  hrefLang="en"
+                  href={localePath(locale, `/resume-keywords/${role.slug}`)}
                   className="group flex h-full min-h-14 items-center justify-between gap-3 rounded-xl border border-border bg-card/60 px-4 py-3 transition-colors hover:border-primary/40"
                 >
-                  <span lang="en" className="text-[15px] font-medium tracking-tight text-foreground">{role.name}</span>
+                  <span className="text-[15px] font-medium tracking-tight text-foreground">{role.name}</span>
                   <ArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
                 </Link>
               </li>
@@ -181,7 +179,7 @@ export function HomePage({ locale }: { locale: Locale }) {
         </section>
       </main>
 
-      <SiteFooter locale={locale} />
+      <SiteFooter locale={locale} path="/" />
     </div>
   );
 }

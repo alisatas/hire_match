@@ -26,13 +26,27 @@ export const isLocale = (value: string): value is Locale => (LOCALES as readonly
 export const getDictionary = (locale: Locale): Dictionary => DICTIONARIES[locale];
 export const homePath = (locale: Locale): string => (locale === "en" ? "/" : `/${locale}`);
 
-/** hreflang map for the home page: every language version plus x-default (English). */
-export function homeAlternates(): Record<string, string> {
+/**
+ * A page's path in one language. Paths are written without a language ("/blog/x");
+ * English serves them as they are, every other language under "/<code>".
+ */
+export function localePath(locale: Locale, path: string = "/"): string {
+  if (locale === "en") return path;
+  return path === "/" ? `/${locale}` : `/${locale}${path}`;
+}
+
+/** hreflang map for a page: every language version plus x-default (English). */
+export function alternatesFor(path: string = "/"): Record<string, string> {
   return {
-    ...Object.fromEntries(LOCALES.map((l) => [l, homePath(l)])),
-    "x-default": "/",
+    ...Object.fromEntries(LOCALES.map((l) => [l, localePath(l, path)])),
+    "x-default": path,
   };
 }
+
+export const homeAlternates = (): Record<string, string> => alternatesFor("/");
+
+/** Locale for dates: British day-month order in English, the page language elsewhere. */
+export const dateLocale = (locale: Locale): string => (locale === "en" ? "en-GB" : LOCALE_INFO[locale].htmlLang);
 
 export type { Dictionary };
 export { fmt } from "./format";

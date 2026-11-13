@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Check, ChevronDown, Globe } from "lucide-react";
 import { CookieSettingsButton } from "@/components/consent/consent-banner";
 import { CoffeeLink } from "@/components/coffee-link";
-import { LOCALES, LOCALE_INFO, getDictionary, homePath, type Locale } from "@/lib/i18n";
+import { LOCALES, LOCALE_INFO, getDictionary, localePath, type Locale } from "@/lib/i18n";
 
 /**
  * Brand mark: a CV page with a scan beam passing through it.
@@ -52,7 +52,7 @@ const navLink =
  * the links are in the HTML for crawlers. Plain <a>: each language has its own root
  * layout (its own <html lang>), so switching is a full page load anyway.
  */
-function LanguageMenu({ locale, label }: { locale: Locale; label: string }) {
+function LanguageMenu({ locale, label, path }: { locale: Locale; label: string; path: string }) {
   return (
     <details className="group relative">
       <summary
@@ -68,7 +68,7 @@ function LanguageMenu({ locale, label }: { locale: Locale; label: string }) {
         {LOCALES.map((code) => (
           <li key={code}>
             <a
-              href={homePath(code)}
+              href={localePath(code, path)}
               hrefLang={LOCALE_INFO[code].htmlLang}
               lang={LOCALE_INFO[code].htmlLang}
               aria-current={code === locale ? "true" : undefined}
@@ -84,11 +84,12 @@ function LanguageMenu({ locale, label }: { locale: Locale; label: string }) {
   );
 }
 
-// `locale` is the language of the page. Pages that exist only in English (role guides,
-// articles, legal) call these without it; anchors then point at the English home page.
-export function SiteHeader({ locale = "en" }: { locale?: Locale }) {
+// `locale` is the language of the page and `path` its address without a language
+// ("/blog/x"), so the language menu can link to the same page in every other language.
+// Pages without a translation (404, orchestration) leave both out.
+export function SiteHeader({ locale = "en", path = "/" }: { locale?: Locale; path?: string }) {
   const t = getDictionary(locale).nav;
-  const home = homePath(locale);
+  const home = localePath(locale);
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/70 backdrop-blur-xl">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -97,10 +98,10 @@ export function SiteHeader({ locale = "en" }: { locale?: Locale }) {
         </Link>
         <nav aria-label={t.primary} className="flex items-center gap-1">
           <Link href={`${home}#how-it-works`} className={navLink}>{t.how}</Link>
-          <Link href="/resume-keywords" hrefLang="en" className={navLink}>{t.keywords}</Link>
-          <Link href="/blog" hrefLang="en" className={navLink}>{t.guides}</Link>
+          <Link href={localePath(locale, "/resume-keywords")} className={navLink}>{t.keywords}</Link>
+          <Link href={localePath(locale, "/blog")} className={navLink}>{t.guides}</Link>
           <Link href={`${home}#faq`} className={navLink}>{t.faq}</Link>
-          <LanguageMenu locale={locale} label={t.language} />
+          <LanguageMenu locale={locale} label={t.language} path={path} />
           <Link
             href={`${home}#analyzer`}
             className="ml-1 inline-flex h-9 items-center gap-1.5 rounded-lg bg-foreground px-3.5 text-[13px] font-semibold text-background transition-opacity hover:opacity-90"
@@ -114,10 +115,10 @@ export function SiteHeader({ locale = "en" }: { locale?: Locale }) {
   );
 }
 
-export function SiteFooter({ locale = "en" }: { locale?: Locale }) {
+export function SiteFooter({ locale = "en", path = "/" }: { locale?: Locale; path?: string }) {
   const dict = getDictionary(locale);
   const t = dict.nav;
-  const home = homePath(locale);
+  const home = localePath(locale);
   return (
     <footer className="border-t border-border">
       <div className="mx-auto max-w-7xl px-4 py-8 text-[13px] text-muted-foreground sm:px-6 lg:px-8">
@@ -128,23 +129,23 @@ export function SiteFooter({ locale = "en" }: { locale?: Locale }) {
             <span>&copy; 2026 · {t.footerNote}</span>
           </div>
           <nav aria-label={t.footer} className="flex flex-wrap items-center gap-x-5 gap-y-2">
-            <Link href="/resume-keywords" hrefLang="en" className="transition-colors hover:text-foreground">{t.keywords}</Link>
-            <Link href="/blog" hrefLang="en" className="transition-colors hover:text-foreground">{t.guides}</Link>
+            <Link href={localePath(locale, "/resume-keywords")} className="transition-colors hover:text-foreground">{t.keywords}</Link>
+            <Link href={localePath(locale, "/blog")} className="transition-colors hover:text-foreground">{t.guides}</Link>
             <Link href={`${home}#faq`} className="transition-colors hover:text-foreground">{t.faq}</Link>
-            <Link href="/terms" className="transition-colors hover:text-foreground">{t.terms}</Link>
-            <Link href="/privacy" className="transition-colors hover:text-foreground">{t.privacy}</Link>
-            <Link href="/refund-policy" className="transition-colors hover:text-foreground">{t.refunds}</Link>
+            <Link href="/terms" hrefLang="en" className="transition-colors hover:text-foreground">{t.terms}</Link>
+            <Link href="/privacy" hrefLang="en" className="transition-colors hover:text-foreground">{t.privacy}</Link>
+            <Link href="/refund-policy" hrefLang="en" className="transition-colors hover:text-foreground">{t.refunds}</Link>
             <CoffeeLink where="footer" t={dict.coffee} />
             <CookieSettingsButton label={t.cookieSettings} />
           </nav>
         </div>
-        {/* Language versions of the home page. Plain <a>: each language has its own root
+        {/* This page in the other languages. Plain <a>: each language has its own root
             layout (its own <html lang>), so switching is a full page load anyway. */}
         <nav aria-label={t.language} className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-border pt-4">
           {LOCALES.map((code) => (
             <a
               key={code}
-              href={homePath(code)}
+              href={localePath(code, path)}
               hrefLang={LOCALE_INFO[code].htmlLang}
               lang={LOCALE_INFO[code].htmlLang}
               aria-current={code === locale ? "true" : undefined}

@@ -48,3 +48,5 @@ export const CONTACT_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(process.env.NEXT_
   : null;
 
 export const LEGAL_UPDATED = "11 November 2026";
+// The same date in ISO form, formatted per language on the translated legal pages
+export const LEGAL_UPDATED_ISO = "2026-11-11";

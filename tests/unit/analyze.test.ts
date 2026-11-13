@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { analyze, yearsFromDateRanges } from "@/lib/analyze";
 import { getRole } from "@/lib/roles";
+import { getRole as getLocalizedRole } from "@/lib/i18n/content";
 import { CHEF_CV, FRONTEND_CV, FRONTEND_JOB, RECRUITER_CV, RECRUITER_JOB, SALES_CV, SALES_JOB } from "./fixtures";
 
 describe("match score calibration", () => {
@@ -248,6 +249,15 @@ Own incident triage and bug triage, manage access control lists (ACLs), split wo
     expect(keys).not.toContain("Clinical / Patient Care");
     expect(keys).not.toContain("logistics");
     expect(keys).not.toContain("Supply Chain & Logistics");
+  });
+
+  // Same promise for the translated guides
+  it.each(["tr", "de", "es", "zh"] as const)("the %s nurse and logistics guides use wording the analyzer detects", (lang) => {
+    for (const [slug, key] of [["registered-nurse", "healthcare"], ["logistics-coordinator", "logistics"]]) {
+      const role = getLocalizedRole(lang, slug)!;
+      const job = `${role.name}\n${role.groups.flatMap(g => g.keywords).join(", ")}.`;
+      expect(analyze(FRONTEND_CV, job).missing.map(m => m.key), `${lang} ${slug}`).toContain(key);
+    }
   });
 
   // The nurse and logistics role guides promise keywords the analyzer recognises.

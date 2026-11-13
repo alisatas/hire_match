@@ -572,3 +572,20 @@ Agents MUST read this log before running checks and MUST append an entry after e
 6. GA4: mark `analysis_complete`, `score_card` and `entry` as key events; add language as a dimension
 
 - 189 unit / 91 browser tests green on the production build (was 119 / 64); tsc 0, ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`
+
+---
+
+## 2026-11-13 — Push 36b (Guides and articles in TR / DE / ES / ZH, 20 → 90+ indexable pages)
+
+**Status:** ✅ PASS (0 critical, 1 large improvement)
+
+**Improvement:** 84 new indexable pages — 18 keyword guides, 3 articles and both indexes in TR / DE / ES / ZH, each with self canonical, hreflang to all versions + x-default, `inLanguage` JSON-LD, sitemap alternates. Legal pages stay English-only (no hreflang).
+
+**Running improvement backlog (next pushes):**
+1. Submit the translated sitemap URLs in Search Console and Bing; confirm IndexNow
+2. Native review of Chinese copy (home dictionary first)
+3. Translate sample postings for TR / DE / ES and the legal pages
+4. Landing pages: "ATS resume checker", "Jobscan alternative" and local equivalents
+5. Off-page listings (owner); GA4 key events + language dimension
+
+- 195 unit / 91 browser tests green on the production build; tsc 0, ESLint 0; no tracked `.env`

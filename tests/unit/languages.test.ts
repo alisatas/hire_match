@@ -128,3 +128,19 @@ describe("pathological input", () => {
     expect(performance.now() - started).toBeLessThan(3000);
   });
 });
+
+describe("word count is comparable across languages", () => {
+  it("counts a German compound as the two words it stands for", () => {
+    expect(countWords("Patientenversorgung und Pflegedokumentation")).toBe(5);
+    expect(countWords("patient care and nursing documentation")).toBe(5);
+  });
+
+  // 45 whitespace-separated words: read as "too short" before, which cut a fitting CV to 36
+  it("does not treat a compact German posting as too short", () => {
+    const cv = "Gesundheits- und Krankenpfleger\n7 Jahre Erfahrung auf internistischen Akutstationen.\nPflegefachkraft, Stadtklinikum — 2018 bis 2025\nPatientenversorgung von bis zu 8 Patienten pro Schicht. Medikamentengabe und Überwachung der Vitalzeichen.\nPflegeplanung und Pflegedokumentation in der elektronischen Patientenakte.\nWundversorgung, Hygieneaudits, Basic Life Support zertifiziert.";
+    const job = "Pflegefachkraft (m/w/d) — Innere Medizin\nWir suchen eine Pflegefachkraft mit mindestens 3 Jahren Berufserfahrung auf einer Akutstation.\nAufgaben:\n- Sichere Patientenversorgung und Pflegeplanung\n- Medikamentengabe und Überwachung der Vitalzeichen\n- Pflegedokumentation in der elektronischen Patientenakte\n- Wundversorgung und Hygiene\n- Basic Life Support Zertifikat erforderlich";
+    const r = analyze(cv, job);
+    expect(r.jobWordCount).toBeGreaterThanOrEqual(50);
+    expect(r.score).toBeGreaterThanOrEqual(60);
+  });
+});

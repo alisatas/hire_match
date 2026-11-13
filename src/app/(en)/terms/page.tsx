@@ -1,17 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ContactLine, LegalPage } from "@/components/legal-page";
-import { OG_IMAGE, SUPPORT } from "@/lib/site";
+import { ContactLine, LegalPage, legalMetadata } from "@/components/legal-page";
+import { SUPPORT } from "@/lib/site";
 
 const title = "Terms of Service";
 const description = "The terms for using CVXray, the free CV and resume matcher: acceptable use, your data, liability and any optional support payments processed by Lemon Squeezy.";
 
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: { canonical: "/terms" },
-  openGraph: { type: "website", siteName: "CVXray", url: "/terms", title, description, images: [OG_IMAGE] },
-};
+export const metadata: Metadata = legalMetadata("en", "/terms", title, description);
 
 export default function TermsPage() {
   return (

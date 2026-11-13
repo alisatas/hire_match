@@ -49,14 +49,13 @@ test.describe("SEO crawl", () => {
       if (p.canonical !== `${SITE}${p.path === "/" ? "" : p.path}` && p.canonical !== `${SITE}${p.path}`) say(`canonical ${p.canonical}`);
       if (p.h1Count !== 1) say(`${p.h1Count} <h1> elements`);
       if (/<meta[^>]+name="robots"[^>]+noindex/i.test(p.html)) say("noindex");
-      // Translated home pages (/tr, /de, /es, /zh) declare their own language
-      const lang = /^\/(tr|de|es|zh)$/.exec(p.path)?.[1] ?? "en";
+      // Pages under /tr, /de, /es and /zh declare their own language
+      const lang = /^\/(tr|de|es|zh)(\/|$)/.exec(p.path)?.[1] ?? "en";
       if (!new RegExp(`<html[^>]+lang="${lang}`, "i").test(p.html)) say(`html lang is not "${lang}"`);
-      // …and every language version of the home page lists all the others
-      if (p.path === "/" || lang !== "en") {
-        for (const code of ["en", "tr", "de", "es", "zh", "x-default"]) {
-          if (!new RegExp(`<link[^>]+rel="alternate"[^>]+hrefLang="${code}"`, "i").test(p.html)) say(`missing hreflang ${code}`);
-        }
+      // Every page exists in every language and lists all the versions
+      // (legal pages exist in English only)
+      if (!/^\/(terms|privacy|refund-policy)$/.test(p.path)) for (const code of ["en", "tr", "de", "es", "zh", "x-default"]) {
+        if (!new RegExp(`<link[^>]+rel="alternate"[^>]+hrefLang="${code}"`, "i").test(p.html)) say(`missing hreflang ${code}`);
       }
       for (const key of ["og:title", "og:description", "og:url", "og:image", "og:type"]) {
         if (!meta(p.html, "property", key)) say(`missing ${key}`);

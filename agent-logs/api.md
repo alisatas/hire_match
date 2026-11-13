@@ -340,3 +340,11 @@ Agents MUST read this log before running checks and MUST append an entry after e
 - Routes stay at `app/api/*`, outside both root layouts; proxy matcher untouched. All malformed-body, cross-site, owner-key and rate-limit cases green
 - New redirects (old share-image URLs → suffixed ones) are temporary (307) and same-site only
 - 189 unit / 91 browser tests green on the production build (was 119 / 64); tsc 0, ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`
+
+---
+
+## 2026-11-13 — Push 36b (Guides and articles in TR / DE / ES / ZH, 20 → 90+ indexable pages)
+
+**Status:** ✅ PASS (0 critical) — no API change
+
+- 195 unit / 91 browser tests green on the production build; tsc 0, ESLint 0; no tracked `.env`
