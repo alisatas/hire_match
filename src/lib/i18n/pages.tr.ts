@@ -1,6 +1,5 @@
 import type { PageStrings } from "./pages.en";
 
-// Legal pages stay in English (no translated legal routes), so `legal` is unused here.
 export const pages: PageStrings = {
   "lowercaseRole": false,
   "breadcrumbLabel": "Sayfa yolu",
@@ -56,10 +55,10 @@ export const pages: PageStrings = {
     "moreTitle": "Diğer rehberler"
   },
   "legal": {
-    "updated": "",
-    "questions": "",
-    "email": "",
-    "receipt": "",
-    "translationNotice": ""
+    "updated": "Son güncelleme: {date}",
+    "questions": "Bu sayfayla ilgili sorularınız mı var?",
+    "email": "E-posta:",
+    "receipt": "Ödemeyle ilgili her konuda Lemon Squeezy makbuz e-postanızı yanıtlayın; doğrudan bize ulaşır.",
+    "translationNotice": "Bu metin kolaylık için sunulan bir çeviridir; iki metin arasında fark olması durumunda İngilizce metin geçerlidir."
   }
 };

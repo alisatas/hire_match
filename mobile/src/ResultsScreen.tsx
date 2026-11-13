@@ -3,7 +3,7 @@ import type { AnalysisResult } from "@/lib/analyze"
 import type { AnalyzerStrings } from "@/lib/i18n/en"
 import { fmt } from "@/lib/i18n/format"
 import { lookup } from "@/lib/i18n/persona"
-import { resourceFor } from "@/lib/resources"
+import { localizeDuration, resourceFor } from "@/lib/resources"
 import type { KeywordSuggestion } from "@/lib/suggestions"
 import { colors, toneColor, toneForScore, type Tone } from "./theme"
 import { Button, Card, Chip, ScoreRing, SectionTitle, styles } from "./ui"
@@ -104,7 +104,7 @@ export function ResultsScreen({ r, persona, suggestions, t, onBack }: {
               <Pressable key={m.key} accessibilityRole="link" onPress={() => Linking.openURL(c.url)}
                 style={{ borderTopWidth: 1, borderTopColor: colors.border, paddingVertical: 12, minHeight: 48 }}>
                 <Text style={[styles.body, { fontWeight: "600" }]}>{c.label}{c.free ? `  · ${t.free}` : ""}</Text>
-                <Text style={styles.muted}>{label(m.label)} · {c.platform} · {c.duration}</Text>
+                <Text style={styles.muted}>{label(m.label)} · {c.platform} · {localizeDuration(c.duration, t)}</Text>
               </Pressable>
             )
           })}

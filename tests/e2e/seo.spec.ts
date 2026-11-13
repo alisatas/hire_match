@@ -53,8 +53,7 @@ test.describe("SEO crawl", () => {
       const lang = /^\/(tr|de|es|zh)(\/|$)/.exec(p.path)?.[1] ?? "en";
       if (!new RegExp(`<html[^>]+lang="${lang}`, "i").test(p.html)) say(`html lang is not "${lang}"`);
       // Every page exists in every language and lists all the versions
-      // (legal pages exist in English only)
-      if (!/^\/(terms|privacy|refund-policy)$/.test(p.path)) for (const code of ["en", "tr", "de", "es", "zh", "x-default"]) {
+      for (const code of ["en", "tr", "de", "es", "zh", "x-default"]) {
         if (!new RegExp(`<link[^>]+rel="alternate"[^>]+hrefLang="${code}"`, "i").test(p.html)) say(`missing hreflang ${code}`);
       }
       for (const key of ["og:title", "og:description", "og:url", "og:image", "og:type"]) {

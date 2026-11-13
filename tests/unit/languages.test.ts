@@ -45,6 +45,7 @@ describe("years of experience in other languages", () => {
     ["Mínimo de 6 años en un puesto similar", 6],
     ["要求3年以上工作经验", 3],
     ["五年以上相关经验", 5],
+    ["3 年以上 React 和 TypeScript 开发经验", 3],
     ["कम से कम 3 वर्ष का अनुभव", 3],
   ])("%s → %i", (text, years) => {
     expect(extractYearsRequired(text)).toBe(years);
@@ -142,5 +143,20 @@ describe("word count is comparable across languages", () => {
     const r = analyze(cv, job);
     expect(r.jobWordCount).toBeGreaterThanOrEqual(50);
     expect(r.score).toBeGreaterThanOrEqual(60);
+  });
+});
+
+// Every translated sample posting must read as a real posting to the engine
+describe("translated sample postings", () => {
+  it.each(["tr", "de", "es", "zh"] as const)("%s samples have skills, years and a full posting", async (lang) => {
+    const { getSamples } = await import("@/lib/i18n/content");
+    const samples = getSamples(lang);
+    expect(samples.map(s => s.id)).toEqual(getSamples("en").map(s => s.id));
+    for (const s of samples) {
+      const r = analyze(s.text, s.text);
+      expect(r.matched.length, `${lang} ${s.id} skills`).toBeGreaterThanOrEqual(3);
+      expect(r.yearsRequired, `${lang} ${s.id} years`).toBeGreaterThan(0);
+      expect(r.lowQuality, `${lang} ${s.id} length`).toBe(false);
+    }
   });
 });

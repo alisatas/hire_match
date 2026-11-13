@@ -70,5 +70,15 @@ export const SKILL_RESOURCES: Record<string, SkillResource> = {
 }
 
 // Own keys only: a key like "__proto__" or "constructor" must never resolve to a built-in
+/** "Self-paced", "~6 hrs", "~2 months" in the page language. */
+export function localizeDuration(duration: string, t: { courseSelfPaced: string; courseHours: string; courseMonths: string }): string {
+    if (duration === "Self-paced") return t.courseSelfPaced
+    const hours = /^~(\d+) hrs$/.exec(duration)
+    if (hours) return t.courseHours.replace("{n}", hours[1])
+    const months = /^~(\d+) months$/.exec(duration)
+    if (months) return t.courseMonths.replace("{n}", months[1])
+    return duration
+}
+
 export const resourceFor = (key: string): SkillResource | undefined =>
     Object.hasOwn(SKILL_RESOURCES, key) ? SKILL_RESOURCES[key] : undefined

@@ -132,9 +132,9 @@ export function SiteFooter({ locale = "en", path = "/" }: { locale?: Locale; pat
             <Link href={localePath(locale, "/resume-keywords")} className="transition-colors hover:text-foreground">{t.keywords}</Link>
             <Link href={localePath(locale, "/blog")} className="transition-colors hover:text-foreground">{t.guides}</Link>
             <Link href={`${home}#faq`} className="transition-colors hover:text-foreground">{t.faq}</Link>
-            <Link href="/terms" hrefLang="en" className="transition-colors hover:text-foreground">{t.terms}</Link>
-            <Link href="/privacy" hrefLang="en" className="transition-colors hover:text-foreground">{t.privacy}</Link>
-            <Link href="/refund-policy" hrefLang="en" className="transition-colors hover:text-foreground">{t.refunds}</Link>
+            <Link href={localePath(locale, "/terms")} className="transition-colors hover:text-foreground">{t.terms}</Link>
+            <Link href={localePath(locale, "/privacy")} className="transition-colors hover:text-foreground">{t.privacy}</Link>
+            <Link href={localePath(locale, "/refund-policy")} className="transition-colors hover:text-foreground">{t.refunds}</Link>
             <CoffeeLink where="footer" t={dict.coffee} />
             <CookieSettingsButton label={t.cookieSettings} />
           </nav>

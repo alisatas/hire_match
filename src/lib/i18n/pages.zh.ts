@@ -1,6 +1,5 @@
 import type { PageStrings } from "./pages.en";
 
-// Legal pages stay in English (no translated legal routes), so `legal` is unused here.
 export const pages: PageStrings = {
   "lowercaseRole": false,
   "breadcrumbLabel": "面包屑导航",
@@ -56,10 +55,10 @@ export const pages: PageStrings = {
     "moreTitle": "更多指南"
   },
   "legal": {
-    "updated": "",
-    "questions": "",
-    "email": "",
-    "receipt": "",
-    "translationNotice": ""
+    "updated": "最后更新：{date}",
+    "questions": "对本页有疑问？",
+    "email": "电子邮箱：",
+    "receipt": "凡与付款相关的问题，请直接回复 Lemon Squeezy 的收据邮件，它会直接发送给我们。",
+    "translationNotice": "本页为方便阅读而提供的译文；如中英文版本存在差异，以英文版本为准。"
   }
 };

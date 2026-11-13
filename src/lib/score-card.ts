@@ -49,7 +49,16 @@ function drawMark(ctx: CanvasRenderingContext2D, x: number, y: number, size: num
     ctx.stroke()
 }
 
-export async function renderScoreCard(data: ScoreCardData, fontFamily: string): Promise<Blob> {
+/** The card's fixed wording, in the page language. English is the default. */
+export interface ScoreCardText { caption: string; footer: string; shareTitle: string; shareText: string }
+export const SCORE_CARD_EN: ScoreCardText = {
+    caption: "CV MATCH SCORE",
+    footer: "Check your own CV free at cvxray.com",
+    shareTitle: "My CV match score",
+    shareText: "Checked my CV with CVXray — cvxray.com",
+}
+
+export async function renderScoreCard(data: ScoreCardData, fontFamily: string, text: ScoreCardText = SCORE_CARD_EN): Promise<Blob> {
     const canvas = document.createElement("canvas")
     canvas.width = W
     canvas.height = H
@@ -94,7 +103,7 @@ export async function renderScoreCard(data: ScoreCardData, fontFamily: string): 
     const tx = 460
     ctx.fillStyle = "#a9c0ff"
     ctx.font = font(600, 24)
-    ctx.fillText("CV MATCH SCORE", tx, 230)
+    ctx.fillText(text.caption, tx, 230)
     ctx.fillStyle = "#fff"
     ctx.font = font(800, 54)
     ctx.fillText(data.label, tx, 295)
@@ -125,7 +134,7 @@ export async function renderScoreCard(data: ScoreCardData, fontFamily: string): 
 
     ctx.fillStyle = "rgba(255,255,255,0.5)"
     ctx.font = font(500, 22)
-    ctx.fillText("Check your own CV free at cvxray.com", 80, H - 56)
+    ctx.fillText(text.footer, 80, H - 56)
 
     return new Promise((resolve, reject) =>
         canvas.toBlob(b => (b ? resolve(b) : reject(new Error("Could not create image"))), "image/png"),
@@ -137,12 +146,12 @@ export async function renderScoreCard(data: ScoreCardData, fontFamily: string): 
  * desktops download the PNG, which is what people expect there — desktop Chrome on
  * macOS also supports file sharing, but a system share dialog is a surprise on a laptop.
  */
-export async function shareOrDownloadCard(blob: Blob): Promise<"shared" | "downloaded" | "cancelled"> {
+export async function shareOrDownloadCard(blob: Blob, text: ScoreCardText = SCORE_CARD_EN): Promise<"shared" | "downloaded" | "cancelled"> {
     const file = new File([blob], "cvxray-score.png", { type: "image/png" })
     const touch = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches
     if (touch && navigator.canShare?.({ files: [file] })) {
         try {
-            await navigator.share({ files: [file], title: "My CV match score", text: "Checked my CV with CVXray — cvxray.com" })
+            await navigator.share({ files: [file], title: text.shareTitle, text: text.shareText })
             return "shared"
         } catch (err) {
             if (err instanceof DOMException && err.name === "AbortError") return "cancelled"

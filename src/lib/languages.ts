@@ -256,7 +256,9 @@ export const INTL_RANGE_SEP = String.raw`bis|a|ile`
 
 const HAN_NUMERALS: Record<string, number> = { 一: 1, 二: 2, 两: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10 }
 // "3年以上工作经验", "五年相关经验", "至少3年" · "5 वर्ष का अनुभव", "कम से कम 3 साल"
-const ZH_YEARS_RE = /(\d{1,2}|[一二两三四五六七八九十])\s*\+?\s*年(?:及?以上)?[^\n。；;，,]{0,10}?(?:经验|經驗|工作经历)/g
+// Up to 30 characters between the count and "经验": postings often name the skill in
+// between ("3 年以上 React 和 TypeScript 开发经验"); a comma or full stop still ends the match.
+const ZH_YEARS_RE = /(\d{1,2}|[一二两三四五六七八九十])\s*\+?\s*年(?:及?以上)?[^\n。；;，,]{0,30}?(?:经验|經驗|工作经历)/g
 const ZH_AT_LEAST_RE = /(?:至少|不少于|最少)\s*(\d{1,2}|[一二两三四五六七八九十])\s*年/g
 const HI_YEARS_RE = /(\d{1,2})\s*\+?\s*(?:वर्षों|वर्ष|सालों|साल)[^\n।.]{0,30}?(?:अनुभव|तजुर्बा)/g
 const HI_AT_LEAST_RE = /(?:कम से कम|न्यूनतम)\s*(\d{1,2})\s*(?:वर्षों|वर्ष|सालों|साल)/g

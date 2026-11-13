@@ -46,7 +46,7 @@ import type { SampleJob } from "@/lib/i18n/content/types"
 import type { AnalyzerStrings, Dictionary } from "@/lib/i18n/en"
 import { fmt } from "@/lib/i18n/format"
 import { localizePersona, lookup, tierOf } from "@/lib/i18n/persona"
-import { resourceFor } from "@/lib/resources"
+import { localizeDuration, resourceFor } from "@/lib/resources"
 import { countWords, looksEnglish } from "@/lib/languages"
 import { extractCompanyName, extractCultureSignals, getInterviewLinks } from "@/lib/insights"
 
@@ -849,8 +849,8 @@ export default function CVAnalyzer({ locale, t, coffee, samples }: { locale: Loc
                                                         label: persona?.label ?? results.persona.label,
                                                         role: sampleRole ? fmt(t.cardRoleSample, { role: sampleRole }) : (scrapedCompanyName ? fmt(t.cardRoleCompany, { company: scrapedCompanyName }) : t.cardRoleDefault),
                                                         matched: results.matched.map(skillLabel),
-                                                    }, getComputedStyle(document.body).fontFamily || "sans-serif")
-                                                    const outcome = await shareOrDownloadCard(blob)
+                                                    }, getComputedStyle(document.body).fontFamily || "sans-serif", t.scoreCard)
+                                                    const outcome = await shareOrDownloadCard(blob, t.scoreCard)
                                                     track("score_card", { method: outcome, score: results.score })
                                                     setCardState(outcome === "cancelled" ? "idle" : "done")
                                                     setTimeout(() => setCardState("idle"), 2500)
@@ -1085,7 +1085,7 @@ export default function CVAnalyzer({ locale, t, coffee, samples }: { locale: Loc
                                                                         <span className={cn("size-1.5 shrink-0 rounded-full", toneDot(priorityTone(m.priority)))} />
                                                                         <div className="min-w-0 flex-1">
                                                                             <p className="truncate text-sm font-medium text-foreground">{resource.label}</p>
-                                                                            <p className="truncate text-xs text-muted-foreground">{skillLabel(m.label)} · {resource.platform} · {resource.duration}</p>
+                                                                            <p className="truncate text-xs text-muted-foreground">{skillLabel(m.label)} · {resource.platform} · {localizeDuration(resource.duration, t)}</p>
                                                                         </div>
                                                                         {resource.free && <Badge tone="accent">{t.free}</Badge>}
                                                                         <ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" />

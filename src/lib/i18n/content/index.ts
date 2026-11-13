@@ -18,15 +18,21 @@ import { ROLES as ROLES_DE } from "./roles.de";
 import { ROLES as ROLES_ES } from "./roles.es";
 import { ROLES as ROLES_TR } from "./roles.tr";
 import { ROLES as ROLES_ZH } from "./roles.zh";
+import { SAMPLE_JOBS as SAMPLES_DE } from "./samples.de";
 import { SAMPLE_JOBS as SAMPLES_EN } from "./samples.en";
+import { SAMPLE_JOBS as SAMPLES_ES } from "./samples.es";
+import { SAMPLE_JOBS as SAMPLES_TR } from "./samples.tr";
 import { SAMPLE_JOBS as SAMPLES_ZH } from "./samples.zh";
-import type { SampleJob } from "./types";
+import { LEGAL as LEGAL_DE } from "./legal.de";
+import { LEGAL as LEGAL_ES } from "./legal.es";
+import { LEGAL as LEGAL_TR } from "./legal.tr";
+import { LEGAL as LEGAL_ZH } from "./legal.zh";
+import type { LegalPages, SampleJob } from "./types";
 
 const ROLES: Record<Locale, RoleGuide[]> = { en: ROLES_EN, tr: ROLES_TR, de: ROLES_DE, es: ROLES_ES, zh: ROLES_ZH };
 const POSTS: Record<Locale, Post[]> = { en: POSTS_EN, tr: POSTS_TR, de: POSTS_DE, es: POSTS_ES, zh: POSTS_ZH };
 const PAGES: Record<Locale, PageStrings> = { en: pagesEn, tr: pagesTr, de: pagesDe, es: pagesEs, zh: pagesZh };
-// Sample postings are translated for Chinese only so far; the others use the English ones.
-const SAMPLES: Record<Locale, SampleJob[]> = { en: SAMPLES_EN, tr: SAMPLES_EN, de: SAMPLES_EN, es: SAMPLES_EN, zh: SAMPLES_ZH };
+const SAMPLES: Record<Locale, SampleJob[]> = { en: SAMPLES_EN, tr: SAMPLES_TR, de: SAMPLES_DE, es: SAMPLES_ES, zh: SAMPLES_ZH };
 
 export const getRoles = (locale: Locale): RoleGuide[] => ROLES[locale];
 export const getRole = (locale: Locale, slug: string): RoleGuide | undefined => ROLES[locale].find((r) => r.slug === slug);
@@ -34,3 +40,7 @@ export const getPosts = (locale: Locale): Post[] => POSTS[locale];
 export const getPost = (locale: Locale, slug: string): Post | undefined => POSTS[locale].find((p) => p.slug === slug);
 export const getPages = (locale: Locale): PageStrings => PAGES[locale];
 export const getSamples = (locale: Locale): SampleJob[] => SAMPLES[locale];
+
+const LEGAL: Record<Exclude<Locale, "en">, LegalPages> = { tr: LEGAL_TR, de: LEGAL_DE, es: LEGAL_ES, zh: LEGAL_ZH };
+/** Translated legal pages. English is written directly in app/(en). */
+export const getLegal = (locale: Exclude<Locale, "en">): LegalPages => LEGAL[locale];

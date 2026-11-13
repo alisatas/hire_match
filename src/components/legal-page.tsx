@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
-import { LOCALE_INFO, dateLocale, fmt, localePath, type Locale } from "@/lib/i18n";
+import { LOCALE_INFO, alternatesFor, dateLocale, fmt, localePath, type Locale } from "@/lib/i18n";
 import { getPages } from "@/lib/i18n/content";
 import { CONTACT_EMAIL, LEGAL_UPDATED, LEGAL_UPDATED_ISO, OG_IMAGE, SITE_URL, jsonLdScript } from "@/lib/site";
 
@@ -12,7 +12,7 @@ export function legalMetadata(locale: Locale, path: string, title: string, descr
   return {
     title,
     description,
-    alternates: { canonical: local },
+    alternates: { canonical: local, languages: alternatesFor(path) },
     openGraph: { type: "website", siteName: "CVXray", locale: LOCALE_INFO[locale].ogLocale, url: local, title, description, images: [OG_IMAGE] },
   };
 }
@@ -64,7 +64,7 @@ export function LegalPage({ locale = "en", path, title, description, intro, sect
   return (
     <div className="relative z-10">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }} />
-      <SiteHeader locale={locale} />
+      <SiteHeader locale={locale} path={path} />
       <main className="mx-auto max-w-3xl px-4 pb-24 pt-8 sm:px-6 sm:pt-12">
         <nav aria-label={pages.breadcrumbLabel} className="-ml-1 flex flex-wrap items-center gap-x-1 text-[13px] text-muted-foreground">
           <Link href={home} className="inline-flex min-h-11 items-center px-1 transition-colors hover:text-foreground">CVXray</Link>
@@ -104,7 +104,7 @@ export function LegalPage({ locale = "en", path, title, description, intro, sect
           )}
         </p>
       </main>
-      <SiteFooter locale={locale} />
+      <SiteFooter locale={locale} path={path} />
     </div>
   );
 }

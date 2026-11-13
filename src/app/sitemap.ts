@@ -28,8 +28,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...page("/resume-keywords", { changeFrequency: "monthly", priority: 0.8 }),
     ...page("/blog", { changeFrequency: "weekly", priority: 0.7 }),
     ...POSTS.flatMap((post) => page(`/blog/${post.slug}`, { lastModified: new Date(post.updated), changeFrequency: "monthly", priority: 0.6 })),
-    // Legal pages exist in English only
-    ...["/terms", "/privacy", "/refund-policy"].map((path) => ({ url: absolute(path), lastModified, changeFrequency: "yearly" as const, priority: 0.3 })),
+    ...["/terms", "/privacy", "/refund-policy"].flatMap((path) => page(path, { changeFrequency: "yearly", priority: 0.3 })),
     ...ROLES.flatMap((role) => page(`/resume-keywords/${role.slug}`, { changeFrequency: "monthly", priority: 0.7 })),
   ];
 }
