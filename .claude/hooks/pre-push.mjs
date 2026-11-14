@@ -2,7 +2,7 @@
 // PreToolUse hook (Bash): refuses `git push` unless
 //   1. the branch already contains origin/main (CI's release commit is rebased in), and
 //   2. `npm run verify` passed on exactly this commit with a clean tree.
-// The owner's localhost approval stays a human step (CLAUDE.md); this only removes the
+// Whether the owner must approve (any ⚠️/🔴 in the gate report) is decided in CLAUDE.md; this only removes the
 // mechanical mistakes that kept recurring.
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";

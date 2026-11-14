@@ -39,7 +39,8 @@ Hooks in `.claude/settings.json` enforce the mechanical rules (section 3–4).
   "reject").
 - Any action in the owner's accounts: Bing Webmaster, Google Search Console, GA4, Vercel,
   Play Console (submitting sitemaps or URLs counts).
-- `git push` — only after the gate and the owner's localhost check (see CLAUDE.md).
+- `git push` — only after the gate. All seven agents ✅ PASS + verify green → push without
+  asking (auto-push); any ⚠️/🔴 → the owner's localhost check first (see CLAUDE.md).
 - Signing in, passwords, signing keys: always the owner's. Never create or store keystores.
 
 ## 3. Git and release

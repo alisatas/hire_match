@@ -33,9 +33,12 @@ check a specific past finding.
 4. Append a dated entry to all seven logs; update the SEO and Math backlogs; commit.
 5. Run `npm run verify` again if code changed in steps 3–4.
 6. Print the PRE-PUSH AGENT REPORT. Any 🔴 → stop and list what must be fixed.
-7. Make sure `npm run dev` is running and tell the owner:
-   "Changes are live at http://localhost:3000 — please check and confirm before I push."
-   **Do not push until the owner explicitly says so.**
+7. **All seven ✅ PASS and verify passed on this commit → auto-push**: go straight to step 8
+   without asking (owner's standing rule, 2026-11-14). Say in the report that it was pushed
+   automatically.
+   Otherwise (any ⚠️ WARN or 🔴, or the push would carry work you did not make): make sure
+   `npm run dev` is running and tell the owner "Changes are live at http://localhost:3000 —
+   please check and confirm before I push." **Do not push until the owner says so.**
 8. `git fetch origin && git rebase origin/main`, then `git push origin main`.
    The pre-push hook refuses the push if origin/main is not contained or verify did not pass
    on this exact commit.

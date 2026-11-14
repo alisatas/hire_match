@@ -10,8 +10,13 @@ problem worth not repeating, or the status in it changes, update PROJECT.md in t
 ## Pre-Push Gate — MANDATORY
 
 Before every `git push`, run the `push-gate` skill (`/push-gate`) and follow it to the letter:
-`npm run verify`, the 7 agents with their logs, the report, the owner's localhost approval,
-then rebase and push. Never skip it, even for small fixes or renames. Hooks in
+`npm run verify`, the 7 agents with their logs, the report, then rebase and push. Never skip
+it, even for small fixes or renames.
+
+**Auto-push (owner's standing rule, 2026-11-14):** when verify passed on the commit and all
+seven agents in the report are ✅ PASS, push without asking — the owner's localhost check is
+not needed. Any ⚠️ WARN or 🔴 BLOCKED, or a push that would carry someone else's
+uncommitted work, → stop and ask the owner as before. Hooks in
 `.claude/settings.json` refuse a push when origin/main is not rebased in or verify has not
 passed on the commit, and refuse commit subjects commitlint would reject.
 
