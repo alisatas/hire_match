@@ -5,8 +5,9 @@ implementing anything. **When you learn something that would have saved time, or
 mistake worth not repeating, add it here in the same change.** Keep entries short and concrete:
 the rule first, then why.
 
-AGENTS.md holds the pre-push gate (7 agents) and CLAUDE.md the push procedure; this file holds
-everything else.
+The pre-push gate (7 agents, logs, report, push procedure) is the `push-gate` skill in
+`.claude/skills/push-gate/` — loaded only when pushing, so it costs nothing in other turns.
+Hooks in `.claude/settings.json` enforce the mechanical rules (section 3–4).
 
 ---
 
@@ -20,6 +21,13 @@ everything else.
 - **Smallest useful scope first.** Ship the part that brings value, list the rest as follow-ups,
   and say plainly what was left out and why.
 - **Batch tool calls** (shell scripts, browser batches) instead of many single calls.
+- **Parallel work, when it is worth it:** one agent per narrow task, each in its own git
+  worktree (`isolation: "worktree"` for subagents, `claude --worktree` or a new session with a
+  worktree), each with its own acceptance check (`npm run verify:quick` plus the test for its
+  task). Never several writers in the same checkout. Merge their branches one at a time and run
+  `npm run verify` after each.
+- Keep always-loaded files short (CLAUDE.md, AGENTS.md, this file). Long procedures belong in
+  skills that load on demand.
 - Reply to the owner in Turkish; code, comments, commits and docs in English.
 
 ## 2. Things that need the owner's explicit OK
@@ -35,18 +43,22 @@ everything else.
 ## 3. Git and release
 
 - **Commit subjects must be lower case** after the type: `feat(i18n): add …`, not
-  `feat(i18n): Add …`. commitlint rejects sentence case.
+  `feat(i18n): Add …`. commitlint rejects sentence case; a PreToolUse hook
+  (`.claude/hooks/commit-subject.mjs`) now refuses such `git commit -m` before it runs.
 - **CI's semantic-release pushes a `chore(release): x.y.z [skip ci]` commit after every push.**
-  Before pushing: `git fetch origin && git rebase origin/main`, then push.
+  Before pushing: `git fetch origin && git rebase origin/main`, then push. The pre-push hook
+  (`.claude/hooks/pre-push.mjs`) refuses a push that does not contain origin/main.
 - lint-staged runs `eslint --fix` on staged `.ts/.tsx` at commit time.
 - Commit only what the task touched; stage files by name when the tree has unrelated changes.
 - Unpushed commits may be amended; pushed ones never.
 
 ## 4. Verification before saying "done"
 
-- `npx tsc --noEmit` (web) and `cd mobile && npx tsc --noEmit` (app).
-- `npx eslint src tests scripts`, `npx vitest run`.
-- Production run: `npm run build`, then `CI=1 E2E_PORT=3100 npx playwright test`.
+- **`npm run verify`** runs everything: types (web + app), lint, unit tests, production build,
+  browser tests on port 3100. Short output; on failure it prints the last lines. A full pass on
+  a clean tree is recorded in `.claude/verify/last.json`; the pre-push hook requires it for the
+  commit being pushed.
+- `npm run verify:quick`: types, lint and unit tests only — run it after every change.
 - **Wait ~60 s between full Playwright runs**: the rate-limit test fails if the previous run's
   requests are still counted.
 - `next dev` regenerates `.next/dev/types`; after moving or deleting routes, stale types break

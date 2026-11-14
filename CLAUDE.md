@@ -7,25 +7,13 @@ PROJECT.md is this project's working memory: architecture, rules, commands and p
 Read it before implementing. Whenever you learn something that would have saved time, hit a
 problem worth not repeating, or the status in it changes, update PROJECT.md in the same change.
 
-## Pre-Push Gate — MANDATORY (in order, no exceptions)
+## Pre-Push Gate — MANDATORY
 
-**BEFORE EVERY `git push`:**
-1. Read AGENTS.md
-2. Run all 7 gate agents in order: Security, QA, API, UI/UX, Browser QA, SEO, Math Professor
-3. Read the relevant source files for each agent
-4. Output the full PRE-PUSH AGENT REPORT
-5. If any 🔴 Critical finding exists — BLOCK the push and list what must be fixed first
-6. **SEO is a continuous improvement loop — not just a check:**
-   - Phase 1: verify nothing is broken
-   - Phase 2: implement at least 1 concrete SEO improvement (copy, FAQ, llms.txt, JSON-LD, metadata)
-   - Phase 3: verify improvement was applied, then include it in the commit
-7. **Show the user the localhost link and wait for approval:**
-   - Make sure the dev server is running (`npm run dev` in the repo root)
-   - Tell the user: "Changes are live at http://localhost:3000 — please check and confirm before I push."
-   - **Do NOT push until the user explicitly says to push.**
-8. Only run `git push` after ✅ SAFE TO PUSH verdict, SEO improvements committed, AND user has confirmed localhost looks good
-
-Never skip any step, even for small fixes or renames.
+Before every `git push`, run the `push-gate` skill (`/push-gate`) and follow it to the letter:
+`npm run verify`, the 7 agents with their logs, the report, the owner's localhost approval,
+then rebase and push. Never skip it, even for small fixes or renames. Hooks in
+`.claude/settings.json` refuse a push when origin/main is not rebased in or verify has not
+passed on the commit, and refuse commit subjects commitlint would reject.
 
 ## Excalidraw Canvas Rule
 

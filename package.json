@@ -11,7 +11,9 @@
     "release": "semantic-release",
     "instagram:post": "node --env-file=.env.local scripts/instagram-post.mjs",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "verify": "node scripts/verify.mjs",
+    "verify:quick": "node scripts/verify.mjs --quick"
   },
   "lint-staged": {
     "*.{ts,tsx}": "eslint --fix"

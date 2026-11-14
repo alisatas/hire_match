@@ -10,6 +10,26 @@
           }
         ]
       }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git push*)",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre-push.mjs\"",
+            "timeout": 30,
+            "statusMessage": "Checking push prerequisites"
+          },
+          {
+            "type": "command",
+            "if": "Bash(git commit*)",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/commit-subject.mjs\"",
+            "timeout": 10
+          }
+        ]
+      }
     ]
   }
 }
