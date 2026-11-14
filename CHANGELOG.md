@@ -1,3 +1,10 @@
+# [1.42.0](https://github.com/alisatas/hire_match/compare/v1.41.0...v1.42.0) (2026-11-14)
+
+
+### Features
+
+* **i18n:** add french at /fr ([3ef1f8f](https://github.com/alisatas/hire_match/commit/3ef1f8fa773eecdd715615f6f4d2ab500da38abb))
+
 # [1.41.0](https://github.com/alisatas/hire_match/compare/v1.40.0...v1.41.0) (2026-11-14)
 
 
