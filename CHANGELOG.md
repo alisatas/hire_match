@@ -1,3 +1,16 @@
+# [1.43.0](https://github.com/alisatas/hire_match/compare/v1.42.0...v1.43.0) (2026-11-14)
+
+
+### Bug Fixes
+
+* **hooks:** check the pushed worktree in the pre-push hook ([17d0018](https://github.com/alisatas/hire_match/commit/17d00189fead25d60c1e201aa85316bed6fb59c0))
+
+
+### Features
+
+* **engine:** read seniority words in non-english job titles ([9fef779](https://github.com/alisatas/hire_match/commit/9fef7797869f4779facf384d4420d593b81f1c7a))
+* **i18n:** show country flags in the language menu ([de4df6f](https://github.com/alisatas/hire_match/commit/de4df6f1e2cd2d4609b0ee4f84db092b965a0672))
+
 # [1.42.0](https://github.com/alisatas/hire_match/compare/v1.41.0...v1.42.0) (2026-11-14)
 
 
