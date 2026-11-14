@@ -341,3 +341,11 @@ Older entries moved out of agent-logs/api.md to keep the gate cheap. Read only w
 - 189 unit / 91 browser tests green on the production build (was 119 / 64); tsc 0, ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`
 
 ---
+
+---
+
+## 2026-11-13 — Push 36b (Guides and articles in TR / DE / ES / ZH, 20 → 90+ indexable pages)
+
+**Status:** ✅ PASS (0 critical) — no API change
+
+- 195 unit / 91 browser tests green on the production build; tsc 0, ESLint 0; no tracked `.env`

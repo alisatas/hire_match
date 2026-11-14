@@ -7,16 +7,6 @@ Only the latest 3 entries are kept here; older ones are in `archive/browser-qa.m
 
 ---
 
-## 2026-11-13 — Push 36b (Guides and articles in TR / DE / ES / ZH, 20 → 90+ indexable pages)
-
-**Status:** ✅ PASS (0 critical)
-
-- SEO crawl covers every translated guide and article through the sitemap; it caught 5 descriptions outside 70–160 characters (fixed)
-- Note: wait 60 s between local full runs (rate-limit test)
-- 195 unit / 91 browser tests green on the production build; tsc 0, ESLint 0; no tracked `.env`
-
----
-
 ## 2026-11-13 — Push 37 (Native Android app in mobile/, SEO brief, seniority signal)
 
 **Status:** ✅ PASS (0 critical) — web unchanged apart from llms.txt; mobile verified on emulator with screenshots
@@ -31,3 +21,13 @@ Only the latest 3 entries are kept here; older ones are in `archive/browser-qa.m
 
 - SEO crawl caught 6 title/description lengths on the new legal pages (fixed); checked /tr 404 and /de/privacy in the browser
 - 203 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical; no tracked `.env`
+
+---
+
+## 2026-11-14 — Push 39 (Brazilian Portuguese at /pt)
+
+**Status:** ✅ PASS (0 critical)
+
+/pt routes load; only console error is the dev-only Vercel debug script blocked by CSP (pre-existing, not in production). New e2e cases: /pt home flow in Portuguese and Português in the footer.
+
+- 220 unit / browser tests green on the production build (verify passed on a9a45d7); tsc 0 (web + mobile), ESLint 0; no tracked `.env`

@@ -8,21 +8,6 @@ Only the latest 3 entries are kept here; older ones are in `archive/math-profess
 
 ---
 
-## 2026-11-13 — Push 36b (Guides and articles in TR / DE / ES / ZH, 20 → 90+ indexable pages)
-
-**Status:** ✅ PASS (1 improvement)
-
-**Improvement:** compound-aware word count (`countWords`, languages.ts): tokens of 15+ letters count as two, so compact German postings are no longer damped as "too short" (German nurse fixture 36 → 70; English fixtures unchanged).
-
-**Running improvement backlog (next pushes):**
-1. Seniority mismatch signal
-2. Extend alias lists from real postings per language
-3. CV quality check in other languages
-
-- 195 unit / 91 browser tests green on the production build; tsc 0, ESLint 0; no tracked `.env`
-
----
-
 ## 2026-11-13 — Push 37 (Native Android app in mobile/, SEO brief, seniority signal)
 
 **Status:** ✅ PASS (1 improvement)
@@ -50,3 +35,18 @@ Only the latest 3 entries are kept here; older ones are in `archive/math-profess
 3. Seniority words in TR/DE/ES/ZH titles
 
 - 203 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical; no tracked `.env`
+
+---
+
+## 2026-11-14 — Push 39 (Brazilian Portuguese at /pt)
+
+**Status:** ✅ PASS (1 improvement)
+
+**Improvement:** Portuguese language layer in `languages.ts` (stop words, skill aliases, headings, "pelo menos / no mínimo N anos", months, "até o momento", education words). Shared nurse case 32 → 75 (English 75), logistics 59 → 69 (CV years 0 → 7.8), frontend 71 → 76; all 105 English CV × posting pairs unchanged (compared with the previous engine).
+
+**Running improvement backlog (next pushes):**
+1. Extend alias lists from real postings per language
+2. CV quality check in other languages
+3. Seniority words in TR/DE/ES/PT/ZH titles
+
+- 220 unit / browser tests green on the production build (verify passed on a9a45d7); tsc 0 (web + mobile), ESLint 0; no tracked `.env`

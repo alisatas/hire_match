@@ -413,3 +413,15 @@ Older entries moved out of agent-logs/uiux.md to keep the gate cheap. Read only 
 - 189 unit / 91 browser tests green on the production build (was 119 / 64); tsc 0, ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`
 
 ---
+
+---
+
+## 2026-11-13 — Push 36b (Guides and articles in TR / DE / ES / ZH, 20 → 90+ indexable pages)
+
+**Status:** ✅ PASS (0 critical)
+
+- Keyword guides (18), articles (3), guide and article indexes now in Türkçe, Deutsch, Español, 中文; the language menu opens the same page in the chosen language
+- Chinese sample postings translated
+- 🟡 Still English: legal pages (linked with hreflang="en"), sample postings for TR / DE / ES, course titles
+- 🟡 Chinese home-page dictionary not yet reviewed by a native speaker (AI review stopped at the usage limit)
+- 195 unit / 91 browser tests green on the production build; tsc 0, ESLint 0; no tracked `.env`

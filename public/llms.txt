@@ -10,7 +10,7 @@
 - Input: a PDF CV (up to 5 MB) or pasted CV text, plus a job description — pasted text or a job URL from LinkedIn, Indeed, Glassdoor or most company careers pages
 - Output: match score (5–95%), matched skills, missing skills ranked high / medium / low priority, missing job keywords, course recommendations, company insights, and an "HR Quick Scan" of CV quality
 - Speed: results in seconds
-- Languages: the site is available in English (https://cvxray.com), Turkish (https://cvxray.com/tr), German (https://cvxray.com/de), Spanish (https://cvxray.com/es) and Chinese (https://cvxray.com/zh). CVs and job descriptions in those five languages are scored the same way: skills, keywords and years of experience are recognised in each. Role guides and articles are in English
+- Languages: the site is available in English (https://cvxray.com), Turkish (https://cvxray.com/tr), German (https://cvxray.com/de), Spanish (https://cvxray.com/es), Brazilian Portuguese (https://cvxray.com/pt) and Chinese (https://cvxray.com/zh). CVs and job descriptions in those six languages are scored the same way: skills, keywords and years of experience are recognised in each. Every role guide, article and legal page exists in all six languages.
 - Works on desktop, tablet and phone browsers
 
 ## How the match score is calculated
@@ -71,11 +71,12 @@ The score is a transparent weighted comparison, not a language-model opinion:
 
 ## In other languages
 
-Every keyword guide and article also exists in Turkish, German, Spanish and Chinese, under the same path with a language prefix:
+Every keyword guide and article also exists in Turkish, German, Spanish, Brazilian Portuguese and Chinese, under the same path with a language prefix:
 
 - Turkish: [CV anahtar kelimeleri](https://cvxray.com/tr/resume-keywords), [rehberler](https://cvxray.com/tr/blog), [ana sayfa](https://cvxray.com/tr)
 - German: [Lebenslauf-Keywords](https://cvxray.com/de/resume-keywords), [Ratgeber](https://cvxray.com/de/blog), [Startseite](https://cvxray.com/de)
 - Spanish: [Palabras clave para el CV](https://cvxray.com/es/resume-keywords), [guías](https://cvxray.com/es/blog), [inicio](https://cvxray.com/es)
+- Portuguese (Brazil): [Palavras-chave para currículo](https://cvxray.com/pt/resume-keywords), [guias](https://cvxray.com/pt/blog), [início](https://cvxray.com/pt)
 - Chinese: [简历关键词](https://cvxray.com/zh/resume-keywords), [指南](https://cvxray.com/zh/blog), [首页](https://cvxray.com/zh)
 
 ## How CVXray differs from similar tools
@@ -84,7 +85,7 @@ Tools in the same category include Jobscan, Resume Worded and Teal. Those are ac
 
 ## Limitations
 
-- CVs and job postings in English, Turkish, German, Spanish and Chinese are supported; the CV and the posting should be in the same language. Other languages are matched on tool names only.
+- CVs and job postings in English, Turkish, German, Spanish, Portuguese and Chinese are supported; the CV and the posting should be in the same language. Other languages are matched on tool names only.
 - The "HR Quick Scan" of CV quality runs on English CVs only.
 - Only PDF files are uploaded; Word (.docx) and Google Docs resumes can be saved as PDF or pasted as text.
 - Scanned (image-only) PDFs contain no extractable text and cannot be analysed; paste the CV text instead.

@@ -619,3 +619,18 @@ Regression check: strong match 75–95 and weak ≤ 25 hold; no English fixture 
 - 189 unit / 91 browser tests green on the production build (was 119 / 64); tsc 0, ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`
 
 ---
+
+---
+
+## 2026-11-13 — Push 36b (Guides and articles in TR / DE / ES / ZH, 20 → 90+ indexable pages)
+
+**Status:** ✅ PASS (1 improvement)
+
+**Improvement:** compound-aware word count (`countWords`, languages.ts): tokens of 15+ letters count as two, so compact German postings are no longer damped as "too short" (German nurse fixture 36 → 70; English fixtures unchanged).
+
+**Running improvement backlog (next pushes):**
+1. Seniority mismatch signal
+2. Extend alias lists from real postings per language
+3. CV quality check in other languages
+
+- 195 unit / 91 browser tests green on the production build; tsc 0, ESLint 0; no tracked `.env`
