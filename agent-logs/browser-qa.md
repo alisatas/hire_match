@@ -7,15 +7,6 @@ Only the latest 3 entries are kept here; older ones are in `archive/browser-qa.m
 
 ---
 
-## 2026-11-13 — Push 38 (Legal pages, samples, course details, score card and 404 in every language)
-
-**Status:** ✅ PASS (0 critical)
-
-- SEO crawl caught 6 title/description lengths on the new legal pages (fixed); checked /tr 404 and /de/privacy in the browser
-- 203 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical; no tracked `.env`
-
----
-
 ## 2026-11-14 — Push 39 (Brazilian Portuguese at /pt)
 
 **Status:** ✅ PASS (0 critical)
@@ -33,3 +24,13 @@ Only the latest 3 entries are kept here; older ones are in `archive/browser-qa.m
 /fr routes load with no new console errors. New e2e cases: /fr home flow in French and Français in the footer. First fetches after a dev-server restart returned the fallback shell while compiling — not a bug; rechecked after compile.
 
 - 234 unit / browser tests green on the production build (verify passed on 80eb754); tsc 0 (web + mobile), ESLint 0; no tracked `.env`
+
+---
+
+## 2026-11-14 — Push 41 (Flags in the language menu)
+
+**Status:** ✅ PASS (0 critical)
+
+/tr and /fr checked in the browser: 8 flags in the open menu (button + 7 languages), only console error is the dev-only Vercel debug script blocked by CSP (pre-existing).
+
+- verify on the pushed commit (see report); tsc 0 (web + mobile), ESLint 0; no tracked `.env`

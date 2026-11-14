@@ -649,3 +649,18 @@ Regression check: strong match 75–95 and weak ≤ 25 hold; no English fixture 
 3. Seniority words in TR/DE/ES/ZH titles
 
 - 198 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`
+
+---
+
+## 2026-11-13 — Push 38 (Legal pages, samples, course details, score card and 404 in every language)
+
+**Status:** ✅ PASS (1 improvement)
+
+**Improvement:** Chinese year counts may name the skill before "经验" ("3 年以上 React 和 TypeScript 开发经验"): the gap allowed between count and 经验 grew from 10 to 30 characters, still stopping at a comma or full stop. Found by the translated sample postings; unit-tested.
+
+**Running improvement backlog (next pushes):**
+1. Extend alias lists from real postings per language
+2. CV quality check in other languages
+3. Seniority words in TR/DE/ES/ZH titles
+
+- 203 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical; no tracked `.env`

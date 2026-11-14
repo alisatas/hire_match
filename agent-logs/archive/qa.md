@@ -401,3 +401,13 @@ Older entries moved out of agent-logs/qa.md to keep the gate cheap. Read only wh
 - Mobile app driven end to end on an Android 15 emulator: paste CV, sample job, report, switch to Turkish
 - 🟡 Not yet tested on device: PDF upload and job-link fetch from the app
 - 198 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`
+
+---
+
+## 2026-11-13 — Push 38 (Legal pages, samples, course details, score card and 404 in every language)
+
+**Status:** ✅ PASS (0 critical)
+
+- Translated samples unit-tested: every TR/DE/ES/ZH posting yields 3+ skills, a years requirement and full length
+- 404 renders English on the server and switches language after hydration (useSyncExternalStore, no mismatch)
+- 203 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical; no tracked `.env`

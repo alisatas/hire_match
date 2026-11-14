@@ -357,3 +357,11 @@ Older entries moved out of agent-logs/api.md to keep the gate cheap. Read only w
 **Status:** ✅ PASS (0 critical) — no API change; the mobile app is a new client of the same two routes
 
 - 198 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`
+
+---
+
+## 2026-11-13 — Push 38 (Legal pages, samples, course details, score card and 404 in every language)
+
+**Status:** ✅ PASS (0 critical) — no API change
+
+- 203 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical; no tracked `.env`

@@ -388,3 +388,12 @@ Older entries moved out of agent-logs/browser-qa.md to keep the gate cheap. Read
 **Status:** ✅ PASS (0 critical) — web unchanged apart from llms.txt; mobile verified on emulator with screenshots
 
 - 198 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`
+
+---
+
+## 2026-11-13 — Push 38 (Legal pages, samples, course details, score card and 404 in every language)
+
+**Status:** ✅ PASS (0 critical)
+
+- SEO crawl caught 6 title/description lengths on the new legal pages (fixed); checked /tr 404 and /de/privacy in the browser
+- 203 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical; no tracked `.env`
