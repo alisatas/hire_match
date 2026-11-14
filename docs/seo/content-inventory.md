@@ -4,18 +4,18 @@ Generated 2026-11-14 from http://localhost:3000/sitemap.xml by `scripts/seo-inve
 
 ## Summary
 
-- **162 indexable pages** in the sitemap: en 27, tr 27, de 27, es 27, pt 27, zh 27
-- Every guide, article and index exists in 6 languages under the same path (`/tr`, `/de`, `/es`, `/pt`, `/zh` prefixes) with hreflang + x-default. Legal pages are English only.
+- **189 indexable pages** in the sitemap: en 27, tr 27, de 27, es 27, pt 27, fr 27, zh 27
+- Every guide, article and index exists in 7 languages under the same path (`/tr`, `/de`, `/es`, `/pt`, `/fr`, `/zh` prefixes) with hreflang + x-default. Legal pages are English only.
 - Translated pages carry the same structure as the English ones; below, English pages are listed in full and translations by title only.
 
 | Page type | English pages | All languages |
 |---|---|---|
-| Home page | 1 | 6 |
-| Keyword guide index | 1 | 6 |
-| Keyword guides | 18 | 108 |
-| Article index | 1 | 6 |
-| Articles | 3 | 18 |
-| Legal | 3 | 18 |
+| Home page | 1 | 7 |
+| Keyword guide index | 1 | 7 |
+| Keyword guides | 18 | 126 |
+| Article index | 1 | 7 |
+| Articles | 3 | 21 |
+| Legal | 3 | 21 |
 
 ## English pages
 
@@ -27,7 +27,7 @@ Generated 2026-11-14 from http://localhost:3000/sitemap.xml by `scripts/seo-inve
 - **Description** (157): Check your CV or resume against any job description. Free match score, missing keywords, skill gaps and courses to close them — instant, private, no sign-up.
 - **H1:** Does your CV match the job?
 - **H2:** Analyze a match · Your match report will appear here · From CV to clear next steps in under a minute · Resume keywords by role · Questions, answered
-- **Words:** ~1249 · **Structured data:** WebSite, WebApplication, Offer, Organization, ImageObject, FAQPage, Question, Answer, HowTo, HowToStep, HowToTool
+- **Words:** ~1251 · **Structured data:** WebSite, WebApplication, Offer, Organization, ImageObject, FAQPage, Question, Answer, HowTo, HowToStep, HowToTool
 
 ### Keyword guide index
 
@@ -253,7 +253,7 @@ Generated 2026-11-14 from http://localhost:3000/sitemap.xml by `scripts/seo-inve
 
 | Path | Title | Words |
 |---|---|---|
-| `/tr` | Ücretsiz CV Analizi: İş İlanı Uyum Skoru \| CVXray | ~638 |
+| `/tr` | Ücretsiz CV Analizi: İş İlanı Uyum Skoru \| CVXray | ~639 |
 | `/tr/resume-keywords` | Mesleğe Göre CV Anahtar Kelimeleri: Ücretsiz Listeler \| CVXray | ~416 |
 | `/tr/blog` | CV ve İş Arama Rehberleri: ATS'yi Geçmenin Yolu \| CVXray | ~130 |
 | `/tr/blog/how-ats-reads-your-cv` | ATS Yazılımları CV'nizi Gerçekte Nasıl Okur? \| CVXray | ~527 |
@@ -285,7 +285,7 @@ Generated 2026-11-14 from http://localhost:3000/sitemap.xml by `scripts/seo-inve
 
 | Path | Title | Words |
 |---|---|---|
-| `/de` | Lebenslauf-Check kostenlos: Passt er zur Stelle? \| CVXray | ~753 |
+| `/de` | Lebenslauf-Check kostenlos: Passt er zur Stelle? \| CVXray | ~754 |
 | `/de/resume-keywords` | Lebenslauf-Keywords nach Beruf: kostenlose Listen \| CVXray | ~298 |
 | `/de/blog` | Ratgeber Bewerbung: Lebenslauf durchs ATS bringen \| CVXray | ~139 |
 | `/de/blog/how-ats-reads-your-cv` | Wie ein ATS Ihren Lebenslauf wirklich liest \| CVXray | ~652 |
@@ -317,7 +317,7 @@ Generated 2026-11-14 from http://localhost:3000/sitemap.xml by `scripts/seo-inve
 
 | Path | Title | Words |
 |---|---|---|
-| `/es` | Analiza tu CV gratis: ¿encaja con la oferta? \| CVXray | ~861 |
+| `/es` | Analiza tu CV gratis: ¿encaja con la oferta? \| CVXray | ~862 |
 | `/es/resume-keywords` | Palabras clave para el CV por puesto: listas gratis \| CVXray | ~490 |
 | `/es/blog` | Guías de CV y empleo: cómo superar el ATS \| CVXray | ~185 |
 | `/es/blog/how-ats-reads-your-cv` | Cómo lee de verdad tu CV un ATS \| CVXray | ~752 |
@@ -349,7 +349,7 @@ Generated 2026-11-14 from http://localhost:3000/sitemap.xml by `scripts/seo-inve
 
 | Path | Title | Words |
 |---|---|---|
-| `/pt` | Analise seu currículo grátis: combina com a vaga? \| CVXray | ~841 |
+| `/pt` | Analise seu currículo grátis: combina com a vaga? \| CVXray | ~842 |
 | `/pt/resume-keywords` | Palavras-chave para currículo por cargo: listas grátis \| CVXray | ~450 |
 | `/pt/blog` | Guias de currículo e emprego: como passar no ATS \| CVXray | ~171 |
 | `/pt/blog/how-ats-reads-your-cv` | Como um ATS lê seu currículo de verdade \| CVXray | ~711 |
@@ -377,11 +377,43 @@ Generated 2026-11-14 from http://localhost:3000/sitemap.xml by `scripts/seo-inve
 | `/pt/resume-keywords/registered-nurse` | Enfermeiro(a): palavras-chave para currículo \| CVXray | ~587 |
 | `/pt/resume-keywords/logistics-coordinator` | Coordenador de Logística: palavras-chave para CV \| CVXray | ~560 |
 
+### fr
+
+| Path | Title | Words |
+|---|---|---|
+| `/fr` | Analyse de CV gratuite : correspond-il à l'offre ? \| CVXray | ~870 |
+| `/fr/resume-keywords` | Mots-clés pour le CV par métier : listes gratuites \| CVXray | ~469 |
+| `/fr/blog` | Guides CV et emploi : comment passer l'ATS \| CVXray | ~166 |
+| `/fr/blog/how-ats-reads-your-cv` | Comment un ATS lit vraiment votre CV \| CVXray | ~766 |
+| `/fr/blog/tailor-cv-to-job-description` | Adapter son CV à une offre en 15 minutes \| CVXray | ~575 |
+| `/fr/blog/what-is-a-good-cv-match-score` | Quel est un bon score de correspondance de CV ? \| CVXray | ~543 |
+| `/fr/terms` | Conditions d'utilisation \| CVXray | ~637 |
+| `/fr/privacy` | Politique de confidentialité \| CVXray | ~578 |
+| `/fr/refund-policy` | Politique de remboursement \| CVXray | ~265 |
+| `/fr/resume-keywords/ai-engineer` | Ingénieur IA : mots-clés pour le CV et compétences \| CVXray | ~557 |
+| `/fr/resume-keywords/frontend-developer` | Développeur Frontend : mots-clés pour le CV \| CVXray | ~515 |
+| `/fr/resume-keywords/backend-engineer` | Développeur Backend : mots-clés pour le CV \| CVXray | ~478 |
+| `/fr/resume-keywords/machine-learning-engineer` | Ingénieur Machine Learning : mots-clés pour le CV \| CVXray | ~495 |
+| `/fr/resume-keywords/software-engineer` | Ingénieur Logiciel : mots-clés pour le CV \| CVXray | ~513 |
+| `/fr/resume-keywords/data-scientist` | Data Scientist : mots-clés pour le CV \| CVXray | ~509 |
+| `/fr/resume-keywords/account-executive` | Account Executive : mots-clés pour le CV \| CVXray | ~515 |
+| `/fr/resume-keywords/digital-marketing-specialist` | Chargé de Marketing Digital : mots-clés pour le CV \| CVXray | ~501 |
+| `/fr/resume-keywords/financial-analyst` | Analyste Financier : mots-clés pour le CV \| CVXray | ~497 |
+| `/fr/resume-keywords/project-manager` | Chef de Projet : mots-clés pour le CV \| CVXray | ~494 |
+| `/fr/resume-keywords/recruiter` | Chargé de Recrutement : mots-clés pour le CV \| CVXray | ~512 |
+| `/fr/resume-keywords/customer-success-manager` | Customer Success Manager : mots-clés pour le CV \| CVXray | ~452 |
+| `/fr/resume-keywords/data-analyst` | Data Analyst : mots-clés pour le CV et compétences \| CVXray | ~513 |
+| `/fr/resume-keywords/product-manager` | Product Manager : mots-clés pour le CV \| CVXray | ~484 |
+| `/fr/resume-keywords/devops-engineer` | Ingénieur DevOps : mots-clés pour le CV \| CVXray | ~484 |
+| `/fr/resume-keywords/ux-designer` | UX Designer : mots-clés pour le CV et compétences \| CVXray | ~486 |
+| `/fr/resume-keywords/registered-nurse` | Infirmier(ère) : mots-clés pour le CV \| CVXray | ~592 |
+| `/fr/resume-keywords/logistics-coordinator` | Coordinateur Logistique : mots-clés pour le CV \| CVXray | ~556 |
+
 ### zh
 
 | Path | Title | Words |
 |---|---|---|
-| `/zh` | 免费简历匹配工具：简历与职位匹配度评分 \| CVXray | ~972 |
+| `/zh` | 免费简历匹配工具：简历与职位匹配度评分 \| CVXray | ~974 |
 | `/zh/resume-keywords` | 各职位简历关键词：免费清单与简历检查 \| CVXray | ~542 |
 | `/zh/blog` | 简历与求职指南：如何通过 ATS 筛选 \| CVXray | ~234 |
 | `/zh/blog/how-ats-reads-your-cv` | ATS 招聘系统究竟是怎样读简历的 \| CVXray | ~880 |

@@ -8,21 +8,6 @@ Only the latest 3 entries are kept here; older ones are in `archive/math-profess
 
 ---
 
-## 2026-11-13 — Push 37 (Native Android app in mobile/, SEO brief, seniority signal)
-
-**Status:** ✅ PASS (1 improvement)
-
-**Improvement:** senior titles imply experience. When a posting states no years, "Lead / Staff / Senior" in the title implies 5 and "Head of / Director / Principal" 8 — for the experience score only, and only when the CV is below that level (the report still says no requirement). A 1-year vs 9-year CV now differ by 2+ more points on a Lead posting; English fixtures unchanged.
-
-**Running improvement backlog (next pushes):**
-1. Extend alias lists from real postings per language
-2. CV quality check in other languages
-3. Seniority words in TR/DE/ES/ZH titles
-
-- 198 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`
-
----
-
 ## 2026-11-13 — Push 38 (Legal pages, samples, course details, score card and 404 in every language)
 
 **Status:** ✅ PASS (1 improvement)
@@ -50,3 +35,18 @@ Only the latest 3 entries are kept here; older ones are in `archive/math-profess
 3. Seniority words in TR/DE/ES/PT/ZH titles
 
 - 220 unit / browser tests green on the production build (verify passed on a9a45d7); tsc 0 (web + mobile), ESLint 0; no tracked `.env`
+
+---
+
+## 2026-11-14 — Push 40 (French at /fr)
+
+**Status:** ✅ PASS (1 improvement)
+
+**Improvement:** French years of experience are read. "ans" is a year unit and the years pattern accepts the elided "d'" (`YEARS_TAIL`, `CV_YEARS_RE` in analyze.ts), plus "au moins", French aliases, headings, months and "aujourd'hui"/"depuis". French postings now report the years asked for (0 → 3/5); nurse 31 → 76 (English 75), logistics 65 → 71 (CV years 0 → 7.8), frontend 69 → 74; 105 English pairs unchanged.
+
+**Running improvement backlog (next pushes):**
+1. Extend alias lists from real postings per language
+2. CV quality check in other languages
+3. Seniority words in TR/DE/ES/PT/FR/ZH titles
+
+- 234 unit / browser tests green on the production build (verify passed on 80eb754); tsc 0 (web + mobile), ESLint 0; no tracked `.env`

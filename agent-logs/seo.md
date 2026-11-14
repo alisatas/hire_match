@@ -8,23 +8,6 @@ Only the latest 3 entries are kept here; older ones are in `archive/seo.md`.
 
 ---
 
-## 2026-11-13 — Push 38 (Legal pages, samples, course details, score card and 404 in every language)
-
-**Status:** ✅ PASS (0 critical, 1 improvement)
-
-**Improvement:** 12 more indexable pages — legal pages in TR/DE/ES/ZH with hreflang and sitemap alternates (135 pages in total); legal pages now take part in hreflang like every other page.
-
-**Running improvement backlog (next pushes):**
-1. Submit translated URLs in Search Console / Bing
-2. Keyword volume research per language (SEO manager)
-3. Landing pages: ATS resume checker, Jobscan alternative
-4. Native review of Chinese copy and legal translations
-5. Play Store listing once the app ships
-
-- 203 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical; no tracked `.env`
-
----
-
 ## 2026-11-14 — Bing Webmaster Tools check (no deploy)
 
 - **Search Performance:** still "check back in 48 hours while we prepare the data" (site added 2026-11-12)
@@ -52,3 +35,20 @@ Only the latest 3 entries are kept here; older ones are in `archive/seo.md`.
 5. Native review of Chinese and Portuguese copy
 
 - 220 unit / browser tests green on the production build (verify passed on a9a45d7); tsc 0 (web + mobile), ESLint 0; no tracked `.env`
+
+---
+
+## 2026-11-14 — Push 40 (French at /fr)
+
+**Status:** ✅ PASS (0 critical, 1 improvement)
+
+**Improvement:** 27 more indexable pages — every page in French (`fr`, hreflang `fr` on all pages, sitemap alternates; 189 sitemap URLs); `llms.txt` lists French. All 27 pages pass title 15–65 / description 70–160 / one h1 / unique titles and descriptions, checked in the browser before verify.
+
+**Running improvement backlog (next pushes):**
+1. Submit /pt and /fr URLs in Search Console / Bing (owner OK needed)
+2. Next language for high-unemployment markets (Arabic needs RTL layout work)
+3. Keyword volume research per language (SEO manager)
+4. Landing pages: ATS resume checker, Jobscan alternative
+5. Native review of Chinese, Portuguese and French copy
+
+- 234 unit / browser tests green on the production build (verify passed on 80eb754); tsc 0 (web + mobile), ESLint 0; no tracked `.env`

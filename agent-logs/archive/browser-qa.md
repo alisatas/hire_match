@@ -380,3 +380,11 @@ Older entries moved out of agent-logs/browser-qa.md to keep the gate cheap. Read
 - SEO crawl covers every translated guide and article through the sitemap; it caught 5 descriptions outside 70–160 characters (fixed)
 - Note: wait 60 s between local full runs (rate-limit test)
 - 195 unit / 91 browser tests green on the production build; tsc 0, ESLint 0; no tracked `.env`
+
+---
+
+## 2026-11-13 — Push 37 (Native Android app in mobile/, SEO brief, seniority signal)
+
+**Status:** ✅ PASS (0 critical) — web unchanged apart from llms.txt; mobile verified on emulator with screenshots
+
+- 198 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`

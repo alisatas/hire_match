@@ -7,16 +7,6 @@ Only the latest 3 entries are kept here; older ones are in `archive/uiux.md`.
 
 ---
 
-## 2026-11-13 — Push 37 (Native Android app in mobile/, SEO brief, seniority signal)
-
-**Status:** ✅ PASS (0 critical)
-
-- Native app (Expo / React Native): input and report screens in the site's colours, 44–52 px tap targets, accessibility labels on score ring, inputs and tabs; 5 languages with in-app picker
-- 🟡 Single-screen state navigation (no Expo Router yet); 74 MB universal test APK (Play bundle splits per device)
-- 198 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`
-
----
-
 ## 2026-11-13 — Push 38 (Legal pages, samples, course details, score card and 404 in every language)
 
 **Status:** ✅ PASS (0 critical)
@@ -35,3 +25,13 @@ Only the latest 3 entries are kept here; older ones are in `archive/uiux.md`.
 /pt home flow checked by hand: paste CV, sample job, analyze → results fully in Portuguese (15/17 skills, 6/3 years). Header menu and footer hold six languages with no horizontal overflow at 375 px (/pt/resume-keywords/registered-nurse). Copy uses Brazilian terms (vaga, currículo, você).
 
 - 220 unit / browser tests green on the production build (verify passed on a9a45d7); tsc 0 (web + mobile), ESLint 0; no tracked `.env`
+
+---
+
+## 2026-11-14 — Push 40 (French at /fr)
+
+**Status:** ✅ PASS (0 critical)
+
+/fr home flow checked by hand: French nurse CV + posting → "Candidat solide" 75 %, "Clinique / soins aux patients" matched, all copy in French ("vous", "offre d'emploi"). Seven languages in the header menu and footer (browser test at 375 px green).
+
+- 234 unit / browser tests green on the production build (verify passed on 80eb754); tsc 0 (web + mobile), ESLint 0; no tracked `.env`

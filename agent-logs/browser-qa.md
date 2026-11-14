@@ -7,14 +7,6 @@ Only the latest 3 entries are kept here; older ones are in `archive/browser-qa.m
 
 ---
 
-## 2026-11-13 — Push 37 (Native Android app in mobile/, SEO brief, seniority signal)
-
-**Status:** ✅ PASS (0 critical) — web unchanged apart from llms.txt; mobile verified on emulator with screenshots
-
-- 198 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical (2 low, 4 moderate); no tracked `.env`
-
----
-
 ## 2026-11-13 — Push 38 (Legal pages, samples, course details, score card and 404 in every language)
 
 **Status:** ✅ PASS (0 critical)
@@ -31,3 +23,13 @@ Only the latest 3 entries are kept here; older ones are in `archive/browser-qa.m
 /pt routes load; only console error is the dev-only Vercel debug script blocked by CSP (pre-existing, not in production). New e2e cases: /pt home flow in Portuguese and Português in the footer.
 
 - 220 unit / browser tests green on the production build (verify passed on a9a45d7); tsc 0 (web + mobile), ESLint 0; no tracked `.env`
+
+---
+
+## 2026-11-14 — Push 40 (French at /fr)
+
+**Status:** ✅ PASS (0 critical)
+
+/fr routes load with no new console errors. New e2e cases: /fr home flow in French and Français in the footer. First fetches after a dev-server restart returned the fallback shell while compiling — not a bug; rechecked after compile.
+
+- 234 unit / browser tests green on the production build (verify passed on 80eb754); tsc 0 (web + mobile), ESLint 0; no tracked `.env`
