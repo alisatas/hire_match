@@ -51,6 +51,10 @@ Hooks in `.claude/settings.json` enforce the mechanical rules (section 3–4).
 - **CI's semantic-release pushes a `chore(release): x.y.z [skip ci]` commit after every push.**
   Before pushing: `git fetch origin && git rebase origin/main`, then push. The pre-push hook
   (`.claude/hooks/pre-push.mjs`) refuses a push that does not contain origin/main.
+- **Pushing from a worktree** (to leave someone else's uncommitted work out): run verify in
+  the worktree (real `npm ci` there — Turbopack refuses a symlinked `node_modules`), then
+  `cd <worktree> && git push origin HEAD:main`. The pre-push hook checks the folder named by
+  a leading `cd … &&` or `git -C …`; otherwise it checks the project folder.
 - lint-staged runs `eslint --fix` on staged `.ts/.tsx` at commit time.
 - Commit only what the task touched; stage files by name when the tree has unrelated changes.
 - Unpushed commits may be amended; pushed ones never.

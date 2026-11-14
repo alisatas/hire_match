@@ -6,12 +6,21 @@
 // mechanical mistakes that kept recurring.
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 
 const input = JSON.parse(readFileSync(0, "utf8") || "{}");
 const command = input?.tool_input?.command ?? "";
 if (!/(^|[;&|]\s*|\s)git\s+push\b/.test(command)) process.exit(0);
 
-const git = (...args) => execFileSync("git", args, { encoding: "utf8" }).trim();
+// The repository being pushed: `git -C <dir> push` or a leading `cd <dir> &&` (a worktree,
+// for example), else the project folder. Checking the project folder for a push made from a
+// worktree compared the wrong HEAD and verify marker.
+const unquote = (s) => s.replace(/^(["'])(.*)\1$/, "$2");
+const dirArg = /\bgit\s+-C\s+("[^"]+"|'[^']+'|\S+)\s+push\b/.exec(command)?.[1]
+  ?? /^\s*cd\s+("[^"]+"|'[^']+'|\S+)\s*&&/.exec(command)?.[1];
+const cwd = dirArg ? unquote(dirArg) : process.cwd();
+
+const git = (...args) => execFileSync("git", args, { encoding: "utf8", cwd }).trim();
 const deny = (reason) => {
   process.stdout.write(JSON.stringify({
     hookSpecificOutput: { hookEventName: "PreToolUse", permissionDecision: "deny", permissionDecisionReason: reason },
@@ -31,7 +40,7 @@ try {
 }
 
 const head = git("rev-parse", "HEAD");
-const marker = ".claude/verify/last.json";
+const marker = join(git("rev-parse", "--show-toplevel"), ".claude/verify/last.json");
 const last = existsSync(marker) ? JSON.parse(readFileSync(marker, "utf8")) : null;
 if (!last || last.sha !== head || last.dirty) {
   deny(`npm run verify has not passed on ${head.slice(0, 7)} with a clean tree. Commit everything, run: npm run verify, then push.`);
