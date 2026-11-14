@@ -1,3 +1,10 @@
+# [1.41.0](https://github.com/alisatas/hire_match/compare/v1.40.0...v1.41.0) (2026-11-14)
+
+
+### Features
+
+* **i18n:** add brazilian portuguese at /pt ([7fc022f](https://github.com/alisatas/hire_match/commit/7fc022f2cce565289d77b42c2a98b2c586f52231))
+
 # [1.40.0](https://github.com/alisatas/hire_match/compare/v1.39.0...v1.40.0) (2026-11-13)
 
 
