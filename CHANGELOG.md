@@ -1,3 +1,10 @@
+# [1.44.0](https://github.com/alisatas/hire_match/compare/v1.43.0...v1.44.0) (2026-11-14)
+
+
+### Features
+
+* **mobile:** add settings screen with language, legal links and version ([39aef44](https://github.com/alisatas/hire_match/commit/39aef449e2c973e5a9305170088ae1b93464d35a))
+
 # [1.43.0](https://github.com/alisatas/hire_match/compare/v1.42.0...v1.43.0) (2026-11-14)
 
 
