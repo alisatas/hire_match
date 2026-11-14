@@ -3,13 +3,33 @@ name: push-gate
 description: CVXray's mandatory pre-push gate — the 7 review agents (Security, QA, API, UI/UX, Browser QA, SEO, Math Professor), their knowledge logs, the report format and the push procedure. Use before every git push or deploy of this repository, and when the user asks to push.
 ---
 
+## Scale the gate to the change
+
+Look at `git diff --stat origin/main..HEAD` first and run only what the change can affect:
+
+| What changed | Run |
+|---|---|
+| Only docs, logs, `PROJECT.md`, `agent-logs/` | `npm run verify`, one short log line per agent, report. No source reading, no SEO/Math improvement. |
+| `mobile/` only | verify; QA, UI/UX and Security read `mobile/`; others one line. |
+| Site code | the full gate below |
+
+Agents whose files did not change write "no change in scope" in the report and log instead of
+re-reading their files. When in doubt, run the agent.
+
+## Logs stay short
+
+Each `agent-logs/<agent>.md` keeps its header and the latest 3 entries. When appending makes it
+4, move the oldest entry to the end of `agent-logs/archive/<agent>.md`. Read the archive only to
+check a specific past finding.
+
 ## Procedure (in order, no exceptions)
 
 1. Commit everything, then run `npm run verify` (types web + app, lint, unit tests, production
    build, browser tests). It must pass on the commit you will push.
-2. Read each agent's log in `agent-logs/` and run the agents below in order, reading the
-   files each one names.
-3. SEO and Math Professor must each ship at least one concrete improvement in this push.
+2. Read each agent's log in `agent-logs/` (latest entries only) and run the agents below in
+   order, reading the files each one names — scaled as above.
+3. SEO and Math Professor must each ship at least one concrete improvement in a push that
+   changes site code (not for docs-only or app-only pushes).
 4. Append a dated entry to all seven logs; update the SEO and Math backlogs; commit.
 5. Run `npm run verify` again if code changed in steps 3–4.
 6. Print the PRE-PUSH AGENT REPORT. Any 🔴 → stop and list what must be fixed.
