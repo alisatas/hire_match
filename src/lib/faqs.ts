@@ -48,7 +48,7 @@ export const FAQS: { q: string; a: string }[] = [
     },
     {
         q: "Does CVXray work with CVs and job posts that are not in English?",
-        a: "Yes. CVXray reads CVs and job descriptions in English, Turkish, German, Spanish, Portuguese and Chinese, and recognises skills, keywords and years of experience in each. Results are most accurate when the CV and the job post are in the same language. The site itself is available in English, Türkçe, Deutsch, Español, Português and 中文.",
+        a: "Yes. CVXray reads CVs and job descriptions in English, Turkish, German, Spanish, Portuguese, French and Chinese, and recognises skills, keywords and years of experience in each. Results are most accurate when the CV and the job post are in the same language. The site itself is available in English, Türkçe, Deutsch, Español, Português, Français and 中文.",
     },
     {
         q: "Can I check a Word (.docx) resume or a scanned PDF?",

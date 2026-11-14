@@ -73,7 +73,7 @@ Hooks in `.claude/settings.json` enforce the mechanical rules (section 3–4).
 
 ## 5. Site architecture you must keep consistent
 
-- **Languages:** `en` at `/`, `tr`, `de`, `es`, `pt` (Brazil, `pt-BR`), `zh` under `/<code>/…`, same path otherwise.
+- **Languages:** `en` at `/`, `tr`, `de`, `es`, `pt` (Brazil, `pt-BR`), `fr`, `zh` under `/<code>/…`, same path otherwise.
   Every page exists in every language: home, `/resume-keywords`, 18 guides, `/blog`,
   3 articles, `/terms`, `/privacy`, `/refund-policy`.
 - **Two root layouts:** `src/app/(en)/layout.tsx` and `src/app/[lang]/layout.tsx`, both render
@@ -91,7 +91,7 @@ Hooks in `.claude/settings.json` enforce the mechanical rules (section 3–4).
 - Shared between web and app: `src/lib/analyze.ts`, `languages.ts`, `suggestions.ts`,
   `resources.ts`, `i18n/*`. No React or Next imports in these.
 
-- **Adding a language** (done for `pt`, Nov 2026; one language per push, owner's rule):
+- **Adding a language** (done for `pt` and `fr`, Nov 2026; one language per push, owner's rule):
   1. Engine first (`languages.ts`): stop words, skill aliases per group, headings, years
      ("pelo menos 3 anos"), months, "present", education words. Add the language to
      `tests/unit/fixtures-intl.ts` (3 cases) and `languages.test.ts`, and compare all
@@ -99,6 +99,9 @@ Hooks in `.claude/settings.json` enforce the mechanical rules (section 3–4).
   2. Files: `<code>.ts`, `pages.<code>.ts`, `content/{roles,posts,samples}.<code>.ts`,
      `content/legal.<code>.tsx`; register in `i18n/index.ts` (`LOCALES`, `LOCALE_INFO`) and
      `content/index.ts`. Translate from the closest existing language (pt from es).
+     Every language needs a flag: `flag` in `LOCALE_INFO` (required by its type); a new
+     country also goes in `FLAG_COUNTRIES` plus an SVG in `components/flag.tsx` (30×20
+     canvas, simplified, no emoji — Windows shows emoji flags as letters).
   3. Hard-coded lists: `not-found-content.tsx` (text + regex), `scripts/seo-inventory.mjs`,
      `tests/e2e/seo.spec.ts`, `tests/e2e/pages.spec.ts` (home flow + footer),
      `tests/unit/analyze.test.ts` (nurse/logistics guide test), the "which languages"
@@ -106,6 +109,11 @@ Hooks in `.claude/settings.json` enforce the mechanical rules (section 3–4).
   4. Nurse and logistics guide keywords must use phrases from the new aliases (unit-tested).
   5. Check all `/<code>` pages' title/description lengths in the browser before verify:
      role titles need a short last fallback ("{role}: palavras-chave para CV").
+  6. Check the years pattern with the language's own phrasing: French "5 ans d'expérience"
+     needed the elided "d'" in `YEARS_TAIL` (analyze.ts), not only a new unit word.
+  7. While another session has uncommitted edits in the shared checkout, build the language
+     commit in a worktree from HEAD and push from there (`git -C <worktree> push origin
+     <branch>:main`); the pre-push hook only sees the main checkout.
 
 ## 6. SEO rules (enforced by `tests/e2e/seo.spec.ts`)
 

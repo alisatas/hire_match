@@ -4,11 +4,12 @@
 import { de } from "./de";
 import { en, type Dictionary } from "./en";
 import { es } from "./es";
+import { fr } from "./fr";
 import { pt } from "./pt";
 import { tr } from "./tr";
 import { zh } from "./zh";
 
-export const LOCALES = ["en", "tr", "de", "es", "pt", "zh"] as const;
+export const LOCALES = ["en", "tr", "de", "es", "pt", "fr", "zh"] as const;
 export type Locale = (typeof LOCALES)[number];
 /** Languages served from /<code> — everything except English. */
 export const TRANSLATED_LOCALES = LOCALES.filter((l): l is Exclude<Locale, "en"> => l !== "en");
@@ -19,10 +20,11 @@ export const LOCALE_INFO: Record<Locale, { name: string; htmlLang: string; ogLoc
   de: { name: "Deutsch", htmlLang: "de", ogLocale: "de_DE" },
   es: { name: "Español", htmlLang: "es", ogLocale: "es_ES" },
   pt: { name: "Português", htmlLang: "pt-BR", ogLocale: "pt_BR" },
+  fr: { name: "Français", htmlLang: "fr", ogLocale: "fr_FR" },
   zh: { name: "中文", htmlLang: "zh-Hans", ogLocale: "zh_CN" },
 };
 
-const DICTIONARIES: Record<Locale, Dictionary> = { en, tr, de, es, pt, zh };
+const DICTIONARIES: Record<Locale, Dictionary> = { en, tr, de, es, pt, fr, zh };
 
 export const isLocale = (value: string): value is Locale => (LOCALES as readonly string[]).includes(value);
 export const getDictionary = (locale: Locale): Dictionary => DICTIONARIES[locale];

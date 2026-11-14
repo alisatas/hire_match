@@ -106,6 +106,7 @@ test.describe("translated home pages", () => {
     { path: "/de", lang: "de", h1: /zur Stelle/, paste: "Kein PDF? Text einfügen", jobTab: "Text einfügen", analyze: "Jetzt analysieren", matched: "Klinik / Patientenversorgung" },
     { path: "/es", lang: "es", h1: /con la oferta/, paste: "¿Sin PDF? Pega el texto", jobTab: "Pegar texto", analyze: "Analizar ajuste", matched: "Clínica / cuidado del paciente" },
     { path: "/pt", lang: "pt-BR", h1: /com a vaga/, paste: "Sem PDF? Cole o texto", jobTab: "Colar texto", analyze: "Analisar compatibilidade", matched: "Clínica / cuidado ao paciente" },
+    { path: "/fr", lang: "fr", h1: /à l'offre/, paste: "Pas de PDF ? Collez le texte", jobTab: "Coller le texte", analyze: "Analyser la correspondance", matched: "Clinique / soins aux patients" },
     { path: "/zh", lang: "zh-Hans", h1: /与职位匹配吗/, paste: "没有 PDF？粘贴文本", jobTab: "粘贴文本", analyze: "开始分析", matched: "临床 / 患者护理" },
   ];
   const NURSE: Record<string, { cv: string; job: string }> = {
@@ -124,6 +125,10 @@ test.describe("translated home pages", () => {
     "pt-BR": {
       cv: "Enfermeira\n7 anos de experiência em unidades de clínica médica.\nEnfermeira assistencial, Hospital Central — 2018 a 2025\nCuidado ao paciente de até 8 pacientes por plantão. Administração de medicamentos e monitoramento de sinais vitais.\nElaborei planos de cuidados e a documentação clínica no prontuário eletrônico.\nCurativos, auditorias de controle de infecção, certificada em suporte básico de vida.",
       job: "Enfermeira — Clínica Médica\nProcuramos uma enfermeira com pelo menos 3 anos de experiência em unidade de internação.\nResponsabilidades:\n- Cuidado ao paciente seguro e planos de cuidados\n- Administração de medicamentos e monitoramento de sinais vitais\n- Documentação clínica no prontuário eletrônico\n- Curativos e controle de infecção\n- Certificação em suporte básico de vida obrigatória",
+    },
+    fr: {
+      cv: "Infirmière diplômée d'État\n7 ans d'expérience en services de médecine interne.\nInfirmière en service de médecine, Hôpital Central — 2018 à 2025\nSoins aux patients pour 8 patients maximum par poste. Administration des médicaments et surveillance des constantes.\nRédaction des plans de soins et de la documentation clinique dans le dossier patient informatisé.\nSoins des plaies, audits de prévention des infections, formée aux gestes et soins d'urgence.",
+      job: "Infirmier / Infirmière — Médecine interne\nNous recherchons une infirmière avec au moins 3 ans d'expérience en service d'hospitalisation.\nVos missions :\n- Soins aux patients en toute sécurité et plans de soins\n- Administration des médicaments et surveillance des constantes\n- Documentation clinique dans le dossier patient informatisé\n- Soins des plaies et prévention des infections\n- Attestation de gestes et soins d'urgence obligatoire",
     },
     "zh-Hans": {
       cv: "注册护士\n7年内科病房护理经验。\n病房护士，市第一医院 — 2018年 至今\n每班负责最多8名患者的患者护理。给药并监测生命体征。\n制定护理计划，在电子病历系统中书写护理记录。\n伤口护理、感染控制检查，持有基础生命支持证书。带教新护士，与医生和家属协作。",
@@ -170,7 +175,7 @@ test.describe("translated home pages", () => {
 
   test("every language is reachable from the footer", async ({ page }) => {
     await page.goto("/");
-    for (const [name, href] of [["Türkçe", "/tr"], ["Deutsch", "/de"], ["Español", "/es"], ["Português", "/pt"], ["中文", "/zh"]]) {
+    for (const [name, href] of [["Türkçe", "/tr"], ["Deutsch", "/de"], ["Español", "/es"], ["Português", "/pt"], ["Français", "/fr"], ["中文", "/zh"]]) {
       await expect(page.locator("footer").getByRole("link", { name, exact: true })).toHaveAttribute("href", href);
     }
   });

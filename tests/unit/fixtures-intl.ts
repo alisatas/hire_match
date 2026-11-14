@@ -399,3 +399,60 @@ Atribuições:
 - Reportar a entrega no prazo e o custo por embarque em Excel
 - Melhorar a entrega de última milha para nossos clientes`,
 };
+
+// French (France): written from the English rows in everyday French posting wording
+cases["frontend (strong match)"].fr = {
+  cv: `Développeur Frontend Senior
+6 ans d'expérience dans le développement d'applications web.
+Expérience
+Développeur Frontend, Acme — 2019 à 2025
+Développement du tunnel de paiement en React et TypeScript avec Next.js, temps de chargement réduit de 40 %.
+Écriture de tests unitaires avec Jest et de tests de bout en bout avec Playwright. Mise en place de la CI/CD avec GitHub Actions.
+Travail avec les designers sur Figma et création d'un système de design avec Tailwind CSS et Storybook.
+Intégration d'API REST et GraphQL. Amélioration de l'accessibilité et des Core Web Vitals. Équipe agile, Scrum.
+Compétences : JavaScript, TypeScript, React, Next.js, Tailwind CSS, Jest, Playwright, GraphQL, Git`,
+  job: `Développeur Frontend
+Nous recherchons un développeur frontend avec au moins 5 ans d'expérience.
+Vous développerez notre application web client en React et TypeScript avec Next.js.
+Profil recherché :
+- Solide expérience en React, TypeScript et JavaScript
+- Expérience avec Next.js et Tailwind CSS
+- Tests avec Jest et Playwright
+- Expérience des API REST et de GraphQL
+- Connaissance de l'accessibilité et de la performance web
+- CI/CD avec GitHub Actions, Git
+- Travail en équipe agile avec des designers qui utilisent Figma
+Vous travaillerez avec les équipes produit, design et backend pour livrer de nouvelles fonctionnalités chaque semaine.`,
+};
+cases["nurse (strong match)"].fr = {
+  cv: `Infirmière diplômée d'État
+7 ans d'expérience en services de médecine interne.
+Infirmière en service de médecine, Hôpital Central — 2018 à 2025
+Soins aux patients pour 8 patients maximum par poste. Administration des médicaments et surveillance des constantes.
+Rédaction des plans de soins et de la documentation clinique dans le dossier patient informatisé.
+Soins des plaies, audits de prévention des infections, formée aux gestes et soins d'urgence. Tutorat de nouvelles infirmières, travail avec les médecins et les familles.`,
+  job: `Infirmier / Infirmière — Médecine interne
+Nous recherchons une infirmière avec au moins 3 ans d'expérience en service d'hospitalisation.
+Vos missions :
+- Soins aux patients en toute sécurité et plans de soins
+- Administration des médicaments et surveillance des constantes
+- Documentation clinique dans le dossier patient informatisé
+- Soins des plaies et prévention des infections
+- Attestation de gestes et soins d'urgence obligatoire
+- Travail avec les médecins, les familles et l'équipe soignante`,
+};
+cases["logistics (strong match)"].fr = {
+  cv: `Coordinateur Logistique
+Coordinateur Logistique, Northwind — mars 2019 à aujourd'hui
+Planification de 120 expéditions par semaine avec quatre transporteurs et négociation des tarifs de fret.
+Gestion des stocks et inventaires tournants dans le WMS d'un entrepôt de 12 000 m2.
+Travail avec les approvisionnements sur les délais fournisseurs et avec un prestataire 3PL sur le dernier kilomètre. Suivi du taux de livraison à l'heure dans Excel.`,
+  job: `Coordinateur Logistique
+Nous recherchons un coordinateur logistique avec au moins 3 ans d'expérience en entrepôt ou en transport.
+Vos missions :
+- Planifier le fret entrant et sortant avec nos transporteurs et nos prestataires 3PL
+- Piloter la gestion des stocks et la fiabilité des stocks dans notre WMS
+- Travailler avec les approvisionnements et la planification de la demande sur les niveaux de stock
+- Suivre le taux de livraison à l'heure et le coût par expédition dans Excel
+- Améliorer la livraison du dernier kilomètre pour nos clients`,
+};

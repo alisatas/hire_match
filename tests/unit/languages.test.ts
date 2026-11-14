@@ -4,7 +4,7 @@ import { countWords, foldText } from "@/lib/languages";
 import { cases } from "./fixtures-intl";
 import { FRONTEND_CV, FRONTEND_JOB } from "./fixtures";
 
-const LANGS = ["tr", "de", "es", "pt", "zh", "hi"] as const;
+const LANGS = ["tr", "de", "es", "pt", "fr", "zh", "hi"] as const;
 
 describe("scores are language-neutral", () => {
   // Before the language layer: nurse 75 (en) vs 24 (tr), 28 (es), 5 (zh), 8 (hi).
@@ -46,6 +46,9 @@ describe("years of experience in other languages", () => {
     ["Pelo menos 4 anos de experiência com React", 4],
     ["No mínimo 2 anos em função similar", 2],
     ["3 a 5 anos de experiência em enfermagem", 3],
+    ["Au moins 4 ans d'expérience en React", 4],
+    ["3 ans minimum d'expérience en logistique", 3],
+    ["Expérience de 2 à 4 ans d’expérience en entrepôt", 2],
     ["要求3年以上工作经验", 3],
     ["五年以上相关经验", 5],
     ["3 年以上 React 和 TypeScript 开发经验", 3],
@@ -63,6 +66,9 @@ describe("years of experience in other languages", () => {
     ["Enfermeira, Hospital Central — 2018 a 2025", 7],
     ["Analista — fevereiro 2020 até o momento", 6],
     ["Coordenadora — set 2019 - atual", 6.4],
+    ["Infirmière, Hôpital Central — 2018 à 2025", 7],
+    ["Coordinateur — avril 2019 à aujourd'hui", 6.8],
+    ["Chargée de recrutement — depuis août 2020", 5.5],
     ["护士，市第一医院 — 2018年3月 至今", 7.9],
     ["物流专员 — 2019.03-2025.02", 6],
     ["स्टाफ नर्स — 2018 से वर्तमान", 7.6],
@@ -76,6 +82,7 @@ describe("years of experience in other languages", () => {
     expect(yearsFromDateRanges("北京大学 本科 2010年 - 2014年", now)).toBe(0);
     expect(yearsFromDateRanges("Universidad de Madrid, Grado — 2010 a 2014", now)).toBe(0);
     expect(yearsFromDateRanges("Universidade de São Paulo, Graduação — 2010 a 2014", now)).toBe(0);
+    expect(yearsFromDateRanges("Université de Lyon, Licence — 2010 à 2014", now)).toBe(0);
   });
 });
 
@@ -99,7 +106,7 @@ describe("localised skill aliases", () => {
   });
 
   it("treats a one-line extra as optional in any language", () => {
-    for (const line of ["Nice to have: Kubernetes", "Tercih sebebi: Kubernetes bilgisi", "Von Vorteil: Kubernetes", "Deseable: Kubernetes", "Desejável: Kubernetes", "Diferencial: Kubernetes", "加分项：Kubernetes"]) {
+    for (const line of ["Nice to have: Kubernetes", "Tercih sebebi: Kubernetes bilgisi", "Von Vorteil: Kubernetes", "Deseable: Kubernetes", "Desejável: Kubernetes", "Diferencial: Kubernetes", "Atouts : Kubernetes", "Kubernetes serait un plus", "加分项：Kubernetes"]) {
       const r = analyze(FRONTEND_CV, `Frontend Developer\nReact and TypeScript, 3 years of experience building web applications for customers.\n${line}`);
       expect(r.missing.find(m => m.key === "kubernetes")?.priority, line).toBe("low");
     }
@@ -155,7 +162,7 @@ describe("word count is comparable across languages", () => {
 
 // Every translated sample posting must read as a real posting to the engine
 describe("translated sample postings", () => {
-  it.each(["tr", "de", "es", "pt", "zh"] as const)("%s samples have skills, years and a full posting", async (lang) => {
+  it.each(["tr", "de", "es", "pt", "fr", "zh"] as const)("%s samples have skills, years and a full posting", async (lang) => {
     const { getSamples } = await import("@/lib/i18n/content");
     const samples = getSamples(lang);
     expect(samples.map(s => s.id)).toEqual(getSamples("en").map(s => s.id));

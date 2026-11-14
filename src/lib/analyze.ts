@@ -398,7 +398,8 @@ function extractKeywords(text: string): Set<string> {
 // folded first, which is why the patterns below are written without diacritics.
 const YEARS_UNIT = String.raw`(?:years?|yrs?|jaar|${INTL_YEARS_UNIT})`
 const YEARS_SEP = String.raw`(?:-|–|—|to|tot|${INTL_RANGE_SEP})`
-const YEARS_TAIL = String.raw`['’]?\s+(?:of\s+|de\s+)?(?:[\w-]+\s+){0,4}?(?:experience|exp|ervaring|werkervaring|expertise|working|in\s+(?:a|an|the)\b|${INTL_EXPERIENCE_WORD})`
+// French elides "de" before a vowel: "5 ans d'expérience", "3 ans minimum d'expérience".
+const YEARS_TAIL = String.raw`['’]?\s+(?:of\s+|de\s+|d['’]\s*)?(?:[\w-]+\s+){0,4}?(?:d['’]\s*)?(?:experience|exp|ervaring|werkervaring|expertise|working|in\s+(?:a|an|the)\b|${INTL_EXPERIENCE_WORD})`
 const YEARS_RANGE_RE = new RegExp(String.raw`\b(\d{1,2})\s*${YEARS_SEP}\s*\d{1,2}\+?\s*${YEARS_UNIT}${YEARS_TAIL}`, "gi")
 const YEARS_SINGLE_RE = new RegExp(String.raw`\b(\d{1,2})\+?\s*${YEARS_UNIT}${YEARS_TAIL}`, "gi")
 const YEARS_MINIMUM_RE = new RegExp(String.raw`\b(?:at\s+least|minimum(?:\s+of)?|min\.?|minimaal|ten\s+minste|${INTL_AT_LEAST})\s+(\d{1,2})\+?\s*${YEARS_UNIT}\b`, "gi")
@@ -511,7 +512,7 @@ export function yearsFromDateRanges(text: string, now: Date = new Date()): numbe
 
 // "6 years of experience" and its Turkish, German and Spanish forms ("6 yıl deneyim",
 // "6 Jahre Erfahrung", "6 años de experiencia"); Chinese and Hindi via nonLatinYears.
-const CV_YEARS_RE = new RegExp(String.raw`(\d+)\+?\s*(?:years?|${INTL_YEARS_UNIT})\s*(?:of\s*|de\s*)?(?:experience|exp|${INTL_EXPERIENCE_WORD})`, "gi")
+const CV_YEARS_RE = new RegExp(String.raw`(\d+)\+?\s*(?:years?|${INTL_YEARS_UNIT})\s*(?:of\s*|de\s*|d['’]\s*)?(?:experience|exp|${INTL_EXPERIENCE_WORD})`, "gi")
 
 function extractYearsFromCV(text: string): number {
     const folded = foldText(text)

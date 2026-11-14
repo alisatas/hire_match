@@ -77,7 +77,7 @@ export const pt: Dictionary = {
     },
     {
       q: "Funciona com currículos e vagas em português?",
-      a: "Sim. O CVXray lê currículos e vagas em português, inglês, espanhol, alemão, turco e chinês. Ele reconhece habilidades, palavras-chave e anos de experiência em cada idioma; o resultado é mais preciso quando o currículo e a vaga estão no mesmo idioma.",
+      a: "Sim. O CVXray lê currículos e vagas em português, inglês, espanhol, francês, alemão, turco e chinês. Ele reconhece habilidades, palavras-chave e anos de experiência em cada idioma; o resultado é mais preciso quando o currículo e a vaga estão no mesmo idioma.",
     },
     {
       q: "Qual nota de compatibilidade é considerada boa?",

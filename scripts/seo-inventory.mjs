@@ -24,7 +24,7 @@ for (const path of paths) {
   const main = html.match(/<main[\s\S]*?<\/main>/i)?.[0] ?? html;
   pages.push({
     path,
-    lang: /^\/(tr|de|es|pt|zh)(\/|$)/.exec(path)?.[1] ?? "en",
+    lang: /^\/(tr|de|es|pt|fr|zh)(\/|$)/.exec(path)?.[1] ?? "en",
     title: decode(html.match(/<title>([^<]*)<\/title>/i)?.[1] ?? ""),
     description: meta(html, "name", "description"),
     h1: [...html.matchAll(/<h1[^>]*>([\s\S]*?)<\/h1>/gi)].map((m) => text(m[1])).join(" | "),
@@ -36,7 +36,7 @@ for (const path of paths) {
   });
 }
 
-const group = (p) => p.path === "/" || /^\/(tr|de|es|pt|zh)$/.test(p.path) ? "Home page"
+const group = (p) => p.path === "/" || /^\/(tr|de|es|pt|fr|zh)$/.test(p.path) ? "Home page"
   : /resume-keywords\/./.test(p.path) ? "Keyword guides"
   : /resume-keywords$/.test(p.path) ? "Keyword guide index"
   : /blog\/./.test(p.path) ? "Articles"
@@ -46,7 +46,7 @@ const en = pages.filter((p) => p.lang === "en");
 const byLang = Object.groupBy(pages, (p) => p.lang);
 let md = `# CVXray content inventory\n\nGenerated ${new Date().toISOString().slice(0, 10)} from ${BASE}/sitemap.xml by \`scripts/seo-inventory.mjs\`. Re-run after content changes.\n\n`;
 md += `## Summary\n\n- **${pages.length} indexable pages** in the sitemap: ${Object.entries(byLang).map(([l, ps]) => `${l} ${ps.length}`).join(", ")}\n`;
-md += `- Every guide, article and index exists in 6 languages under the same path (\`/tr\`, \`/de\`, \`/es\`, \`/pt\`, \`/zh\` prefixes) with hreflang + x-default. Legal pages are English only.\n`;
+md += `- Every guide, article and index exists in 7 languages under the same path (\`/tr\`, \`/de\`, \`/es\`, \`/pt\`, \`/fr\`, \`/zh\` prefixes) with hreflang + x-default. Legal pages are English only.\n`;
 md += `- Translated pages carry the same structure as the English ones; below, English pages are listed in full and translations by title only.\n\n`;
 md += `| Page type | English pages | All languages |\n|---|---|---|\n`;
 for (const g of ["Home page", "Keyword guide index", "Keyword guides", "Article index", "Articles", "Legal"]) {
@@ -60,7 +60,7 @@ for (const g of ["Home page", "Keyword guide index", "Keyword guides", "Article 
   }
 }
 md += `\n## Translated pages (titles)\n`;
-for (const lang of ["tr", "de", "es", "pt", "zh"]) {
+for (const lang of ["tr", "de", "es", "pt", "fr", "zh"]) {
   md += `\n### ${lang}\n\n| Path | Title | Words |\n|---|---|---|\n`;
   for (const p of byLang[lang] ?? []) md += `| \`${p.path}\` | ${p.title.replace(/\|/g, "\\|")} | ~${p.words} |\n`;
 }

@@ -76,7 +76,7 @@ export const de: Dictionary = {
     },
     {
       q: "Funktioniert CVXray mit deutschen Lebensläufen und Stellenanzeigen?",
-      a: "Ja. CVXray liest Lebensläufe und Stellenanzeigen auf Deutsch, Englisch, Türkisch, Spanisch, Portugiesisch und Chinesisch. Skills, Keywords und Berufsjahre werden in jeder Sprache erkannt; am genauesten ist das Ergebnis, wenn Lebenslauf und Anzeige in derselben Sprache verfasst sind.",
+      a: "Ja. CVXray liest Lebensläufe und Stellenanzeigen auf Deutsch, Englisch, Türkisch, Spanisch, Portugiesisch, Französisch und Chinesisch. Skills, Keywords und Berufsjahre werden in jeder Sprache erkannt; am genauesten ist das Ergebnis, wenn Lebenslauf und Anzeige in derselben Sprache verfasst sind.",
     },
     {
       q: "Was ist ein guter Match-Score?",

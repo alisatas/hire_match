@@ -5,7 +5,7 @@ import { LOCALE_INFO, TRANSLATED_LOCALES, getDictionary, isLocale } from "@/lib/
 import { sharedMetadata } from "@/lib/metadata";
 import { OG_IMAGE } from "@/lib/site";
 
-// Root layout for the translated home pages (/tr, /de, /es, /pt, /zh). English keeps its own
+// Root layout for the translated home pages (/tr, /de, /es, /pt, /fr, /zh). English keeps its own
 // root layout in app/(en), so <html lang> is right in the static HTML of each language.
 // Only the listed languages exist; any other single-segment path is a 404.
 export const dynamicParams = false;
