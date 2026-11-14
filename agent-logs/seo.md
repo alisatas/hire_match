@@ -624,3 +624,16 @@ Agents MUST read this log before running checks and MUST append an entry after e
 5. Play Store listing once the app ships
 
 - 203 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical; no tracked `.env`
+
+---
+
+## 2026-11-14 — Bing Webmaster Tools check (no deploy)
+
+- **Search Performance:** still "check back in 48 hours while we prepare the data" (site added 2026-11-12)
+- **AI Performance:** 0 citations in Microsoft Copilot and partners (3 months to 2026-11-13) — unchanged from the baseline
+- **Sitemaps:** 1 sitemap, last crawl 2026-11-12, **25 URLs discovered** — the old count; the sitemap now lists 135 URLs
+- **IndexNow:** working — all 135 sitemap URLs (every language) submitted 2026-11-13 19:07 by the deploy workflow
+- **Site Explorer:** no indexed URLs listed yet
+- **URL Inspection `https://cvxray.com/tr`:** discovered 2026-11-13, crawled 2026-11-13 17:55, stored status "Indexing allowed? No / URL cannot appear on Bing". The **live test passes**: "URL can be indexed by Bing", no SEO/GEO issues, 2 markup types. Live HTML as Bingbot: 200, `index, follow`, self canonical, `lang="tr"`. Read: the stored result predates processing of the new pages; recheck after the next crawl
+- Done with owner OK: sitemap resubmitted 2026-11-14 ("submitted for processing", status Processing); the five home pages (`/`, `/tr`, `/de`, `/es`, `/zh`) sent through URL Submission at 10:27 (quota 95/100 left)
+- Recheck ~2026-11-16: sitemap URL count (expect 135), `/tr` index status, Search Performance data
