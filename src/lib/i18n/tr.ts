@@ -76,7 +76,7 @@ export const tr: Dictionary = {
     },
     {
       q: "Türkçe CV ve Türkçe iş ilanlarıyla çalışıyor mu?",
-      a: "Evet. CVXray Türkçe, İngilizce, Almanca, İspanyolca ve Çince CV ile ilanları okur. Becerileri, anahtar kelimeleri ve deneyim yılını her dilde tanır; CV ile ilanın aynı dilde olması en doğru sonucu verir.",
+      a: "Evet. CVXray Türkçe, İngilizce, Almanca, İspanyolca, Portekizce ve Çince CV ile ilanları okur. Becerileri, anahtar kelimeleri ve deneyim yılını her dilde tanır; CV ile ilanın aynı dilde olması en doğru sonucu verir.",
     },
     {
       q: "İyi bir CV uyum skoru kaçtır?",

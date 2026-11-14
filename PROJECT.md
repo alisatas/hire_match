@@ -72,7 +72,7 @@ Hooks in `.claude/settings.json` enforce the mechanical rules (section 3–4).
 
 ## 5. Site architecture you must keep consistent
 
-- **Languages:** `en` at `/`, `tr`, `de`, `es`, `zh` under `/<code>/…`, same path otherwise.
+- **Languages:** `en` at `/`, `tr`, `de`, `es`, `pt` (Brazil, `pt-BR`), `zh` under `/<code>/…`, same path otherwise.
   Every page exists in every language: home, `/resume-keywords`, 18 guides, `/blog`,
   3 articles, `/terms`, `/privacy`, `/refund-policy`.
 - **Two root layouts:** `src/app/(en)/layout.tsx` and `src/app/[lang]/layout.tsx`, both render
@@ -81,7 +81,7 @@ Hooks in `.claude/settings.json` enforce the mechanical rules (section 3–4).
 - Pages are shared components in `src/components/pages/*` and `home-page.tsx`, called with a
   `locale` by thin route files in `(en)` and `[lang]`.
 - **Strings:** UI in `src/lib/i18n/{en,tr,de,es,zh}.ts` (`en.ts` defines the shape — add a key
-  to all five). Page strings in `pages.<lang>.ts`. Content (guides, articles, samples, legal)
+  to every language). Page strings in `pages.<lang>.ts`. Content (guides, articles, samples, legal)
   in `src/lib/i18n/content/*.<lang>.ts(x)`, read through `content/index.ts`.
 - Paths: `localePath(locale, "/blog")`; hreflang: `alternatesFor(path)`. Every page sets a
   self canonical plus `languages`; the sitemap lists every page in every language.
@@ -90,14 +90,30 @@ Hooks in `.claude/settings.json` enforce the mechanical rules (section 3–4).
 - Shared between web and app: `src/lib/analyze.ts`, `languages.ts`, `suggestions.ts`,
   `resources.ts`, `i18n/*`. No React or Next imports in these.
 
+- **Adding a language** (done for `pt`, Nov 2026; one language per push, owner's rule):
+  1. Engine first (`languages.ts`): stop words, skill aliases per group, headings, years
+     ("pelo menos 3 anos"), months, "present", education words. Add the language to
+     `tests/unit/fixtures-intl.ts` (3 cases) and `languages.test.ts`, and compare all
+     English pairs with the previous engine (section 4).
+  2. Files: `<code>.ts`, `pages.<code>.ts`, `content/{roles,posts,samples}.<code>.ts`,
+     `content/legal.<code>.tsx`; register in `i18n/index.ts` (`LOCALES`, `LOCALE_INFO`) and
+     `content/index.ts`. Translate from the closest existing language (pt from es).
+  3. Hard-coded lists: `not-found-content.tsx` (text + regex), `scripts/seo-inventory.mjs`,
+     `tests/e2e/seo.spec.ts`, `tests/e2e/pages.spec.ts` (home flow + footer),
+     `tests/unit/analyze.test.ts` (nurse/logistics guide test), the "which languages"
+     FAQ answer in every language and `lib/faqs.ts`. `grep -rn "tr|de|es"` finds most.
+  4. Nurse and logistics guide keywords must use phrases from the new aliases (unit-tested).
+  5. Check all `/<code>` pages' title/description lengths in the browser before verify:
+     role titles need a short last fallback ("{role}: palavras-chave para CV").
+
 ## 6. SEO rules (enforced by `tests/e2e/seo.spec.ts`)
 
 - Title 15–65 characters **including** " | CVXray" (9) — keep page titles ≤ 56. Chinese counts
   characters, so short Chinese titles fail: write e.g. "CVXray 隐私政策", not "隐私政策".
 - Description 70–160 characters, unique per page and language.
 - Exactly one `<h1>`, self canonical, `index, follow`, OG and Twitter tags, parseable JSON-LD.
-- Every linked page must be in the sitemap; every multilingual page needs hreflang for all
-  five languages plus `x-default`.
+- Every linked page must be in the sitemap; every multilingual page needs hreflang for every
+  language plus `x-default`.
 - New translations: run the crawl — machine-written text regularly overshoots the limits.
 - `node scripts/seo-inventory.mjs` regenerates `docs/seo/content-inventory.*`;
   `docs/seo/seo-brief.md` is the hand-off for the SEO manager.

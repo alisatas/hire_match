@@ -14,11 +14,12 @@ const TEXT: Record<Locale, { h1: string; text: string }> = {
   tr: { h1: "Bu sayfa mevcut değil", text: "Bağlantı eski ya da hatalı yazılmış olabilir. CV'nizi hemen bir ilanla karşılaştırabilir veya anahtar kelime rehberlerine göz atabilirsiniz." },
   de: { h1: "Diese Seite gibt es nicht", text: "Der Link ist vielleicht veraltet oder falsch geschrieben. Prüfen Sie Ihren Lebenslauf direkt an einer Stelle oder stöbern Sie in den Keyword-Ratgebern." },
   es: { h1: "Esta página no existe", text: "Puede que el enlace sea antiguo o tenga un error. Puedes comparar tu CV con una oferta ahora mismo o consultar las guías de palabras clave." },
+  pt: { h1: "Esta página não existe", text: "O link pode estar desatualizado ou com erro de digitação. Você pode comparar seu currículo com uma vaga agora mesmo ou ver os guias de palavras-chave." },
   zh: { h1: "此页面不存在", text: "链接可能已过期或输入有误。你可以立即用职位描述检查简历，或浏览各职位的关键词指南。" },
 };
 
 const readLocale = (): Locale => {
-  const code = /^\/(tr|de|es|zh)(\/|$)/.exec(window.location.pathname)?.[1];
+  const code = /^\/(tr|de|es|pt|zh)(\/|$)/.exec(window.location.pathname)?.[1];
   return (code as Locale | undefined) ?? "en";
 };
 const noop = () => () => {};

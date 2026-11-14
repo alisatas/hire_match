@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────
 // LANGUAGE LAYER FOR THE ANALYSIS ENGINE
-// Turkish, German, Spanish, Hindi and Chinese on top of English and Dutch.
+// Turkish, German, Spanish, Portuguese, Hindi and Chinese on top of English and Dutch.
 //
 // The engine used to keep only a–z: "hasta bakımı" became "hasta bak m", Chinese and
 // Hindi text vanished entirely. A nurse CV that matched a ward-nurse posting line for
@@ -10,6 +10,13 @@
 // No language detection: every list is applied to every text. That keeps mixed postings
 // working ("React Geliştirici — 5 yıl deneyim") and means there is no detector to get
 // wrong. The cost is that each entry must be safe in all languages — see the notes.
+//
+// Math Prof improvement (Portuguese): Brazilian postings were read through the Spanish
+// lists only. On the shared nurse case (English 75) a Portuguese CV and posting scored 32:
+// "cuidado ao paciente", "sinais vitais" and "prontuário eletrônico" matched nothing, and
+// "março 2019 até o momento" gave 0 years on the CV. With the Portuguese entries below:
+// nurse 32 → 75, logistics 59 → 69 (CV years 0 → 7.8; English 67), frontend 71 → 76
+// (English 70). All 105 English CV × posting pairs in the unit fixtures score the same.
 // ─────────────────────────────────────────────
 
 /**
@@ -131,6 +138,12 @@ export const INTL_STOP_WORDS: string[] = [
     "seras", "tendras", "capacidad", "habilidades", "manejo", "minimo", "deseable", "junto", "dentro",
     "mediante", "segun", "todos", "todas", "otros", "otras", "donde", "cuando", "unos", "unas",
     "tiene", "tienen", "hacer", "nuevo", "nueva", "nuevos", "nuevas", "obligatoria", "obligatorio",
+    // Portuguese (Brazil) — words already listed for Spanish are not repeated
+    "nosso", "nossa", "nossos", "nossas", "procuramos", "oferecemos", "conhecimento", "equipe", "equipes",
+    "trabalho", "trabalhar", "vaga", "vagas", "voce", "sera", "tera", "atuar", "atuacao", "atividades",
+    "desejavel", "diferencial", "diferenciais", "atraves", "outros", "outras", "onde", "quando", "fazer",
+    "novo", "novos", "novas", "tambem", "pelo", "pela", "pelos", "pelas", "mais", "seja", "nivel",
+    "candidato", "candidata", "candidatos", "beneficios", "clientes",
     // Hindi
     "अनुभव", "लिए", "साथ", "करना", "करने", "करें", "करेंगे", "होना", "होगा", "होगी", "चाहिए", "हमारी",
     "हमारे", "हमारा", "आपको", "आपके", "आपकी", "कार्य", "कंपनी", "वर्ष", "वर्षों", "आवश्यक", "योग्यता",
@@ -152,64 +165,88 @@ export const INTL_STOP_WORDS: string[] = [
 // Hindi lists are shorter: postings in India are overwhelmingly written in English, and
 // Hindi ones mostly use the English term in Devanagari.
 export const LOCALIZED_SKILL_ALIASES: Record<string, string[]> = {
-    jest: ["birim test*", "komponententest*", "pruebas unitarias", "prueba unitaria", "tests unitarios", "单元测试", "यूनिट टेस्ट*"],
-    cypress: ["uçtan uca test*", "end-to-end-test*", "pruebas end-to-end", "pruebas de extremo a extremo", "端到端测试"],
+    jest: ["birim test*", "komponententest*", "pruebas unitarias", "prueba unitaria", "tests unitarios", "单元测试", "यूनिट टेस्ट*",
+        "testes unitários", "teste unitário"],
+    cypress: ["uçtan uca test*", "end-to-end-test*", "pruebas end-to-end", "pruebas de extremo a extremo", "端到端测试",
+        "testes end-to-end", "testes ponta a ponta"],
     testing: ["yazılım testi", "test otomasyonu", "kalite güvence*", "qualitätssicherung", "softwaretest*",
         "testautomatisierung", "aseguramiento de calidad", "pruebas de software", "automatización de pruebas",
-        "软件测试", "自动化测试", "质量保证", "सॉफ्टवेयर परीक्षण", "गुणवत्ता आश्वासन"],
+        "软件测试", "自动化测试", "质量保证", "सॉफ्टवेयर परीक्षण", "गुणवत्ता आश्वासन",
+        "garantia de qualidade", "testes de software", "automação de testes", "testes automatizados"],
     git: ["sürüm kontrol*", "versiyon kontrol*", "versionskontrolle", "versionsverwaltung", "control de versiones",
-        "版本控制", "संस्करण नियंत्रण"],
-    agile: ["çevik", "agil", "agiles", "agilen", "agiler", "agilem", "ágiles", "敏捷", "एजाइल"],
-    api: ["mikroservis*", "microservicios", "微服务", "接口开发"],
-    docker: ["containerisierung", "konteynerleştirme", "容器化"],
-    cicd: ["sürekli entegrasyon", "kontinuierliche integration", "integración continua", "持续集成", "持续交付"],
+        "版本控制", "संस्करण नियंत्रण",
+        "controle de versão"],
+    agile: ["çevik", "agil", "agiles", "agilen", "agiler", "agilem", "ágiles", "敏捷", "एजाइल",
+        "ágeis", "metodologia ágil", "equipe ágil"],
+    api: ["mikroservis*", "microservicios", "微服务", "接口开发",
+        "microsserviços"],
+    docker: ["containerisierung", "konteynerleştirme", "容器化",
+        "conteinerização"],
+    cicd: ["sürekli entegrasyon", "kontinuierliche integration", "integración continua", "持续集成", "持续交付",
+        "integração contínua", "entrega contínua"],
     figma: ["kullanıcı deneyimi", "arayüz tasarım*", "tasarım sistemi", "designsystem*", "experiencia de usuario",
-        "diseño de interfaces", "sistema de diseño", "用户体验", "交互设计", "界面设计", "设计系统"],
+        "diseño de interfaces", "sistema de diseño", "用户体验", "交互设计", "界面设计", "设计系统",
+        "experiência do usuário", "design de interfaces", "sistema de design"],
     ml: ["makine öğrenmesi", "makine öğrenimi", "derin öğrenme", "maschinelles lernen", "maschinellem lernen",
-        "maschinellen lernens", "aprendizaje automático", "aprendizaje profundo", "机器学习", "深度学习", "मशीन लर्निंग"],
+        "maschinellen lernens", "aprendizaje automático", "aprendizaje profundo", "机器学习", "深度学习", "मशीन लर्निंग",
+        "aprendizado de máquina", "aprendizagem de máquina", "aprendizado profundo"],
     data: ["veri analizi", "veri analitiği", "veri bilimi", "datenanalyse*", "análisis de datos", "ciencia de datos",
-        "数据分析", "数据科学", "डेटा विश्लेषण", "डेटा एनालिसिस"],
+        "数据分析", "数据科学", "डेटा विश्लेषण", "डेटा एनालिसिस",
+        "análise de dados", "ciência de dados"],
     ai: ["yapay zeka", "büyük dil model*", "künstliche intelligenz", "künstlicher intelligenz", "generative ki",
         "sprachmodell*", "inteligencia artificial", "ia generativa", "modelos de lenguaje", "人工智能", "大模型",
-        "大语言模型", "生成式ai", "提示词工程", "कृत्रिम बुद्धिमत्ता", "आर्टिफिशियल इंटेलिजेंस"],
+        "大语言模型", "生成式ai", "提示词工程", "कृत्रिम बुद्धिमत्ता", "आर्टिफिशियल इंटेलिजेंस",
+        "inteligência artificial"],
     vectordb: ["vektör veritabanı", "anlamsal arama", "vektordatenbank*", "semantische suche", "base de datos vectorial",
-        "bases de datos vectoriales", "búsqueda semántica", "向量数据库", "向量检索", "语义搜索"],
-    mlops: ["model dağıtımı", "modellbereitstellung", "despliegue de modelos", "模型部署"],
-    bi: ["veri görselleştirme", "datenvisualisierung", "visualización de datos", "数据可视化", "डेटा विज़ुअलाइज़ेशन"],
-    excel: ["pivot tablo*", "düşeyara", "pivot-tabelle*", "sverweis", "tablas dinámicas", "buscarv", "数据透视表"],
+        "bases de datos vectoriales", "búsqueda semántica", "向量数据库", "向量检索", "语义搜索",
+        "banco de dados vetorial", "bancos de dados vetoriais", "busca semântica"],
+    mlops: ["model dağıtımı", "modellbereitstellung", "despliegue de modelos", "模型部署",
+        "implantação de modelos"],
+    bi: ["veri görselleştirme", "datenvisualisierung", "visualización de datos", "数据可视化", "डेटा विज़ुअलाइज़ेशन",
+        "visualização de dados"],
+    excel: ["pivot tablo*", "düşeyara", "pivot-tabelle*", "sverweis", "tablas dinámicas", "buscarv", "数据透视表",
+        "procv"],
     product: ["ürün yönetimi", "ürün yol haritası", "ürün stratejisi", "yol haritası", "kullanıcı hikaye*",
         "produktmanagement", "produktstrategie", "produkt-roadmap", "gestión de producto", "gestión de productos",
         "estrategia de producto", "hoja de ruta", "historias de usuario", "产品管理", "产品规划", "产品路线图",
-        "产品策略", "用户故事", "उत्पाद प्रबंधन", "प्रोडक्ट मैनेजमेंट"],
+        "产品策略", "用户故事", "उत्पाद प्रबंधन", "प्रोडक्ट मैनेजमेंट",
+        "gestão de produto", "gestão de produtos", "estratégia de produto", "roadmap de produto", "histórias de usuário"],
     projectmgmt: ["proje yönetimi", "paydaş yönetimi", "risk yönetimi", "projektmanagement", "projektleitung",
         "stakeholder-management", "risikomanagement", "gestión de proyectos", "dirección de proyectos",
-        "gestión de riesgos", "项目管理", "风险管理", "干系人管理", "परियोजना प्रबंधन", "प्रोजेक्ट मैनेजमेंट", "जोखिम प्रबंधन"],
+        "gestión de riesgos", "项目管理", "风险管理", "干系人管理", "परियोजना प्रबंधन", "प्रोजेक्ट मैनेजमेंट", "जोखिम प्रबंधन",
+        "gestão de projetos", "gerenciamento de projetos", "gestão de riscos", "gestão de stakeholders"],
     sales: ["b2b satış", "kurumsal satış", "potansiyel müşteri", "soğuk arama", "iş geliştirme", "müşteri portföy*",
         "satış hedef*", "satış kotası", "b2b-vertrieb", "neukundenakquise", "neukundengewinnung", "kaltakquise",
         "geschäftsentwicklung", "key account management", "leadgenerierung", "ventas b2b", "generación de leads",
         "prospección", "llamadas en frío", "desarrollo de negocio", "gestión de cuentas", "cierre de ventas",
         "大客户销售", "销售指标", "客户开发", "商务拓展", "销售线索", "b2b销售", "陌生拜访",
-        "बिजनेस डेवलपमेंट", "लीड जनरेशन", "बी2बी बिक्री"],
-    crm: ["müşteri ilişkileri yönetimi", "kundenbeziehungsmanagement", "gestión de relaciones con clientes", "客户关系管理"],
+        "बिजनेस डेवलपमेंट", "लीड जनरेशन", "बी2बी बिक्री",
+        "vendas b2b", "geração de leads", "prospecção de clientes", "desenvolvimento de negócios", "gestão de contas", "fechamento de vendas", "metas de vendas"],
+    crm: ["müşteri ilişkileri yönetimi", "kundenbeziehungsmanagement", "gestión de relaciones con clientes", "客户关系管理",
+        "gestão de relacionamento com o cliente"],
     marketing: ["dijital pazarlama", "içerik pazarlama*", "e-posta pazarlama*", "sosyal medya pazarlama*",
         "performans pazarlama*", "kampanya yönetimi", "pazarlama otomasyonu", "digitales marketing", "digitalmarketing",
         "online-marketing", "e-mail-marketing", "kampagnenmanagement", "marketing-automatisierung", "marketing digital",
         "marketing de contenidos", "marketing en redes sociales", "gestión de campañas", "automatización de marketing",
         "数字营销", "内容营销", "社交媒体营销", "新媒体运营", "邮件营销", "市场推广", "营销自动化",
-        "डिजिटल मार्केटिंग", "कंटेंट मार्केटिंग", "सोशल मीडिया मार्केटिंग"],
+        "डिजिटल मार्केटिंग", "कंटेंट मार्केटिंग", "सोशल मीडिया मार्केटिंग",
+        "marketing de conteúdo", "marketing nas redes sociais", "gestão de campanhas", "automação de marketing", "marketing de performance"],
     seo: ["arama motoru optimizasyonu", "anahtar kelime araştırma*", "suchmaschinenoptimierung", "suchmaschinenmarketing",
         "keyword-recherche", "optimización de motores de búsqueda", "posicionamiento web",
-        "investigación de palabras clave", "搜索引擎优化", "搜索引擎营销", "关键词研究", "सर्च इंजन ऑप्टिमाइजेशन"],
+        "investigación de palabras clave", "搜索引擎优化", "搜索引擎营销", "关键词研究", "सर्च इंजन ऑप्टिमाइजेशन",
+        "otimização para mecanismos de busca", "pesquisa de palavras-chave"],
     finance: ["finansal modelleme", "finansal analiz", "bütçeleme", "mutabakat", "ufrs", "tfrs", "finanzmodellierung",
         "finanzanalyse", "budgetierung", "kreditorenbuchhaltung", "debitorenbuchhaltung", "kontenabstimmung",
         "modelización financiera", "modelado financiero", "análisis financiero", "cuentas por pagar",
         "cuentas por cobrar", "conciliación bancaria", "conciliaciones", "niif", "elaboración de presupuestos",
-        "财务建模", "财务分析", "预算管理", "应付账款", "应收账款", "对账", "वित्तीय विश्लेषण", "वित्तीय मॉडलिंग", "बजटिंग"],
+        "财务建模", "财务分析", "预算管理", "应付账款", "应收账款", "对账", "वित्तीय विश्लेषण", "वित्तीय मॉडलिंग", "बजटिंग",
+        "modelagem financeira", "análise financeira", "contas a pagar", "contas a receber", "conciliação bancária", "conciliações bancárias", "elaboração de orçamento*"],
     hr: ["aday takip sistemi", "yetenek kazanımı", "işveren markası", "uçtan uca işe alım", "işe alım süreç*",
         "bewerbermanagementsystem", "bewerbermanagement", "talentakquise", "active sourcing", "direktansprache",
         "arbeitgebermarke", "adquisición de talento", "captación de talento", "reclutamiento y selección",
         "marca empleadora", "sistema de seguimiento de candidatos", "招聘全流程", "人才获取", "人才招聘", "雇主品牌",
-        "招聘系统", "候选人寻访", "टैलेंट एक्विजिशन", "प्रतिभा अधिग्रहण", "भर्ती प्रक्रिया"],
+        "招聘系统", "候选人寻访", "टैलेंट एक्विजिशन", "प्रतिभा अधिग्रहण", "भर्ती प्रक्रिया",
+        "aquisição de talentos", "recrutamento e seleção", "marca empregadora", "sistema de rastreamento de candidatos"],
     healthcare: ["hasta bakım*", "hemşirelik bakım*", "ilaç uygulama*", "yaşamsal bulgu*", "vital bulgu*", "yara bakım*",
         "enfeksiyon kontrol*", "bakım plan*", "temel yaşam desteği", "elektronik sağlık kayıt*",
         "patientenversorgung", "medikamentengabe", "medikamentenverabreichung", "vitalzeichen", "wundversorgung",
@@ -222,7 +259,8 @@ export const LOCALIZED_SKILL_ALIASES: Record<string, string[]> = {
         "患者护理", "病人护理", "临床护理", "给药", "生命体征", "伤口护理", "感染控制", "护理计划", "电子病历",
         "基础生命支持", "护理记录",
         "रोगी देखभाल", "मरीजों की देखभाल", "दवा प्रशासन", "महत्वपूर्ण संकेत", "घाव की देखभाल", "संक्रमण नियंत्रण",
-        "देखभाल योजना", "इलेक्ट्रॉनिक स्वास्थ्य रिकॉर्ड"],
+        "देखभाल योजना", "इलेक्ट्रॉनिक स्वास्थ्य रिकॉर्ड",
+        "cuidado ao paciente", "cuidados ao paciente", "assistência ao paciente", "administração de medicamentos", "sinais vitais", "curativos", "controle de infecção", "controle de infecções", "plano de cuidados", "planos de cuidados", "suporte básico de vida", "prontuário eletrônico"],
     logistics: ["tedarik zinciri yönetimi", "tedarik zinciri planlama*", "stok yönetimi", "envanter yönetimi",
         "depo yönetimi", "talep planlama*", "satın alma", "satınalma", "navlun", "filo yönetimi", "son kilometre teslimat*",
         "sevkiyat planlama*", "lieferkettenmanagement", "bestandsmanagement", "bestandsführung", "lagerverwaltung",
@@ -230,17 +268,18 @@ export const LOCALIZED_SKILL_ALIASES: Record<string, string[]> = {
         "gestión de la cadena de suministro", "gestión de inventario", "gestión de inventarios", "gestión de almacén",
         "gestión de almacenes", "planificación de la demanda", "aprovisionamiento", "gestión de flotas", "última milla",
         "供应链管理", "库存管理", "仓储管理", "仓库管理", "需求计划", "采购", "货运", "第三方物流", "车队管理", "最后一公里",
-        "आपूर्ति श्रृंखला प्रबंधन", "सप्लाई चेन मैनेजमेंट", "इन्वेंटरी प्रबंधन", "वेयरहाउस प्रबंधन", "गोदाम प्रबंधन", "खरीद प्रबंधन"],
+        "आपूर्ति श्रृंखला प्रबंधन", "सप्लाई चेन मैनेजमेंट", "इन्वेंटरी प्रबंधन", "वेयरहाउस प्रबंधन", "गोदाम प्रबंधन", "खरीद प्रबंधन",
+        "gestão da cadeia de suprimentos", "cadeia de suprimentos", "gestão de estoque*", "gestão de armazém", "planejamento da demanda", "planejamento de demanda", "suprimentos", "frete*", "gestão de frota*"],
 }
 
 // ── Section headings ─────────────────────────────────────────────────────────
 // Tested against the folded line. Latin-script entries are regex sources joined into the
 // English patterns in analyze.ts (which end in \b); Chinese and Hindi have no ASCII word
 // boundary, so they get their own start-anchored patterns.
-export const INTL_JOB_HEADING = String.raw`aranan nitelikler|genel nitelikler|nitelikler|gereksinimler|sorumluluklar|is tanimi|gorev tanimi|gorevler|anforderungen|aufgaben|ihre aufgaben|deine aufgaben|ihr profil|dein profil|qualifikationen|das bringst du mit|das bringen sie mit|was sie mitbringen|requisitos|responsabilidades|funciones|tu perfil|que buscamos|cualificaciones|perfil buscado`
-export const INTL_BOILERPLATE_HEADING = String.raw`hakkimizda|biz kimiz|neler sunuyoruz|yan haklar|sirket hakkinda|uber uns|wir bieten|das bieten wir|was wir bieten|unser angebot|sobre nosotros|quienes somos|que ofrecemos|ofrecemos|beneficios`
-export const INTL_NICE_HEADING = String.raw`tercih sebepleri|tercih sebebi|wunschenswert|von vorteil|deseable|se valorara|valorable`
-export const INTL_NICE_INLINE = String.raw`tercih sebebi|tercih edilir|von vorteil|wunschenswert|se valorara|es un plus|deseable`
+export const INTL_JOB_HEADING = String.raw`aranan nitelikler|genel nitelikler|nitelikler|gereksinimler|sorumluluklar|is tanimi|gorev tanimi|gorevler|anforderungen|aufgaben|ihre aufgaben|deine aufgaben|ihr profil|dein profil|qualifikationen|das bringst du mit|das bringen sie mit|was sie mitbringen|requisitos|responsabilidades|funciones|tu perfil|que buscamos|cualificaciones|perfil buscado|requisitos e qualificacoes|qualificacoes|atribuicoes|responsabilidades e atribuicoes|principais atividades|o que buscamos|o que procuramos|perfil desejado|seu perfil`
+export const INTL_BOILERPLATE_HEADING = String.raw`hakkimizda|biz kimiz|neler sunuyoruz|yan haklar|sirket hakkinda|uber uns|wir bieten|das bieten wir|was wir bieten|unser angebot|sobre nosotros|quienes somos|que ofrecemos|ofrecemos|beneficios|sobre nos|quem somos|o que oferecemos|oferecemos`
+export const INTL_NICE_HEADING = String.raw`tercih sebepleri|tercih sebebi|wunschenswert|von vorteil|deseable|se valorara|valorable|desejavel|diferenciais|diferencial`
+export const INTL_NICE_INLINE = String.raw`tercih sebebi|tercih edilir|von vorteil|wunschenswert|se valorara|es un plus|deseable|desejavel|sera um diferencial|e um diferencial|e um plus`
 
 export const NONLATIN_JOB_HEADING = /^(岗位职责|工作职责|职位职责|任职要求|岗位要求|职位要求|任职资格|职位描述|工作内容|技能要求|आवश्यकताएं|आवश्यकताएँ|जिम्मेदारियां|जिम्मेदारियाँ|मुख्य जिम्मेदारियां|योग्यताएं|योग्यता|कार्य विवरण)/
 export const NONLATIN_BOILERPLATE_HEADING = /^(公司介绍|公司简介|关于我们|福利待遇|公司福利|薪资福利|我们提供|हमारे बारे में|कंपनी के बारे में|हम क्या प्रदान करते हैं|लाभ)/
@@ -251,7 +290,7 @@ export const NONLATIN_NICE_INLINE = /优先|加分|वांछनीय|प्�
 // Folded Latin-script words, spliced into the English patterns in analyze.ts.
 export const INTL_YEARS_UNIT = String.raw`yil(?:lik)?|jahren?|anos?`
 export const INTL_EXPERIENCE_WORD = String.raw`deneyim|tecrube|berufserfahrung|erfahrung|experiencia`
-export const INTL_AT_LEAST = String.raw`en\s+az|mindestens|al\s+menos|como\s+minimo|minimo(?:\s+de)?`
+export const INTL_AT_LEAST = String.raw`en\s+az|mindestens|al\s+menos|como\s+minimo|minimo(?:\s+de)?|no\s+minimo|pelo\s+menos`
 export const INTL_RANGE_SEP = String.raw`bis|a|ile`
 
 const HAN_NUMERALS: Record<string, number> = { 一: 1, 二: 2, 两: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10 }
@@ -281,11 +320,13 @@ export const INTL_MONTHS: Record<string, number> = {
     mai: 5, dez: 12,
     // Spanish: enero abril agosto diciembre
     ene: 1, abr: 4, ago: 8, dic: 12,
+    // Portuguese: fevereiro setembro outubro (the rest match English, German or Spanish)
+    fev: 2, set: 9, out: 10,
 }
-export const INTL_PRESENT = String.raw`halen|devam ediyor|devam|gunumuz|bugun|heute|aktuell|actualidad|presente|hoy`
-export const INTL_DATE_SEP = String.raw`bis|a|hasta|al`
+export const INTL_PRESENT = String.raw`halen|devam ediyor|devam|gunumuz|bugun|heute|aktuell|actualidad|presente|hoy|atual|atualmente|o momento`
+export const INTL_DATE_SEP = String.raw`bis|a|hasta|al|ate`
 export const INTL_SINCE = String.raw`seit|desde`
-export const INTL_EDUCATION = String.raw`universite|universitesi|lisans|fakulte|fakultesi|mezun|egitim|universitat|hochschule|studium|abitur|ausbildung|universidad|licenciatura|grado|educacion|bachillerato`
+export const INTL_EDUCATION = String.raw`universite|universitesi|lisans|fakulte|fakultesi|mezun|egitim|universitat|hochschule|studium|abitur|ausbildung|universidad|licenciatura|grado|educacion|bachillerato|universidade|faculdade|graduacao|bacharelado|formacao academica|ensino superior`
 // "医学院附属医院" (a hospital attached to a medical school) is an employer, not a degree.
 export const NONLATIN_EDUCATION = /大学(?!附属)|学院(?!附属)|本科|硕士|博士|学士|教育背景|教育经历|विश्वविद्यालय|कॉलेज|स्नातक|शिक्षा/
 
@@ -313,7 +354,7 @@ export const NONLATIN_SENIORITY: [RegExp, number][] = [
 
 /**
  * True when a text reads as English: at least 3% of its words are English function
- * words. None of the six is a word in Turkish, German, Spanish or Dutch, so prose in
+ * words. None of the six is a word in Turkish, German, Spanish, Portuguese or Dutch, so prose in
  * those languages scores near zero; even terse English CV bullets clear the bar.
  */
 export function looksEnglish(text: string): boolean {

@@ -28,7 +28,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 
 /**
  * The home page in one language. English renders it at "/", the translations at
- * "/tr", "/de", "/es" and "/zh" — same layout, strings from src/lib/i18n.
+ * "/tr", "/de", "/es", "/pt" and "/zh" — same layout, strings from src/lib/i18n.
  */
 export function HomePage({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);

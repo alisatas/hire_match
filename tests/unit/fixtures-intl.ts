@@ -342,3 +342,60 @@ Funciones:
 - ग्राहकों के लिए लास्ट-माइल डिलीवरी में सुधार`,
   },
 };
+
+// Portuguese (Brazil): written from the English rows in everyday Brazilian posting wording
+cases["frontend (strong match)"].pt = {
+  cv: `Desenvolvedor Frontend Sênior
+6 anos de experiência no desenvolvimento de aplicações web.
+Experiência
+Desenvolvedor Frontend, Acme — 2019 a 2025
+Desenvolvi o checkout em React e TypeScript com Next.js, reduzindo o tempo de carregamento em 40%.
+Escrevi testes unitários com Jest e testes end-to-end com Playwright. Configurei CI/CD com GitHub Actions.
+Trabalhei com designers no Figma e construí um sistema de design com Tailwind CSS e Storybook.
+Integrei REST APIs e GraphQL. Melhorei a acessibilidade e os Core Web Vitals. Equipe ágil, Scrum.
+Habilidades: JavaScript, TypeScript, React, Next.js, Tailwind CSS, Jest, Playwright, GraphQL, Git`,
+  job: `Desenvolvedor Frontend
+Procuramos um desenvolvedor frontend com pelo menos 5 anos de experiência.
+Você vai desenvolver nossa aplicação web para clientes em React e TypeScript com Next.js.
+Requisitos:
+- Sólida experiência com React, TypeScript e JavaScript
+- Experiência com Next.js e Tailwind CSS
+- Testes com Jest e Playwright
+- Experiência com REST APIs e GraphQL
+- Conhecimento de acessibilidade e performance web
+- CI/CD com GitHub Actions, Git
+- Trabalho em uma equipe ágil com designers que usam Figma
+Você vai trabalhar com os times de produto, design e backend para entregar funcionalidades aos clientes toda semana.`,
+};
+cases["nurse (strong match)"].pt = {
+  cv: `Enfermeira
+7 anos de experiência em unidades de clínica médica.
+Enfermeira assistencial, Hospital Central — 2018 a 2025
+Cuidado ao paciente de até 8 pacientes por plantão. Administração de medicamentos e monitoramento de sinais vitais.
+Elaborei planos de cuidados e a documentação clínica no prontuário eletrônico.
+Curativos, auditorias de controle de infecção, certificada em suporte básico de vida. Treinei novas enfermeiras e trabalhei com médicos e famílias.`,
+  job: `Enfermeira — Clínica Médica
+Procuramos uma enfermeira com pelo menos 3 anos de experiência em unidade de internação.
+Responsabilidades:
+- Cuidado ao paciente seguro e planos de cuidados
+- Administração de medicamentos e monitoramento de sinais vitais
+- Documentação clínica no prontuário eletrônico
+- Curativos e controle de infecção
+- Certificação em suporte básico de vida obrigatória
+- Trabalho com médicos, famílias e a equipe de enfermagem`,
+};
+cases["logistics (strong match)"].pt = {
+  cv: `Coordenador de Logística
+Coordenador de Logística, Northwind — março 2019 até o momento
+Planejei 120 embarques semanais com quatro transportadoras e negociei tarifas de frete.
+Fiz a gestão de estoque e os inventários no WMS de um armazém de 12.000 m2.
+Trabalhei com suprimentos nos prazos de fornecedores e com um parceiro 3PL na última milha. Reportei a entrega no prazo em Excel.`,
+  job: `Coordenador de Logística
+Procuramos um coordenador de logística com no mínimo 3 anos de experiência em armazenagem ou transporte.
+Atribuições:
+- Planejar o frete de entrada e saída com nossas transportadoras e parceiros 3PL
+- Responder pela gestão de estoque e pela acuracidade de estoque no nosso WMS
+- Trabalhar com suprimentos e planejamento da demanda nos níveis de estoque
+- Reportar a entrega no prazo e o custo por embarque em Excel
+- Melhorar a entrega de última milha para nossos clientes`,
+};

@@ -252,7 +252,7 @@ Own incident triage and bug triage, manage access control lists (ACLs), split wo
   });
 
   // Same promise for the translated guides
-  it.each(["tr", "de", "es", "zh"] as const)("the %s nurse and logistics guides use wording the analyzer detects", (lang) => {
+  it.each(["tr", "de", "es", "pt", "zh"] as const)("the %s nurse and logistics guides use wording the analyzer detects", (lang) => {
     for (const [slug, key] of [["registered-nurse", "healthcare"], ["logistics-coordinator", "logistics"]]) {
       const role = getLocalizedRole(lang, slug)!;
       const job = `${role.name}\n${role.groups.flatMap(g => g.keywords).join(", ")}.`;

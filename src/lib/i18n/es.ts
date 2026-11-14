@@ -76,7 +76,7 @@ export const es: Dictionary = {
     },
     {
       q: "¿Funciona con currículums y ofertas en español?",
-      a: "Sí. CVXray lee currículums y ofertas en español, inglés, alemán, turco y chino. Reconoce habilidades, palabras clave y años de experiencia en cada idioma; el resultado es más preciso cuando el CV y la oferta están en el mismo idioma.",
+      a: "Sí. CVXray lee currículums y ofertas en español, inglés, portugués, alemán, turco y chino. Reconoce habilidades, palabras clave y años de experiencia en cada idioma; el resultado es más preciso cuando el CV y la oferta están en el mismo idioma.",
     },
     {
       q: "¿Qué puntuación de ajuste se considera buena?",
