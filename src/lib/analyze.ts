@@ -619,10 +619,17 @@ export function analyze(cvText: string, jobText: string): AnalysisResult {
     // senior title now implies a requirement (lead / staff / senior → 5, head / director /
     // principal → 8) — used for the experience score only; the report still shows "no
     // requirement stated". The title is the first line, as for the skill boost.
+    // Math Prof improvement (Push 41): the same title words in the other site languages.
+    // German "Leiter/Leitung", Spanish "Jefe de", Portuguese "Diretor", French "Directeur",
+    // Turkish "Müdür(ü)" read as head level (8); "Líder"/"Lider" and "Teamleiter" as lead
+    // level (5). ("Sênior"/"Sénior" already fold to "senior".) Before: a German
+    // "Teamleiter Logistik" posting without a year count gave a 1-year CV the neutral
+    // experience default, the same as a 9-year CV; now 5 years are implied, as for an
+    // English "Team Lead". Title line only, so body text ("Leitung von Projekten") never fires.
     const titleLine = foldText((jobText.trim().split("\n", 1)[0] ?? "").slice(0, 120))
     const impliedYears = yearsRequired > 0 ? yearsRequired
-        : /\b(head of|director|principal|vp|vice president)\b/.test(titleLine) ? 8
-        : /\b(lead|staff|senior|sr\.?|kidemli)\b/.test(titleLine) ? 5
+        : /\b(head of|directora?|principal|vp|vice president|diretora?|directeur|directrice|direktor(?:in)?|leiter(?:in)?|leitung|jef[ea] de|mudur\w*)\b/.test(titleLine) ? 8
+        : /\b(lead|staff|senior|sr\.?|kidemli|lider|teamleiter(?:in)?|teamleitung)\b/.test(titleLine) ? 5
         : 0
 
     // countWords also handles text without spaces (Chinese)

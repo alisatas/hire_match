@@ -33,7 +33,7 @@ The score is a transparent weighted comparison, not a language-model opinion:
 ## Questions CVXray answers
 
 - Does my CV / resume match this job description?
-- Is there a free CV matcher in Turkish, German, Spanish or Chinese? (ücretsiz CV analizi, Lebenslauf-Check, analizar CV gratis, 简历匹配)
+- Is there a free CV matcher in Turkish, German, Spanish, Portuguese, French or Chinese? (ücretsiz CV analizi, Lebenslauf-Check, analizar CV gratis, análise de currículo grátis, analyse de CV gratuite, 简历匹配)
 - Which keywords from the job posting are missing from my resume?
 - Which skills do I need to add for this role, and which matter most?
 - What is a good CV match score?

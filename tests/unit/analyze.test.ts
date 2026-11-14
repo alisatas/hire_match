@@ -291,4 +291,14 @@ describe("seniority in the job title", () => {
   it("keeps showing that no years were stated", () => {
     expect(analyze(cv(1), job("Head of Frontend")).yearsRequired).toBe(0)
   });
+
+  // Push 41: the same title words in the other site languages
+  it.each(["Teamleiter Frontend", "Líder de Frontend", "Leiter Frontend", "Directeur Frontend", "Diretora de Frontend", "Jefe de Frontend", "Frontend Müdürü"])(
+    "separates a junior from a senior CV when the title says %s", (title) => {
+      expect(gap(title)).toBeGreaterThanOrEqual(gap("Frontend Engineer") + 2)
+    });
+
+  it("ignores leadership words outside the title line", () => {
+    expect(gap("Frontend Engineer\nLeitung von Projekten, Teamleiter im Sprint")).toBe(gap("Frontend Engineer"))
+  });
 });
