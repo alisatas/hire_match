@@ -397,3 +397,13 @@ Older entries moved out of agent-logs/browser-qa.md to keep the gate cheap. Read
 
 - SEO crawl caught 6 title/description lengths on the new legal pages (fixed); checked /tr 404 and /de/privacy in the browser
 - 203 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical; no tracked `.env`
+
+---
+
+## 2026-11-14 — Push 39 (Brazilian Portuguese at /pt)
+
+**Status:** ✅ PASS (0 critical)
+
+/pt routes load; only console error is the dev-only Vercel debug script blocked by CSP (pre-existing, not in production). New e2e cases: /pt home flow in Portuguese and Português in the footer.
+
+- 220 unit / browser tests green on the production build (verify passed on a9a45d7); tsc 0 (web + mobile), ESLint 0; no tracked `.env`

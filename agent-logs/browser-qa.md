@@ -7,16 +7,6 @@ Only the latest 3 entries are kept here; older ones are in `archive/browser-qa.m
 
 ---
 
-## 2026-11-14 — Push 39 (Brazilian Portuguese at /pt)
-
-**Status:** ✅ PASS (0 critical)
-
-/pt routes load; only console error is the dev-only Vercel debug script blocked by CSP (pre-existing, not in production). New e2e cases: /pt home flow in Portuguese and Português in the footer.
-
-- 220 unit / browser tests green on the production build (verify passed on a9a45d7); tsc 0 (web + mobile), ESLint 0; no tracked `.env`
-
----
-
 ## 2026-11-14 — Push 40 (French at /fr)
 
 **Status:** ✅ PASS (0 critical)
@@ -34,3 +24,9 @@ Only the latest 3 entries are kept here; older ones are in `archive/browser-qa.m
 /tr and /fr checked in the browser: 8 flags in the open menu (button + 7 languages), only console error is the dev-only Vercel debug script blocked by CSP (pre-existing).
 
 - verify on the pushed commit (see report); tsc 0 (web + mobile), ESLint 0; no tracked `.env`
+
+---
+
+## 2026-11-14 — Push 42 (App settings screen)
+
+**Status:** ✅ PASS — no change in scope (app-only push; web pages unchanged). Browser tests run in verify.

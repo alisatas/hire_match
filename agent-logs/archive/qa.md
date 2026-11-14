@@ -411,3 +411,13 @@ Older entries moved out of agent-logs/qa.md to keep the gate cheap. Read only wh
 - Translated samples unit-tested: every TR/DE/ES/ZH posting yields 3+ skills, a years requirement and full length
 - 404 renders English on the server and switches language after hydration (useSyncExternalStore, no mismatch)
 - 203 unit / 92 browser tests green on the production build; tsc 0 (web + mobile), ESLint 0; prod audit 0 high/critical; no tracked `.env`
+
+---
+
+## 2026-11-14 — Push 39 (Brazilian Portuguese at /pt)
+
+**Status:** ✅ PASS (0 critical, 1 note)
+
+Engine additions are data (stop words, aliases, headings, years, months). Pathological-input tests still finish quickly; Portuguese fixtures (frontend, nurse, logistics) score within 10 points of English with the same years. 🟡 Note: the month prefixes `set`/`out` (setembro/outubro) only apply directly before a year in a date range, so "set 2019 – 2021" reads as September; an English "out 2019" before a range would read as October — harmless (month precision only).
+
+- 220 unit / browser tests green on the production build (verify passed on a9a45d7); tsc 0 (web + mobile), ESLint 0; no tracked `.env`

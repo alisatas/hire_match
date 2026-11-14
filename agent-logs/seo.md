@@ -8,23 +8,6 @@ Only the latest 3 entries are kept here; older ones are in `archive/seo.md`.
 
 ---
 
-## 2026-11-14 — Push 39 (Brazilian Portuguese at /pt)
-
-**Status:** ✅ PASS (0 critical, 1 improvement)
-
-**Improvement:** 27 more indexable pages — every page in Brazilian Portuguese (`pt-BR`, hreflang `pt-BR` on all pages, sitemap alternates); `llms.txt` now lists Portuguese and no longer says guides are English-only. All 27 pages checked for title 15–65 / description 70–160 before verify (5 shortened; role titles got a short last fallback).
-
-**Running improvement backlog (next pushes):**
-1. Submit /pt URLs in Search Console / Bing (owner OK needed)
-2. Next language for high-unemployment markets (owner's plan, one language per push)
-3. Keyword volume research per language (SEO manager)
-4. Landing pages: ATS resume checker, Jobscan alternative
-5. Native review of Chinese and Portuguese copy
-
-- 220 unit / browser tests green on the production build (verify passed on a9a45d7); tsc 0 (web + mobile), ESLint 0; no tracked `.env`
-
----
-
 ## 2026-11-14 — Push 40 (French at /fr)
 
 **Status:** ✅ PASS (0 critical, 1 improvement)
@@ -56,3 +39,9 @@ Only the latest 3 entries are kept here; older ones are in `archive/seo.md`.
 5. Native review of Chinese, Portuguese and French copy
 
 - verify on the pushed commit (see report); tsc 0 (web + mobile), ESLint 0; no tracked `.env`
+
+---
+
+## 2026-11-14 — Push 42 (App settings screen)
+
+**Status:** ✅ PASS — no change in scope (app-only push; no site page or metadata touched, no SEO improvement required). Backlog unchanged.

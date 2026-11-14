@@ -8,21 +8,6 @@ Only the latest 3 entries are kept here; older ones are in `archive/math-profess
 
 ---
 
-## 2026-11-14 — Push 39 (Brazilian Portuguese at /pt)
-
-**Status:** ✅ PASS (1 improvement)
-
-**Improvement:** Portuguese language layer in `languages.ts` (stop words, skill aliases, headings, "pelo menos / no mínimo N anos", months, "até o momento", education words). Shared nurse case 32 → 75 (English 75), logistics 59 → 69 (CV years 0 → 7.8), frontend 71 → 76; all 105 English CV × posting pairs unchanged (compared with the previous engine).
-
-**Running improvement backlog (next pushes):**
-1. Extend alias lists from real postings per language
-2. CV quality check in other languages
-3. Seniority words in TR/DE/ES/PT/ZH titles
-
-- 220 unit / browser tests green on the production build (verify passed on a9a45d7); tsc 0 (web + mobile), ESLint 0; no tracked `.env`
-
----
-
 ## 2026-11-14 — Push 40 (French at /fr)
 
 **Status:** ✅ PASS (1 improvement)
@@ -50,3 +35,9 @@ Only the latest 3 entries are kept here; older ones are in `archive/math-profess
 3. Seniority words in non-English CV titles (job titles done)
 
 - verify on the pushed commit (see report); tsc 0 (web + mobile), ESLint 0; no tracked `.env`
+
+---
+
+## 2026-11-14 — Push 42 (App settings screen)
+
+**Status:** ✅ PASS — no change in scope (app-only push; `analyze.ts` untouched, no math improvement required). Backlog unchanged.

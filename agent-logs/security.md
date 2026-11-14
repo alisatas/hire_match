@@ -7,16 +7,6 @@ Only the latest 3 entries are kept here; older ones are in `archive/security.md`
 
 ---
 
-## 2026-11-14 — Push 39 (Brazilian Portuguese at /pt)
-
-**Status:** ✅ PASS (0 critical)
-
-No API, proxy, header or analyzer change. New content is plain strings rendered as text nodes; legal.pt.tsx uses the same `CONTACT_EMAIL` constant and Lemon Squeezy links as the other languages. 404 language regex gained `pt` only (anchored, no backtracking risk). No new sinks (`dangerouslySetInnerHTML`, `eval`, `console.log`) in the diff; attack suite green.
-
-- 220 unit / browser tests green on the production build (verify passed on a9a45d7); tsc 0 (web + mobile), ESLint 0; no tracked `.env`
-
----
-
 ## 2026-11-14 — Push 40 (French at /fr)
 
 **Status:** ✅ PASS (0 critical)
@@ -34,3 +24,13 @@ No API, proxy, header or analyzer change. New content is plain strings rendered 
 No API, proxy, header or analyzer-input change. `Flag` renders static SVG from a typed map — no user input, no new sinks. The title-seniority regex gained alternatives only (`mudur\w*` is a single bounded run on a ≤120-char line); attack suite green.
 
 - verify on the pushed commit (see report); tsc 0 (web + mobile), ESLint 0; no tracked `.env`
+
+---
+
+## 2026-11-14 — Push 42 (App settings screen)
+
+**Status:** ✅ PASS (0 critical)
+
+App-only push, `mobile/` read. Settings links are built from a hard-coded `https://cvxray.com` plus `localePath()` of a typed locale — no user input reaches `Linking.openURL`. `prefs.json` lives in the app's private document folder, holds only the language, and every read is validated with `isLocale` (a tampered file falls back to the phone's language). No secrets, no logging, no new network calls. `@/lib/site` is deliberately not imported in the app (reads `process.env` at load).
+
+- verify on the pushed commit (see report); no tracked `.env`

@@ -637,3 +637,20 @@ Older entries moved out of agent-logs/seo.md to keep the gate cheap. Read only w
 - **URL Inspection `https://cvxray.com/tr`:** discovered 2026-11-13, crawled 2026-11-13 17:55, stored status "Indexing allowed? No / URL cannot appear on Bing". The **live test passes**: "URL can be indexed by Bing", no SEO/GEO issues, 2 markup types. Live HTML as Bingbot: 200, `index, follow`, self canonical, `lang="tr"`. Read: the stored result predates processing of the new pages; recheck after the next crawl
 - Done with owner OK: sitemap resubmitted 2026-11-14 ("submitted for processing", status Processing); the five home pages (`/`, `/tr`, `/de`, `/es`, `/zh`) sent through URL Submission at 10:27 (quota 95/100 left)
 - Recheck ~2026-11-16: sitemap URL count (expect 135), `/tr` index status, Search Performance data
+
+---
+
+## 2026-11-14 — Push 39 (Brazilian Portuguese at /pt)
+
+**Status:** ✅ PASS (0 critical, 1 improvement)
+
+**Improvement:** 27 more indexable pages — every page in Brazilian Portuguese (`pt-BR`, hreflang `pt-BR` on all pages, sitemap alternates); `llms.txt` now lists Portuguese and no longer says guides are English-only. All 27 pages checked for title 15–65 / description 70–160 before verify (5 shortened; role titles got a short last fallback).
+
+**Running improvement backlog (next pushes):**
+1. Submit /pt URLs in Search Console / Bing (owner OK needed)
+2. Next language for high-unemployment markets (owner's plan, one language per push)
+3. Keyword volume research per language (SEO manager)
+4. Landing pages: ATS resume checker, Jobscan alternative
+5. Native review of Chinese and Portuguese copy
+
+- 220 unit / browser tests green on the production build (verify passed on a9a45d7); tsc 0 (web + mobile), ESLint 0; no tracked `.env`

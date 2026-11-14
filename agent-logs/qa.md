@@ -7,16 +7,6 @@ Only the latest 3 entries are kept here; older ones are in `archive/qa.md`.
 
 ---
 
-## 2026-11-14 — Push 39 (Brazilian Portuguese at /pt)
-
-**Status:** ✅ PASS (0 critical, 1 note)
-
-Engine additions are data (stop words, aliases, headings, years, months). Pathological-input tests still finish quickly; Portuguese fixtures (frontend, nurse, logistics) score within 10 points of English with the same years. 🟡 Note: the month prefixes `set`/`out` (setembro/outubro) only apply directly before a year in a date range, so "set 2019 – 2021" reads as September; an English "out 2019" before a range would read as October — harmless (month precision only).
-
-- 220 unit / browser tests green on the production build (verify passed on a9a45d7); tsc 0 (web + mobile), ESLint 0; no tracked `.env`
-
----
-
 ## 2026-11-14 — Push 40 (French at /fr)
 
 **Status:** ✅ PASS (0 critical)
@@ -34,3 +24,13 @@ French fixtures (frontend, nurse, logistics) score within 10 points of English w
 `LOCALE_INFO.flag` and the SVG map are both `Record`-typed, so a language or country without a flag fails `tsc` instead of rendering nothing. Title-seniority words in DE/ES/PT/FR/TR unit-tested (7 titles), plus a test that leadership words below the title line do not count. Engine comparison: 48 English CV × posting pairs (fixtures × fixture and sample jobs) and every intl fixture unchanged.
 
 - verify on the pushed commit (see report); tsc 0 (web + mobile), ESLint 0; no tracked `.env`
+
+---
+
+## 2026-11-14 — Push 42 (App settings screen)
+
+**Status:** ✅ PASS (0 critical, 1 note)
+
+App-only push, `mobile/` read. Pref read/write wrapped in try/catch (missing, unreadable or malformed file → phone language; failed write → app keeps working). `File.write()` is async in SDK 58, so `writeSync()` is used. Android Back steps language → settings → main; the main view stays mounted while Settings is open so a typed CV survives. Fixed in passing: the app bundle was broken since the legal pages (content index pulled in `next/link`); samples now load directly, `expo export` bundles. Verified on the emulator: language switch, restart keeps German (`am force-stop`). 🟡 Note: changing the language still resets the input form (`key={locale}`, behaviour unchanged from before).
+
+- verify on the pushed commit (see report); tsc 0 (web + mobile)
