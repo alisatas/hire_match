@@ -17,7 +17,23 @@ in the same change.
   assembleRelease`.
 - The app calls the site's `/api/extract-pdf` and `/api/scrape`; native requests carry no
   `Origin`, so the cross-site guard lets them through. Do not tighten it without checking the app.
-- Not yet verified on a device: PDF upload and job-link fetch.
+- Not yet verified on a device: PDF upload and job-link fetch. Settings verified on the
+  emulator (2026-11-14): language switch and Android Back.
+- Never import `@/lib/i18n/content` (its index loads the web's legal pages → `next/link`,
+  Metro fails). Import the needed `content/*.<lang>.ts` files directly (`src/samples.ts`).
+  Check bundling without a device: `npx expo export --platform android --output-dir <tmp>`.
+- App-only strings (Settings) live in `src/SettingsScreen.tsx`, not the shared dictionaries.
+- Settings (gear in the header) is a grouped platform-style list: General (Language →
+  its own page), Legal (terms, privacy, refunds open cvxray.com in the browser), About
+  (website), then version from `app.json`. Navigation is a `screen` state in `App.tsx`, not
+  Expo Router; the main view is hidden, not unmounted, so a typed CV survives, and Android
+  Back steps back. Icons: `src/icons.tsx` (react-native-svg, no icon font). No contact row
+  until a contact e-mail exists.
+- Preferences (language) persist in `prefs.json` via `expo-file-system` (`src/prefs.ts`),
+  read synchronously at start so there is no flash of the wrong language. Its `write()` is
+  async in SDK 58 — use `writeSync()`. Verified on the emulator with `am force-stop`.
+  Adding a native module means a new APK; a JS-only bundle check is not enough.
+- Do not import `@/lib/site` in the app: it reads `process.env.NEXT_PUBLIC_*` at load time.
 
 ## Android toolchain and emulator
 
