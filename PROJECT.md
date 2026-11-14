@@ -1,0 +1,157 @@
+# CVXray — project rules and lessons learned
+
+The working memory of this project for AI agents (Claude Code and others). Read it before
+implementing anything. **When you learn something that would have saved time, or make a
+mistake worth not repeating, add it here in the same change.** Keep entries short and concrete:
+the rule first, then why.
+
+AGENTS.md holds the pre-push gate (7 agents) and CLAUDE.md the push procedure; this file holds
+everything else.
+
+---
+
+## 1. Working style and budget
+
+- **Do not fan out parallel subagents for bulk work** (translations, rewrites). Four parallel
+  translation agents hit the 5-hour usage limit twice and blocked the owner's other work.
+  Do it in the main session, one language or file at a time.
+- **Write output to disk as soon as each piece is complete.** Agents that kept everything in
+  memory until the end lost all work when the limit hit.
+- **Smallest useful scope first.** Ship the part that brings value, list the rest as follow-ups,
+  and say plainly what was left out and why.
+- **Batch tool calls** (shell scripts, browser batches) instead of many single calls.
+- Reply to the owner in Turkish; code, comments, commits and docs in English.
+
+## 2. Things that need the owner's explicit OK
+
+- Downloads outside `npm install` (SDKs, toolchains, system images): name source and size.
+- Accepting any licence or terms (Android SDK, Chrome first-run, cookie banners other than
+  "reject").
+- Any action in the owner's accounts: Bing Webmaster, Google Search Console, GA4, Vercel,
+  Play Console (submitting sitemaps or URLs counts).
+- `git push` — only after the gate and the owner's localhost check (see CLAUDE.md).
+- Signing in, passwords, signing keys: always the owner's. Never create or store keystores.
+
+## 3. Git and release
+
+- **Commit subjects must be lower case** after the type: `feat(i18n): add …`, not
+  `feat(i18n): Add …`. commitlint rejects sentence case.
+- **CI's semantic-release pushes a `chore(release): x.y.z [skip ci]` commit after every push.**
+  Before pushing: `git fetch origin && git rebase origin/main`, then push.
+- lint-staged runs `eslint --fix` on staged `.ts/.tsx` at commit time.
+- Commit only what the task touched; stage files by name when the tree has unrelated changes.
+- Unpushed commits may be amended; pushed ones never.
+
+## 4. Verification before saying "done"
+
+- `npx tsc --noEmit` (web) and `cd mobile && npx tsc --noEmit` (app).
+- `npx eslint src tests scripts`, `npx vitest run`.
+- Production run: `npm run build`, then `CI=1 E2E_PORT=3100 npx playwright test`.
+- **Wait ~60 s between full Playwright runs**: the rate-limit test fails if the previous run's
+  requests are still counted.
+- `next dev` regenerates `.next/dev/types`; after moving or deleting routes, stale types break
+  `tsc` → `rm -rf .next/dev/types` (or `npx next typegen`).
+- Engine changes: compare every English fixture score with the previous engine
+  (`git show HEAD:src/lib/analyze.ts` into the scratchpad, import both in a throwaway test).
+  English scores must not move unless that is the point of the change.
+- Previewable changes: check them in the browser pane, not only in tests.
+
+## 5. Site architecture you must keep consistent
+
+- **Languages:** `en` at `/`, `tr`, `de`, `es`, `zh` under `/<code>/…`, same path otherwise.
+  Every page exists in every language: home, `/resume-keywords`, 18 guides, `/blog`,
+  3 articles, `/terms`, `/privacy`, `/refund-policy`.
+- **Two root layouts:** `src/app/(en)/layout.tsx` and `src/app/[lang]/layout.tsx`, both render
+  `components/root-shell.tsx`, so `<html lang>` is right in static HTML. Unmatched URLs are
+  served by `app/global-not-found.tsx` (`experimental.globalNotFound`; recheck on Next upgrades).
+- Pages are shared components in `src/components/pages/*` and `home-page.tsx`, called with a
+  `locale` by thin route files in `(en)` and `[lang]`.
+- **Strings:** UI in `src/lib/i18n/{en,tr,de,es,zh}.ts` (`en.ts` defines the shape — add a key
+  to all five). Page strings in `pages.<lang>.ts`. Content (guides, articles, samples, legal)
+  in `src/lib/i18n/content/*.<lang>.ts(x)`, read through `content/index.ts`.
+- Paths: `localePath(locale, "/blog")`; hreflang: `alternatesFor(path)`. Every page sets a
+  self canonical plus `languages`; the sitemap lists every page in every language.
+- Route groups add a suffix to colocated `opengraph-image` routes; old URLs are redirected in
+  `next.config.ts`. Tests must follow the `og:image` URL a page advertises.
+- Shared between web and app: `src/lib/analyze.ts`, `languages.ts`, `suggestions.ts`,
+  `resources.ts`, `i18n/*`. No React or Next imports in these.
+
+## 6. SEO rules (enforced by `tests/e2e/seo.spec.ts`)
+
+- Title 15–65 characters **including** " | CVXray" (9) — keep page titles ≤ 56. Chinese counts
+  characters, so short Chinese titles fail: write e.g. "CVXray 隐私政策", not "隐私政策".
+- Description 70–160 characters, unique per page and language.
+- Exactly one `<h1>`, self canonical, `index, follow`, OG and Twitter tags, parseable JSON-LD.
+- Every linked page must be in the sitemap; every multilingual page needs hreflang for all
+  five languages plus `x-default`.
+- New translations: run the crawl — machine-written text regularly overshoots the limits.
+- `node scripts/seo-inventory.mjs` regenerates `docs/seo/content-inventory.*`;
+  `docs/seo/seo-brief.md` is the hand-off for the SEO manager.
+
+## 7. Scoring engine rules
+
+- Every alias in `LOCALIZED_SKILL_ALIASES` applies to every language (no language detection).
+  An alias must not be an everyday word in another language: German "KI" is Turkish "ki",
+  Spanish "contenedores" are shipping containers, "triage"/"ACLs"/"epic" fire on tech posts.
+- Trailing `*` marks a stem for Turkish/German endings ("hasta bakım*").
+- Real postings name the skill between the year count and "experience" ("3 年以上 React
+  开发经验"); keep year patterns tolerant and test real phrasings.
+- `tests/unit/fixtures-intl.ts` holds the same CV and job in six languages; scores must stay
+  within 10 points of English. Translated sample postings must each yield 3+ skills, a years
+  requirement and full length (unit-tested).
+- Every push needs one commented "Math Prof improvement" (AGENTS.md); describe the measured
+  before → after in the comment.
+
+## 8. Mobile app (`mobile/`, Expo SDK 58, React Native)
+
+- Read `mobile/AGENTS.md` and the versioned Expo docs before touching Expo APIs.
+- Shared code via `@/…` → `../src/…`: `tsconfig.json` paths for types, `metro.config.js`
+  `resolveRequest` for the bundler (Metro ignores tsconfig paths outside the project).
+- Package / bundle id `com.cvxray.app` (permanent once on Play). `mobile/android` and
+  `mobile/ios` are generated by `npx expo prebuild` and not committed.
+- Build: `JAVA_HOME=~/.local/android-toolchain/jdk/Contents/Home
+  ANDROID_HOME=~/.local/android-toolchain/sdk`, then `cd mobile/android && ./gradlew
+  assembleRelease`.
+- The app calls the site's `/api/extract-pdf` and `/api/scrape`; native requests carry no
+  `Origin`, so the cross-site guard lets them through. Do not tighten it without checking the app.
+- Not yet verified on a device: PDF upload and job-link fetch.
+
+## 9. Android toolchain and emulator
+
+- Toolchain lives in `~/.local/android-toolchain` (JDK 17, SDK, Gradle, AVD `cvxray_test`).
+- `sdkmanager` is deprecated; use `cmdline-tools/latest/bin/android --no-metrics --sdk=… sdk
+  install <pkg>`. Gradle installs missing build-tools and NDK itself once licences are accepted.
+- Emulator: `ANDROID_AVD_HOME=~/.local/android-toolchain/avd emulator -avd cvxray_test`.
+- `adb shell monkey` launches unreliably; use `adb shell am start -n com.cvxray.app/.MainActivity`.
+- Driving the UI: tap by uiautomator bounds and match exact node text (a substring matched
+  the CV field instead of a chip). Close the keyboard with keyevent 111 (Escape) — Back (4)
+  exits the app. `adb shell input text` truncates long strings.
+- A fresh emulator's Chrome shows a first-run screen that blocks Chrome-based flows.
+
+## 10. Browsers and owner accounts
+
+- The built-in browser pane has none of the owner's sign-ins. Bing Webmaster, Search Console
+  and GA4 need **Claude in Chrome**, with the owner signing in there.
+- If the Chrome extension does not respond, ask the owner to open Chrome and the Claude side
+  panel; do not loop on retries.
+- Close tabs you opened when done.
+
+## 11. Search visibility status (update after each check)
+
+- Google Search Console: URL-prefix property `https://cvxray.com/`, first data 2026-11-10.
+- Bing Webmaster (2026-11-14): Search Performance not ready yet; AI citations 0; sitemap
+  resubmitted (135 URLs), five home pages submitted; `/tr` live test passes but stored status
+  "not indexed". **Recheck ~2026-11-16.**
+- IndexNow: `.github/workflows/indexnow.yml` submits all sitemap URLs after content deploys
+  (verified: 135 URLs on 2026-11-13).
+
+## 12. Known gaps and follow-ups
+
+- Chinese copy and all legal translations: no native or legal review yet (English prevails).
+- Course titles stay English (proper names of external courses).
+- CV quality check runs on English CVs only.
+- Play Store: owner needs a developer account and an upload key; then a signed bundle.
+- The Excalidraw script named in CLAUDE.md (`/Users/aliisatas/Desktop/hire-match/update-canvas.mjs`)
+  does not exist on this machine and nothing listens on port 3002 — skipped until the owner
+  restores it.
+- `gh` CLI is not installed; GitHub checks go through the web UI.

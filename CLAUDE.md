@@ -1,4 +1,11 @@
 @AGENTS.md
+@PROJECT.md
+
+## Project rules and lessons learned — MANDATORY
+
+PROJECT.md is this project's working memory: architecture, rules, commands and past mistakes.
+Read it before implementing. Whenever you learn something that would have saved time, hit a
+problem worth not repeating, or the status in it changes, update PROJECT.md in the same change.
 
 ## Pre-Push Gate — MANDATORY (in order, no exceptions)
 
