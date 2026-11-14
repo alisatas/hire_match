@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { ArrowRight, Check, ChevronDown, Globe } from "lucide-react";
+import { ArrowRight, Check, ChevronDown } from "lucide-react";
 import { CookieSettingsButton } from "@/components/consent/consent-banner";
 import { CoffeeLink } from "@/components/coffee-link";
+import { Flag } from "@/components/flag";
 import { LOCALES, LOCALE_INFO, getDictionary, localePath, type Locale } from "@/lib/i18n";
 
 /**
@@ -58,7 +59,7 @@ function LanguageMenu({ locale, label, path }: { locale: Locale; label: string; 
       <summary
         className="flex h-11 cursor-pointer list-none items-center gap-1.5 rounded-md px-2.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground sm:h-9 [&::-webkit-details-marker]:hidden"
       >
-        <Globe className="size-4" aria-hidden />
+        <Flag country={LOCALE_INFO[locale].flag} />
         {/* The accessible name starts with the visible text, as WCAG 2.5.3 asks */}
         <span className="uppercase">{locale}</span>
         <span className="sr-only">{label}: {LOCALE_INFO[locale].name}</span>
@@ -74,7 +75,10 @@ function LanguageMenu({ locale, label, path }: { locale: Locale; label: string; 
               aria-current={code === locale ? "true" : undefined}
               className="flex min-h-11 items-center justify-between gap-3 rounded-lg px-3 text-sm text-foreground/85 transition-colors hover:bg-foreground/[0.05] hover:text-foreground aria-[current=true]:font-medium aria-[current=true]:text-foreground sm:min-h-9"
             >
-              {LOCALE_INFO[code].name}
+              <span className="flex items-center gap-2.5">
+                <Flag country={LOCALE_INFO[code].flag} />
+                {LOCALE_INFO[code].name}
+              </span>
               {code === locale && <Check className="size-3.5 text-primary" aria-hidden />}
             </a>
           </li>

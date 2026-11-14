@@ -14,14 +14,22 @@ export type Locale = (typeof LOCALES)[number];
 /** Languages served from /<code> — everything except English. */
 export const TRANSLATED_LOCALES = LOCALES.filter((l): l is Exclude<Locale, "en"> => l !== "en");
 
-export const LOCALE_INFO: Record<Locale, { name: string; htmlLang: string; ogLocale: string }> = {
-  en: { name: "English", htmlLang: "en", ogLocale: "en_US" },
-  tr: { name: "Türkçe", htmlLang: "tr", ogLocale: "tr_TR" },
-  de: { name: "Deutsch", htmlLang: "de", ogLocale: "de_DE" },
-  es: { name: "Español", htmlLang: "es", ogLocale: "es_ES" },
-  pt: { name: "Português", htmlLang: "pt-BR", ogLocale: "pt_BR" },
-  fr: { name: "Français", htmlLang: "fr", ogLocale: "fr_FR" },
-  zh: { name: "中文", htmlLang: "zh-Hans", ogLocale: "zh_CN" },
+/**
+ * Countries whose flag the language menu can draw (`components/flag.tsx` holds one SVG per
+ * code, typed against this list). A new language needs its flag here and there — the
+ * `Record<Locale, …>` below makes `flag` required, so a language without one fails `tsc`.
+ */
+export const FLAG_COUNTRIES = ["us", "tr", "de", "es", "br", "fr", "cn"] as const;
+export type FlagCountry = (typeof FLAG_COUNTRIES)[number];
+
+export const LOCALE_INFO: Record<Locale, { name: string; htmlLang: string; ogLocale: string; flag: FlagCountry }> = {
+  en: { name: "English", htmlLang: "en", ogLocale: "en_US", flag: "us" },
+  tr: { name: "Türkçe", htmlLang: "tr", ogLocale: "tr_TR", flag: "tr" },
+  de: { name: "Deutsch", htmlLang: "de", ogLocale: "de_DE", flag: "de" },
+  es: { name: "Español", htmlLang: "es", ogLocale: "es_ES", flag: "es" },
+  pt: { name: "Português", htmlLang: "pt-BR", ogLocale: "pt_BR", flag: "br" },
+  fr: { name: "Français", htmlLang: "fr", ogLocale: "fr_FR", flag: "fr" },
+  zh: { name: "中文", htmlLang: "zh-Hans", ogLocale: "zh_CN", flag: "cn" },
 };
 
 const DICTIONARIES: Record<Locale, Dictionary> = { en, tr, de, es, pt, fr, zh };
